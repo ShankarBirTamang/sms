@@ -1,13 +1,15 @@
 import { ReactNode, useState } from "react";
 import Icon from "../../../components/Icon/Icon.tsx";
-import { Link } from "react-router-dom";
 
-type Props = {
+// import { Link } from "react-router-dom";
+
+interface Props {
   children?: ReactNode;
   title: string;
   icon?: string;
   route?: string;
-};
+}
+
 const NavDropDown = ({ children, title = "Drop", icon, route }: Props) => {
   const [isHovered, setIsHovered] = useState(false);
 

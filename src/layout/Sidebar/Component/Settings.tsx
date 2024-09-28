@@ -1,113 +1,144 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Icon from "../../../components/Icon/Icon.tsx";
 
-// Define the type for menu items
 interface MenuItem {
   title: string;
-  submenu?: MenuItem[]; // Optional submenu
+  route?: string;
+  submenu?: MenuItem[];
 }
 
-const Settings: React.FC = () => {
+const Settings = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [openSubMenus, setOpenSubMenus] = useState<{ [key: string]: boolean }>(
     {},
   );
+  const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
 
-  // Define your menu items and their submenus
   const menuItems: MenuItem[] = [
-    { title: "New Ticket" },
-    { title: "New Customer" },
     {
-      title: "New Group",
+      title: "Student Services",
       submenu: [
-        { title: "Admin Group" },
-        { title: "Staff Group" },
-        { title: "Member Group" },
-      ],
-    },
-    {
-      title: "Old Group",
-      submenu: [
-        { title: "OLD Admin Group" },
         {
-          title: "Details",
-          submenu: [{ title: "Detail 1" }, { title: "Detail 2" }],
+          title: "Photographs",
+          route: "",
         },
         {
-          title: "Hello",
-          submenu: [{ title: "Hello" }, { title: "Detail 2" }],
+          title: "Student Details",
+          route: "",
         },
         {
-          title: "World",
-          submenu: [{ title: "World" }, { title: "Detail 2" }],
+          title: "Gate Pass",
+          route: "",
         },
         {
-          title: "John",
+          title: "ID Cards",
+          route: "",
+        },
+        {
+          title: "Single Print Certificate",
+          route: "",
           submenu: [
-            { title: "John" },
-            { title: "Detail 2" },
-            {
-              title: "another",
-              submenu: [{ title: "World" }, { title: "Detail 2" }],
-            },
+            { title: "Transfer/Character", route: "" },
+            { title: "SEE Character", route: "" },
+          ],
+        },
+        {
+          title: "Bulk Print Certificate",
+          route: "",
+          submenu: [
+            { title: "Transfer/Character", route: "" },
+            { title: "SEE Character", route: "" },
           ],
         },
       ],
     },
-    { title: "New Contact" },
+    {
+      title: "Academic",
+      submenu: [
+        { title: "Academic Levels", route: "" },
+        { title: "Academic Sessions", route: "" },
+        { title: "Grades", route: "" },
+        {
+          title: "Routine",
+          route: "",
+          submenu: [
+            { title: "Time Table", route: "" },
+            { title: "Setup Routine", route: "" },
+          ],
+        },
+      ],
+    },
+    {
+      title: "Transportation",
+      submenu: [
+        { title: "Vehicles", route: "" },
+        { title: "Routes", route: "" },
+        { title: "Students", route: "" },
+      ],
+    },
+    {
+      title: "IEMIS",
+      route: "",
+      submenu: [
+        {
+          title: "Export Photograph",
+          route: "",
+        },
+      ],
+    },
   ];
 
-  // Function to toggle dropdown visibility
   const toggleDropdown = () => {
     setDropdownOpen((prev) => !prev);
   };
 
-  // Function to manage submenu visibility based on menu title
   const toggleSubMenu = (menu: string) => {
+    setHoveredMenu(menu);
     setOpenSubMenus((prev) => ({
       ...prev,
-      [menu]: !prev[menu], // Toggle the submenu for the specified menu
+      [menu]: !prev[menu],
     }));
   };
 
-  // Function to handle mouse enter and leave for dropdown
   const handleMouseEnter = () => {
     setDropdownOpen(true);
   };
 
   const handleMouseLeave = () => {
     setDropdownOpen(false);
-    setOpenSubMenus({}); // Close all submenus when not hovering over dropdown
+    setHoveredMenu(null);
+    setOpenSubMenus({});
   };
 
-  // Recursive component for rendering menu items
   const renderMenuItems = (items: MenuItem[]) => {
     return items.map((item, index) => (
       <div
         key={index}
         className="menu-item px-3"
-        onMouseEnter={() => item.submenu && toggleSubMenu(item.title)} // Show submenu on hover
-        onMouseLeave={() => item.submenu && toggleSubMenu(item.title)} // Hide submenu when not hovering
+        onMouseEnter={() => item.submenu && toggleSubMenu(item.title)}
+        onMouseLeave={() => item.submenu && toggleSubMenu(item.title)}
+        style={{
+          position: hoveredMenu === item.title ? "relative" : "initial",
+        }}
       >
         <a href="#" className="menu-link px-3">
           <span className="menu-title">{item.title}</span>
           {item.submenu && <span className="menu-arrow"></span>}
         </a>
 
-        {/* Render submenu if it exists */}
         {item.submenu && openSubMenus[item.title] && (
           <div
             className="menu-sub menu-sub-dropdown w-200px py-4"
             style={{
-              display: "flex",
+              display: "block",
               zIndex: 108,
               position: "absolute",
-              inset: "70px auto auto -10px",
-              margin: "0px",
-              transform: "translate(200px, 0)", // Adjust as needed
+              left: 190,
+              top: 0,
+              height: "fit-content",
             }}
           >
-            {renderMenuItems(item.submenu)} {/* Recursive call */}
+            {renderMenuItems(item.submenu)}
           </div>
         )}
       </div>
@@ -118,8 +149,8 @@ const Settings: React.FC = () => {
     <div
       className="d-flex flex-center w-100 scroll-px"
       title="Quick actions"
-      onMouseEnter={handleMouseEnter} // Show dropdown on hover
-      onMouseLeave={handleMouseLeave} // Hide dropdown when not hovering
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <button
         type="button"
@@ -144,13 +175,12 @@ const Settings: React.FC = () => {
         >
           <div className="menu-item px-3">
             <div className="menu-content fs-6 text-dark fw-bold px-3 py-4">
-              Quick Actions
+              Settings Menu
             </div>
           </div>
 
           <div className="separator mb-3 opacity-75"></div>
 
-          {/* Render the menu items using the recursive function */}
           {renderMenuItems(menuItems)}
 
           <div className="separator mt-3 opacity-75"></div>
