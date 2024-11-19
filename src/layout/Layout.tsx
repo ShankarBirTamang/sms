@@ -1,13 +1,13 @@
-import { ReactNode } from "react";
 import Header from "./Header/Header.tsx";
 import Footer from "./Footer/Footer.tsx";
 import Sidebar from "./Sidebar/Sidebar.tsx";
+import { Outlet } from "react-router-dom";
 
-interface Props {
-  children?: ReactNode;
-}
+// interface Props {
+//   children?: ReactNode;
+// }
 
-const Layout = ({ children }: Props) => {
+const Layout = () => {
   return (
     <>
       <Sidebar />
@@ -21,7 +21,7 @@ const Layout = ({ children }: Props) => {
           id="kt_content"
         >
           <div className="container-xxl" id="kt_content_container">
-            {children}
+            <Outlet />
           </div>
         </div>
         <Footer />

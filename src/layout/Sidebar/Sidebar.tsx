@@ -1,9 +1,33 @@
 import Icon from "../../components/Icon/Icon.tsx";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import Settings from "./Component/Settings.tsx";
 // import {useState} from "react";
 
+interface MenuItems {
+  title: string;
+  icon: string;
+  route: string;
+}
+
 const Sidebar = () => {
+  const menuItems: MenuItems[] = [
+    {
+      title: "Dashboard",
+      icon: "dashboard",
+      route: "",
+    },
+    {
+      title: "Students",
+      icon: "student",
+      route: "students",
+    },
+    {
+      title: "Employees",
+      icon: "users",
+      route: "employees",
+    },
+  ];
+
   // const [isActive, setIsActive] = useState(false)
   return (
     <>
@@ -33,24 +57,20 @@ const Sidebar = () => {
               id="kt_aside_menu"
               className="menu menu-column menu-title-gray-600 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-icon-gray-400 menu-arrow-gray-400 fw-semibold fs-6 my-auto"
             >
-              <div className="menu-item  show py-2">
-                <span className="menu-link menu-center">
-                  <Link to={"#"}>
+              {menuItems.map((item) => (
+                <NavLink
+                  to={item.route}
+                  className={({ isActive }) =>
+                    ["menu-item py-2", isActive ? "here" : ""].join(" ")
+                  }
+                >
+                  <span className="menu-link menu-center">
                     <span className="menu-icon me-0">
-                      <Icon name={"dashboard"} className={"svg-icon-2x"} />
+                      <Icon name={item.icon} className={"svg-icon-2x"} />
                     </span>
-                  </Link>
-                </span>
-              </div>
-              <div className="menu-item show py-2">
-                <span className="menu-link menu-center">
-                  <Link to={"#"}>
-                    <span className="menu-icon me-0">
-                      <Icon name={"toggleOn"} className={"svg-icon-2x"} />
-                    </span>
-                  </Link>
-                </span>
-              </div>
+                  </span>
+                </NavLink>
+              ))}
             </div>
           </div>
         </div>
