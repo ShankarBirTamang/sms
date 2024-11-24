@@ -59,6 +59,7 @@ const Sidebar = () => {
             >
               {menuItems.map((item) => (
                 <NavLink
+                  key={item.route}
                   to={item.route}
                   className={({ isActive }) =>
                     ["menu-item py-2", isActive ? "here" : ""].join(" ")
