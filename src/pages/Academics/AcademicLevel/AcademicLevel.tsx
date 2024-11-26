@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Icon from "../../../components/Icon/Icon";
 import axiosInstance from "../../../../axiosConfig";
+import Loading from "../../../components/Loading/Loading";
 
 interface AcademicLevel {
   id: number;
@@ -49,7 +50,7 @@ const AcademicLevelComponent = () => {
     setLoading(true);
     try {
       const response = await axiosInstance.get<ApiResponse>(
-        `academics/academic-levels?per_page=3&page=${page}`
+        `academics/academic-levels?per_page=10&page=${page}`
       );
       setAcademicLevels(response.data.data);
       setPagination(response.data.meta);
@@ -69,14 +70,6 @@ const AcademicLevelComponent = () => {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-
-  if (loading) {
-    return <div>Loading academic levels...</div>;
-  }
-
-  if (error) {
-    return <div className="alert alert-danger">{error}</div>;
-  }
   //   Handle form input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -122,16 +115,11 @@ const AcademicLevelComponent = () => {
   };
 
   // Handle edit button click
-  //   const handleEditClick = (level: AcademicLevel) => {
-  //     setFormData({ name: level.name, description: level.description });
-  //     setFormMode("edit");
-  //     setCurrentLevelId(level.id);
-  //   };
-
-  if (loading) {
-    return <div>Loading academic levels...</div>;
-  }
-
+  const handleEditClick = (level: AcademicLevel) => {
+    setFormData({ name: level.name, description: level.description });
+    setFormMode("edit");
+    setCurrentLevelId(level.id);
+  };
   if (error) {
     return <div className="alert alert-danger">{error}</div>;
   }
@@ -180,13 +168,18 @@ const AcademicLevelComponent = () => {
                   </div>
                   <div className="col-12 pt-15 text-center">
                     <button
+                      title="reset"
                       type="reset"
                       className="btn btn-light me-3"
                       onClick={resetForm}
                     >
                       Reset
                     </button>
-                    <button type="submit" className="btn btn-primary">
+                    <button
+                      title="submit"
+                      type="submit"
+                      className="btn btn-primary"
+                    >
                       {formMode === "create" ? "Submit" : "Update"}
                     </button>
                   </div>
@@ -206,34 +199,38 @@ const AcademicLevelComponent = () => {
             </div>
 
             <div className="card-body pt-0">
-              <table className="table table-striped">
-                <thead>
-                  <tr>
-                    <th className="text-center">SN</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th className="text-end">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {academicLevels.map((level) => (
-                    <tr key={level.id}>
-                      <td className="text-center">{level.id}</td>
-                      <td>{level.name}</td>
-                      <td>{level.description}</td>
-                      <td className="text-end">
-                        <button
-                          title="edit academic level"
-                          type="button"
-                          className="btn btn-light-info btn-icon"
-                        >
-                          <Icon name={"edit"} className={"svg-icon"} />
-                        </button>
-                      </td>
+              {loading && <Loading />}
+              {!loading && (
+                <table className="table table-striped table-sm">
+                  <thead>
+                    <tr>
+                      <th className="text-center">SN</th>
+                      <th>Name</th>
+                      <th>Description</th>
+                      <th className="text-end">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {academicLevels.map((level) => (
+                      <tr key={level.id}>
+                        <td className="text-center">{level.id}</td>
+                        <td>{level.name}</td>
+                        <td>{level.description}</td>
+                        <td className="text-end">
+                          <button
+                            title="edit academic level"
+                            type="button"
+                            // onClick={() =>}
+                            className="btn btn-light-info btn-icon btn-sm"
+                          >
+                            <Icon name={"edit"} className={"svg-icon"} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
 
             {/* Pagination */}
@@ -249,6 +246,7 @@ const AcademicLevelComponent = () => {
                         }`}
                       >
                         <button
+                          title="page-link"
                           className="page-link"
                           onClick={() => handlePageChange(1)}
                           disabled={!edgeLinks.first}
@@ -266,6 +264,7 @@ const AcademicLevelComponent = () => {
                           className={`page-item ${link.active ? "active" : ""}`}
                         >
                           <button
+                            title="page-link"
                             className="page-link"
                             onClick={() => handlePageChange(Number(link.label))}
                             dangerouslySetInnerHTML={{ __html: link.label }}
@@ -281,6 +280,7 @@ const AcademicLevelComponent = () => {
                         }`}
                       >
                         <button
+                          title="page-link"
                           className="page-link"
                           onClick={() => handlePageChange(pagination.last_page)}
                           disabled={!edgeLinks.last}
