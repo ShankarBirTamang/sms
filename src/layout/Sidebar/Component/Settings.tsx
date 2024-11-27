@@ -10,7 +10,7 @@ interface MenuItem {
 const Settings = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [openSubMenus, setOpenSubMenus] = useState<{ [key: string]: boolean }>(
-    {},
+    {}
   );
   const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
 
