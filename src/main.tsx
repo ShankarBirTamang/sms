@@ -7,6 +7,9 @@ import Students from "./pages/Students/Students.tsx";
 import ProtectedRoute from "./components/Icon/ProtectedRoute.tsx"; // Make sure this is correctly named
 import Login from "./pages/Authentication/Login.tsx";
 import AcademicLevel from "./pages/Academics/AcademicLevel/AcademicLevel.tsx";
+import AcademicSession from "./pages/Academics/AcademicSession/AcademicSession.tsx";
+import GradeGroup from "./pages/Academics/GradeGroup/GradeGroup.tsx";
+import Test from "./pages/Test.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -24,6 +27,11 @@ createRoot(document.getElementById("root")!).render(
               path="academics/academic-levels"
               element={<AcademicLevel />}
             />
+            <Route
+              path="academics/academic-sessions"
+              element={<AcademicSession />}
+            />
+            <Route path="academics/grade-groups" element={<GradeGroup />} />
           </Route>
         </Route>
       </Routes>

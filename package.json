@@ -10,7 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.9.1",
     "@react-buddy/ide-toolbox": "^2.4.0",
+    "@sbmdkl/nepali-date-converter": "^2.0.3",
+    "@sbmdkl/nepali-datepicker-reactjs": "^1.2.2",
     "@types/styled-components": "^5.1.34",
     "axios": "^1.7.7",
     "dotenv": "^16.4.5",
@@ -19,7 +22,8 @@
     "react-dom": "^18.3.1",
     "react-icons": "^5.3.0",
     "react-router-dom": "^6.26.2",
-    "styled-components": "^6.1.13"
+    "styled-components": "^6.1.13",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

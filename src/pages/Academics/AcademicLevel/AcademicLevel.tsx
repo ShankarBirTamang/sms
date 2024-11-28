@@ -2,134 +2,128 @@ import { useEffect, useState } from "react";
 import Icon from "../../../components/Icon/Icon";
 import axiosInstance from "../../../../axiosConfig";
 import Loading from "../../../components/Loading/Loading";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { string, z } from "zod";
+import { FieldValues, useForm } from "react-hook-form";
 
-interface AcademicLevel {
-  id: number;
-  name: string;
-  description: string;
-}
+import Pagination, {
+  PaginationProps,
+} from "../../../components/Pagination/Pagination";
+import useAcademicLevels from "../../../hooks/useAcademicLevels";
+import useDebounce from "../../../hooks/useDebounce";
+import {
+  CreateAcademicLevelInterface,
+  UpdateAcademicLevelInterface,
+} from "../../../services/academics/academicLevelService";
 
-interface ApiResponse {
-  data: AcademicLevel[];
-  links: {
-    first: string;
-    last: string;
-    prev: string | null;
-    next: string | null;
-  };
-  meta: {
-    current_page: number;
-    from: number;
-    last_page: number;
-    links: {
-      url: string | null;
-      label: string;
-      active: boolean;
-    }[];
-    path: string;
-    per_page: number;
-    to: number;
-    total: number;
-  };
-}
+const schema = z.object({
+  name: z.string().min(1, { message: "Name is required" }),
+  description: z.string(),
+});
+
+type FormData = z.infer<typeof schema>;
 
 const AcademicLevelComponent = () => {
-  const [academicLevels, setAcademicLevels] = useState<AcademicLevel[]>([]);
-  const [pagination, setPagination] = useState<ApiResponse["meta"] | null>(
-    null
-  );
-  const [edgeLinks, setEdgeLinks] = useState<ApiResponse["links"] | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
-  const [formMode, setFormMode] = useState<"create" | "edit">("create");
-  const [currentLevelId, setCurrentLevelId] = useState<number | null>(null);
-  const [formData, setFormData] = useState({ name: "", description: "" });
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
+  const [searchTerm, setSearchTerm] = useState(""); // New state for search term
+  const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
+  //get academic Levels
+  const {
+    academicLevels,
+    isLoading,
+    pagination,
+    edgeLinks,
+    saveAcademicLevel,
+    updateAcademicLevel,
+    setError,
+  } = useAcademicLevels({
+    search: debouncedSearchTerm,
+    currentPage,
+    itemsPerPage,
+  });
 
-  const fetchAcademicLevels = async (page: number = 1) => {
-    setLoading(true);
-    try {
-      const response = await axiosInstance.get<ApiResponse>(
-        `academics/academic-levels?per_page=10&page=${page}`
-      );
-      setAcademicLevels(response.data.data);
-      setPagination(response.data.meta);
-      setEdgeLinks(response.data.links);
-    } catch (err) {
-      console.error("Error fetching academic levels:", err);
-      setError("Failed to fetch academic levels. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAcademicLevels(currentPage);
-  }, [currentPage]);
-
+  // header functions
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-  //   Handle form input changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+
+  const handleItemsPerPageChange = (value: number | null) => {
+    setItemsPerPage(value);
+    setCurrentPage(1);
   };
 
-  // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+    setCurrentPage(1); // Reset to the first page on new search
+  };
+  // useEffect(() => {
+  //   saveAcademicLevel({
+  //     id: 0,
+  //     name: "TestName",
+  //     description: "test trest",
+  //   });
+  // }, []);
+
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  const handleEditClick = (level: UpdateAcademicLevelInterface) => {
+    reset({
+      name: level.name,
+      description: level.description ?? "",
+    });
+    setFormMode("edit");
+    setCurrentLevelId(level.id);
+  };
+
+  const onSubmit = (
+    data: CreateAcademicLevelInterface | UpdateAcademicLevelInterface
+  ) => {
     try {
+      setIsSubmitting(true);
       if (formMode === "create") {
-        // Create logic
-        const response = await axiosInstance.post(
-          "academics/academic-levels",
-          formData
-        );
-        setAcademicLevels((prev) => [...prev, response.data]); // Append new level
-      } else if (formMode === "edit" && currentLevelId) {
-        // Edit logic
-        const response = await axiosInstance.put(
-          `academics/academic-levels/${currentLevelId}`,
-          formData
-        );
-        setAcademicLevels((prev) =>
-          prev.map((level) =>
-            level.id === currentLevelId ? response.data : level
-          )
-        );
+        saveAcademicLevel(data);
+      } else if (formMode === "edit") {
+        if (currentLevelId) {
+          updateAcademicLevel({ ...data, id: currentLevelId });
+        } else {
+          setError("Error Updating Data");
+        }
       }
+    } catch (error) {
+      // setError(error.toString();
+      console.error("Error saving academic level:", error);
+    } finally {
       resetForm();
-    } catch (err) {
-      console.error("Error saving academic level:", err);
-      setError("Failed to save academic level. Please try again later.");
+      setIsSubmitting(false);
     }
   };
-
-  //   Reset form to initial state
+  const [currentLevelId, setCurrentLevelId] = useState<number | null>(null);
   const resetForm = () => {
-    setFormData({ name: "", description: "" });
+    reset({
+      name: "",
+      description: "",
+    });
     setFormMode("create");
     setCurrentLevelId(null);
     setError("");
   };
 
-  // Handle edit button click
-  const handleEditClick = (level: AcademicLevel) => {
-    setFormData({ name: level.name, description: level.description });
-    setFormMode("edit");
-    setCurrentLevelId(level.id);
-  };
-  if (error) {
-    return <div className="alert alert-danger">{error}</div>;
-  }
+  // Add Academic Level Form
+  const [formMode, setFormMode] = useState<"create" | "edit">("create");
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isValid },
+  } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   return (
     <>
       <div className="row">
         <div className="col-md-4">
           <div className="card mb-3">
-            <div className="card-header border-0 px-6">
+            <div className="card-header mb-6">
               <div className="card-title">
                 <h1 className="d-flex align-items-center position-relative my-1">
                   {formMode === "create" ? "Add New Level" : "Edit Level"}
@@ -138,7 +132,8 @@ const AcademicLevelComponent = () => {
             </div>
 
             <div className="card-body pt-0">
-              <form onSubmit={handleSubmit}>
+              {isSubmitting}
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="row">
                   <div className="col-12">
                     <div className="fv-row mb-7">
@@ -147,23 +142,31 @@ const AcademicLevelComponent = () => {
                       </label>
                       <input
                         type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        className="form-control form-control mb-3 mb-lg-0"
+                        {...register("name")}
+                        className={`form-control ${
+                          errors.name && "is-invalid"
+                        } form-control mb-3 mb-lg-0`}
                         placeholder="Ex: Educator"
                       />
+                      {errors.name && (
+                        <span className="text-danger">
+                          {errors.name.message}
+                        </span>
+                      )}
                     </div>
                     <div className="fv-row mb-7">
                       <label className="fw-bold fs-6 mb-2">Description</label>
-                      <input
-                        type="text"
-                        name="description"
-                        value={formData.description}
-                        onChange={handleInputChange}
+                      <textarea
+                        {...register("description")}
                         className="form-control form-control mb-3 mb-lg-0"
                         placeholder="Ex: Detailed description"
-                      />
+                        rows={4} // Adjust the rows to fit your design
+                      ></textarea>
+                      {errors.description && (
+                        <span className="text-danger">
+                          {errors.description.message}
+                        </span>
+                      )}
                     </div>
                   </div>
                   <div className="col-12 pt-15 text-center">
@@ -171,7 +174,6 @@ const AcademicLevelComponent = () => {
                       title="reset"
                       type="reset"
                       className="btn btn-light me-3"
-                      onClick={resetForm}
                     >
                       Reset
                     </button>
@@ -179,8 +181,13 @@ const AcademicLevelComponent = () => {
                       title="submit"
                       type="submit"
                       className="btn btn-primary"
+                      disabled={isSubmitting} // Disable button while submitting
                     >
-                      {formMode === "create" ? "Submit" : "Update"}
+                      {isSubmitting
+                        ? "Saving..."
+                        : formMode === "create"
+                        ? "Submit"
+                        : "Update"}
                     </button>
                   </div>
                 </div>
@@ -190,19 +197,59 @@ const AcademicLevelComponent = () => {
         </div>
         <div className="col-md-8">
           <div className="card mb-3">
-            <div className="card-header border-0 px-6">
-              <div className="card-title">
-                <h1 className="d-flex align-items-center position-relative my-1">
-                  Academic Levels
+            <div className="card-header mb-6">
+              <div className="card-title w-100">
+                <h1 className="d-flex justify-content-between align-items-center position-relative my-1 w-100">
+                  <span>Academic Levels</span>
+                  <div className="d-flex gap-2">
+                    <div className="search-input">
+                      <input
+                        type="text"
+                        name="search"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        placeholder="Search levels..."
+                        className="form-control"
+                      />
+                    </div>
+                    <select
+                      className="form-control"
+                      style={{
+                        width: 50,
+                      }}
+                      title="Items per Page"
+                      id="itemsPerPage"
+                      value={itemsPerPage ?? "all"}
+                      onChange={(e) =>
+                        handleItemsPerPageChange(
+                          e.target.value === "all"
+                            ? null
+                            : parseInt(e.target.value)
+                        )
+                      }
+                    >
+                      <option value="all">All</option>
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                    </select>
+                  </div>
                 </h1>
               </div>
             </div>
 
             <div className="card-body pt-0">
-              {loading && <Loading />}
-              {!loading && (
+              {isLoading && <Loading />}
+              {!isLoading && academicLevels.length === 0 && (
+                <div className="alert alert-info">No Academic Levels Found</div>
+              )}
+              {!isLoading && (
                 <table className="table table-striped table-sm">
-                  <thead>
+                  <thead
+                    style={{
+                      fontWeight: "bold",
+                    }}
+                  >
                     <tr>
                       <th className="text-center">SN</th>
                       <th>Name</th>
@@ -211,16 +258,19 @@ const AcademicLevelComponent = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {academicLevels.map((level) => (
-                      <tr key={level.id}>
-                        <td className="text-center">{level.id}</td>
+                    {academicLevels.map((level, index) => (
+                      <tr key={index}>
+                        <td className="text-center">
+                          {" "}
+                          {/* {(currentPage - 1) * itemsPerPage ?? 0 + index + 1} */}
+                        </td>
                         <td>{level.name}</td>
                         <td>{level.description}</td>
                         <td className="text-end">
                           <button
                             title="edit academic level"
                             type="button"
-                            // onClick={() =>}
+                            onClick={() => handleEditClick(level)}
                             className="btn btn-light-info btn-icon btn-sm"
                           >
                             <Icon name={"edit"} className={"svg-icon"} />
@@ -235,63 +285,11 @@ const AcademicLevelComponent = () => {
 
             {/* Pagination */}
             <div className="card-footer">
-              {pagination && (
-                <nav>
-                  <ul className="pagination justify-content-center">
-                    {/* Previous Page */}
-                    {edgeLinks && (
-                      <li
-                        className={`page-item ${
-                          !edgeLinks.first ? "disabled" : ""
-                        }`}
-                      >
-                        <button
-                          title="page-link"
-                          className="page-link"
-                          onClick={() => handlePageChange(1)}
-                          disabled={!edgeLinks.first}
-                        >
-                          First Page
-                        </button>
-                      </li>
-                    )}
-
-                    {/* Page Numbers */}
-                    {pagination.links.map((link, index) =>
-                      link.url ? (
-                        <li
-                          key={index}
-                          className={`page-item ${link.active ? "active" : ""}`}
-                        >
-                          <button
-                            title="page-link"
-                            className="page-link"
-                            onClick={() => handlePageChange(Number(link.label))}
-                            dangerouslySetInnerHTML={{ __html: link.label }}
-                          />
-                        </li>
-                      ) : null
-                    )}
-
-                    {edgeLinks && (
-                      <li
-                        className={`page-item ${
-                          !edgeLinks.last ? "disabled" : ""
-                        }`}
-                      >
-                        <button
-                          title="page-link"
-                          className="page-link"
-                          onClick={() => handlePageChange(pagination.last_page)}
-                          disabled={!edgeLinks.last}
-                        >
-                          Last Page
-                        </button>
-                      </li>
-                    )}
-                  </ul>
-                </nav>
-              )}
+              <Pagination
+                pagination={pagination}
+                edgeLinks={edgeLinks}
+                onPageChange={handlePageChange}
+              />
             </div>
           </div>
         </div>

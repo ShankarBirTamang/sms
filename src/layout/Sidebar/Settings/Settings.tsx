@@ -20,7 +20,8 @@ const Settings = () => {
       title: "Academic",
       submenu: [
         { title: "Academic Levels", route: "academics/academic-levels" },
-        { title: "Academic Sessions", route: "" },
+        { title: "Academic Sessions", route: "academics/academic-sessions" },
+        { title: "Grade Groups", route: "academics/grade-groups" },
         { title: "Grades", route: "" },
         {
           title: "Routine",

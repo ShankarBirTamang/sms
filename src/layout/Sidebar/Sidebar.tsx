@@ -1,6 +1,6 @@
 import Icon from "../../components/Icon/Icon.tsx";
 import { NavLink } from "react-router-dom";
-import Settings from "./Component/Settings.tsx";
+import Settings from "./Settings/Settings.tsx";
 // import {useState} from "react";
 
 interface MenuItems {
