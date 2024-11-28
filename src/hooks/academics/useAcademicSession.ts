@@ -1,27 +1,25 @@
 import { useEffect, useState } from "react";
-import academicLevelService, {
-  CreateAcademicLevelInterface,
-  UpdateAcademicLevelInterface,
-} from "../services/academics/academicLevelService";
-import { CanceledError } from "../services/apiClient";
-import { ApiResponseInterface } from "../Interface/Interface";
-import { PaginationProps } from "../components/Pagination/Pagination";
-import create from "../services/httpService";
+import {
+  ApiResponseInterface,
+  PaginationAndSearch,
+} from "../../Interface/Interface";
+import academicSessionService, {
+  AcademicSessionInterface,
+  UpdateAcademicSessionInterface,
+} from "../../services/academics/academicSessionService";
 
-interface AcademicLevelData {
-  search?: string;
-  currentPage: number;
-  itemsPerPage?: number | null;
-}
+import { CanceledError } from "../../services/apiClient";
+import { PaginationProps } from "../../components/Pagination/Pagination";
 
-const useAcademicLevels = ({
+const useAcademicSession = ({
   search = "",
   currentPage = 2,
   itemsPerPage = null,
-}: AcademicLevelData) => {
-  const [academicLevels, setAcademicLevels] = useState<
-    UpdateAcademicLevelInterface[]
+}: PaginationAndSearch) => {
+  const [academicSessions, setAcademicSessions] = useState<
+    UpdateAcademicSessionInterface[]
   >([]);
+
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setLoading] = useState(false);
 
@@ -42,13 +40,13 @@ const useAcademicLevels = ({
     }
 
     const { request, cancel } =
-      academicLevelService.getAll<
-        ApiResponseInterface<UpdateAcademicLevelInterface>
+      academicSessionService.getAll<
+        ApiResponseInterface<UpdateAcademicSessionInterface>
       >(params);
 
     request
       .then((result) => {
-        setAcademicLevels(result.data.data);
+        setAcademicSessions(result.data.data);
         setPagination(result.data.meta);
         setEdgeLinks(result.data.links);
         setLoading(false);
@@ -62,20 +60,27 @@ const useAcademicLevels = ({
     return () => cancel();
   }, [search, currentPage, itemsPerPage]);
 
-  const saveAcademicLevel = async ({
+  const saveAcademicSession = async ({
     name,
-    description,
-  }: CreateAcademicLevelInterface) => {
+    start_date,
+    start_date_np,
+    end_date,
+    end_date_np,
+    academic_level_id,
+  }: AcademicSessionInterface) => {
     const params = {
       name,
-      description,
+      start_date,
+      start_date_np,
+      end_date,
+      end_date_np,
+      academic_level_id,
     };
-
     try {
       const result =
-        await academicLevelService.create<CreateAcademicLevelInterface>(params);
+        await academicSessionService.create<AcademicSessionInterface>(params);
       // Update state only after successful creation
-      setAcademicLevels([...academicLevels, result.data]);
+      setAcademicSessions([...academicSessions, result.data]);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -85,26 +90,36 @@ const useAcademicLevels = ({
     }
   };
 
-  const updateAcademicLevel = async ({
+  const updateAcademicSession = async ({
     id,
     name,
-    description,
-  }: UpdateAcademicLevelInterface) => {
+    start_date,
+    start_date_np,
+    end_date,
+    end_date_np,
+    academic_level_id,
+  }: UpdateAcademicSessionInterface) => {
     const params = {
       id,
       name,
-      description,
+      start_date,
+      start_date_np,
+      end_date,
+      end_date_np,
+      academic_level_id,
     };
-    const originalAcademicLevel = [...academicLevels];
+    const originalAcademicLevel = [...academicSessions];
 
     try {
       console.log("Original:", originalAcademicLevel);
 
       const result =
-        await academicLevelService.update<UpdateAcademicLevelInterface>(params);
-      setAcademicLevels(
-        academicLevels.map((level) =>
-          level.id === result.data.data.id ? result.data.data : level
+        await academicSessionService.update<UpdateAcademicSessionInterface>(
+          params
+        );
+      setAcademicSessions(
+        academicSessions.map((session) =>
+          session.id === result.data.data.id ? result.data.data : session
         )
       );
     } catch (err) {
@@ -115,18 +130,19 @@ const useAcademicLevels = ({
       }
     }
   };
+
   return {
-    academicLevels,
+    academicSessions,
     error,
     isLoading,
-    setAcademicLevels,
+    setAcademicSessions,
     setError,
     pagination,
     edgeLinks,
     currentPage,
-    saveAcademicLevel,
-    updateAcademicLevel,
+    saveAcademicSession,
+    updateAcademicSession,
   };
 };
 
-export default useAcademicLevels;
+export default useAcademicSession;

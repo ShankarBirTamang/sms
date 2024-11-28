@@ -1,58 +1,107 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Icon from "../../../components/Icon/Icon";
-import axiosInstance from "../../../../axiosConfig";
-
-import {
-  AcademicLevelInterface,
-  AcademicSessionInterface,
-  ApiResponseInterface,
-} from "../../../Interface/Interface";
-import DatePicker, {
-  DateInterface,
-} from "../../../components/DatePicker/DatePicker";
-
 import Loading from "../../../components/Loading/Loading";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { FieldValues, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
+
+import Pagination from "../../../components/Pagination/Pagination";
+import useDebounce from "../../../hooks/useDebounce";
+import useAcademicSession from "../../../hooks/academics/useAcademicSession";
+import useAcademicLevels from "../../../hooks/academics/useAcademicLevels";
+import DatePicker from "../../../components/DatePicker/DatePicker";
+import {
+  AcademicSessionInterface,
+  UpdateAcademicSessionInterface,
+} from "../../../services/academics/academicSessionService";
 
 const AcademicSession = () => {
-  const [loading, setLoading] = useState<boolean>(true);
-
-  const [academicLevels, setAcademicLevels] = useState<
-    AcademicLevelInterface[]
-  >([]);
-  const [academicSessions, setAcademicSessions] = useState<
-    AcademicSessionInterface[]
-  >([]);
-
-  //for pagination
-  const [pagination, setPagination] = useState<
-    ApiResponseInterface<AcademicSessionInterface>["meta"] | null
-  >(null);
-  const [edgeLinks, setEdgeLinks] = useState<
-    ApiResponseInterface<AcademicSessionInterface>["links"] | null
-  >(null);
-  const [itemsPerPage, setItemsPerPage] = useState<number>(10);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  //end for Pagination
-
-  const [error, setError] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
+  const [searchTerm, setSearchTerm] = useState(""); // New state for search term
+  const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
-  const [currenSessionId, setCurrenSessionId] = useState<number | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // get Academic LEvels
+  const [currentSessionId, setCurrentSessionId] = useState<number | null>(null);
 
-  const fetchAcademicLevels = async () => {
+  //get academic Levels
+
+  const schema = z.object({
+    name: z.string().min(1, { message: "Name is required" }),
+    start_date: z.string(),
+    start_date_np: z.string(),
+    end_date: z.string(),
+    end_date_np: z.string(),
+    academic_level_id: z.number().refine(
+      (id) => {
+        // Check if the academic level ID exists in the academicLevels array
+        return academicLevels.some((level) => level.id === id);
+      },
+      {
+        message: "Invalid academic level ID",
+      }
+    ),
+  });
+
+  type FormData = z.infer<typeof schema>;
+
+  const {
+    academicSessions,
+    isLoading,
+    pagination,
+    edgeLinks,
+    saveAcademicSession,
+    updateAcademicSession,
+    setError,
+  } = useAcademicSession({
+    search: debouncedSearchTerm,
+    currentPage,
+    itemsPerPage,
+  });
+
+  const { academicLevels } = useAcademicLevels({});
+
+  // header functions
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (value: number | null) => {
+    setItemsPerPage(value);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+    setCurrentPage(1);
+  };
+  // Add Academic Session Form
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+    setValue,
+  } = useForm<FormData>({ resolver: zodResolver(schema) });
+
+  const onSubmit = (
+    data: AcademicSessionInterface | UpdateAcademicSessionInterface
+  ) => {
     try {
-      const response = await axiosInstance.get<
-        ApiResponseInterface<AcademicLevelInterface>
-      >(`academics/academic-levels`);
-
-      setAcademicLevels(response.data.data);
-    } catch (err) {
-      console.error("Error fetching academic levels:", err);
-      setError("Failed to fetch academic levels. Please try again later.");
+      setIsSubmitting(true);
+      if (formMode === "create") {
+        saveAcademicSession(data);
+      } else if (formMode === "edit") {
+        if (currentSessionId) {
+          updateAcademicSession({ ...data, id: currentSessionId });
+        }
+      }
+      reset(); // Reset the form after submission
+    } catch (error) {
+      console.error("Error saving session:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -61,16 +110,14 @@ const AcademicSession = () => {
     field: "startDate" | "endDate"
   ) => {
     if (field === "startDate") {
-      console.log("Start Date changed to:", dates);
+      // console.log("Start Date changed to:", dates);
+      setValue("start_date", dates.adDate);
+      setValue("start_date_np", dates.bsDate);
     } else if (field === "endDate") {
-      console.log("End Date changed to:", dates);
+      setValue("end_date", dates.adDate);
+      setValue("end_date_np", dates.bsDate);
     }
   };
-  useEffect(() => {
-    fetchAcademicLevels();
-  }, []);
-
-  //   fetchAcademicLevels();
 
   return (
     <>
@@ -86,7 +133,7 @@ const AcademicSession = () => {
               </div>
             </div>
             <div className="card-body">
-              <form id="addDataForm" className="form" method="POST">
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="d-flex">
                   <div className="row">
                     <div className="col-12">
@@ -95,8 +142,11 @@ const AcademicSession = () => {
                           Level
                         </label>
                         <select
+                          title="select academic Level"
                           className="form-control form-control-solid mb-3 mb-lg-0 "
-                          name="level"
+                          {...register("academic_level_id", {
+                            valueAsNumber: true,
+                          })}
                         >
                           <option>Select Academic Level</option>
                           {academicLevels.map((levels) => (
@@ -105,6 +155,11 @@ const AcademicSession = () => {
                             </option>
                           ))}
                         </select>
+                        {errors.academic_level_id && (
+                          <span className="text-danger">
+                            {errors.academic_level_id.message}
+                          </span>
+                        )}
                       </div>
                     </div>
                     <div className="col-12">
@@ -114,19 +169,26 @@ const AcademicSession = () => {
                         </label>
                         <input
                           type="text"
-                          name="name"
+                          {...register("name")}
                           className="form-control form-control-solid mb-3 mb-lg-0 "
                           placeholder="Ex: Academic Year 2078-79"
                         />
+                        {errors.name && (
+                          <span className="text-danger">
+                            {errors.name.message}
+                          </span>
+                        )}
                       </div>
                     </div>
-                    <div className="col-12">
+                    <div className="col-12 mb-7">
                       <DatePicker
                         onDateChange={(date) =>
                           handleDateChange(date, "startDate")
                         }
                         title="Start Date"
                       />
+                    </div>
+                    <div className="col-12 mb-7">
                       <DatePicker
                         onDateChange={(date) =>
                           handleDateChange(date, "endDate")
@@ -136,24 +198,25 @@ const AcademicSession = () => {
                     </div>
                   </div>
                 </div>
-                <div className="text-center pt-15">
+                <div className="col-12 pt-15 text-center">
                   <button
+                    title="reset"
                     type="reset"
                     className="btn btn-light me-3"
-                    data-kt-users-modal-action="cancel"
                   >
-                    Discard
+                    Reset
                   </button>
                   <button
+                    title="submit"
                     type="submit"
                     className="btn btn-primary"
-                    data-kt-users-modal-action="submit"
+                    disabled={isSubmitting} // Disable button while submitting
                   >
-                    <span className="indicator-label">Submit</span>
-                    <span className="indicator-progress">
-                      Please wait...
-                      <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
-                    </span>
+                    {isSubmitting
+                      ? "Saving..."
+                      : formMode === "create"
+                      ? "Submit"
+                      : "Update"}
                   </button>
                 </div>
               </form>
@@ -162,166 +225,120 @@ const AcademicSession = () => {
         </div>
         <div className="col-md-8">
           <div className="card">
-            <div className="card-header">
-              <div className="card-title">Academic Sessions</div>
-              <div className="card-toolbar">
-                <div className="d-flex justify-content-end">
-                  <div className="d-flex align-items-center position-relative my-1">
-                    <Icon
-                      name="searchDark"
-                      className="svg-icon svg-icon-1 position-absolute ms-6"
-                    />
+            <div className="card-header mb-6">
+              <div className="card-title w-100">
+                <h1 className="d-flex justify-content-between align-items-center position-relative my-1 w-100">
+                  <span>Academic Sessions</span>
+                  <div className="d-flex gap-2">
+                    <div className="d-flex align-items-center position-relative my-1 h-100">
+                      <Icon
+                        name="searchDark"
+                        className="svg-icon svg-icon-1 position-absolute ms-6"
+                      />
 
-                    <input
-                      type="text"
-                      id="data_search"
-                      className="form-control form-control-solid w-250px ps-14"
-                      placeholder="Search Session"
-                    />
+                      <input
+                        type="text"
+                        id="data_search"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        className="form-control w-250px ps-14 h-100"
+                        placeholder="Search Session"
+                      />
+                    </div>
+
+                    <select
+                      className="form-control w-50px h-100"
+                      title="Items per Page"
+                      id="itemsPerPage"
+                      value={itemsPerPage ?? "all"}
+                      onChange={(e) =>
+                        handleItemsPerPageChange(
+                          e.target.value === "all"
+                            ? null
+                            : parseInt(e.target.value)
+                        )
+                      }
+                    >
+                      <option value="all">All</option>
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                    </select>
                   </div>
-                </div>
+                </h1>
               </div>
             </div>
+
             <div className="card-body pt-0">
-              <div
-                id="table_sessions_wrapper"
-                className="dataTables_wrapper dt-bootstrap4 no-footer"
-              >
-                <div className="table-responsive">
-                  <table
-                    className="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer"
-                    id="table_sessions"
-                    aria-describedby="table_sessions_info"
-                  >
-                    <thead>
-                      <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
-                        <th
-                          className="min-w-125px sorting sorting_asc"
-                          aria-controls="table_sessions"
-                          aria-sort="ascending"
-                          aria-label="Session Name: activate to sort column descending"
-                        >
-                          Session Name
-                        </th>
-                        <th
-                          className="min-w-125px sorting"
-                          aria-controls="table_sessions"
-                          aria-label="Level: activate to sort column ascending"
-                        >
-                          Level
-                        </th>
-                        <th
-                          className="min-w-125px sorting"
-                          aria-controls="table_sessions"
-                          aria-label="Start Date: activate to sort column ascending"
-                        >
-                          Start Date
-                        </th>
-                        <th
-                          className="min-w-125px sorting"
-                          aria-controls="table_sessions"
-                          aria-label="End Date: activate to sort column ascending"
-                        >
-                          End Date
-                        </th>
-                        <th
-                          className="min-w-125px sorting"
-                          aria-controls="table_sessions"
-                          aria-label="Status: activate to sort column ascending"
-                        >
-                          Status
-                        </th>
-                        <th
-                          className="text-end min-w-100px sorting"
-                          aria-controls="table_sessions"
-                          aria-label="Actions: activate to sort column ascending"
-                        >
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-gray-600 fw-bold">
-                      <tr className="odd">
-                        <td className="sorting_1">
-                          Academic Session 2081-82 [+2]
-                        </td>
-                        <td>Plus 2</td>
-                        <td> 2081-04-03 &nbsp;(2024-07-18)</td>
-                        <td>2082-03-31 &nbsp;(2025-07-15)</td>
-                        <td>
-                          <a href="https://publichighschool.edu.np/sms/settings/academics/sessions/2/change-status">
-                            <div className="badge badge-success fw-bolder">
-                              Active
-                            </div>
-                          </a>
-                        </td>
-                        <td className="text-end"></td>
-                      </tr>
-                    </tbody>
-                  </table>
+              <div className="">
+                <div className="">
+                  {isLoading && <Loading />}
+                  {!isLoading && academicLevels.length === 0 && (
+                    <div className="alert alert-info">
+                      No Academic Sessions Found
+                    </div>
+                  )}
+                  {!isLoading && (
+                    <table
+                      className="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer"
+                      id="table_sessions"
+                      aria-describedby="table_sessions_info"
+                    >
+                      <thead>
+                        <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+                          <th className="min-w-225px">Session Name</th>
+                          <th className="">Level</th>
+                          <th className="">Start Date</th>
+                          <th className="">End Date</th>
+                          <th className="">Status</th>
+                          <th className="text-end">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="text-gray-600 fw-bold">
+                        {academicSessions.map((session, index) => (
+                          <tr key={index} className="odd">
+                            <td className="sorting_1">{session.name}</td>
+                            <td>{session.academic_level}</td>
+                            <td>
+                              {" "}
+                              {session.start_date_np} &nbsp;(
+                              {session.start_date})
+                            </td>
+                            <td>
+                              {session.end_date_np} &nbsp;({session.end_date})
+                            </td>
+                            <td>
+                              <a href="https://publichighschool.edu.np/sms/settings/academics/sessions/2/change-status">
+                                <div className="badge badge-success fw-bolder">
+                                  Active
+                                </div>
+                              </a>
+                            </td>
+                            <td className="text-end">
+                              <button
+                                title="edit academic level"
+                                type="button"
+                                // onClick={() => handleEditClick(level)}
+                                className="btn btn-light-info btn-icon btn-sm"
+                              >
+                                <Icon name={"edit"} className={"svg-icon"} />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
                 </div>
               </div>
             </div>
             {/* Pagination */}
             <div className="card-footer">
-              {pagination && (
-                <nav>
-                  <ul className="pagination justify-content-center">
-                    {/* Previous Page */}
-                    {edgeLinks && (
-                      <li
-                        className={`page-item ${
-                          !edgeLinks.first ? "disabled" : ""
-                        }`}
-                      >
-                        <button
-                          type="button"
-                          title="page-link"
-                          className="page-link"
-                          onClick={() => handlePageChange(1)}
-                          disabled={!edgeLinks.first}
-                        >
-                          First Page
-                        </button>
-                      </li>
-                    )}
-
-                    {/* Page Numbers */}
-                    {pagination.links.map((link, index) =>
-                      link.url ? (
-                        <li
-                          key={index}
-                          className={`page-item ${link.active ? "active" : ""}`}
-                        >
-                          <button
-                            title="page-link"
-                            className="page-link"
-                            onClick={() => handlePageChange(Number(link.label))}
-                            dangerouslySetInnerHTML={{ __html: link.label }}
-                          />
-                        </li>
-                      ) : null
-                    )}
-
-                    {edgeLinks && (
-                      <li
-                        className={`page-item ${
-                          !edgeLinks.last ? "disabled" : ""
-                        }`}
-                      >
-                        <button
-                          title="page-link"
-                          className="page-link"
-                          onClick={() => handlePageChange(pagination.last_page)}
-                          disabled={!edgeLinks.last}
-                        >
-                          Last Page
-                        </button>
-                      </li>
-                    )}
-                  </ul>
-                </nav>
-              )}
+              <Pagination
+                pagination={pagination}
+                edgeLinks={edgeLinks}
+                onPageChange={handlePageChange}
+              />
             </div>
           </div>
         </div>

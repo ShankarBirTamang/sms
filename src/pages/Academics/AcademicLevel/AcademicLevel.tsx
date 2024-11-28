@@ -1,15 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Icon from "../../../components/Icon/Icon";
-import axiosInstance from "../../../../axiosConfig";
 import Loading from "../../../components/Loading/Loading";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { string, z } from "zod";
-import { FieldValues, useForm } from "react-hook-form";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
 
-import Pagination, {
-  PaginationProps,
-} from "../../../components/Pagination/Pagination";
-import useAcademicLevels from "../../../hooks/useAcademicLevels";
+import Pagination from "../../../components/Pagination/Pagination";
+import useAcademicLevels from "../../../hooks/academics/useAcademicLevels";
 import useDebounce from "../../../hooks/useDebounce";
 import {
   CreateAcademicLevelInterface,
@@ -23,11 +20,12 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-const AcademicLevelComponent = () => {
+const AcademicLevel = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
   const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
+  const [formMode, setFormMode] = useState<"create" | "edit">("create");
   //get academic Levels
   const {
     academicLevels,
@@ -110,12 +108,11 @@ const AcademicLevelComponent = () => {
   };
 
   // Add Academic Level Form
-  const [formMode, setFormMode] = useState<"create" | "edit">("create");
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   return (
@@ -239,48 +236,54 @@ const AcademicLevelComponent = () => {
             </div>
 
             <div className="card-body pt-0">
-              {isLoading && <Loading />}
-              {!isLoading && academicLevels.length === 0 && (
-                <div className="alert alert-info">No Academic Levels Found</div>
-              )}
-              {!isLoading && (
-                <table className="table table-striped table-sm">
-                  <thead
-                    style={{
-                      fontWeight: "bold",
-                    }}
-                  >
-                    <tr>
-                      <th className="text-center">SN</th>
-                      <th>Name</th>
-                      <th>Description</th>
-                      <th className="text-end">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {academicLevels.map((level, index) => (
-                      <tr key={index}>
-                        <td className="text-center">
-                          {" "}
-                          {/* {(currentPage - 1) * itemsPerPage ?? 0 + index + 1} */}
-                        </td>
-                        <td>{level.name}</td>
-                        <td>{level.description}</td>
-                        <td className="text-end">
-                          <button
-                            title="edit academic level"
-                            type="button"
-                            onClick={() => handleEditClick(level)}
-                            className="btn btn-light-info btn-icon btn-sm"
-                          >
-                            <Icon name={"edit"} className={"svg-icon"} />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
+              <div className="table">
+                <div className="table-responsive">
+                  {isLoading && <Loading />}
+                  {!isLoading && academicLevels.length === 0 && (
+                    <div className="alert alert-info">
+                      No Academic Levels Found
+                    </div>
+                  )}
+                  {!isLoading && (
+                    <table className="table table-striped table-sm">
+                      <thead
+                        style={{
+                          fontWeight: "bold",
+                        }}
+                      >
+                        <tr>
+                          <th className="text-center">SN</th>
+                          <th>Name</th>
+                          <th>Description</th>
+                          <th className="text-end">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {academicLevels.map((level, index) => (
+                          <tr key={index}>
+                            <td className="text-center">
+                              {" "}
+                              {/* {(currentPage - 1) * itemsPerPage ?? 0 + index + 1} */}
+                            </td>
+                            <td>{level.name}</td>
+                            <td>{level.description}</td>
+                            <td className="text-end">
+                              <button
+                                title="edit academic level"
+                                type="button"
+                                onClick={() => handleEditClick(level)}
+                                className="btn btn-light-info btn-icon btn-sm"
+                              >
+                                <Icon name={"edit"} className={"svg-icon"} />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Pagination */}
@@ -298,4 +301,4 @@ const AcademicLevelComponent = () => {
   );
 };
 
-export default AcademicLevelComponent;
+export default AcademicLevel;

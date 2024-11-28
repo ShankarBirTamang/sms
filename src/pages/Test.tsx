@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import useAcademicLevels from "../hooks/useAcademicLevels";
+import useAcademicLevels from "../hooks/academics/useAcademicLevels";
 import useDebounce from "../hooks/useDebounce"; // Import the debounce hook
 import Pagination from "../components/Pagination/Pagination";
 import Loading from "../components/Loading/Loading";
