@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Icon from "../../../components/Icon/Icon.tsx";
+import { Link } from "react-router-dom";
 
 interface MenuItem {
   title: string;
@@ -15,6 +16,23 @@ const Settings = () => {
   const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
 
   const menuItems: MenuItem[] = [
+    {
+      title: "Academic",
+      submenu: [
+        { title: "Academic Levels", route: "academics/academic-levels" },
+        { title: "Academic Sessions", route: "academics/academic-sessions" },
+        { title: "Grade Groups", route: "academics/grade-groups" },
+        { title: "Grades", route: "" },
+        {
+          title: "Routine",
+          route: "",
+          submenu: [
+            { title: "Time Table", route: "" },
+            { title: "Setup Routine", route: "" },
+          ],
+        },
+      ],
+    },
     {
       title: "Student Services",
       submenu: [
@@ -52,22 +70,7 @@ const Settings = () => {
         },
       ],
     },
-    {
-      title: "Academic",
-      submenu: [
-        { title: "Academic Levels", route: "" },
-        { title: "Academic Sessions", route: "" },
-        { title: "Grades", route: "" },
-        {
-          title: "Routine",
-          route: "",
-          submenu: [
-            { title: "Time Table", route: "" },
-            { title: "Setup Routine", route: "" },
-          ],
-        },
-      ],
-    },
+
     {
       title: "Transportation",
       submenu: [
@@ -121,10 +124,19 @@ const Settings = () => {
           position: hoveredMenu === item.title ? "relative" : "initial",
         }}
       >
-        <a href="#" className="menu-link px-3">
-          <span className="menu-title">{item.title}</span>
-          {item.submenu && <span className="menu-arrow"></span>}
-        </a>
+        {item.route ? (
+          <Link to={item.route} className="menu-link px-3">
+            {" "}
+            <span className="menu-title">{item.title}</span>{" "}
+            {item.submenu && <span className="menu-arrow"></span>}{" "}
+          </Link>
+        ) : (
+          <span className="menu-link px-3">
+            {" "}
+            <span className="menu-title">{item.title}</span>{" "}
+            {item.submenu && <span className="menu-arrow"></span>}{" "}
+          </span>
+        )}
 
         {item.submenu && openSubMenus[item.title] && (
           <div

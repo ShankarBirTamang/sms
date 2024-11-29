@@ -33,7 +33,9 @@ const Search = () => {
       <div className="header-search py-3 py-lg-0 me-3" ref={inputRef}>
         <div
           id="kt_header_search"
-          className={`header-search d-flex align-items-center w-lg-250px ${startSearch ? "show menu-dropdown" : null}`}
+          className={`header-search d-flex align-items-center w-lg-250px ${
+            startSearch ? "show menu-dropdown" : null
+          }`}
         >
           <form
             data-kt-search-element="form"
@@ -52,7 +54,6 @@ const Search = () => {
               className="form-control custom-form-control ps-13"
               name="search"
               onClick={handleSearchClick}
-              value=""
               placeholder="Search"
               data-kt-search-element="input"
             />
@@ -89,7 +90,9 @@ const Search = () => {
                   }
                 : undefined
             } // No style if isActive is false
-            className={`menu menu-sub menu-sub-dropdown w-300px w-md-350px py-7 px-7 ${startSearch ? "show" : null} overflow-hidden `}
+            className={`menu menu-sub menu-sub-dropdown w-300px w-md-350px py-7 px-7 ${
+              startSearch ? "show" : null
+            } overflow-hidden `}
           >
             <div data-kt-search-element="wrapper">
               {/*Search Results*/}

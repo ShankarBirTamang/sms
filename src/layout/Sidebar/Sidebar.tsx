@@ -1,6 +1,6 @@
 import Icon from "../../components/Icon/Icon.tsx";
-import { Link, NavLink } from "react-router-dom";
-import Settings from "./Component/Settings.tsx";
+import { NavLink } from "react-router-dom";
+import Settings from "./Settings/Settings.tsx";
 // import {useState} from "react";
 
 interface MenuItems {
@@ -59,6 +59,7 @@ const Sidebar = () => {
             >
               {menuItems.map((item) => (
                 <NavLink
+                  key={item.route}
                   to={item.route}
                   className={({ isActive }) =>
                     ["menu-item py-2", isActive ? "here" : ""].join(" ")
