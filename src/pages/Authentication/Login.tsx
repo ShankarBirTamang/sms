@@ -1,16 +1,34 @@
 import axios from "axios";
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 const baseUrl = import.meta.env.VITE_API_URL;
 import axiosInstance from "../../../axiosConfig";
 import { useNavigate } from "react-router-dom";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+
+const schema = z.object({
+  email: z
+    .string()
+    .min(1, { message: "Email is required" })
+    .email({ message: "Invalid email format" }),
+  password: z.string().min(1, { message: "Password is required" }),
+});
+type FormData = z.infer<typeof schema>;
 
 const Login = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    setError,
+    reset,
+    formState: { errors },
+  } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   useEffect(() => {
     const validateToken = async () => {
@@ -31,21 +49,31 @@ const Login = () => {
     return <div>Loading...</div>; // Show loading indicator while validating
   }
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: FormData) => {
+    // e.preventDefault();
     setLoading(true);
     try {
       const response = await axios.post(`${baseUrl}/login`, {
-        email: email,
-        password: password,
+        email: data.email,
+        password: data.password,
       });
       if (response.data.token) {
         localStorage.setItem("authToken", response.data.token);
         window.location.href = "/";
       }
     } catch (err) {
-      setError("Invalid email or Password");
+      reset({
+        password: "",
+      });
       console.log("Login Error : ", err);
+      setError("email", {
+        type: "manual",
+        message: "Invalid email or password. Please try again.",
+      });
+      setError("password", {
+        type: "manual",
+        message: "Invalid email or password. Please try again.",
+      });
     } finally {
       setLoading(false);
     }
@@ -69,7 +97,7 @@ const Login = () => {
           <div className="d-flex flex-center w-lg-50 p-10">
             <div className="card rounded-3 w-md-550px">
               <div className="card-body p-10 p-lg-20">
-                <form className="form w-100" onSubmit={handleSubmit}>
+                <form className="form w-100" onSubmit={handleSubmit(onSubmit)}>
                   <div className="text-center mb-11">
                     <h1 className="text-dark fw-bolder mb-3">Sign In</h1>
                     <div className="text-gray-500 fw-semibold fs-6">
@@ -117,33 +145,38 @@ const Login = () => {
                       Or with email
                     </span>
                   </div>
-
-                  {/* Email Input */}
                   <div className="fv-row mb-8">
                     <input
                       type="email"
                       placeholder="Email"
-                      name="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="form-control bg-transparent"
+                      {...register("email")}
+                      className={`form-control bg-transparent ${
+                        errors.email && "is-invalid"
+                      }`}
                     />
+                    {errors.email && (
+                      <span className="text-danger">
+                        {errors.email.message}
+                      </span>
+                    )}
                   </div>
 
-                  {/* Password Input */}
                   <div className="fv-row mb-3">
                     <input
                       type="password"
                       placeholder="Password"
-                      name="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="form-control bg-transparent"
+                      {...register("password")}
+                      className={`form-control bg-transparent ${
+                        errors.password && "is-invalid"
+                      }`}
                     />
                   </div>
 
-                  {/* Error message */}
-                  {error && <div className="alert alert-danger">{error}</div>}
+                  {errors.password && (
+                    <span className="text-danger">
+                      {errors.password.message}
+                    </span>
+                  )}
 
                   <div className="d-flex flex-stack flex-wrap gap-3 fs-base fw-semibold mb-8">
                     <div></div>
