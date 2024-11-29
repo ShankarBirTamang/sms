@@ -6,12 +6,12 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 
 import Pagination from "../../../components/Pagination/Pagination";
-import useAcademicLevels from "../../../hooks/academics/useAcademicLevels";
+import useAcademicLevels from "../../hooks/useAcademicLevels";
 import useDebounce from "../../../hooks/useDebounce";
 import {
   CreateAcademicLevelInterface,
   UpdateAcademicLevelInterface,
-} from "../../../services/academics/academicLevelService";
+} from "../../services/academicLevelService";
 
 const schema = z.object({
   name: z.string().min(1, { message: "Name is required" }),

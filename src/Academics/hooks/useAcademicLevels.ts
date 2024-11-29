@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import academicLevelService, {
   CreateAcademicLevelInterface,
   UpdateAcademicLevelInterface,
-} from "../../services/academics/academicLevelService";
+} from "../services/academicLevelService";
 import { CanceledError } from "../../services/apiClient";
 import {
   ApiResponseInterface,

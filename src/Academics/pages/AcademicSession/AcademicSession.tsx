@@ -7,13 +7,13 @@ import { useForm } from "react-hook-form";
 
 import Pagination from "../../../components/Pagination/Pagination";
 import useDebounce from "../../../hooks/useDebounce";
-import useAcademicSession from "../../../hooks/academics/useAcademicSession";
-import useAcademicLevels from "../../../hooks/academics/useAcademicLevels";
+import useAcademicSession from "../../hooks/useAcademicSession";
+import useAcademicLevels from "../../hooks/useAcademicLevels";
 import DatePicker from "../../../components/DatePicker/DatePicker";
 import {
   AcademicSessionInterface,
   UpdateAcademicSessionInterface,
-} from "../../../services/academics/academicSessionService";
+} from "../../services/academicSessionService";
 
 const AcademicSession = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -53,7 +53,7 @@ const AcademicSession = () => {
     edgeLinks,
     saveAcademicSession,
     updateAcademicSession,
-    setError,
+    // setError,
   } = useAcademicSession({
     search: debouncedSearchTerm,
     currentPage,
@@ -127,7 +127,7 @@ const AcademicSession = () => {
             <div className="card-header mb-6">
               <div className="card-title">
                 <h1 className="d-flex align-items-center position-relative my-1">
-                  {/* {formMode === "create" ? "Add New Level" : "Edit Level"} */}
+                  {formMode === "create" ? "Add New " : "Edit "}
                   Academic Sessions
                 </h1>
               </div>
@@ -143,7 +143,9 @@ const AcademicSession = () => {
                         </label>
                         <select
                           title="select academic Level"
-                          className="form-control form-control-solid mb-3 mb-lg-0 "
+                          className={`form-control mb-3 mb-lg-0 ${
+                            errors.academic_level_id && "is-invalid"
+                          }`}
                           {...register("academic_level_id", {
                             valueAsNumber: true,
                           })}
@@ -170,7 +172,9 @@ const AcademicSession = () => {
                         <input
                           type="text"
                           {...register("name")}
-                          className="form-control form-control-solid mb-3 mb-lg-0 "
+                          className={`form-control mb-3 mb-lg-0 ${
+                            errors.name && "is-invalid"
+                          }`}
                           placeholder="Ex: Academic Year 2078-79"
                         />
                         {errors.name && (
@@ -186,6 +190,14 @@ const AcademicSession = () => {
                           handleDateChange(date, "startDate")
                         }
                         title="Start Date"
+                        errorAD={
+                          errors.start_date ? errors.start_date.message : ""
+                        }
+                        errorBS={
+                          errors.start_date_np
+                            ? errors.start_date_np.message
+                            : ""
+                        }
                       />
                     </div>
                     <div className="col-12 mb-7">
@@ -194,6 +206,10 @@ const AcademicSession = () => {
                           handleDateChange(date, "endDate")
                         }
                         title="End Date"
+                        errorAD={errors.end_date ? errors.end_date.message : ""}
+                        errorBS={
+                          errors.end_date_np ? errors.end_date_np.message : ""
+                        }
                       />
                     </div>
                   </div>
@@ -308,7 +324,7 @@ const AcademicSession = () => {
                               {session.end_date_np} &nbsp;({session.end_date})
                             </td>
                             <td>
-                              <a href="https://publichighschool.edu.np/sms/settings/academics/sessions/2/change-status">
+                              <a href="#">
                                 <div className="badge badge-success fw-bolder">
                                   Active
                                 </div>

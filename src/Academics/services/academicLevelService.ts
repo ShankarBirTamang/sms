@@ -1,4 +1,4 @@
-import create from "../httpService";
+import create from "../../services/httpService";
 
 // export interface AcademicLevelInterface {
 //   id?: number;

@@ -6,10 +6,10 @@ import Dashboard from "./pages/Dashboard/Dashboard.tsx";
 import Students from "./pages/Students/Students.tsx";
 import ProtectedRoute from "./components/Icon/ProtectedRoute.tsx"; // Make sure this is correctly named
 import Login from "./pages/Authentication/Login.tsx";
-import AcademicLevel from "./pages/Academics/AcademicLevel/AcademicLevel.tsx";
-import AcademicSession from "./pages/Academics/AcademicSession/AcademicSession.tsx";
-import GradeGroup from "./pages/Academics/GradeGroup/GradeGroup.tsx";
 import Test from "./pages/Test.tsx";
+import AcademicLevel from "./Academics/pages/AcademicLevel/AcademicLevel.tsx";
+import AcademicSession from "./Academics/pages/AcademicSession/AcademicSession.tsx";
+import GradeGroup from "./Academics/pages/GradeGroup/GradeGroup.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

@@ -13,9 +13,16 @@ export interface DateInterface {
 interface DatePickerProps {
   onDateChange: (dates: DateInterface) => void;
   title?: string;
+  errorBS?: string;
+  errorAD?: string;
 }
 
-const DatePicker = ({ onDateChange, title = "Date" }: DatePickerProps) => {
+const DatePicker = ({
+  onDateChange,
+  title = "Date",
+  errorAD,
+  errorBS,
+}: DatePickerProps) => {
   const [adDate, setAdDate] = useState<string>(""); // Ensure initial state is defined
   const [bsDate, setBsDate] = useState<string>("");
   const [renderKey, setRenderKey] = useState("");
@@ -58,11 +65,12 @@ const DatePicker = ({ onDateChange, title = "Date" }: DatePickerProps) => {
         <label className="required fw-bold fs-6 mb-2">{title} (BS)</label>
         <Calendar
           key={renderKey}
-          className="form-control form-control-solid mb-3 mb-lg-0"
+          className={`form-control mb-3 mb-lg-0 ${errorBS && "is-invalid"}`}
           language="en"
           onChange={handleDate}
           defaultDate={bsDate}
         />
+        {errorBS && <span className="text-danger">{errorBS}</span>}
       </div>
       <div className="col-6">
         <label className="required fw-bold fs-6 mb-2">{title} (AD)</label>
@@ -72,8 +80,9 @@ const DatePicker = ({ onDateChange, title = "Date" }: DatePickerProps) => {
           name="english-date"
           value={adDate}
           onChange={handleEnglishDateChange}
-          className="form-control form-control-solid mb-3 mb-lg-0"
+          className={`form-control mb-3 mb-lg-0 ${errorAD && "is-invalid"}`}
         />
+        {errorAD && <span className="text-danger">{errorAD}</span>}
       </div>
     </div>
   );

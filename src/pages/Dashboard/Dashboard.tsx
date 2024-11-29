@@ -122,8 +122,8 @@ const Dashboard = () => {
         </div>
         <div className="col-xl-5 mb-5 mb-xl-10">
           <div className="row mb-5 mb-xl-8 g-5 g-xl-8">
-            {menuItems.map((item: MenuItem) => (
-              <div className="col-4">
+            {menuItems.map((item: MenuItem, index: number) => (
+              <div key={index} className="col-4">
                 <div className="card card-stretch h-100">
                   <a
                     href={item.route}

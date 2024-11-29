@@ -6,7 +6,7 @@ import {
 import academicSessionService, {
   AcademicSessionInterface,
   UpdateAcademicSessionInterface,
-} from "../../services/academics/academicSessionService";
+} from "../services/academicSessionService";
 
 import { CanceledError } from "../../services/apiClient";
 import { PaginationProps } from "../../components/Pagination/Pagination";
@@ -80,7 +80,7 @@ const useAcademicSession = ({
       const result =
         await academicSessionService.create<AcademicSessionInterface>(params);
       // Update state only after successful creation
-      setAcademicSessions([...academicSessions, result.data]);
+      setAcademicSessions([...academicSessions, result.data.data]);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
