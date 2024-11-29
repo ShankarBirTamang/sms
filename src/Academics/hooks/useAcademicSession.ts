@@ -35,6 +35,8 @@ const useAcademicSession = ({
       per_page: itemsPerPage,
       search: search,
     };
+    console.log(itemsPerPage);
+
     if (itemsPerPage !== null) {
       params.page = currentPage;
     }
@@ -122,12 +124,15 @@ const useAcademicSession = ({
           session.id === result.data.data.id ? result.data.data : session
         )
       );
+      console.log(result);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
         setError("An unknown error occurred.");
       }
+    } finally {
+      // console.log(params, result);
     }
   };
 

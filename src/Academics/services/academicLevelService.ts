@@ -16,7 +16,7 @@ export interface UpdateAcademicLevelInterface
   id: number; // id is required for updates
 }
 
-export interface AcademicLevelsResponse {
-  data: UpdateAcademicLevelInterface[];
-}
+// export interface AcademicLevelsResponse {
+//   data: UpdateAcademicLevelInterface[];
+// }
 export default create("/academics/academic-levels");

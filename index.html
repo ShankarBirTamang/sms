@@ -1,41 +1,59 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <title>Infinity School</title>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!--begin::Fonts(mandatory for all pages)-->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700"/>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700"
+    />
     <!--end::Fonts-->
     <!--begin::Vendor Stylesheets(used for this page only)-->
-    <link href="assets/plugins/custom/fullcalendar/fullcalendar.bundle.css" rel="stylesheet" type="text/css"/>
-    <link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css"/>
+    <link
+      href="assets/plugins/custom/fullcalendar/fullcalendar.bundle.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="assets/plugins/custom/datatables/datatables.bundle.css"
+      rel="stylesheet"
+      type="text/css"
+    />
     <!--end::Vendor Stylesheets-->
     <!--begin::Global Stylesheets Bundle(mandatory for all pages)-->
-    <link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css"/>
-    <link href="assets/css/style.bundle.css" rel="stylesheet" type="text/css"/>
+    <link
+      href="assets/plugins/global/plugins.bundle.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link href="assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="./src/index.css" />
     <style>
-        .menu-sub-dropdown {
-            display: none; /* Hidden by default */
-        }
+      .menu-sub-dropdown {
+        display: none; /* Hidden by default */
+      }
 
-        .menu-sub-dropdown.show {
-            display: block; /* Show when needed */
-        }
+      .menu-sub-dropdown.show {
+        display: block; /* Show when needed */
+      }
     </style>
     <!--end::Global Stylesheets Bundle-->
-</head>
-<body id="kt_body" class="header-fixed header-tablet-and-mobile-fixed aside-fixed aside-secondary-disabled">
-<!--begin::Root-->
-<div class="d-flex flex-column flex-root">
-    <!--begin::Page-->
+  </head>
+  <body
+    id="kt_body"
+    class="header-fixed header-tablet-and-mobile-fixed aside-fixed aside-secondary-disabled"
+  >
+    <!--begin::Root-->
+    <div class="d-flex flex-column flex-root">
+      <!--begin::Page-->
 
-    <div id="root" class="page d-flex flex-row flex-column-fluid"></div>
-    <script type="module" src="/src/main.tsx"></script>
-
-</div>
-<!--<script src="assets/plugins/global/plugins.bundle.js"></script>-->
-<!--<script src="assets/js/scripts.bundle.js"></script>-->
-<!--end::Global Javascript Bundle-->
-</body>
+      <div id="root" class="page d-flex flex-row flex-column-fluid"></div>
+      <script type="module" src="/src/main.tsx"></script>
+    </div>
+    <!--<script src="assets/plugins/global/plugins.bundle.js"></script>-->
+    <!--<script src="assets/js/scripts.bundle.js"></script>-->
+    <!--end::Global Javascript Bundle-->
+  </body>
 </html>

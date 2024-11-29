@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { adToBs, bsToAd } from "@sbmdkl/nepali-date-converter";
+import { adToBs } from "@sbmdkl/nepali-date-converter";
 import Calendar from "@sbmdkl/nepali-datepicker-reactjs";
 import "@sbmdkl/nepali-datepicker-reactjs/dist/index.css";
 
@@ -15,6 +15,8 @@ interface DatePickerProps {
   title?: string;
   errorBS?: string;
   errorAD?: string;
+  valueAD?: string;
+  valueBS?: string;
 }
 
 const DatePicker = ({
@@ -22,9 +24,11 @@ const DatePicker = ({
   title = "Date",
   errorAD,
   errorBS,
+  valueAD = "",
+  valueBS = "",
 }: DatePickerProps) => {
-  const [adDate, setAdDate] = useState<string>(""); // Ensure initial state is defined
-  const [bsDate, setBsDate] = useState<string>("");
+  const [adDate, setAdDate] = useState<string>(valueAD); // Ensure initial state is defined
+  const [bsDate, setBsDate] = useState<string>(valueBS);
   const [renderKey, setRenderKey] = useState("");
 
   useEffect(() => {

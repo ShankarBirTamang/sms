@@ -12,6 +12,7 @@ import {
   CreateAcademicLevelInterface,
   UpdateAcademicLevelInterface,
 } from "../../services/academicLevelService";
+import useDocumentTitle from "../../../hooks/useDocumentTitle";
 
 const schema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -21,6 +22,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const AcademicLevel = () => {
+  useDocumentTitle("Academic Levels");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
@@ -199,21 +201,24 @@ const AcademicLevel = () => {
                 <h1 className="d-flex justify-content-between align-items-center position-relative my-1 w-100">
                   <span>Academic Levels</span>
                   <div className="d-flex gap-2">
-                    <div className="search-input">
+                    <div className="d-flex align-items-center position-relative h-100">
+                      <Icon
+                        name="searchDark"
+                        className="svg-icon svg-icon-1 position-absolute ms-6"
+                      />
+
                       <input
                         type="text"
-                        name="search"
+                        id="data_search"
                         value={searchTerm}
                         onChange={handleSearchChange}
-                        placeholder="Search levels..."
-                        className="form-control"
+                        className="form-control w-250px ps-14"
+                        placeholder="Search Academic Levels"
                       />
                     </div>
+
                     <select
-                      className="form-control"
-                      style={{
-                        width: 50,
-                      }}
+                      className="form-control w-50px h-100"
                       title="Items per Page"
                       id="itemsPerPage"
                       value={itemsPerPage ?? "all"}
