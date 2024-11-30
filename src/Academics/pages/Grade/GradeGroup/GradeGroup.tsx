@@ -1,17 +1,17 @@
 import { useState } from "react";
-import Icon from "../../../components/Icon/Icon";
-import Loading from "../../../components/Loading/Loading";
+import Icon from "../../../../components/Icon/Icon";
+import Loading from "../../../../components/Loading/Loading";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-import useDebounce from "../../../hooks/useDebounce";
-import useGradeGroup from "../../hooks/useGradeGroup";
-import Pagination from "../../../components/Pagination/Pagination";
+import useDebounce from "../../../../hooks/useDebounce";
+import useGradeGroup from "../../../hooks/useGradeGroup";
+import Pagination from "../../../../components/Pagination/Pagination";
 import {
   GradeGroupInterface,
   UpdateGradeGroupInterface,
-} from "../../services/gradeGroupService";
-import useDocumentTitle from "../../../hooks/useDocumentTitle";
+} from "../../../services/gradeGroupService";
+import useDocumentTitle from "../../../../hooks/useDocumentTitle";
 
 const schema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -209,7 +209,7 @@ const GradeGroup = () => {
                     </div>
 
                     <select
-                      className="form-control w-50px h-100"
+                      className="form-control w-50px"
                       title="Items per Page"
                       id="itemsPerPage"
                       value={itemsPerPage ?? "all"}

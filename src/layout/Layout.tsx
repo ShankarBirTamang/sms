@@ -5,22 +5,18 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import axiosInstance from "../../axiosConfig";
-
-// interface Props {
-//   children?: ReactNode;
-// }
-
-// const baseUrl = import.meta.env.VITE_API_URL;
+import { usePermissions } from "../hooks/usePermissions.ts";
 
 const Layout = () => {
+  const { setPermissions } = usePermissions();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-
   useEffect(() => {
     const validateToken = async () => {
       try {
         const response = await axiosInstance.get("/validate-token");
         if (response.status === 200) {
           setIsAuthenticated(true);
+          setPermissions(response.data.permissions);
         }
       } catch (error) {
         console.error("Token validation failed", error);
@@ -28,13 +24,15 @@ const Layout = () => {
       }
     };
     validateToken();
-  }, []);
+  }, [setPermissions]);
   if (isAuthenticated === null) {
-    return <div>Loading...</div>; // Show loading indicator while validating
+    return <div>Loading...</div>;
   }
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
+
+  const title = document.title;
   return (
     <>
       <Sidebar />
@@ -42,7 +40,7 @@ const Layout = () => {
         className="wrapper d-flex flex-column flex-row-fluid"
         id="kt_wrapper"
       >
-        <Header />
+        <Header title={title} />
         <div
           className="content d-flex flex-column flex-column-fluid"
           id="kt_content"

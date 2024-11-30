@@ -218,7 +218,7 @@ const AcademicLevel = () => {
                     </div>
 
                     <select
-                      className="form-control w-50px h-100"
+                      className="form-control w-50px"
                       title="Items per Page"
                       id="itemsPerPage"
                       value={itemsPerPage ?? "all"}

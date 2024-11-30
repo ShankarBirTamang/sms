@@ -1,4 +1,4 @@
-import create from "../../services/httpService";
+import apiRoute from "../../services/httpService";
 
 // export interface AcademicLevelInterface {
 //   id?: number;
@@ -19,4 +19,4 @@ export interface UpdateAcademicLevelInterface
 // export interface AcademicLevelsResponse {
 //   data: UpdateAcademicLevelInterface[];
 // }
-export default create("/academics/academic-levels");
+export default apiRoute("/academics/academic-levels");

@@ -40,6 +40,6 @@ class HttpService {
     );
   }
 }
-const create = (endpoint: string) => new HttpService(endpoint);
+const apiRoute = (endpoint: string) => new HttpService(endpoint);
 
-export default create;
+export default apiRoute;

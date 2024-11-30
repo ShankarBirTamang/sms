@@ -340,7 +340,7 @@ const AcademicSession = () => {
                     </div>
 
                     <select
-                      className="form-control w-50px h-100"
+                      className="form-control w-50px"
                       title="Items per Page"
                       id="itemsPerPage"
                       value={itemsPerPage ?? "all"}
@@ -381,8 +381,8 @@ const AcademicSession = () => {
                         <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                           <th className="min-w-225px">Session Name</th>
                           <th className="">Level</th>
-                          <th className="">Start Date</th>
-                          <th className="">End Date</th>
+                          <th className="min-w-125px">Start Date</th>
+                          <th className="min-w-125px">End Date</th>
                           <th className="">Status</th>
                           <th className="text-end">Actions</th>
                         </tr>
@@ -393,12 +393,12 @@ const AcademicSession = () => {
                             <td className="sorting_1">{session.name}</td>
                             <td>{session.academic_level}</td>
                             <td>
-                              {" "}
-                              {session.start_date_np} &nbsp;(
-                              {session.start_date})
+                              B.S.:{session.start_date_np} <br />
+                              A.D.:{session.start_date}
                             </td>
                             <td>
-                              {session.end_date_np} &nbsp;({session.end_date})
+                              B.S.:{session.end_date_np} <br />
+                              A.D.:{session.end_date}
                             </td>
                             <td>
                               <a href="#">

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 interface MenuItem {
   title: string;
+  prefix?: string;
   route?: string;
   submenu?: MenuItem[];
 }
@@ -18,11 +19,12 @@ const Settings = () => {
   const menuItems: MenuItem[] = [
     {
       title: "Academic",
+      prefix: "academics",
       submenu: [
-        { title: "Academic Levels", route: "academics/academic-levels" },
-        { title: "Academic Sessions", route: "academics/academic-sessions" },
-        { title: "Grade Groups", route: "academics/grade-groups" },
-        { title: "Grades", route: "" },
+        { title: "Academic Levels", route: "academic-levels" },
+        { title: "Academic Sessions", route: "academic-sessions" },
+        { title: "Grade Settings", route: "grade-settings" },
+        { title: "Grades", route: "grades" },
         {
           title: "Routine",
           route: "",
@@ -113,7 +115,7 @@ const Settings = () => {
     setOpenSubMenus({});
   };
 
-  const renderMenuItems = (items: MenuItem[]) => {
+  const renderMenuItems = (items: MenuItem[], parentPrefix: string = "") => {
     return items.map((item, index) => (
       <div
         key={index}
@@ -125,14 +127,12 @@ const Settings = () => {
         }}
       >
         {item.route ? (
-          <Link to={item.route} className="menu-link px-3">
-            {" "}
-            <span className="menu-title">{item.title}</span>{" "}
+          <Link to={`/${parentPrefix}${item.route}`} className="menu-link px-3">
+            <span className="menu-title">{item.title}</span>
             {item.submenu && <span className="menu-arrow"></span>}{" "}
           </Link>
         ) : (
           <span className="menu-link px-3">
-            {" "}
             <span className="menu-title">{item.title}</span>{" "}
             {item.submenu && <span className="menu-arrow"></span>}{" "}
           </span>
@@ -150,7 +150,11 @@ const Settings = () => {
               height: "fit-content",
             }}
           >
-            {renderMenuItems(item.submenu)}
+            {/* Pass the current item's prefix to the submenu items */}
+            {renderMenuItems(
+              item.submenu,
+              item.prefix ? `${item.prefix}/` : parentPrefix
+            )}
           </div>
         )}
       </div>
@@ -165,6 +169,7 @@ const Settings = () => {
       onMouseLeave={handleMouseLeave}
     >
       <button
+        title="Settings"
         type="button"
         className="btn btn-custom show menu-dropdown"
         onClick={toggleDropdown}

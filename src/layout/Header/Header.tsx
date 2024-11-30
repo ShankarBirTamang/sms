@@ -4,7 +4,11 @@ import Search from "./Component/Search.tsx";
 import NavDropDown from "./Component/NavDropDown.tsx";
 import ColorMode from "./Component/ColorMode.tsx";
 
-const Header = () => {
+interface Header {
+  title?: string;
+}
+
+const Header = ({ title }: Header) => {
   return (
     <>
       <div
@@ -17,7 +21,9 @@ const Header = () => {
         <div className="header-container container-xxl">
           <div className="page-title d-flex flex-column align-items-start justify-content-center flex-wrap me-lg-20 py-3 py-lg-0 me-3">
             <h1 className="d-flex flex-column text-dark fw-bold my-1">
-              <span className="text-white fs-1">Dashboard</span>
+              <span className="text-white fs-1">
+                {title ?? "Infinity School"}
+              </span>
               <small className="text-gray-600 fs-6 fw-normal pt-2">
                 Create a store with #YDR-124-346 code
               </small>

@@ -7,7 +7,7 @@ function useDocumentTitle(
   const defaultTitleRef = useRef<string>(document.title);
 
   useEffect(() => {
-    document.title = title + " | Infinity School";
+    document.title = title;
   }, [title]);
 
   useEffect(() => {

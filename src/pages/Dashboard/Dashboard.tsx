@@ -1,4 +1,5 @@
 import Icon from "../../components/Icon/Icon.tsx";
+// import { usePermissions } from "../../hooks/usePermissions.ts";
 
 interface MenuItem {
   title: string;
@@ -7,6 +8,9 @@ interface MenuItem {
 }
 
 const Dashboard = () => {
+  // const { permissions } = usePermissions();
+  // if (permissions.includes("user-create")) console.log("perms:", permissions);
+
   const menuItems: MenuItem[] = [
     {
       title: "Grade",
