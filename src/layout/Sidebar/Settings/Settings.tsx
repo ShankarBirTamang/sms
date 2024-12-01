@@ -19,10 +19,9 @@ const menuItems: MenuItem[] = [
       { title: "Grades", route: "grades" },
       {
         title: "Routine",
-        route: "",
         submenu: [
-          { title: "Time Table", route: "" },
-          { title: "Setup Routine", route: "" },
+          { title: "Time Table", route: "time-table" },
+          { title: "Setup Routine", route: "setup-routine" },
         ],
       },
     ],
@@ -30,75 +29,49 @@ const menuItems: MenuItem[] = [
   {
     title: "Student Services",
     submenu: [
-      {
-        title: "Photographs",
-        route: "",
-      },
-      {
-        title: "Student Details",
-        route: "",
-      },
-      {
-        title: "Gate Pass",
-        route: "",
-      },
-      {
-        title: "ID Cards",
-        route: "",
-      },
+      { title: "Photographs", route: "photographs" },
+      { title: "Student Details", route: "student-details" },
+      { title: "Gate Pass", route: "gate-pass" },
+      { title: "ID Cards", route: "id-cards" },
       {
         title: "Single Print Certificate",
-        route: "",
         submenu: [
-          { title: "Transfer/Character", route: "" },
-          { title: "SEE Character", route: "" },
+          { title: "Transfer/Character", route: "transfer-character" },
+          { title: "SEE Character", route: "see-character" },
         ],
       },
       {
         title: "Bulk Print Certificate",
-        route: "",
         submenu: [
-          { title: "Transfer/Character", route: "" },
-          { title: "SEE Character", route: "" },
+          { title: "Transfer/Character", route: "transfer-character" },
+          { title: "SEE Character", route: "see-character" },
         ],
       },
     ],
   },
-
   {
     title: "Transportation",
     submenu: [
-      { title: "Vehicles", route: "" },
-      { title: "Routes", route: "" },
-      { title: "Students", route: "" },
+      { title: "Vehicles", route: "vehicles" },
+      { title: "Routes", route: "routes" },
+      { title: "Students", route: "students" },
     ],
   },
   {
     title: "IEMIS",
-    route: "",
-    submenu: [
-      {
-        title: "Export Photograph",
-        route: "",
-      },
-    ],
+    submenu: [{ title: "Export Photograph", route: "export-photograph" }],
   },
 ];
 
 const Settings = () => {
   const [openMenu, setOpenMenu] = useState<string[]>([]);
 
-  const toggleMenu = (currentIndex: string) => {
-    setOpenMenu(
-      (prev) =>
-        prev.includes(currentIndex)
-          ? prev.filter((index) => index !== currentIndex) // Close the menu
-          : [...prev, currentIndex] // Open the menu
+  const toggleMenu = (currentIndex: string, isOpen: boolean) => {
+    setOpenMenu((prev) =>
+      isOpen
+        ? [...prev, currentIndex]
+        : prev.filter((index) => index !== currentIndex)
     );
-  };
-
-  const notToggleMenu = (currentIndex: string) => {
-    setOpenMenu((prev) => prev.filter((index) => index !== currentIndex));
   };
 
   const renderMenu = (menus: MenuItem[], parentPrefix: string = "") => {
@@ -109,40 +82,33 @@ const Settings = () => {
             ? `${parentPrefix}-${index}`
             : `${index}`;
 
-          // Update parent prefix for nested menus
-          const newParentPrefix = menu.prefix
-            ? `${parentPrefix}${menu.prefix}/`
-            : parentPrefix;
+          // Construct route based on prefix and route
+          const route = menu.route
+            ? menu.prefix
+              ? `/${menu.prefix}/${menu.route}`
+              : `/${menu.route}`
+            : null;
 
           return (
             <div
               className="menu-item px-3"
               key={currentIndex}
               style={{ position: "relative" }}
-              onMouseEnter={(e) => {
-                e.stopPropagation(); // Prevent event bubbling
-                toggleMenu(currentIndex);
-              }}
-              onMouseLeave={(e) => {
-                notToggleMenu(currentIndex);
-              }}
+              onMouseEnter={() => toggleMenu(currentIndex, true)}
+              onMouseLeave={() => toggleMenu(currentIndex, false)}
             >
-              {menu.route ? (
-                <Link
-                  to={`/${newParentPrefix}${menu.route}`}
-                  className="menu-link px-3"
-                >
+              {route ? (
+                <Link to={route} className="menu-link px-3">
                   <span className="menu-title">{menu.title}</span>
                   {menu.submenu && <span className="menu-arrow" />}
                 </Link>
               ) : (
-                <a href="#" className="menu-link px-3">
+                <span className="menu-link px-3">
                   <span className="menu-title">{menu.title}</span>
                   {menu.submenu && <span className="menu-arrow" />}
-                </a>
+                </span>
               )}
 
-              {/* Show child menu if this menu is clicked */}
               {menu.submenu && openMenu.includes(currentIndex) && (
                 <div
                   className="menu-submenu-card p-3 border rounded mt-2 bg-white shadow-lg"
@@ -154,8 +120,7 @@ const Settings = () => {
                     transition: "opacity 0.2s ease-in-out",
                   }}
                 >
-                  {renderMenu(menu.submenu, newParentPrefix)}{" "}
-                  {/* Recursive rendering */}
+                  {renderMenu(menu.submenu, currentIndex)}
                 </div>
               )}
             </div>
@@ -182,7 +147,7 @@ const Settings = () => {
           Setting Menu
         </div>
       </div>
-      {renderMenu(menuItems)} {/* Render the main menu */}
+      {renderMenu(menuItems)}
       <div className="separator mt-3 opacity-75" />
       <div className="menu-item px-3">
         <div className="menu-content px-3 py-3">
