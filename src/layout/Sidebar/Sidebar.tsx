@@ -1,6 +1,7 @@
 import Icon from "../../components/Icon/Icon.tsx";
 import { NavLink } from "react-router-dom";
 import Settings from "./Settings/Settings.tsx";
+import { useRef, useState } from "react";
 // import {useState} from "react";
 
 interface MenuItems {
@@ -27,6 +28,13 @@ const Sidebar = () => {
       route: "employees",
     },
   ];
+
+  const [isOpen, setIsOpen] = useState(false); // Track dropdown visibility
+  const dropdownRef = useRef<HTMLDivElement>(null); // Ref for the dropdown
+
+  const handleToggle = () => {
+    setIsOpen((prev) => !prev); // Toggle the dropdown
+  };
 
   // const [isActive, setIsActive] = useState(false)
   return (
@@ -79,8 +87,32 @@ const Sidebar = () => {
         <div
           className="aside-footer flex-column-auto pb-5 pb-lg-10"
           id="kt_aside_footer"
+          ref={dropdownRef} // Attach the ref to the container
         >
-          <Settings />
+          <div
+            className="d-flex flex-center w-100 scroll-px"
+            title="Quick actions"
+          >
+            <button
+              type="button"
+              onClick={handleToggle}
+              className="btn btn-custom"
+              style={{
+                position: "relative",
+              }}
+            >
+              <Icon name="settings" className={"svg-icon-2x m-0"} />
+            </button>
+
+            {isOpen && (
+              <div
+                onMouseEnter={() => setIsOpen(true)}
+                onMouseLeave={() => setIsOpen(false)}
+              >
+                <Settings />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>
