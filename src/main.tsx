@@ -1,40 +1,33 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import Layout from "./layout/Layout.tsx";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Dashboard from "./pages/Dashboard/Dashboard.tsx";
-import Students from "./pages/Students/Students.tsx";
-import ProtectedRoute from "./components/Icon/ProtectedRoute.tsx"; // Make sure this is correctly named
-import Login from "./pages/Authentication/Login.tsx";
-import AcademicLevel from "./pages/Academics/AcademicLevel/AcademicLevel.tsx";
-import AcademicSession from "./pages/Academics/AcademicSession/AcademicSession.tsx";
-import GradeGroup from "./pages/Academics/GradeGroup/GradeGroup.tsx";
-import Test from "./pages/Test.tsx";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Layout from "./layout/Layout";
+import Dashboard from "./pages/Dashboard/Dashboard";
+import ProtectedRoute from "./components/Icon/ProtectedRoute";
+import Login from "./pages/Authentication/Login";
+import AcademicRoute from "./Academics/AcademicRoute";
+import { PermissionProvider } from "./context/permissionContext";
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route element={<Layout />}>
-          {/* Login page route */}
+const App: React.FC = () => {
+  return (
+    <StrictMode>
+      <BrowserRouter>
+        <PermissionProvider>
+          <Routes>
+            {/* Login route */}
+            <Route path="/login" element={<Login />} />
+            <Route element={<ProtectedRoute />}>
+              <Route element={<Layout />}>
+                <Route path="/" element={<Dashboard />} />
+                {/* Include academic routes */}
+              </Route>
+              <Route path="academics/*" element={<AcademicRoute />} />
+            </Route>
+          </Routes>
+        </PermissionProvider>
+      </BrowserRouter>
+    </StrictMode>
+  );
+};
 
-          {/* ProtectedRoute wraps protected routes */}
-          <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="students" element={<Students />} />
-            <Route
-              path="academics/academic-levels"
-              element={<AcademicLevel />}
-            />
-            <Route
-              path="academics/academic-sessions"
-              element={<AcademicSession />}
-            />
-            <Route path="academics/grade-groups" element={<GradeGroup />} />
-          </Route>
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  </StrictMode>
-);
+createRoot(document.getElementById("root")!).render(<App />);

@@ -1,4 +1,4 @@
-import create from "../httpService";
+import apiRoute from "../../services/httpService";
 
 export interface AcademicSessionInterface {
   name: string;
@@ -18,4 +18,4 @@ export interface UpdateAcademicSessionInterface
 // export interface AcademicLevelsResponse {
 //   data: UpdateAcademicSessionInterface[];
 // }
-export default create("/academics/academic-sessions");
+export default apiRoute("/academics/academic-sessions");

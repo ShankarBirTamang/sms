@@ -1,25 +1,23 @@
 import { useEffect, useState } from "react";
+import academicLevelService, {
+  CreateAcademicLevelInterface,
+  UpdateAcademicLevelInterface,
+} from "../services/academicLevelService";
+import { CanceledError } from "../../services/apiClient";
 import {
   ApiResponseInterface,
   PaginationAndSearch,
 } from "../../Interface/Interface";
-import academicSessionService, {
-  AcademicSessionInterface,
-  UpdateAcademicSessionInterface,
-} from "../../services/academics/academicSessionService";
-
-import { CanceledError } from "../../services/apiClient";
 import { PaginationProps } from "../../components/Pagination/Pagination";
 
-const useAcademicSession = ({
+const useAcademicLevels = ({
   search = "",
-  currentPage = 2,
+  currentPage = 1,
   itemsPerPage = null,
 }: PaginationAndSearch) => {
-  const [academicSessions, setAcademicSessions] = useState<
-    UpdateAcademicSessionInterface[]
+  const [academicLevels, setAcademicLevels] = useState<
+    UpdateAcademicLevelInterface[]
   >([]);
-
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setLoading] = useState(false);
 
@@ -40,13 +38,13 @@ const useAcademicSession = ({
     }
 
     const { request, cancel } =
-      academicSessionService.getAll<
-        ApiResponseInterface<UpdateAcademicSessionInterface>
+      academicLevelService.getAll<
+        ApiResponseInterface<UpdateAcademicLevelInterface>
       >(params);
 
     request
       .then((result) => {
-        setAcademicSessions(result.data.data);
+        setAcademicLevels(result.data.data);
         setPagination(result.data.meta);
         setEdgeLinks(result.data.links);
         setLoading(false);
@@ -60,27 +58,20 @@ const useAcademicSession = ({
     return () => cancel();
   }, [search, currentPage, itemsPerPage]);
 
-  const saveAcademicSession = async ({
+  const saveAcademicLevel = async ({
     name,
-    start_date,
-    start_date_np,
-    end_date,
-    end_date_np,
-    academic_level_id,
-  }: AcademicSessionInterface) => {
+    description,
+  }: CreateAcademicLevelInterface) => {
     const params = {
       name,
-      start_date,
-      start_date_np,
-      end_date,
-      end_date_np,
-      academic_level_id,
+      description,
     };
+
     try {
       const result =
-        await academicSessionService.create<AcademicSessionInterface>(params);
+        await academicLevelService.create<CreateAcademicLevelInterface>(params);
       // Update state only after successful creation
-      setAcademicSessions([...academicSessions, result.data]);
+      setAcademicLevels([...academicLevels, result.data.data]);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -90,36 +81,26 @@ const useAcademicSession = ({
     }
   };
 
-  const updateAcademicSession = async ({
+  const updateAcademicLevel = async ({
     id,
     name,
-    start_date,
-    start_date_np,
-    end_date,
-    end_date_np,
-    academic_level_id,
-  }: UpdateAcademicSessionInterface) => {
+    description,
+  }: UpdateAcademicLevelInterface) => {
     const params = {
       id,
       name,
-      start_date,
-      start_date_np,
-      end_date,
-      end_date_np,
-      academic_level_id,
+      description,
     };
-    const originalAcademicLevel = [...academicSessions];
+    const originalAcademicLevel = [...academicLevels];
 
     try {
       console.log("Original:", originalAcademicLevel);
 
       const result =
-        await academicSessionService.update<UpdateAcademicSessionInterface>(
-          params
-        );
-      setAcademicSessions(
-        academicSessions.map((session) =>
-          session.id === result.data.data.id ? result.data.data : session
+        await academicLevelService.update<UpdateAcademicLevelInterface>(params);
+      setAcademicLevels(
+        academicLevels.map((level) =>
+          level.id === result.data.data.id ? result.data.data : level
         )
       );
     } catch (err) {
@@ -130,19 +111,18 @@ const useAcademicSession = ({
       }
     }
   };
-
   return {
-    academicSessions,
+    academicLevels,
     error,
     isLoading,
-    setAcademicSessions,
+    setAcademicLevels,
     setError,
     pagination,
     edgeLinks,
     currentPage,
-    saveAcademicSession,
-    updateAcademicSession,
+    saveAcademicLevel,
+    updateAcademicLevel,
   };
 };
 
-export default useAcademicSession;
+export default useAcademicLevels;

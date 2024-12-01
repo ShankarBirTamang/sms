@@ -33,7 +33,13 @@ class HttpService {
   update<T extends Entity>(entity: T) {
     return apiClient.put(this.endpoint + "/" + entity.id, entity);
   }
+  changeStatus<T extends Entity>(entity: T) {
+    return apiClient.post(
+      this.endpoint + "/" + entity.id + "/change-status",
+      entity
+    );
+  }
 }
-const create = (endpoint: string) => new HttpService(endpoint);
+const apiRoute = (endpoint: string) => new HttpService(endpoint);
 
-export default create;
+export default apiRoute;

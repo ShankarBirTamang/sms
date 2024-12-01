@@ -1,23 +1,22 @@
 import { useEffect, useState } from "react";
-import academicLevelService, {
-  CreateAcademicLevelInterface,
-  UpdateAcademicLevelInterface,
-} from "../../services/academics/academicLevelService";
 import { CanceledError } from "../../services/apiClient";
 import {
   ApiResponseInterface,
   PaginationAndSearch,
 } from "../../Interface/Interface";
 import { PaginationProps } from "../../components/Pagination/Pagination";
-
-const useAcademicLevels = ({
+import gradeGroupService, {
+  GradeGroupInterface,
+  UpdateGradeGroupInterface,
+} from "../services/gradeGroupService";
+const useGradeGroup = ({
   search = "",
-  currentPage = 2,
+  currentPage = 1,
   itemsPerPage = null,
 }: PaginationAndSearch) => {
-  const [academicLevels, setAcademicLevels] = useState<
-    UpdateAcademicLevelInterface[]
-  >([]);
+  const [gradeGroups, setGradeGroups] = useState<UpdateGradeGroupInterface[]>(
+    []
+  );
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setLoading] = useState(false);
 
@@ -25,7 +24,6 @@ const useAcademicLevels = ({
   const [pagination, setPagination] =
     useState<PaginationProps["pagination"]>(null);
   const [edgeLinks, setEdgeLinks] = useState<PaginationProps["edgeLinks"]>();
-  //end for Pagination
 
   useEffect(() => {
     setLoading(true);
@@ -38,13 +36,13 @@ const useAcademicLevels = ({
     }
 
     const { request, cancel } =
-      academicLevelService.getAll<
-        ApiResponseInterface<UpdateAcademicLevelInterface>
-      >(params);
+      gradeGroupService.getAll<ApiResponseInterface<UpdateGradeGroupInterface>>(
+        params
+      );
 
     request
       .then((result) => {
-        setAcademicLevels(result.data.data);
+        setGradeGroups(result.data.data);
         setPagination(result.data.meta);
         setEdgeLinks(result.data.links);
         setLoading(false);
@@ -58,20 +56,18 @@ const useAcademicLevels = ({
     return () => cancel();
   }, [search, currentPage, itemsPerPage]);
 
-  const saveAcademicLevel = async ({
-    name,
-    description,
-  }: CreateAcademicLevelInterface) => {
+  const saveGradeGroup = async ({ name, description }: GradeGroupInterface) => {
     const params = {
       name,
       description,
     };
 
     try {
-      const result =
-        await academicLevelService.create<CreateAcademicLevelInterface>(params);
+      const result = await gradeGroupService.create<GradeGroupInterface>(
+        params
+      );
       // Update state only after successful creation
-      setAcademicLevels([...academicLevels, result.data]);
+      setGradeGroups([...gradeGroups, result.data.data]);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -81,25 +77,26 @@ const useAcademicLevels = ({
     }
   };
 
-  const updateAcademicLevel = async ({
+  const updateGradeGroup = async ({
     id,
     name,
     description,
-  }: UpdateAcademicLevelInterface) => {
+  }: UpdateGradeGroupInterface) => {
     const params = {
       id,
       name,
       description,
     };
-    const originalAcademicLevel = [...academicLevels];
+    const originalGradeGroup = [...gradeGroups];
 
     try {
-      console.log("Original:", originalAcademicLevel);
+      console.log("Original:", originalGradeGroup);
 
-      const result =
-        await academicLevelService.update<UpdateAcademicLevelInterface>(params);
-      setAcademicLevels(
-        academicLevels.map((level) =>
+      const result = await gradeGroupService.update<UpdateGradeGroupInterface>(
+        params
+      );
+      setGradeGroups(
+        gradeGroups.map((level) =>
           level.id === result.data.data.id ? result.data.data : level
         )
       );
@@ -111,18 +108,19 @@ const useAcademicLevels = ({
       }
     }
   };
+
   return {
-    academicLevels,
+    gradeGroups,
     error,
     isLoading,
-    setAcademicLevels,
     setError,
+    setGradeGroups,
     pagination,
     edgeLinks,
     currentPage,
-    saveAcademicLevel,
-    updateAcademicLevel,
+    saveGradeGroup,
+    updateGradeGroup,
   };
 };
 
-export default useAcademicLevels;
+export default useGradeGroup;

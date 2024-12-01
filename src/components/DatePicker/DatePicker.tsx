@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { adToBs, bsToAd } from "@sbmdkl/nepali-date-converter";
+import { adToBs } from "@sbmdkl/nepali-date-converter";
 import Calendar from "@sbmdkl/nepali-datepicker-reactjs";
 import "@sbmdkl/nepali-datepicker-reactjs/dist/index.css";
 
@@ -13,11 +13,22 @@ export interface DateInterface {
 interface DatePickerProps {
   onDateChange: (dates: DateInterface) => void;
   title?: string;
+  errorBS?: string;
+  errorAD?: string;
+  valueAD?: string;
+  valueBS?: string;
 }
 
-const DatePicker = ({ onDateChange, title = "Date" }: DatePickerProps) => {
-  const [adDate, setAdDate] = useState<string>(""); // Ensure initial state is defined
-  const [bsDate, setBsDate] = useState<string>("");
+const DatePicker = ({
+  onDateChange,
+  title = "Date",
+  errorAD,
+  errorBS,
+  valueAD = "",
+  valueBS = "",
+}: DatePickerProps) => {
+  const [adDate, setAdDate] = useState<string>(valueAD); // Ensure initial state is defined
+  const [bsDate, setBsDate] = useState<string>(valueBS);
   const [renderKey, setRenderKey] = useState("");
 
   useEffect(() => {
@@ -58,11 +69,12 @@ const DatePicker = ({ onDateChange, title = "Date" }: DatePickerProps) => {
         <label className="required fw-bold fs-6 mb-2">{title} (BS)</label>
         <Calendar
           key={renderKey}
-          className="form-control form-control-solid mb-3 mb-lg-0"
+          className={`form-control mb-3 mb-lg-0 ${errorBS && "is-invalid"}`}
           language="en"
           onChange={handleDate}
           defaultDate={bsDate}
         />
+        {errorBS && <span className="text-danger">{errorBS}</span>}
       </div>
       <div className="col-6">
         <label className="required fw-bold fs-6 mb-2">{title} (AD)</label>
@@ -72,8 +84,9 @@ const DatePicker = ({ onDateChange, title = "Date" }: DatePickerProps) => {
           name="english-date"
           value={adDate}
           onChange={handleEnglishDateChange}
-          className="form-control form-control-solid mb-3 mb-lg-0"
+          className={`form-control mb-3 mb-lg-0 ${errorAD && "is-invalid"}`}
         />
+        {errorAD && <span className="text-danger">{errorAD}</span>}
       </div>
     </div>
   );

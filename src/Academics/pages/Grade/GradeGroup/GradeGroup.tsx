@@ -1,17 +1,17 @@
 import { useState } from "react";
-import Icon from "../../../components/Icon/Icon";
-import Loading from "../../../components/Loading/Loading";
+import Icon from "../../../../components/Icon/Icon";
+import Loading from "../../../../components/Loading/Loading";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-
-import Pagination from "../../../components/Pagination/Pagination";
-import useAcademicLevels from "../../../hooks/academics/useAcademicLevels";
-import useDebounce from "../../../hooks/useDebounce";
+import useDebounce from "../../../../hooks/useDebounce";
+import useGradeGroup from "../../../hooks/useGradeGroup";
+import Pagination from "../../../../components/Pagination/Pagination";
 import {
-  CreateAcademicLevelInterface,
-  UpdateAcademicLevelInterface,
-} from "../../../services/academics/academicLevelService";
+  GradeGroupInterface,
+  UpdateGradeGroupInterface,
+} from "../../../services/gradeGroupService";
+import useDocumentTitle from "../../../../hooks/useDocumentTitle";
 
 const schema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -20,22 +20,27 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-const AcademicLevel = () => {
+const GradeGroup = () => {
+  useDocumentTitle("Grade Groups");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
   const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
-  //get academic Levels
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [currentGradeGroupId, setCurrentGradeGroupId] = useState<number | null>(
+    null
+  );
+
   const {
-    academicLevels,
+    gradeGroups,
     isLoading,
     pagination,
     edgeLinks,
-    saveAcademicLevel,
-    updateAcademicLevel,
+    saveGradeGroup,
+    updateGradeGroup,
     setError,
-  } = useAcademicLevels({
+  } = useGradeGroup({
     search: debouncedSearchTerm,
     currentPage,
     itemsPerPage,
@@ -55,35 +60,24 @@ const AcademicLevel = () => {
     setSearchTerm(event.target.value);
     setCurrentPage(1); // Reset to the first page on new search
   };
-  // useEffect(() => {
-  //   saveAcademicLevel({
-  //     id: 0,
-  //     name: "TestName",
-  //     description: "test trest",
-  //   });
-  // }, []);
 
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
-  const handleEditClick = (level: UpdateAcademicLevelInterface) => {
+  const handleEditClick = (group: UpdateGradeGroupInterface) => {
     reset({
-      name: level.name,
-      description: level.description ?? "",
+      name: group.name,
+      description: group.description ?? "",
     });
     setFormMode("edit");
-    setCurrentLevelId(level.id);
+    setCurrentGradeGroupId(group.id);
   };
 
-  const onSubmit = (
-    data: CreateAcademicLevelInterface | UpdateAcademicLevelInterface
-  ) => {
+  const onSubmit = (data: GradeGroupInterface | UpdateGradeGroupInterface) => {
     try {
       setIsSubmitting(true);
       if (formMode === "create") {
-        saveAcademicLevel(data);
+        saveGradeGroup(data);
       } else if (formMode === "edit") {
-        if (currentLevelId) {
-          updateAcademicLevel({ ...data, id: currentLevelId });
+        if (currentGradeGroupId) {
+          updateGradeGroup({ ...data, id: currentGradeGroupId });
         } else {
           setError("Error Updating Data");
         }
@@ -96,14 +90,13 @@ const AcademicLevel = () => {
       setIsSubmitting(false);
     }
   };
-  const [currentLevelId, setCurrentLevelId] = useState<number | null>(null);
   const resetForm = () => {
     reset({
       name: "",
       description: "",
     });
     setFormMode("create");
-    setCurrentLevelId(null);
+    setCurrentGradeGroupId(null);
     setError("");
   };
 
@@ -123,7 +116,7 @@ const AcademicLevel = () => {
             <div className="card-header mb-6">
               <div className="card-title">
                 <h1 className="d-flex align-items-center position-relative my-1">
-                  {formMode === "create" ? "Add New Level" : "Edit Level"}
+                  {formMode === "create" ? "Add New " : "Edit"} Grade Group
                 </h1>
               </div>
             </div>
@@ -197,23 +190,26 @@ const AcademicLevel = () => {
             <div className="card-header mb-6">
               <div className="card-title w-100">
                 <h1 className="d-flex justify-content-between align-items-center position-relative my-1 w-100">
-                  <span>Academic Levels</span>
+                  <span>Grade Groups</span>
                   <div className="d-flex gap-2">
-                    <div className="search-input">
+                    <div className="d-flex align-items-center position-relative h-100">
+                      <Icon
+                        name="searchDark"
+                        className="svg-icon svg-icon-1 position-absolute ms-6"
+                      />
+
                       <input
                         type="text"
-                        name="search"
+                        id="data_search"
                         value={searchTerm}
                         onChange={handleSearchChange}
-                        placeholder="Search levels..."
-                        className="form-control"
+                        className="form-control w-250px  ps-14"
+                        placeholder="Search Grade Group"
                       />
                     </div>
+
                     <select
-                      className="form-control"
-                      style={{
-                        width: 50,
-                      }}
+                      className="form-control w-50px"
                       title="Items per Page"
                       id="itemsPerPage"
                       value={itemsPerPage ?? "all"}
@@ -239,7 +235,7 @@ const AcademicLevel = () => {
               <div className="table">
                 <div className="table-responsive">
                   {isLoading && <Loading />}
-                  {!isLoading && academicLevels.length === 0 && (
+                  {!isLoading && gradeGroups.length === 0 && (
                     <div className="alert alert-info">
                       No Academic Levels Found
                     </div>
@@ -259,19 +255,19 @@ const AcademicLevel = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {academicLevels.map((level, index) => (
+                        {gradeGroups.map((group, index) => (
                           <tr key={index}>
                             <td className="text-center">
                               {" "}
                               {/* {(currentPage - 1) * itemsPerPage ?? 0 + index + 1} */}
                             </td>
-                            <td>{level.name}</td>
-                            <td>{level.description}</td>
+                            <td>{group.name}</td>
+                            <td>{group.description}</td>
                             <td className="text-end">
                               <button
-                                title="edit academic level"
+                                title="edit grade group"
                                 type="button"
-                                onClick={() => handleEditClick(level)}
+                                onClick={() => handleEditClick(group)}
                                 className="btn btn-light-info btn-icon btn-sm"
                               >
                                 <Icon name={"edit"} className={"svg-icon"} />
@@ -301,4 +297,4 @@ const AcademicLevel = () => {
   );
 };
 
-export default AcademicLevel;
+export default GradeGroup;

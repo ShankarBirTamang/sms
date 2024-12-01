@@ -1,16 +1,5 @@
 import axios, { CanceledError } from "axios";
 
-// export default axios.create({
-//   baseURL: "https://jsonplaceholder.typicode.com",
-//   headers: {
-//     // 'api-key' : '...'
-//   },
-// });
-
-// export { CanceledError };
-
-// import axios from "axios";
-
 // Retrieve the base URL from your environment variables
 const baseUrl = import.meta.env.VITE_API_URL;
 
