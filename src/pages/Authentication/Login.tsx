@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
+import Icon from "../../components/Icon/Icon";
 
 const schema = z.object({
   email: z
@@ -18,8 +19,9 @@ type FormData = z.infer<typeof schema>;
 
 const Login = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-
+  const [isVisible, setIsVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const {
@@ -29,6 +31,16 @@ const Login = () => {
     reset,
     formState: { errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
+
+  //Set PW visible
+  const handleEyeVisiblity = () => {
+    setIsVisible((prev) => !prev);
+  };
+
+  //Eyes visible only when PW is in the input
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
 
   useEffect(() => {
     const validateToken = async () => {
@@ -162,14 +174,34 @@ const Login = () => {
                   </div>
 
                   <div className="fv-row mb-3">
-                    <input
-                      type="password"
-                      placeholder="Password"
-                      {...register("password")}
-                      className={`form-control bg-transparent ${
-                        errors.password && "is-invalid"
-                      }`}
-                    />
+                    <div className="position-relative">
+                      <input
+                        type={isVisible ? "text" : "password"}
+                        placeholder="Password"
+                        {...register("password")}
+                        className={`form-control bg-transparent ${
+                          errors.password && "is-invalid"
+                        }`}
+                        onInput={handlePasswordChange}
+                      />
+                      {password.length > 0 && (
+                        <span
+                          style={{
+                            position: "absolute",
+                            top: "50%",
+                            right: "3%",
+                            transform: "translate(-50%, -50%)",
+                            cursor: "pointer",
+                          }}
+                          onClick={handleEyeVisiblity}
+                        >
+                          <Icon
+                            name={isVisible ? "eye" : "eyeOff"}
+                            className="svg-icon m-0"
+                          />
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   {errors.password && (
