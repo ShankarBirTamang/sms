@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/Icon/ProtectedRoute";
 import Login from "./pages/Authentication/Login";
 import AcademicRoute from "./Academics/AcademicRoute";
 import { PermissionProvider } from "./context/permissionContext";
+import Address from "./pages/Address/Address";
 
 const App: React.FC = () => {
   return (
@@ -20,6 +21,7 @@ const App: React.FC = () => {
               <Route element={<Layout />}>
                 <Route path="/" element={<Dashboard />} />
                 {/* Include academic routes */}
+                <Route path="general/address" element={<Address />} />
               </Route>
               <Route path="academics/*" element={<AcademicRoute />} />
             </Route>
