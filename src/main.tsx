@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/Icon/ProtectedRoute";
 import Login from "./pages/Authentication/Login";
 import AcademicRoute from "./Academics/AcademicRoute";
 import { PermissionProvider } from "./context/permissionContext";
+import InstituteRoute from "./Institute/InstituteRoute";
 
 const App: React.FC = () => {
   return (
@@ -22,6 +23,7 @@ const App: React.FC = () => {
                 {/* Include academic routes */}
               </Route>
               <Route path="academics/*" element={<AcademicRoute />} />
+              <Route path="institute/*" element={<InstituteRoute />} />
             </Route>
           </Routes>
         </PermissionProvider>

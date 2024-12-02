@@ -1,5 +1,5 @@
 import Icon from "../../components/Icon/Icon.tsx";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import Settings from "./Settings/Settings.tsx";
 import { useRef, useState } from "react";
 // import {useState} from "react";
@@ -15,7 +15,7 @@ const Sidebar = () => {
     {
       title: "Dashboard",
       icon: "dashboard",
-      route: "",
+      route: "/",
     },
     {
       title: "Students",
@@ -44,13 +44,13 @@ const Sidebar = () => {
           className="aside-logo flex-column-auto pt-10 pt-lg-20"
           id="kt_aside_logo"
         >
-          <a href="../../demo9/dist/index.html">
+          <Link to={"/"}>
             <img
               alt="Logo"
               src="assets/media/logos/demo9.svg"
               className="h-40px"
             />
-          </a>
+          </Link>
         </div>
 
         <div

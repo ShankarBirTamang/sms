@@ -53,6 +53,7 @@ const menuItems: MenuItem[] = [
       },
     ],
   },
+
   {
     title: "Transportation",
     prefix: "transportation",
@@ -60,6 +61,16 @@ const menuItems: MenuItem[] = [
       { title: "Vehicles", route: "vehicles" },
       { title: "Routes", route: "routes" },
       { title: "Students", route: "students" },
+    ],
+  },
+  {
+    title: "Institute",
+    prefix: "institute",
+    submenu: [
+      { title: "Details", route: "details" },
+      { title: "Room/Halls", route: "room-halls" },
+      { title: "Laboratories", route: "laboratories" },
+      { title: "Boardings", route: "boardings" },
     ],
   },
   {
