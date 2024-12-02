@@ -1,13 +1,11 @@
 import { Route, Routes } from "react-router-dom";
 import Layout from "../layout/Layout";
 import ProtectedRoute from "../components/Icon/ProtectedRoute";
-import Dashboard from "../pages/Dashboard/Dashboard";
 import Students from "../pages/Students/Students";
 import AcademicLevel from "../Academics/pages/AcademicLevel/AcademicLevel";
 import AcademicSession from "../Academics/pages/AcademicSession/AcademicSession";
-import GradeGroup from "../Academics/pages/GradeGroup/GradeGroup";
 import Grade from "../Academics/pages/Grade/Grade";
-import GradeSettings from "./GradeSettings/GradeSettings";
+import GradeSettings from "./pages/GradeSettings/GradeSettings";
 
 const routes = [
   {

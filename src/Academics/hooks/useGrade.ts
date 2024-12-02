@@ -36,8 +36,6 @@ const useGrade = ({
       gradeService.getAll<ApiResponseInterface<UpdateGradeInterface>>(params);
     request
       .then((result) => {
-        console.log(result.data);
-
         setGrades(result.data.data);
         setPagination(result.data.meta);
         setEdgeLinks(result.data.links);

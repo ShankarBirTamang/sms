@@ -1,43 +1,45 @@
 import { useState } from "react";
-import Icon from "../../../components/Icon/Icon";
-import Loading from "../../../components/Loading/Loading";
+import Icon from "../../../../components/Icon/Icon";
+import Loading from "../../../../components/Loading/Loading";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 
-import Pagination from "../../../components/Pagination/Pagination";
-import useAcademicLevels from "../../hooks/useAcademicLevels";
-import useDebounce from "../../../hooks/useDebounce";
+import Pagination from "../../../../components/Pagination/Pagination";
+import useDebounce from "../../../../hooks/useDebounce";
+import useDocumentTitle from "../../../../hooks/useDocumentTitle";
+import useFaculty from "../../../hooks/useFaculty";
 import {
-  CreateAcademicLevelInterface,
-  UpdateAcademicLevelInterface,
-} from "../../services/academicLevelService";
-import useDocumentTitle from "../../../hooks/useDocumentTitle";
+  FacultyInterface,
+  UpdateFacultyInterface,
+} from "../../../services/facultyService";
 
 const schema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
+  code: z.string().min(1, { message: "Code is required" }),
   description: z.string(),
 });
 
 type FormData = z.infer<typeof schema>;
 
-const AcademicLevel = () => {
-  useDocumentTitle("Academic Levels");
+const Faculty = () => {
+  useDocumentTitle("Faculties");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
   const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
-  //get academic Levels
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
   const {
-    academicLevels,
+    faculties,
     isLoading,
     pagination,
     edgeLinks,
-    saveAcademicLevel,
-    updateAcademicLevel,
+    saveFaculty,
+    updateFaculty,
     setError,
-  } = useAcademicLevels({
+  } = useFaculty({
     search: debouncedSearchTerm,
     currentPage,
     itemsPerPage,
@@ -58,27 +60,24 @@ const AcademicLevel = () => {
     setCurrentPage(1); // Reset to the first page on new search
   };
 
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
-  const handleEditClick = (level: UpdateAcademicLevelInterface) => {
+  const handleEditClick = (faculty: UpdateFacultyInterface) => {
     reset({
-      name: level.name,
-      description: level.description ?? "",
+      name: faculty.name,
+      code: faculty.code,
+      description: faculty.description ?? "",
     });
     setFormMode("edit");
-    setCurrentLevelId(level.id);
+    setCurrentFacultyId(faculty.id);
   };
 
-  const onSubmit = (
-    data: CreateAcademicLevelInterface | UpdateAcademicLevelInterface
-  ) => {
+  const onSubmit = (data: FacultyInterface | UpdateFacultyInterface) => {
     try {
       setIsSubmitting(true);
       if (formMode === "create") {
-        saveAcademicLevel(data);
+        saveFaculty(data);
       } else if (formMode === "edit") {
-        if (currentLevelId) {
-          updateAcademicLevel({ ...data, id: currentLevelId });
+        if (currentFacultyId) {
+          updateFaculty({ ...data, id: currentFacultyId });
         } else {
           setError("Error Updating Data");
         }
@@ -91,14 +90,15 @@ const AcademicLevel = () => {
       setIsSubmitting(false);
     }
   };
-  const [currentLevelId, setCurrentLevelId] = useState<number | null>(null);
+  const [currentFacultyId, setCurrentFacultyId] = useState<number | null>(null);
   const resetForm = () => {
     reset({
       name: "",
+      code: "",
       description: "",
     });
     setFormMode("create");
-    setCurrentLevelId(null);
+    setCurrentFacultyId(null);
     setError("");
   };
 
@@ -118,7 +118,7 @@ const AcademicLevel = () => {
             <div className="card-header mb-6">
               <div className="card-title">
                 <h1 className="d-flex align-items-center position-relative my-1">
-                  {formMode === "create" ? "Add New Level" : "Edit Level"}
+                  {formMode === "create" ? "Add New" : "Edit"} Faculty
                 </h1>
               </div>
             </div>
@@ -130,7 +130,7 @@ const AcademicLevel = () => {
                   <div className="col-12">
                     <div className="fv-row mb-7">
                       <label className="required fw-bold fs-6 mb-2">
-                        Level Name
+                        Faculty Name
                       </label>
                       <input
                         type="text"
@@ -143,6 +143,22 @@ const AcademicLevel = () => {
                       {errors.name && (
                         <span className="text-danger">
                           {errors.name.message}
+                        </span>
+                      )}
+                    </div>
+                    <div className="fv-row mb-7">
+                      <label className="required fw-bold fs-6 mb-2">Code</label>
+                      <input
+                        type="text"
+                        {...register("code")}
+                        className={`form-control ${
+                          errors.code && "is-invalid"
+                        } form-control mb-3 mb-lg-0`}
+                        placeholder="Ex: Educator"
+                      />
+                      {errors.code && (
+                        <span className="text-danger">
+                          {errors.code.message}
                         </span>
                       )}
                     </div>
@@ -192,7 +208,7 @@ const AcademicLevel = () => {
             <div className="card-header mb-6">
               <div className="card-title w-100">
                 <h1 className="d-flex justify-content-between align-items-center position-relative my-1 w-100">
-                  <span>Academic Levels</span>
+                  <span>Faculties</span>
                   <div className="d-flex gap-2">
                     <div className="d-flex align-items-center position-relative h-100">
                       <Icon
@@ -206,7 +222,7 @@ const AcademicLevel = () => {
                         value={searchTerm}
                         onChange={handleSearchChange}
                         className="form-control w-250px ps-14"
-                        placeholder="Search Academic Levels"
+                        placeholder="Search Faculties"
                       />
                     </div>
 
@@ -237,7 +253,7 @@ const AcademicLevel = () => {
               <div className="table">
                 <div className="table-responsive">
                   {isLoading && <Loading />}
-                  {!isLoading && academicLevels.length === 0 && (
+                  {!isLoading && faculties.length === 0 && (
                     <div className="alert alert-info">
                       No Academic Levels Found
                     </div>
@@ -257,19 +273,21 @@ const AcademicLevel = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {academicLevels.map((level, index) => (
+                        {faculties.map((faculty, index) => (
                           <tr key={index}>
                             <td className="text-center">
                               {" "}
                               {/* {(currentPage - 1) * itemsPerPage ?? 0 + index + 1} */}
                             </td>
-                            <td>{level.name}</td>
-                            <td>{level.description}</td>
+                            <td>
+                              {faculty.name} ({faculty.code})
+                            </td>
+                            <td>{faculty.description}</td>
                             <td className="text-end">
                               <button
-                                title="edit academic level"
+                                title="edit faculty"
                                 type="button"
-                                onClick={() => handleEditClick(level)}
+                                onClick={() => handleEditClick(faculty)}
                                 className="btn btn-light-info btn-icon btn-sm"
                               >
                                 <Icon name={"edit"} className={"svg-icon"} />
@@ -299,4 +317,4 @@ const AcademicLevel = () => {
   );
 };
 
-export default AcademicLevel;
+export default Faculty;

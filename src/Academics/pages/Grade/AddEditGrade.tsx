@@ -2,17 +2,21 @@ import { useEffect, useState } from "react";
 import Icon from "../../../components/Icon/Icon";
 import Loading from "../../../components/Loading/Loading";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { number, string, z } from "zod";
 import { useForm } from "react-hook-form";
 import useAcademicSession from "../../hooks/useAcademicSession";
 import CustomSelect, {
   Option,
 } from "../../../components/CustomSelect/CustomSelect";
 import useGradeGroup from "../../hooks/useGradeGroup";
+import useFaculty from "../../hooks/useFaculty";
+import { Stringifier } from "styled-components/dist/types";
+import SectionComponent from "./SectionComponent";
 
 const AddEditGrade = () => {
   const { academicSessions } = useAcademicSession({});
   const { gradeGroups } = useGradeGroup({});
+
   const academicSessionOptions = academicSessions.map((session) => ({
     value: session.id,
     label: session.name,
@@ -28,7 +32,7 @@ const AddEditGrade = () => {
   const [selectedGradeGroup, setSelectedGradeGroup] = useState<Option | null>(
     null
   );
-  const generalSections = ["A", "B", "C", "D", "E", "F", "G"];
+
   const SectionSchema = z.object({
     name: z.string(),
   });
@@ -54,16 +58,12 @@ const AddEditGrade = () => {
     ),
     name: z.string().min(1, { message: "Grade name is required" }),
     short_name: z.string().min(1, { message: "Short Name is Required" }),
-    has_faculties: z
-      .string()
-      .transform((val) => val === "true")
-      .refine((val) => typeof val === "boolean", {
-        message: "Invalid boolean value",
-      }),
+    has_faculties: z.boolean({ message: "Has Faculties Field is requred." }),
     section_type: z.enum(["standard", "custom"], {
       errorMap: () => ({ message: "This field is required" }),
     }),
     sections: z.array(SectionSchema),
+    selectedFaculties: z.array(z.string()),
   });
   type FormData = z.infer<typeof GradeSchema>;
   const {
@@ -79,7 +79,7 @@ const AddEditGrade = () => {
     selectedOption: { value: number; label: string } | null
   ) => {
     if (selectedOption) {
-      setValue("academic_session_id", selectedOption.value); // Update form value
+      setValue("academic_session_id", selectedOption.value);
     }
   };
 
@@ -87,14 +87,13 @@ const AddEditGrade = () => {
     selectedOption: { value: number; label: string } | null
   ) => {
     if (selectedOption) {
-      setValue("grade_group_id", selectedOption.value); // Update form value
+      setValue("grade_group_id", selectedOption.value);
     }
   };
 
   const onSubmit = (data: FormData) => {
     alert("oops");
     console.log(data);
-    // Handle the form submission logic here
   };
 
   useEffect(() => {
@@ -102,6 +101,8 @@ const AddEditGrade = () => {
       console.log("Current validation errors:", errors);
     }
   }, [errors]);
+
+  //custom section without faculties end
 
   return (
     <div className="add-grade">
@@ -175,126 +176,9 @@ const AddEditGrade = () => {
             </div>
           </div>
 
-          <div className="col-md-6 mb-3">
-            <div className="fv-row mb-7">
-              <label className="required fw-bold fs-6 mb-2">
-                Does Grade Have Streams?
-              </label>
-              <div className="d-flex gap-3 mt-3">
-                <div className="form-check">
-                  <input
-                    title="Yes"
-                    className="form-check-input"
-                    type="radio"
-                    value="true"
-                    id="has_faculties_yes"
-                    {...register("has_faculties", { valueAsNumber: true })}
-                  />
-                  <label className="form-check-label">Yes</label>
-                </div>
-                <div className="form-check">
-                  <input
-                    title="No"
-                    className="form-check-input"
-                    type="radio"
-                    value="false"
-                    id="has_faculties_no"
-                    checked
-                    {...register("has_faculties", { valueAsNumber: true })}
-                  />
-                  <label className="form-check-label">No</label>
-                </div>
-              </div>
-              {errors.has_faculties && (
-                <span className="text-danger">
-                  {errors.has_faculties.message}
-                </span>
-              )}
-            </div>
-          </div>
-
-          <div className="col-md-6 mb-3">
-            <div className="fv-row mb-7">
-              <label className="required fw-bold fs-6 mb-2">
-                Grade's Section Name Type:
-              </label>
-              <div className="d-flex gap-3 mt-3">
-                <div className="form-check">
-                  <input
-                    title="Standard"
-                    className="form-check-input"
-                    type="radio"
-                    value="standard"
-                    id="section_type_standard"
-                    {...register("section_type", {
-                      required: "This field is required",
-                    })}
-                  />
-                  <label
-                    className="form-check-label"
-                    htmlFor="section_type_standard"
-                  >
-                    Standard A,B,C
-                  </label>
-                </div>
-                <div className="form-check">
-                  <input
-                    title="Custom"
-                    className="form-check-input"
-                    type="radio"
-                    value="custom"
-                    id="section_type_custom"
-                    checked
-                    {...register("section_type")}
-                  />
-                  <label
-                    className="form-check-label"
-                    htmlFor="section_type_custom"
-                  >
-                    Custom Names
-                  </label>
-                </div>
-              </div>
-              {errors.section_type && (
-                <span className="text-danger">
-                  {errors.section_type.message}
-                </span>
-              )}
-            </div>
-          </div>
-
-          <div className="col-12">
-            <div className="fv-row mb-7">
-              <label className="required fw-bold fs-6 mb-2">
-                Select Sections
-              </label>
-              <div className="row">
-                {generalSections.map((section, index) => (
-                  <div className="col-1" key={index}>
-                    <div className="form-check">
-                      <input
-                        title={section}
-                        className="form-check-input sectionCheckbox"
-                        type="checkbox"
-                        value={section}
-                        id={`section-${index}`}
-                        {...register("sections")}
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor={`section-${index}`}
-                      >
-                        {section}
-                      </label>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              {errors.sections && (
-                <span className="text-danger">{errors.sections.message}</span>
-              )}
-            </div>
-          </div>
+          {/* section part start */}
+          <SectionComponent />
+          {/* Section part end */}
         </div>
         <div className="text-center pt-15">
           <button type="button" className="btn btn-light me-3">

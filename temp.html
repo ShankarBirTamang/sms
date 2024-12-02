@@ -1,75 +1,141 @@
-<div className="card mb-5 mb-xl-10">
-  <div className="card-body pt-9 pb-0">
-    <div className="d-flex flex-wrap flex-sm-nowrap mb-3">
-      <div className="flex-grow-1">
-        <div
-          className="d-flex justify-content-between align-items-start flex-wrap mb-2"
-        >
-          <div className="d-flex flex-column">
-            <div className="d-flex align-items-center mb-2">Max Smith</div>
-          </div>
+<div className="col-12">
+  <div className="fv-row mb-7">
+    <label className="required fw-bold fs-6 mb-2">Select Faculties</label>
+    <div className="d-flex gap-5 flex-wrap">
+      <div className="">
+        <div className="form-check">
+          <input
+            className="form-check-input sectionCheckbox"
+            type="checkbox"
+            value="Science"
+            id="Science"
+            n=""
+            wire:model.live="newGrade.faculties"
+          />
+          <label className="form-check-label" for="Science"> Science </label>
         </div>
       </div>
-      <ul
-        className="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-5 fw-bold"
-      >
-        <li className="nav-item mt-2">
-          <a
-            className="nav-link text-active-primary ms-0 me-10 py-5 active"
-            href="../../demo9/dist/account/overview.html"
-            >Overview</a
-          >
-        </li>
-        <li className="nav-item mt-2">
-          <a
-            className="nav-link text-active-primary ms-0 me-10 py-5"
-            href="../../demo9/dist/account/settings.html"
-            >Settings</a
-          >
-        </li>
-        <li className="nav-item mt-2">
-          <a
-            className="nav-link text-active-primary ms-0 me-10 py-5"
-            href="../../demo9/dist/account/security.html"
-            >Security</a
-          >
-        </li>
-        <li className="nav-item mt-2">
-          <a
-            className="nav-link text-active-primary ms-0 me-10 py-5"
-            href="../../demo9/dist/account/billing.html"
-            >Billing</a
-          >
-        </li>
-        <li className="nav-item mt-2">
-          <a
-            className="nav-link text-active-primary ms-0 me-10 py-5"
-            href="../../demo9/dist/account/statements.html"
-            >Statements</a
-          >
-        </li>
-        <li className="nav-item mt-2">
-          <a
-            className="nav-link text-active-primary ms-0 me-10 py-5"
-            href="../../demo9/dist/account/referrals.html"
-            >Referrals</a
-          >
-        </li>
-        <li className="nav-item mt-2">
-          <a
-            className="nav-link text-active-primary ms-0 me-10 py-5"
-            href="../../demo9/dist/account/api-keys.html"
-            >API Keys</a
-          >
-        </li>
-        <li className="nav-item mt-2">
-          <a
-            className="nav-link text-active-primary ms-0 me-10 py-5"
-            href="../../demo9/dist/account/logs.html"
-            >Logs</a
-          >
-        </li>
-      </ul>
+      <div className="">
+        <div className="form-check">
+          <input
+            className="form-check-input sectionCheckbox"
+            type="checkbox"
+            value="Management"
+            id="Management"
+            n=""
+            wire:model.live="newGrade.faculties"
+          />
+          <label className="form-check-label" for="Management">
+            Management
+          </label>
+        </div>
+      </div>
+      <div className="">
+        <div className="form-check">
+          <input
+            className="form-check-input sectionCheckbox"
+            type="checkbox"
+            value="Humanities"
+            id="Humanities"
+            n=""
+            wire:model.live="newGrade.faculties"
+          />
+          <label className="form-check-label" for="Humanities">
+            Humanities
+          </label>
+        </div>
+      </div>
+      <div className="">
+        <div className="form-check">
+          <input
+            className="form-check-input sectionCheckbox"
+            type="checkbox"
+            value="Computer Science"
+            id="Computer Science"
+            n=""
+            wire:model.live="newGrade.faculties"
+          />
+          <label className="form-check-label" for="Computer Science">
+            Computer Science
+          </label>
+        </div>
+      </div>
+      <div className="">
+        <div className="form-check">
+          <input
+            className="form-check-input sectionCheckbox"
+            type="checkbox"
+            value="Hotel Management"
+            id="Hotel Management"
+            n=""
+            wire:model.live="newGrade.faculties"
+          />
+          <label className="form-check-label" for="Hotel Management">
+            Hotel Management
+          </label>
+        </div>
+      </div>
+      <div className="">
+        <div className="form-check">
+          <input
+            className="form-check-input sectionCheckbox"
+            type="checkbox"
+            value="Education"
+            id="Education"
+            n=""
+            wire:model.live="newGrade.faculties"
+          />
+          <label className="form-check-label" for="Education">
+            Education
+          </label>
+        </div>
+      </div>
+      <div className="">
+        <div className="form-check">
+          <input
+            className="form-check-input sectionCheckbox"
+            type="checkbox"
+            value="Electrical Engineering"
+            id="Electrical Engineering"
+            n=""
+            wire:model.live="newGrade.faculties"
+          />
+          <label className="form-check-label" for="Electrical Engineering">
+            Electrical Engineering
+          </label>
+        </div>
+      </div>
+      <div className="">
+        <div className="form-check">
+          <input
+            className="form-check-input sectionCheckbox"
+            type="checkbox"
+            value="Computer Engineering"
+            id="Computer Engineering"
+            n=""
+            wire:model.live="newGrade.faculties"
+          />
+          <label className="form-check-label" for="Computer Engineering">
+            Computer Engineering
+          </label>
+        </div>
+      </div>
+      <div className="">
+        <div className="form-check">
+          <input
+            className="form-check-input sectionCheckbox"
+            type="checkbox"
+            value="Civil Engineering"
+            id="Civil Engineering"
+            n=""
+            wire:model.live="newGrade.faculties"
+          />
+          <label className="form-check-label" for="Civil Engineering">
+            Civil Engineering
+          </label>
+        </div>
+      </div>
     </div>
   </div>
+  <hr />
 </div>

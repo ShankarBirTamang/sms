@@ -15,17 +15,15 @@ const Grade = () => {
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
   const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
-  const [addGradeDrawer, setAddGradeDrawer] = useState(false);
+  const [addGradeDrawer, setAddGradeDrawer] = useState(true);
   const { grades, isLoading, pagination, edgeLinks } = useGrade({
     search: debouncedSearchTerm,
     currentPage,
     itemsPerPage,
   });
-  console.log(grades);
-
+  ``;
   const toggleAddGradeDrawer = () => {
     setAddGradeDrawer(!addGradeDrawer);
-    console.log(addGradeDrawer);
   };
   // header functions
   const handlePageChange = (page: number) => {
@@ -101,7 +99,7 @@ const Grade = () => {
                 isOpen={addGradeDrawer}
                 onClose={toggleAddGradeDrawer}
                 position="right"
-                width="800px"
+                width="900px"
                 title="Add New Grade"
               >
                 <AddEditGrade />
@@ -138,8 +136,8 @@ const Grade = () => {
                     <td>
                       <div className="w-300px">
                         {Object.entries(grade.sections).map(
-                          ([sectionGroup, sections]) => (
-                            <div className="mb-1">
+                          ([sectionGroup, sections], sci) => (
+                            <div key={`SEC-${sci}`} className="mb-1">
                               <strong>{sectionGroup}:</strong>
                               <div className="d-flex flex-wrap gap-3">
                                 {sections.map((section, si) => (
