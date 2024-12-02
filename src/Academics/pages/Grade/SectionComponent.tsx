@@ -83,9 +83,6 @@ const SectionComponent = () => {
     );
   };
 
-  //   const handleRemoveSectionFromCustomFaculty(facultyId:number,index:number){
-
-  //   }
   const generalSections = ["A", "B", "C", "D", "E", "F", "G"];
 
   const handleHasFacultiesChange = (
@@ -102,17 +99,6 @@ const SectionComponent = () => {
     const value = event.target.value as "standard" | "custom";
     setSectionType(value); // Update the local state
     // setValue("section_type", value); // Update the form state
-  };
-
-  const handleSelectedFaculties = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = event.target.value;
-    if (event.target.checked) {
-      setSelectedFaculties((prev) => [...prev, value]);
-    } else {
-      setSelectedFaculties((prev) => prev.filter((option) => option !== value));
-    }
   };
 
   //custom section without faculties
