@@ -21,7 +21,7 @@ const Grade = () => {
     currentPage,
     itemsPerPage,
   });
-  ``;
+
   const toggleAddGradeDrawer = () => {
     setAddGradeDrawer(!addGradeDrawer);
   };
@@ -52,7 +52,7 @@ const Grade = () => {
               data-kt-user-table-toolbar="base"
             >
               <div className="d-flex gap-2">
-                <div className="d-flex align-items-center position-relative h-100">
+                <div className="d-flex align-items-center position-relative">
                   <Icon
                     name="searchDark"
                     className="svg-icon svg-icon-1 position-absolute ms-6"

@@ -1,15 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import useFaculty from "../../hooks/useFaculty";
-import Icon from "../../../components/Icon/Icon";
 
-const SectionComponent = () => {
+export interface SectionData {
+  hasFaculties: boolean;
+  sectionType: "standard" | "custom";
+  facultySections: { facultyId: number; sections: string[] }[];
+  sections: string[];
+}
+interface AddSectionInterface {
+  onSectionDataChange: (data: SectionData, isValid: boolean) => void;
+}
+
+const SectionComponent = ({ onSectionDataChange }: AddSectionInterface) => {
   const { faculties } = useFaculty({});
-  const [hasFaculties, setHasFaculties] = useState<boolean>(true);
-  const [sectionType, setSectionType] = useState<string>("custom");
-  const [selectedFaculties, setSelectedFaculties] = useState<string[]>([]);
+  const [hasFaculties, setHasFaculties] = useState<boolean>(false);
+  const [sectionType, setSectionType] = useState<
+    "standard" | "custom" | undefined
+  >("standard");
   const [facultySections, setFacultySections] = useState<
     { facultyId: number; sections: string[] }[]
   >([]);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [sections, setSections] = useState<string[]>([]);
 
@@ -90,7 +101,8 @@ const SectionComponent = () => {
   ) => {
     const value = event.target.value === "true";
     setHasFaculties(value); // Update the local state
-    // setValue("has_faculties", value); // Update the form state
+    setFacultySections([]);
+    setSections([]);
   };
 
   const handleSectionTypeChange = (
@@ -98,7 +110,8 @@ const SectionComponent = () => {
   ) => {
     const value = event.target.value as "standard" | "custom";
     setSectionType(value); // Update the local state
-    // setValue("section_type", value); // Update the form state
+    setFacultySections([]);
+    setSections([]);
   };
 
   //custom section without faculties
@@ -117,13 +130,46 @@ const SectionComponent = () => {
     setSections(newSections);
   };
 
-  useEffect(() => {
-    console.log("Handle Standard SElection Checkbox:", sections);
-  }, [sections]);
+  // useEffect(() => {
+  //   console.log("Handle Standard SElection Checkbox:", sections);
+  // }, [sections]);
+
+  // useEffect(() => {
+  //   console.log("Handle Faculty Sections:", facultySections);
+  // }, [facultySections]);
+
+  const validate = useCallback(() => {
+    const newErrors: { [key: string]: string } = {};
+    if (hasFaculties && facultySections.length === 0) {
+      newErrors.facultySections = "At least one faculty must be selected.";
+    }
+    if (!hasFaculties && sections.length === 0) {
+      newErrors.sections = "At least one section must be added.";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }, [hasFaculties, facultySections, sections]);
 
   useEffect(() => {
-    console.log("Handle Faculty Sections:", facultySections);
-  }, [facultySections]);
+    const isValid = validate();
+    console.log(isValid);
+
+    const data: SectionData = {
+      hasFaculties,
+      sectionType,
+      facultySections,
+      sections,
+    };
+    onSectionDataChange(data, isValid); // Send validated data and validation status to the parent
+  }, [
+    hasFaculties,
+    sectionType,
+    facultySections,
+    sections,
+    onSectionDataChange,
+    validate,
+  ]);
+
   return (
     <>
       <div className="col-md-6 mb-3">
@@ -140,6 +186,7 @@ const SectionComponent = () => {
                 value="standard"
                 id="section_type_standard"
                 name="section_type"
+                checked={sectionType === "standard"}
                 onChange={handleSectionTypeChange}
               />
               <label
@@ -157,6 +204,7 @@ const SectionComponent = () => {
                 value="custom"
                 name="section_type"
                 id="section_type_custom"
+                checked={sectionType === "custom"}
                 onChange={handleSectionTypeChange}
               />
               <label className="form-check-label" htmlFor="section_type_custom">
@@ -184,6 +232,7 @@ const SectionComponent = () => {
                 value="true"
                 id="has_faculties_yes"
                 name="has_faculties"
+                checked={hasFaculties === true}
                 onChange={handleHasFacultiesChange}
               />
               <label className="form-check-label" htmlFor="has_faculties_yes">
@@ -198,6 +247,7 @@ const SectionComponent = () => {
                 value="false"
                 id="has_faculties_no"
                 name="has_faculties"
+                checked={hasFaculties === false}
                 onChange={handleHasFacultiesChange}
               />
               <label className="form-check-label" htmlFor="has_faculties_no">
@@ -465,6 +515,12 @@ const SectionComponent = () => {
             </div>
           </div>
         </div>
+      )}
+      {errors.facultySections && (
+        <h5 className="text-danger">Note: {errors.facultySections}</h5>
+      )}
+      {errors.sections && (
+        <h5 className="text-danger">Note: {errors.sections}</h5>
       )}
     </>
   );

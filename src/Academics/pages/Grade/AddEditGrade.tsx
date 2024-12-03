@@ -11,7 +11,7 @@ import CustomSelect, {
 import useGradeGroup from "../../hooks/useGradeGroup";
 import useFaculty from "../../hooks/useFaculty";
 import { Stringifier } from "styled-components/dist/types";
-import SectionComponent from "./SectionComponent";
+import SectionComponent, { SectionData } from "./SectionComponent";
 
 const AddEditGrade = () => {
   const { academicSessions } = useAcademicSession({});
@@ -89,6 +89,13 @@ const AddEditGrade = () => {
     if (selectedOption) {
       setValue("grade_group_id", selectedOption.value);
     }
+  };
+
+  const handleSectionDataChange = (data: SectionData, isValid: boolean) => {
+    console.log("Add Edit:", data);
+
+    // setSectionData(data);
+    // setIsSectionValid(isValid);
   };
 
   const onSubmit = (data: FormData) => {
@@ -177,7 +184,7 @@ const AddEditGrade = () => {
           </div>
 
           {/* section part start */}
-          <SectionComponent />
+          <SectionComponent onSectionDataChange={handleSectionDataChange} />
           {/* Section part end */}
         </div>
         <div className="text-center pt-15">
