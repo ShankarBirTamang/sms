@@ -1,3 +1,4 @@
+import { AddGradeInterface } from "./../services/gradeService";
 import { useEffect, useState } from "react";
 import { CanceledError } from "../../services/apiClient";
 import {
@@ -21,6 +22,8 @@ const useGrade = ({
   const [edgeLinks, setEdgeLinks] = useState<PaginationProps["edgeLinks"]>();
 
   const [grades, setGrades] = useState<UpdateGradeInterface[]>([]);
+
+  const [testData, setTestData] = useState<UpdateGradeInterface[]>([]);
 
   useEffect(() => {
     setLoading(true);
@@ -50,6 +53,44 @@ const useGrade = ({
     return () => cancel();
   }, [search, currentPage, itemsPerPage]);
 
+  const saveGrade = async ({
+    academic_session_id,
+    grade_group_id,
+    name,
+    short_name,
+    hasFaculties,
+    sectionType,
+    facultySections,
+    sections,
+  }: AddGradeInterface) => {
+    const params = {
+      academic_session_id,
+      grade_group_id,
+      name,
+      short_name,
+      hasFaculties,
+      sectionType,
+      facultySections,
+      sections,
+    };
+
+    try {
+      const result = await gradeService.create<AddGradeInterface>(params);
+      // Update state only after successful creation
+      setGrades([...grades, result.data.data]);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred.");
+      }
+    }
+  };
+
+  useEffect(() => {
+    console.log("Grades:", grades);
+  }, [grades]);
+
   //end for Pagination
   return {
     grades,
@@ -59,6 +100,7 @@ const useGrade = ({
     pagination,
     edgeLinks,
     currentPage,
+    saveGrade,
   };
 };
 

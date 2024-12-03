@@ -1,27 +1,24 @@
 import create from "../../services/httpService";
 import { UpdateAcademicSessionInterface } from "./academicSessionService";
 
-// export interface SectionInterface {
-//   name: string;
-//   faculty_id: number;
-//   room_id: number;
-// }
-
-// export interface GradeInterface {
-//   name: string;
-//   short_name: string;
-//   grade_group_id: string;
-//   section_type: string;
-//   session: UpdateAcademicSessionInterface;
-//   sections: SectionInterface[];
-// }
-
+export interface SectionData {
+  hasFaculties: boolean;
+  sectionType: "standard" | "custom";
+  facultySections: { facultyId: number; sections: string[] }[];
+  sections: string[];
+}
+export interface AddGradeInterface extends SectionData {
+  academic_session_id: number;
+  grade_group_id: number;
+  name: string;
+  short_name: string;
+}
 interface FacultyInterface {
   id: number;
   name: string;
 }
 
-interface SectionInterface {
+export interface SectionInterface {
   id: number;
   name: string;
   grade_id: number;

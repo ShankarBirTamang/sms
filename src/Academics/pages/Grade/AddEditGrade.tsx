@@ -9,13 +9,14 @@ import CustomSelect, {
   Option,
 } from "../../../components/CustomSelect/CustomSelect";
 import useGradeGroup from "../../hooks/useGradeGroup";
-import useFaculty from "../../hooks/useFaculty";
-import { Stringifier } from "styled-components/dist/types";
-import SectionComponent, { SectionData } from "./SectionComponent";
+import SectionComponent from "./SectionComponent";
+import { AddGradeInterface, SectionData } from "../../services/gradeService";
+import useGrade from "../../hooks/useGrade";
 
 const AddEditGrade = () => {
   const { academicSessions } = useAcademicSession({});
   const { gradeGroups } = useGradeGroup({});
+  const { saveGrade } = useGrade({});
 
   const academicSessionOptions = academicSessions.map((session) => ({
     value: session.id,
@@ -33,8 +34,11 @@ const AddEditGrade = () => {
     null
   );
 
-  const SectionSchema = z.object({
-    name: z.string(),
+  const FacultySectionSchema = z.object({
+    facultyId: z.number().int({ message: "Faculty ID must be an integer" }),
+    sections: z.array(
+      z.string().min(1, { message: "Section name cannot be empty" })
+    ),
   });
 
   const GradeSchema = z.object({
@@ -62,8 +66,8 @@ const AddEditGrade = () => {
     section_type: z.enum(["standard", "custom"], {
       errorMap: () => ({ message: "This field is required" }),
     }),
-    sections: z.array(SectionSchema),
-    selectedFaculties: z.array(z.string()),
+    sections: z.array(z.string()),
+    facultySections: z.array(FacultySectionSchema),
   });
   type FormData = z.infer<typeof GradeSchema>;
   const {
@@ -92,15 +96,32 @@ const AddEditGrade = () => {
   };
 
   const handleSectionDataChange = (data: SectionData, isValid: boolean) => {
-    console.log("Add Edit:", data);
+    if (isValid) {
+      console.log("Add Edit:", data);
+      setValue("section_type", data.sectionType);
+      setValue("has_faculties", data.hasFaculties);
+      setValue("sections", data.sections);
+      setValue("facultySections", data.facultySections);
+    }
 
     // setSectionData(data);
     // setIsSectionValid(isValid);
   };
 
   const onSubmit = (data: FormData) => {
-    alert("oops");
-    console.log(data);
+    console.log("Saving Grade");
+    const gradeData: AddGradeInterface = {
+      name: data.name,
+      short_name: data.short_name,
+      academic_session_id: data.academic_session_id,
+      grade_group_id: data.grade_group_id,
+      hasFaculties: data.has_faculties,
+      sectionType: data.section_type,
+      sections: data.sections,
+      facultySections: data.facultySections,
+    };
+
+    saveGrade(gradeData);
   };
 
   useEffect(() => {

@@ -1,12 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import useFaculty from "../../hooks/useFaculty";
+import { SectionData } from "../../services/gradeService";
 
-export interface SectionData {
-  hasFaculties: boolean;
-  sectionType: "standard" | "custom";
-  facultySections: { facultyId: number; sections: string[] }[];
-  sections: string[];
-}
 interface AddSectionInterface {
   onSectionDataChange: (data: SectionData, isValid: boolean) => void;
 }
@@ -14,9 +9,9 @@ interface AddSectionInterface {
 const SectionComponent = ({ onSectionDataChange }: AddSectionInterface) => {
   const { faculties } = useFaculty({});
   const [hasFaculties, setHasFaculties] = useState<boolean>(false);
-  const [sectionType, setSectionType] = useState<
-    "standard" | "custom" | undefined
-  >("standard");
+  const [sectionType, setSectionType] = useState<"standard" | "custom">(
+    "standard"
+  );
   const [facultySections, setFacultySections] = useState<
     { facultyId: number; sections: string[] }[]
   >([]);
@@ -24,25 +19,19 @@ const SectionComponent = ({ onSectionDataChange }: AddSectionInterface) => {
 
   const [sections, setSections] = useState<string[]>([]);
 
-  // Handle checkbox change
   const handleStandardSectionCheckbox = (
     section: string,
     isChecked: boolean
   ) => {
-    setSections(
-      (prev) =>
-        isChecked
-          ? [...prev, section] // Add section if checked
-          : prev.filter((item) => item !== section) // Remove section if unchecked
+    setSections((prev) =>
+      isChecked ? [...prev, section] : prev.filter((item) => item !== section)
     );
   };
 
   const handleFacultyChange = (facultyId: number, checked: boolean) => {
     if (checked) {
-      // Add faculty with empty sections
       setFacultySections((prev) => [...prev, { facultyId, sections: [] }]);
     } else {
-      // Remove faculty
       setFacultySections((prev) =>
         prev.filter((item) => item.facultyId !== facultyId)
       );
@@ -74,7 +63,7 @@ const SectionComponent = ({ onSectionDataChange }: AddSectionInterface) => {
         item.facultyId === facultyId
           ? {
               ...item,
-              sections: [...item.sections, ""], // Add an empty string for the new section
+              sections: [...item.sections, ""],
             }
           : item
       )
@@ -87,7 +76,7 @@ const SectionComponent = ({ onSectionDataChange }: AddSectionInterface) => {
         item.facultyId === facultyId
           ? {
               ...item,
-              sections: item.sections.filter((_, i) => i !== index), // Remove the section at the specified index
+              sections: item.sections.filter((_, i) => i !== index),
             }
           : item
       )
@@ -100,7 +89,7 @@ const SectionComponent = ({ onSectionDataChange }: AddSectionInterface) => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = event.target.value === "true";
-    setHasFaculties(value); // Update the local state
+    setHasFaculties(value);
     setFacultySections([]);
     setSections([]);
   };
@@ -109,34 +98,25 @@ const SectionComponent = ({ onSectionDataChange }: AddSectionInterface) => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = event.target.value as "standard" | "custom";
-    setSectionType(value); // Update the local state
+    setSectionType(value);
     setFacultySections([]);
     setSections([]);
   };
 
-  //custom section without faculties
   const addCustomSection = () => {
-    setSections([...sections, ""]); // Add a new empty section
+    setSections([...sections, ""]);
   };
 
   const removeCustomSection = (index: number) => {
     const newSections = sections.filter((_, i) => i !== index);
-    setSections(newSections); // Remove the section at the specified index
+    setSections(newSections);
   };
 
   const handleCustomSectionChange = (index: number, value: string) => {
     const newSections = [...sections];
-    newSections[index] = value; // Update the section name
+    newSections[index] = value;
     setSections(newSections);
   };
-
-  // useEffect(() => {
-  //   console.log("Handle Standard SElection Checkbox:", sections);
-  // }, [sections]);
-
-  // useEffect(() => {
-  //   console.log("Handle Faculty Sections:", facultySections);
-  // }, [facultySections]);
 
   const validate = useCallback(() => {
     const newErrors: { [key: string]: string } = {};
@@ -152,7 +132,6 @@ const SectionComponent = ({ onSectionDataChange }: AddSectionInterface) => {
 
   useEffect(() => {
     const isValid = validate();
-    console.log(isValid);
 
     const data: SectionData = {
       hasFaculties,
@@ -160,7 +139,7 @@ const SectionComponent = ({ onSectionDataChange }: AddSectionInterface) => {
       facultySections,
       sections,
     };
-    onSectionDataChange(data, isValid); // Send validated data and validation status to the parent
+    onSectionDataChange(data, isValid);
   }, [
     hasFaculties,
     sectionType,
@@ -255,9 +234,6 @@ const SectionComponent = ({ onSectionDataChange }: AddSectionInterface) => {
               </label>
             </div>
           </div>
-          {/* {errors.has_faculties && (
-            <span className="text-danger">{errors.has_faculties.message}</span>
-          )} */}
         </div>
       </div>
 
@@ -281,6 +257,9 @@ const SectionComponent = ({ onSectionDataChange }: AddSectionInterface) => {
                           onChange={(e) =>
                             handleFacultyChange(faculty.id, e.target.checked)
                           }
+                          checked={facultySections.some(
+                            (item) => item.facultyId === faculty.id
+                          )}
                         />
                         <label
                           className="form-check-label"
@@ -300,6 +279,11 @@ const SectionComponent = ({ onSectionDataChange }: AddSectionInterface) => {
                                   title={section}
                                   className="form-check-input sectionCheckbox"
                                   type="checkbox"
+                                  checked={facultySections.some(
+                                    (item) =>
+                                      item.facultyId === faculty.id &&
+                                      item.sections.includes(section)
+                                  )}
                                   onChange={(e) =>
                                     handleSectionChange(
                                       faculty.id,
@@ -322,100 +306,104 @@ const SectionComponent = ({ onSectionDataChange }: AddSectionInterface) => {
                               </div>
                             </div>
                           ))}
-                        {sectionType === "custom" && (
-                          <div className="col-12">
-                            <div className="row">
-                              <div className="col-12 mb-3">
-                                <label className="required fw-bold fs-6 mb-2">
-                                  Add Sections for {faculty.name}
-                                </label>
-                              </div>
-                              <div className="col-12">
-                                <div className="row">
-                                  {facultySections.map(
-                                    (facultySection) =>
-                                      facultySection.facultyId === faculty.id &&
-                                      facultySection.sections.map(
-                                        (section, index) => (
-                                          <div
-                                            className="col-md-6 mb-3"
-                                            key={index}
-                                          >
-                                            <div className="d-flex">
-                                              <input
-                                                type="text"
-                                                className="form-control form-control-sm"
-                                                style={{
-                                                  height: 35,
-                                                  borderRadius: "5px 0 0 5px",
-                                                }}
-                                                placeholder="Section name"
-                                                value={section}
-                                                onChange={(e) => {
-                                                  const newSections =
-                                                    facultySection.sections.map(
-                                                      (s, i) =>
-                                                        i === index
-                                                          ? e.target.value
-                                                          : s // Update the section name
+                        {facultySections.some(
+                          (item) => item.facultyId === faculty.id
+                        ) &&
+                          sectionType === "custom" && (
+                            <div className="col-12">
+                              <div className="row">
+                                <div className="col-12 mb-3">
+                                  <label className="required fw-bold fs-6 mb-2">
+                                    Add Sections for {faculty.name}
+                                  </label>
+                                </div>
+                                <div className="col-12">
+                                  <div className="row">
+                                    {facultySections.map(
+                                      (facultySection) =>
+                                        facultySection.facultyId ===
+                                          faculty.id &&
+                                        facultySection.sections.map(
+                                          (section, index) => (
+                                            <div
+                                              className="col-md-6 mb-3"
+                                              key={index}
+                                            >
+                                              <div className="d-flex">
+                                                <input
+                                                  type="text"
+                                                  className="form-control form-control-sm"
+                                                  style={{
+                                                    height: 35,
+                                                    borderRadius: "5px 0 0 5px",
+                                                  }}
+                                                  placeholder="Section name"
+                                                  value={section}
+                                                  onChange={(e) => {
+                                                    const newSections =
+                                                      facultySection.sections.map(
+                                                        (s, i) =>
+                                                          i === index
+                                                            ? e.target.value
+                                                            : s // Update the section name
+                                                      );
+                                                    setFacultySections((prev) =>
+                                                      prev.map((item) =>
+                                                        item.facultyId ===
+                                                        facultySection.facultyId
+                                                          ? {
+                                                              ...item,
+                                                              sections:
+                                                                newSections,
+                                                            }
+                                                          : item
+                                                      )
                                                     );
-                                                  setFacultySections((prev) =>
-                                                    prev.map((item) =>
-                                                      item.facultyId ===
-                                                      facultySection.facultyId
-                                                        ? {
-                                                            ...item,
-                                                            sections:
-                                                              newSections,
-                                                          }
-                                                        : item
+                                                  }}
+                                                />
+                                                <button
+                                                  className="btn btn-danger d-flex justify-content-center align-items-center"
+                                                  style={{
+                                                    height: 35,
+                                                    borderRadius: "0 5px 5px 0",
+                                                  }}
+                                                  type="button"
+                                                  onClick={() =>
+                                                    removeFacultyCustomSection(
+                                                      facultySection.facultyId,
+                                                      index
                                                     )
-                                                  );
-                                                }}
-                                              />
-                                              <button
-                                                className="btn btn-danger d-flex justify-content-center align-items-center"
-                                                style={{
-                                                  height: 35,
-                                                  borderRadius: "0 5px 5px 0",
-                                                }}
-                                                type="button"
-                                                onClick={() =>
-                                                  removeFacultyCustomSection(
-                                                    facultySection.facultyId,
-                                                    index
-                                                  )
-                                                } // Pass facultyId and index
-                                              >
-                                                Delete
-                                              </button>
+                                                  } // Pass facultyId and index
+                                                >
+                                                  Delete
+                                                </button>
+                                              </div>
                                             </div>
-                                          </div>
+                                          )
                                         )
-                                      )
-                                  )}
-                                  <div className="col-12">
-                                    <button
-                                      className="btn btn-sm btn-danger"
-                                      type="button"
-                                      onClick={() =>
-                                        handleFacultyCustomSection(faculty.id)
-                                      }
-                                      disabled={
-                                        !facultySections.some(
-                                          (item) =>
-                                            item.facultyId === faculty.id
-                                        )
-                                      }
-                                    >
-                                      Add Section
-                                    </button>
+                                    )}
+                                    <div className="col-12">
+                                      <button
+                                        className="btn btn-sm btn-danger"
+                                        type="button"
+                                        onClick={() =>
+                                          handleFacultyCustomSection(faculty.id)
+                                        }
+                                        disabled={
+                                          !facultySections.some(
+                                            (item) =>
+                                              item.facultyId === faculty.id
+                                          )
+                                        }
+                                      >
+                                        Add Section
+                                      </button>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        )}
+                          )}
                       </div>
                     </div>
                   </div>
@@ -456,9 +444,6 @@ const SectionComponent = ({ onSectionDataChange }: AddSectionInterface) => {
                 </div>
               ))}
             </div>
-            {/* {errors.sections && (
-              <span className="text-danger">{errors.sections.message}</span>
-            )} */}
           </div>
         </div>
       )}
