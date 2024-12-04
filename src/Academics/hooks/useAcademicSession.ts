@@ -1,3 +1,4 @@
+import { number } from "zod";
 import { useEffect, useState } from "react";
 import {
   ApiResponseInterface,
@@ -5,6 +6,7 @@ import {
 } from "../../Interface/Interface";
 import academicSessionService, {
   AcademicSessionInterface,
+  ChangeAcademicSessionStatusInterface,
   UpdateAcademicSessionInterface,
 } from "../services/academicSessionService";
 
@@ -35,7 +37,6 @@ const useAcademicSession = ({
       per_page: itemsPerPage,
       search: search,
     };
-    console.log(itemsPerPage);
 
     if (itemsPerPage !== null) {
       params.page = currentPage;
@@ -110,11 +111,9 @@ const useAcademicSession = ({
       end_date_np,
       academic_level_id,
     };
-    const originalAcademicLevel = [...academicSessions];
+    // const originalAcademicLevel = [...academicSessions];
 
     try {
-      console.log("Original:", originalAcademicLevel);
-
       const result =
         await academicSessionService.update<UpdateAcademicSessionInterface>(
           params
@@ -124,7 +123,6 @@ const useAcademicSession = ({
           session.id === result.data.data.id ? result.data.data : session
         )
       );
-      console.log(result);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -133,6 +131,43 @@ const useAcademicSession = ({
       }
     } finally {
       // console.log(params, result);
+    }
+  };
+
+  const changeAcademicSessionStatus = async ({
+    id,
+  }: ChangeAcademicSessionStatusInterface) => {
+    try {
+      // Update the status of the academic session
+      await academicSessionService.changeStatus<ChangeAcademicSessionStatusInterface>(
+        {
+          id,
+        }
+      );
+
+      const params: Record<string, string | number | null> = {
+        per_page: itemsPerPage,
+        search: search,
+      };
+      const { request, cancel } =
+        academicSessionService.getAll<
+          ApiResponseInterface<UpdateAcademicSessionInterface>
+        >(params);
+
+      request
+        .then((result) => {
+          setAcademicSessions(result.data.data);
+          setPagination(result.data.meta);
+          setEdgeLinks(result.data.links);
+          setLoading(false);
+        })
+        .catch((err) => {
+          if (err instanceof CanceledError) return;
+          setError(err.message);
+          setLoading(false);
+        });
+    } catch (error) {
+      console.error("Error changing academic session status:", error);
     }
   };
 
@@ -147,6 +182,7 @@ const useAcademicSession = ({
     currentPage,
     saveAcademicSession,
     updateAcademicSession,
+    changeAcademicSessionStatus,
   };
 };
 

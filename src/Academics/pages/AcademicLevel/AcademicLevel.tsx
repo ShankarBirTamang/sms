@@ -13,6 +13,7 @@ import {
   UpdateAcademicLevelInterface,
 } from "../../services/academicLevelService";
 import useDocumentTitle from "../../../hooks/useDocumentTitle";
+import toast from "react-hot-toast";
 
 const schema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -69,16 +70,18 @@ const AcademicLevel = () => {
     setCurrentLevelId(level.id);
   };
 
-  const onSubmit = (
+  const onSubmit = async (
     data: CreateAcademicLevelInterface | UpdateAcademicLevelInterface
   ) => {
     try {
       setIsSubmitting(true);
       if (formMode === "create") {
-        saveAcademicLevel(data);
+        await saveAcademicLevel(data);
+        toast.success("Academic Level Added Successfully.");
       } else if (formMode === "edit") {
         if (currentLevelId) {
-          updateAcademicLevel({ ...data, id: currentLevelId });
+          await updateAcademicLevel({ ...data, id: currentLevelId });
+          toast.success("Academic Level Updated Successfully.");
         } else {
           setError("Error Updating Data");
         }

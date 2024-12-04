@@ -33,6 +33,7 @@ class HttpService {
   update<T extends Entity>(entity: T) {
     return apiClient.put(this.endpoint + "/" + entity.id, entity);
   }
+
   changeStatus<T extends Entity>(entity: T) {
     return apiClient.post(
       this.endpoint + "/" + entity.id + "/change-status",

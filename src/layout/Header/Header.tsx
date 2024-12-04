@@ -3,6 +3,7 @@ import Icon from "../../components/Icon/Icon.tsx";
 import Search from "./Component/Search.tsx";
 import NavDropDown from "./Component/NavDropDown.tsx";
 import ColorMode from "./Component/ColorMode.tsx";
+import Toast from "../../components/Toast/Toast.tsx";
 
 interface Header {
   title?: string;
@@ -11,6 +12,9 @@ interface Header {
 const Header = ({ title }: Header) => {
   return (
     <>
+      <div>
+        <Toast />
+      </div>
       <div
         id="kt_header"
         className="header py-6 py-lg-0"

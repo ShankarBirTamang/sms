@@ -7,24 +7,32 @@ import useDebounce from "../../../hooks/useDebounce";
 import Loading from "../../../components/Loading/Loading";
 import Pagination from "../../../components/Pagination/Pagination";
 import Icon from "../../../components/Icon/Icon";
+import { UpdateGradeInterface } from "../../services/gradeService";
 
 const Grade = () => {
   useDocumentTitle("All Grades");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
+  const [itemsPerPage, setItemsPerPage] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
   const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
-  const [formMode, setFormMode] = useState<"create" | "edit">("create");
-  const [addGradeDrawer, setAddGradeDrawer] = useState(true);
+  const [addGradeDrawer, setAddGradeDrawer] = useState(false);
+  const [editGradeDrawer, setEditGradeDrawer] = useState(false);
   const { grades, isLoading, pagination, edgeLinks } = useGrade({
     search: debouncedSearchTerm,
     currentPage,
     itemsPerPage,
   });
 
+  const [editGrade, setEditGrade] = useState<UpdateGradeInterface>();
+
   const toggleAddGradeDrawer = () => {
     setAddGradeDrawer(!addGradeDrawer);
   };
+
+  const toggleEditGradeDrawer = () => {
+    setEditGradeDrawer(!editGradeDrawer);
+  };
+
   // header functions
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -39,6 +47,10 @@ const Grade = () => {
     setSearchTerm(event.target.value);
     setCurrentPage(1); // Reset to the first page on new search
   };
+  const handleEditClick = (grade: UpdateGradeInterface) => {
+    toggleEditGradeDrawer();
+    setEditGrade(grade);
+  };
   return (
     <>
       <div className="card">
@@ -51,7 +63,7 @@ const Grade = () => {
               className="d-flex justify-content-end"
               data-kt-user-table-toolbar="base"
             >
-              <div className="d-flex gap-2">
+              <div className="d-flex align-items-center gap-2">
                 <div className="d-flex align-items-center position-relative">
                   <Icon
                     name="searchDark"
@@ -94,16 +106,6 @@ const Grade = () => {
                   Add Grade
                 </button>
               </div>
-
-              <DrawerModal
-                isOpen={addGradeDrawer}
-                onClose={toggleAddGradeDrawer}
-                position="right"
-                width="900px"
-                title="Add New Grade"
-              >
-                <AddEditGrade />
-              </DrawerModal>
             </div>
           </div>
         </div>
@@ -172,14 +174,14 @@ const Grade = () => {
 
                     <td className="text-end">
                       <a
-                        href="https://publichighschool.edu.np/sms/settings/academics/grades/1/subjects"
+                        href="#"
                         className="btn btn-light-danger btn-sm"
                         type="link"
                       >
                         Subjects
                       </a>
                       <a
-                        href="https://publichighschool.edu.np/sms/settings/academics/grades/1"
+                        href="#"
                         className="btn btn-light-info btn-sm"
                         type="link"
                         title="Students"
@@ -190,6 +192,7 @@ const Grade = () => {
                         type="button"
                         className="btn btn-light-success btn-sm"
                         title="Edit"
+                        onClick={() => handleEditClick(grade)}
                       >
                         Edit
                       </button>
@@ -209,6 +212,28 @@ const Grade = () => {
           />
         </div>
       </div>
+      <DrawerModal
+        isOpen={addGradeDrawer}
+        onClose={toggleAddGradeDrawer}
+        position="right"
+        width="900px"
+        title="Add Grade"
+      >
+        <AddEditGrade formType={"create"} onSave={toggleAddGradeDrawer} />
+      </DrawerModal>
+      <DrawerModal
+        isOpen={editGradeDrawer}
+        onClose={toggleEditGradeDrawer}
+        position="right"
+        width="900px"
+        title="Edit Grade Details"
+      >
+        <AddEditGrade
+          formType={"edit"}
+          onSave={toggleAddGradeDrawer}
+          editData={editGrade}
+        />
+      </DrawerModal>
     </>
   );
 };

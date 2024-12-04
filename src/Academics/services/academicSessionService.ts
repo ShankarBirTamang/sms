@@ -8,11 +8,16 @@ export interface AcademicSessionInterface {
   end_date_np: string;
   academic_level_id: number;
   academic_level?: string;
+  is_active?: boolean;
 }
 
 export interface UpdateAcademicSessionInterface
   extends AcademicSessionInterface {
   id: number; // id is required for updates
+}
+
+export interface ChangeAcademicSessionStatusInterface {
+  id: number;
 }
 
 // export interface AcademicLevelsResponse {

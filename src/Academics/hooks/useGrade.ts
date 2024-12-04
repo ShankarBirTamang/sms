@@ -87,9 +87,9 @@ const useGrade = ({
     }
   };
 
-  useEffect(() => {
-    console.log("Grades:", grades);
-  }, [grades]);
+  // useEffect(() => {
+  //   console.log("Grades:", grades);
+  // }, [grades]);
 
   //end for Pagination
   return {

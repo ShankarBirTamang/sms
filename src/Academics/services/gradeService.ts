@@ -7,6 +7,31 @@ export interface SectionData {
   facultySections: { facultyId: number; sections: string[] }[];
   sections: string[];
 }
+export interface AddSectionInterface {
+  onSectionDataChange: (data: SectionData, isValid: boolean) => void;
+}
+export interface EditSectionInterface {
+  editData: UpdateGradeInterface;
+  onSectionDataChange: (
+    data: EditSectionDataInterface,
+    isValid: boolean
+  ) => void;
+}
+
+export interface EditSectionData {
+  id: number | 0;
+  name: string;
+}
+
+export interface EditSectionDataInterface {
+  hasFaculties: boolean;
+  sectionType: "standard" | "custom";
+  facultySections:
+    | { facultyId: number; sections: EditSectionInterface[] }[]
+    | null;
+  sections: EditSectionInterface[] | null;
+}
+
 export interface AddGradeInterface extends SectionData {
   academic_session_id: number;
   grade_group_id: number;
@@ -37,13 +62,22 @@ interface GradeInterface {
   grade_group_id: number;
   short_name: string;
   is_active: number;
-  has_faculties: number;
+  has_faculties: boolean;
+  section_type: "standard" | "custom";
   session: UpdateAcademicSessionInterface;
   sections: SectionsInterface;
 }
 
-export interface UpdateGradeInterface extends GradeInterface {
+export interface UpdateGradeInterface {
   id: number;
+  name: string;
+  grade_group_id: number;
+  short_name: string;
+  is_active: number;
+  has_faculties: number;
+  section_type: "standard" | "custom";
+  session: UpdateAcademicSessionInterface;
+  sections: SectionsInterface;
 }
 
 export default create("/academics/grades");
