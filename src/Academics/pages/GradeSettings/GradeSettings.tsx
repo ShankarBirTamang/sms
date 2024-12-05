@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import GradeGroup from "../pages/Grade/GradeGroup/GradeGroup";
-import Faculty from "../pages/Grade/Faculty/Faculty";
+import GradeGroup from "./GradeGroup/GradeGroup";
+import Faculty from "./Faculty/Faculty";
 
 const GradeSettings = () => {
   const [tab, setTab] = useState("group");

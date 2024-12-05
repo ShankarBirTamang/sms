@@ -1,28 +1,55 @@
 import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import InputField from "../components/InputField";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import axiosInstance from "../../../axiosConfig";
+const baseUrl = import.meta.env.VITE_API_URL;
 
 interface FormData {
   email: string;
   name: string;
+  short_name: string;
+  latitude: string;
+  longitude: string;
   address: string;
   contact: string;
   website: string;
-  shortDesc: string;
-  longDesc: string;
+  short_desc: string;
+  long_desc: string;
   logo: File | null;
   cover: File | null;
 }
 
+const defaultLogo =
+  "https://sms.aanshtech.com/storage/1/PUBLIC-LOGO.nO.bACKGROUND.webp";
+const defaultCover =
+  "https://images.pexels.com/photos/207684/pexels-photo-207684.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+
 const Details = () => {
-  const [logo, setLogo] = useState<string | null>(
-    "https://sms.aanshtech.com/storage/1/PUBLIC-LOGO.nO.bACKGROUND.webp"
-  );
-  const [cover, setCover] = useState<string | null>(
-    "https://images.pexels.com/photos/207684/pexels-photo-207684.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-  );
+  const [logoFile, setLogoFile] = useState<File | null>(null); // Initially set to null
+  const [logoUrl, setLogoUrl] = useState<string>(defaultLogo); // Set to default logo URL
+  const [coverFile, setCoverFile] = useState<File | null>(null); // Initially set to null
+  const [coverUrl, setCoverUrl] = useState<string>(defaultCover); // Set to default cover URL
   const [isLogoSelected, setIsLogoSelected] = useState(false);
   const [isCoverSelected, setIsCoverSelected] = useState(false);
+
+  const schema = z.object({
+    name: z
+      .string()
+      .min(5, "Institute name must be at least 5 characters long"),
+    short_name: z.string().min(1, "Short name is required"),
+    email: z.string().email("Invalid email address").optional(),
+    address: z.string().min(3, "Institute address is required"),
+    contact: z.string().min(3, "Institute contact number is required"),
+    website: z.string().url("Invalid website URL").optional(),
+    latitude: z.string().min(1, "Latitude is required"),
+    longitude: z.string().min(1, "Longitude is required"),
+    short_desc: z.string().optional(),
+    long_desc: z.string().optional(),
+    logo: z.instanceof(File).nullable().optional(),
+    cover: z.instanceof(File).nullable().optional(),
+  });
 
   const {
     register,
@@ -31,27 +58,31 @@ const Details = () => {
     setValue,
     formState: { errors },
   } = useForm<FormData>({
+    resolver: zodResolver(schema),
     defaultValues: {
       name: "",
+      short_name: "",
+      latitude: "",
+      longitude: "",
       address: "",
       contact: "",
       email: "",
-      website: "",
-      shortDesc: "",
-      longDesc: "",
+      // website: "",
+      short_desc: "",
+      long_desc: "",
     },
   });
 
   useEffect(() => {
     return () => {
-      if (logo) {
-        URL.revokeObjectURL(logo);
+      if (logoFile) {
+        URL.revokeObjectURL(logoUrl);
       }
-      if (cover) {
-        URL.revokeObjectURL(cover);
+      if (coverFile) {
+        URL.revokeObjectURL(coverUrl);
       }
     };
-  }, [logo, cover]);
+  }, [logoFile, coverFile]);
 
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -62,46 +93,49 @@ const Details = () => {
       const imageUrl = URL.createObjectURL(file);
 
       if (field === "logo") {
-        if (logo) URL.revokeObjectURL(logo);
-        setLogo(imageUrl);
-        setValue("logo", file); // Set the file in react-hook-form
+        setLogoFile(file); // Set the file
+        setLogoUrl(imageUrl); // Set the URL for display
+        setValue("logo", file);
         setIsLogoSelected(true);
       } else if (field === "cover") {
-        if (cover) URL.revokeObjectURL(cover);
-        setCover(imageUrl);
-        setValue("cover", file); // Set the file in react-hook-form
+        setCoverFile(file); // Set the file
+        setCoverUrl(imageUrl); // Set the URL for display
+        setValue("cover", file);
         setIsCoverSelected(true);
       }
     }
   };
 
   const handleCancelLogo = () => {
-    setLogo(
-      "https://sms.aanshtech.com/storage/1/PUBLIC-LOGO.nO.bACKGROUND.webp"
-    );
+    setLogoFile(null); // Reset the logo file
+    setLogoUrl(defaultLogo); // Reset to default logo URL
+    setValue("logo", null);
     setIsLogoSelected(false);
   };
 
   const handleRemoveLogo = () => {
-    if (logo) URL.revokeObjectURL(logo);
-    setLogo(null);
+    setLogoFile(null); // Reset the logo file
+    setLogoUrl(defaultLogo); // Reset to default logo URL
+    setValue("logo", null);
     setIsLogoSelected(false);
   };
 
   const handleCancelCover = () => {
-    if (cover) URL.revokeObjectURL(cover);
-    setCover(
-      "https://images.pexels.com/photos/207684/pexels-photo-207684.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-    );
+    setCoverFile(null); // Reset the logo file
+    setCoverUrl(defaultCover); // Reset to default logo URL
+    setValue("cover", null);
     setIsCoverSelected(false);
   };
 
   const handleRemoveCover = () => {
-    setCover(null);
+    setCoverFile(null); // Reset the logo file
+    setCoverUrl(defaultCover); // Reset to default logo URL
+    setValue("cover", null);
     setIsCoverSelected(false);
   };
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
+    console.log("raw data", data);
     const formData = new FormData();
 
     for (const key in data) {
@@ -110,21 +144,40 @@ const Details = () => {
       }
     }
 
-    if (data.logo && isLogoSelected) {
-      formData.append("logo", data.logo);
-    } else if (logo) {
-      formData.append("logo", logo);
+    // Handle logo
+    if (logoFile) {
+      formData.append("logo", logoFile);
+    } else if (logoUrl) {
+      formData.append("logo_url", logoUrl); // Use a different field for URLs to avoid ambiguity.
     }
 
-    if (data.cover && isCoverSelected) {
-      formData.append("cover", data.cover);
-    } else if (cover) {
-      formData.append("cover", cover);
+    // Handle cover
+    if (coverFile) {
+      formData.append("cover", coverFile);
+    } else if (coverUrl) {
+      formData.append("cover_url", coverUrl); // Use a different field for URLs to avoid ambiguity.
     }
 
     // Log all FormData key-value pairs
+
     for (const [key, value] of formData.entries()) {
       console.log(`${key}:`, value);
+    }
+
+    try {
+      const response = await axiosInstance.post(
+        `${baseUrl}/general/institute/update`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log("Response from Details:", response.data);
+    } catch (error) {
+      console.error("Error submitting form:", error);
     }
   };
 
@@ -202,7 +255,9 @@ const Details = () => {
                     <div
                       className="image-input-wrapper w-125px h-125px"
                       style={{
-                        backgroundImage: logo ? `url(${logo})` : "none",
+                        backgroundImage: logoFile
+                          ? `url(${logoUrl})`
+                          : `url(${defaultLogo})`,
                       }}
                     ></div>
                     <label
@@ -224,7 +279,7 @@ const Details = () => {
                       />
                       <input type="hidden" name="avatar_remove" />
                     </label>
-                    {logo && isLogoSelected ? (
+                    {logoFile && isLogoSelected ? (
                       <span
                         className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
                         aria-label="Cancel avatar"
@@ -238,7 +293,7 @@ const Details = () => {
                       >
                         <i className="bi bi-x fs-2"></i>
                       </span>
-                    ) : logo ? (
+                    ) : logoFile ? (
                       <span
                         className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
                         aria-label="Remove avatar"
@@ -258,6 +313,11 @@ const Details = () => {
                     Allowed file types: png, jpg, jpeg.
                   </div>
                 </div>
+                {
+                  <div className="fv-plugins-message-container mt-2 text-danger">
+                    {errors.logo?.message}
+                  </div>
+                }
               </div>
 
               <div className="row mb-6">
@@ -276,7 +336,9 @@ const Details = () => {
                     <div
                       className="image-input-wrapper w-125px h-125px"
                       style={{
-                        backgroundImage: cover ? `url(${cover})` : "none",
+                        backgroundImage: coverFile
+                          ? `url(${coverUrl})`
+                          : `url(${defaultCover})`,
                       }}
                     ></div>
                     <label
@@ -298,7 +360,7 @@ const Details = () => {
                       />
                       <input type="hidden" name="avatar_remove" />
                     </label>
-                    {cover && isCoverSelected ? (
+                    {coverFile && isCoverSelected ? (
                       <span
                         className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
                         aria-label="Cancel avatar"
@@ -312,7 +374,7 @@ const Details = () => {
                       >
                         <i className="bi bi-x fs-2"></i>
                       </span>
-                    ) : cover ? (
+                    ) : coverFile ? (
                       <span
                         className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
                         aria-label="Remove avatar"
@@ -332,6 +394,11 @@ const Details = () => {
                     Allowed file types: png, jpg, jpeg.
                   </div>
                 </div>
+                {
+                  <div className="fv-plugins-message-container mt-2 text-danger">
+                    {errors.cover?.message}
+                  </div>
+                }
               </div>
 
               {/* Name Input */}
@@ -342,46 +409,36 @@ const Details = () => {
                 <div className="col-lg-8">
                   <input
                     type="text"
-                    {...register("name", {
-                      required: "Institute name is required",
-                      minLength: {
-                        value: 5,
-                        message:
-                          "Institute name must be at least 5 characters long",
-                      },
-                    })}
+                    {...register("name")}
                     className="form-control form-control-lg form-control-solid"
                     placeholder="Enter Institute Name"
                     required
                   />
-                  {errors.name && (
+                  {
                     <div className="fv-plugins-message-container mt-2 text-danger">
                       {errors.name?.message}
                     </div>
-                  )}
+                  }
                 </div>
               </div>
 
-              {/* Address Input */}
               <div className="row mb-6">
                 <label className="col-lg-4 col-form-label required fw-semibold fs-6">
-                  Address
+                  Short Name
                 </label>
                 <div className="col-lg-8">
-                  <textarea
-                    {...register("address", {
-                      required: "Institute address is required",
-                    })}
+                  <input
+                    type="text"
+                    {...register("short_name")}
                     className="form-control form-control-lg form-control-solid"
-                    rows={3}
-                    placeholder="Enter Address"
+                    placeholder="Enter Institute Short Name"
                     required
-                  ></textarea>
-                  {errors.address && (
+                  />
+                  {
                     <div className="fv-plugins-message-container mt-2 text-danger">
-                      {errors.address?.message}
+                      {errors.short_name?.message}
                     </div>
-                  )}
+                  }
                 </div>
               </div>
 
@@ -400,36 +457,98 @@ const Details = () => {
                     placeholder="Enter Contact Number"
                     required
                   />
-                  {errors.contact && (
+                  {
                     <div className="fv-plugins-message-container mt-2 text-danger">
-                      {errors.contact.message}
+                      {errors.contact?.message}
                     </div>
-                  )}
+                  }
                 </div>
               </div>
 
               {/* Email Input */}
               <div className="row mb-6">
-                <label className="col-lg-4 col-form-label fw-semibold fs-6">
+                <label className="col-lg-4 col-form-label fw-semibold required fs-6">
                   Email
                 </label>
                 <div className="col-lg-8">
                   <input
+                    required
                     type="email"
                     {...register("email")}
                     className="form-control form-control-lg form-control-solid"
                     placeholder="Enter Email Address"
                   />
-                  {errors.email && (
+                  {
                     <div className="fv-plugins-message-container mt-2 text-danger">
                       {errors.email?.message}
                     </div>
-                  )}
+                  }
+                </div>
+              </div>
+
+              {/* Address Input */}
+              <div className="row mb-6">
+                <label className="col-lg-4 col-form-label required fw-semibold fs-6">
+                  Address
+                </label>
+                <div className="col-lg-8">
+                  <textarea
+                    {...register("address")}
+                    className="form-control form-control-lg form-control-solid"
+                    rows={3}
+                    placeholder="Enter Address"
+                    required
+                  ></textarea>
+                  {
+                    <div className="fv-plugins-message-container mt-2 text-danger">
+                      {errors.address?.message}
+                    </div>
+                  }
+                </div>
+              </div>
+
+              {/* Latitude  */}
+              <div className="row mb-6">
+                <label className="col-lg-4 col-form-label required fw-semibold fs-6">
+                  Latitude
+                </label>
+                <div className="col-lg-8">
+                  <input
+                    {...register("latitude")}
+                    className="form-control form-control-lg form-control-solid"
+                    placeholder="Enter Latitude"
+                    required
+                  ></input>
+                  {
+                    <div className="fv-plugins-message-container mt-2 text-danger">
+                      {errors.latitude?.message}
+                    </div>
+                  }
+                </div>
+              </div>
+
+              {/* longitude  */}
+              <div className="row mb-6">
+                <label className="col-lg-4 col-form-label required fw-semibold fs-6">
+                  Longitude
+                </label>
+                <div className="col-lg-8">
+                  <input
+                    {...register("longitude")}
+                    className="form-control form-control-lg form-control-solid"
+                    placeholder="Enter Longitude"
+                    required
+                  ></input>
+                  {
+                    <div className="fv-plugins-message-container mt-2 text-danger">
+                      {errors.longitude?.message}
+                    </div>
+                  }
                 </div>
               </div>
 
               {/* Website Input */}
-              <div className="row mb-6">
+              {/* <div className="row mb-6">
                 <label className="col-lg-4 col-form-label fw-semibold fs-6">
                   Website
                 </label>
@@ -440,8 +559,13 @@ const Details = () => {
                     placeholder="Enter Website URL"
                     {...register("website")}
                   />
+                  {
+                    <div className="fv-plugins-message-container mt-2 text-danger">
+                      {errors.website?.message}
+                    </div>
+                  }
                 </div>
-              </div>
+              </div> */}
 
               <div
                 className="row mb-6 h-20"
@@ -454,7 +578,7 @@ const Details = () => {
                 </label>
                 <div className="col-lg-8 fv-row">
                   <Controller
-                    name="shortDesc"
+                    name="short_desc"
                     control={control}
                     render={({ field }) => (
                       <InputField
@@ -467,6 +591,11 @@ const Details = () => {
                       />
                     )}
                   />
+                  {
+                    <div className="fv-plugins-message-container mt-2 text-danger">
+                      {errors.short_desc?.message}
+                    </div>
+                  }
                 </div>
               </div>
 
@@ -481,7 +610,7 @@ const Details = () => {
                 </label>
                 <div className="col-lg-8 fv-row">
                   <Controller
-                    name="longDesc"
+                    name="long_desc"
                     control={control}
                     render={({ field }) => (
                       <InputField
@@ -494,13 +623,24 @@ const Details = () => {
                       />
                     )}
                   />
+                  {
+                    <div className="fv-plugins-message-container mt-2 text-danger">
+                      {errors.long_desc?.message}
+                    </div>
+                  }
                 </div>
               </div>
 
               {/* Submit Button */}
               <div className="row mb-6">
                 <div className="col-lg-8 offset-lg-4">
-                  <button type="submit" className="btn btn-primary">
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    style={{
+                      cursor: "pointer",
+                    }}
+                  >
                     Save Changes
                   </button>
                 </div>

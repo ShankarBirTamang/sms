@@ -15,6 +15,7 @@ import CustomSelect, {
 } from "../../../components/CustomSelect/CustomSelect";
 import {
   AcademicSessionInterface,
+  ChangeAcademicSessionStatusInterface,
   UpdateAcademicSessionInterface,
 } from "../../services/academicSessionService";
 import useDocumentTitle from "../../../hooks/useDocumentTitle";
@@ -69,6 +70,7 @@ const AcademicSession = () => {
     edgeLinks,
     saveAcademicSession,
     updateAcademicSession,
+    changeAcademicSessionStatus,
     // setError,
   } = useAcademicSession({
     search: debouncedSearchTerm,
@@ -198,6 +200,17 @@ const AcademicSession = () => {
     setFormMode("create");
     setRenderKey(Math.floor((Math.random() + 1) * 10).toString());
   };
+
+  const [hoveredSessionId, setHoveredSessionId] = useState<number | null>(null);
+  const toggleSessionStatus = async (sessionId: number) => {
+    try {
+      console.log(sessionId);
+      await changeAcademicSessionStatus({ id: sessionId });
+    } catch (error) {
+      console.error("Error updating session status:", error);
+    }
+  };
+
   return (
     <>
       <div className="row">
@@ -402,9 +415,28 @@ const AcademicSession = () => {
                             </td>
                             <td>
                               <a href="#">
-                                <div className="badge badge-success fw-bolder">
-                                  Active
-                                </div>
+                                <button
+                                  className={`btn btn-sm ${
+                                    session.is_active
+                                      ? "btn-success"
+                                      : "btn-danger"
+                                  } w-100px`}
+                                  onMouseEnter={() =>
+                                    setHoveredSessionId(session.id)
+                                  } // Set hovered session ID
+                                  onMouseLeave={() => setHoveredSessionId(null)} // Reset hovered session ID
+                                  onClick={() =>
+                                    toggleSessionStatus(session.id)
+                                  } // Add onClick event
+                                >
+                                  {hoveredSessionId === session.id
+                                    ? session.is_active
+                                      ? "Deactivate"
+                                      : "Activate" // Change text on hover
+                                    : session.is_active
+                                    ? "Active"
+                                    : "Inactive"}
+                                </button>
                               </a>
                             </td>
                             <td className="text-end">

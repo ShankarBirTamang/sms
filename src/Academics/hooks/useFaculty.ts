@@ -1,4 +1,3 @@
-import { AddGradeInterface } from "./../services/gradeService";
 import { useEffect, useState } from "react";
 import { CanceledError } from "../../services/apiClient";
 import {
@@ -6,9 +5,12 @@ import {
   PaginationAndSearch,
 } from "../../Interface/Interface";
 import { PaginationProps } from "../../components/Pagination/Pagination";
-import gradeService, { UpdateGradeInterface } from "../services/gradeService";
+import facultyService, {
+  FacultyInterface,
+  UpdateFacultyInterface,
+} from "../services/facultyService";
 
-const useGrade = ({
+const useFaculty = ({
   search = "",
   currentPage = 1,
   itemsPerPage = null,
@@ -21,9 +23,7 @@ const useGrade = ({
     useState<PaginationProps["pagination"]>(null);
   const [edgeLinks, setEdgeLinks] = useState<PaginationProps["edgeLinks"]>();
 
-  const [grades, setGrades] = useState<UpdateGradeInterface[]>([]);
-
-  const [testData, setTestData] = useState<UpdateGradeInterface[]>([]);
+  const [faculties, setFaculties] = useState<UpdateFacultyInterface[]>([]);
 
   useEffect(() => {
     setLoading(true);
@@ -36,10 +36,13 @@ const useGrade = ({
     }
 
     const { request, cancel } =
-      gradeService.getAll<ApiResponseInterface<UpdateGradeInterface>>(params);
+      facultyService.getAll<ApiResponseInterface<UpdateFacultyInterface>>(
+        params
+      );
+
     request
       .then((result) => {
-        setGrades(result.data.data);
+        setFaculties(result.data.data);
         setPagination(result.data.meta);
         setEdgeLinks(result.data.links);
         setLoading(false);
@@ -53,31 +56,17 @@ const useGrade = ({
     return () => cancel();
   }, [search, currentPage, itemsPerPage]);
 
-  const saveGrade = async ({
-    academic_session_id,
-    grade_group_id,
-    name,
-    short_name,
-    hasFaculties,
-    sectionType,
-    facultySections,
-    sections,
-  }: AddGradeInterface) => {
+  const saveFaculty = async ({ name, code, description }: FacultyInterface) => {
     const params = {
-      academic_session_id,
-      grade_group_id,
       name,
-      short_name,
-      hasFaculties,
-      sectionType,
-      facultySections,
-      sections,
+      code,
+      description,
     };
 
     try {
-      const result = await gradeService.create<AddGradeInterface>(params);
+      const result = await facultyService.create<FacultyInterface>(params);
       // Update state only after successful creation
-      setGrades([...grades, result.data.data]);
+      setFaculties([...faculties, result.data.data]);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -87,21 +76,51 @@ const useGrade = ({
     }
   };
 
-  // useEffect(() => {
-  //   console.log("Grades:", grades);
-  // }, [grades]);
+  const updateFaculty = async ({
+    id,
+    name,
+    code,
+    description,
+  }: UpdateFacultyInterface) => {
+    const params = {
+      id,
+      name,
+      code,
+      description,
+    };
+    const originalFaculty = [...faculties];
 
-  //end for Pagination
+    try {
+      console.log("Original:", originalFaculty);
+
+      const result = await facultyService.update<UpdateFacultyInterface>(
+        params
+      );
+      setFaculties(
+        faculties.map((faculty) =>
+          faculty.id === result.data.data.id ? result.data.data : faculty
+        )
+      );
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred.");
+      }
+    }
+  };
+
   return {
-    grades,
-    error,
-    setError,
     isLoading,
     pagination,
+    faculties,
     edgeLinks,
     currentPage,
-    saveGrade,
+    error,
+    setError,
+    saveFaculty,
+    updateFaculty,
   };
 };
 
-export default useGrade;
+export default useFaculty;
