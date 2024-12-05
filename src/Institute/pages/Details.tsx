@@ -62,10 +62,12 @@ const Details = () => {
       const imageUrl = URL.createObjectURL(file);
 
       if (field === "logo") {
+        if (logo) URL.revokeObjectURL(logo);
         setLogo(imageUrl);
         setValue("logo", file); // Set the file in react-hook-form
         setIsLogoSelected(true);
       } else if (field === "cover") {
+        if (cover) URL.revokeObjectURL(cover);
         setCover(imageUrl);
         setValue("cover", file); // Set the file in react-hook-form
         setIsCoverSelected(true);
@@ -81,20 +83,13 @@ const Details = () => {
   };
 
   const handleRemoveLogo = () => {
+    if (logo) URL.revokeObjectURL(logo);
     setLogo(null);
     setIsLogoSelected(false);
   };
 
-  const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
-      const imageUrl = URL.createObjectURL(file);
-      setCover(imageUrl);
-      setIsCoverSelected(true);
-    }
-  };
-
   const handleCancelCover = () => {
+    if (cover) URL.revokeObjectURL(cover);
     setCover(
       "https://images.pexels.com/photos/207684/pexels-photo-207684.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
     );
@@ -109,19 +104,22 @@ const Details = () => {
   const onSubmit = (data: any) => {
     const formData = new FormData();
 
-    // Append text fields
     for (const key in data) {
       if (key !== "logo" && key !== "cover") {
         formData.append(key, data[key]);
       }
     }
 
-    // Append file inputs if selected
-    if (data.logo) {
+    if (data.logo && isLogoSelected) {
       formData.append("logo", data.logo);
+    } else if (logo) {
+      formData.append("logo", logo);
     }
-    if (data.cover) {
+
+    if (data.cover && isCoverSelected) {
       formData.append("cover", data.cover);
+    } else if (cover) {
+      formData.append("cover", cover);
     }
 
     // Log all FormData key-value pairs
@@ -346,11 +344,21 @@ const Details = () => {
                     type="text"
                     {...register("name", {
                       required: "Institute name is required",
+                      minLength: {
+                        value: 5,
+                        message:
+                          "Institute name must be at least 5 characters long",
+                      },
                     })}
                     className="form-control form-control-lg form-control-solid"
                     placeholder="Enter Institute Name"
                     required
                   />
+                  {errors.name && (
+                    <div className="fv-plugins-message-container mt-2 text-danger">
+                      {errors.name?.message}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -369,6 +377,11 @@ const Details = () => {
                     placeholder="Enter Address"
                     required
                   ></textarea>
+                  {errors.address && (
+                    <div className="fv-plugins-message-container mt-2 text-danger">
+                      {errors.address?.message}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -387,6 +400,11 @@ const Details = () => {
                     placeholder="Enter Contact Number"
                     required
                   />
+                  {errors.contact && (
+                    <div className="fv-plugins-message-container mt-2 text-danger">
+                      {errors.contact.message}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -402,6 +420,11 @@ const Details = () => {
                     className="form-control form-control-lg form-control-solid"
                     placeholder="Enter Email Address"
                   />
+                  {errors.email && (
+                    <div className="fv-plugins-message-container mt-2 text-danger">
+                      {errors.email?.message}
+                    </div>
+                  )}
                 </div>
               </div>
 
