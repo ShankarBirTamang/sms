@@ -1,15 +1,46 @@
 import { useEffect, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import InputField from "../components/InputField";
+
+interface FormData {
+  email: string;
+  name: string;
+  address: string;
+  contact: string;
+  website: string;
+  shortDesc: string;
+  longDesc: string;
+  logo: File | null;
+  cover: File | null;
+}
 
 const Details = () => {
   const [logo, setLogo] = useState<string | null>(
     "https://sms.aanshtech.com/storage/1/PUBLIC-LOGO.nO.bACKGROUND.webp"
   );
-  const [isLogoSelected, setIsLogoSelected] = useState(false);
-  const [shortDesc, setShortDesc] = useState("");
   const [cover, setCover] = useState<string | null>(
     "https://images.pexels.com/photos/207684/pexels-photo-207684.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   );
+  const [isLogoSelected, setIsLogoSelected] = useState(false);
   const [isCoverSelected, setIsCoverSelected] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors },
+  } = useForm<FormData>({
+    defaultValues: {
+      name: "",
+      address: "",
+      contact: "",
+      email: "",
+      website: "",
+      shortDesc: "",
+      longDesc: "",
+    },
+  });
 
   useEffect(() => {
     return () => {
@@ -22,12 +53,23 @@ const Details = () => {
     };
   }, [logo, cover]);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    field: "logo" | "cover"
+  ) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       const imageUrl = URL.createObjectURL(file);
-      setLogo(imageUrl);
-      setIsLogoSelected(true);
+
+      if (field === "logo") {
+        setLogo(imageUrl);
+        setValue("logo", file); // Set the file in react-hook-form
+        setIsLogoSelected(true);
+      } else if (field === "cover") {
+        setCover(imageUrl);
+        setValue("cover", file); // Set the file in react-hook-form
+        setIsCoverSelected(true);
+      }
     }
   };
 
@@ -62,6 +104,30 @@ const Details = () => {
   const handleRemoveCover = () => {
     setCover(null);
     setIsCoverSelected(false);
+  };
+
+  const onSubmit = (data: any) => {
+    const formData = new FormData();
+
+    // Append text fields
+    for (const key in data) {
+      if (key !== "logo" && key !== "cover") {
+        formData.append(key, data[key]);
+      }
+    }
+
+    // Append file inputs if selected
+    if (data.logo) {
+      formData.append("logo", data.logo);
+    }
+    if (data.cover) {
+      formData.append("cover", data.cover);
+    }
+
+    // Log all FormData key-value pairs
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
   };
 
   return (
@@ -113,7 +179,7 @@ const Details = () => {
           </div>
         </div>
         <div>
-          <form action="" method="POST" encType="multipart/form-data">
+          <form action="" method="POST" onSubmit={handleSubmit(onSubmit)}>
             <input type="hidden" name="_method" value="PUT" />
             <input
               type="hidden"
@@ -152,11 +218,11 @@ const Details = () => {
                     >
                       <i className="bi bi-pencil-fill fs-7"></i>
                       <input
+                        id="logo"
                         type="file"
-                        name="logo"
                         accept=".png, .jpg, .jpeg"
                         style={{ display: "none" }}
-                        onChange={handleFileChange}
+                        onChange={(event) => handleFileChange(event, "logo")}
                       />
                       <input type="hidden" name="avatar_remove" />
                     </label>
@@ -226,11 +292,11 @@ const Details = () => {
                     >
                       <i className="bi bi-pencil-fill fs-7"></i>
                       <input
+                        id="cover"
                         type="file"
-                        name="cover"
                         accept=".png, .jpg, .jpeg"
                         style={{ display: "none" }}
-                        onChange={handleCoverChange}
+                        onChange={(event) => handleFileChange(event, "cover")}
                       />
                       <input type="hidden" name="avatar_remove" />
                     </label>
@@ -278,7 +344,9 @@ const Details = () => {
                 <div className="col-lg-8">
                   <input
                     type="text"
-                    name="name"
+                    {...register("name", {
+                      required: "Institute name is required",
+                    })}
                     className="form-control form-control-lg form-control-solid"
                     placeholder="Enter Institute Name"
                     required
@@ -293,7 +361,9 @@ const Details = () => {
                 </label>
                 <div className="col-lg-8">
                   <textarea
-                    name="address"
+                    {...register("address", {
+                      required: "Institute address is required",
+                    })}
                     className="form-control form-control-lg form-control-solid"
                     rows={3}
                     placeholder="Enter Address"
@@ -310,7 +380,9 @@ const Details = () => {
                 <div className="col-lg-8">
                   <input
                     type="text"
-                    name="contact"
+                    {...register("contact", {
+                      required: "Institute contact number is required",
+                    })}
                     className="form-control form-control-lg form-control-solid"
                     placeholder="Enter Contact Number"
                     required
@@ -326,7 +398,7 @@ const Details = () => {
                 <div className="col-lg-8">
                   <input
                     type="email"
-                    name="email"
+                    {...register("email")}
                     className="form-control form-control-lg form-control-solid"
                     placeholder="Enter Email Address"
                   />
@@ -341,32 +413,64 @@ const Details = () => {
                 <div className="col-lg-8">
                   <input
                     type="url"
-                    name="website"
                     className="form-control form-control-lg form-control-solid"
                     placeholder="Enter Website URL"
+                    {...register("website")}
                   />
                 </div>
               </div>
 
-              {/* <div className="row mb-6">
+              <div
+                className="row mb-6 h-20"
+                style={{
+                  height: "12rem",
+                }}
+              >
                 <label className="col-lg-4 col-form-label fw-semibold fs-6">
                   Short Description
                 </label>
-                <div className="col-lg-8 fv-row"></div>
-              </div> */}
+                <div className="col-lg-8 fv-row">
+                  <Controller
+                    name="shortDesc"
+                    control={control}
+                    render={({ field }) => (
+                      <InputField
+                        placeholder="Input Short Description"
+                        style={{
+                          height: "6rem",
+                        }}
+                        value={field.value} // Pass value explicitly
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
+                </div>
+              </div>
 
-              <div className="row mb-6">
+              <div
+                className="row mb-6"
+                style={{
+                  height: "12rem",
+                }}
+              >
                 <label className="col-lg-4 col-form-label fw-semibold fs-6">
                   Long Description
                 </label>
                 <div className="col-lg-8 fv-row">
-                  <textarea
-                    name="long_desc"
-                    id="long_desc"
-                    className="form-control form-control-lg form-control-solid"
-                    style={{ height: "auto" }}
-                    rows={5}
-                  ></textarea>
+                  <Controller
+                    name="longDesc"
+                    control={control}
+                    render={({ field }) => (
+                      <InputField
+                        placeholder="Input Long Description"
+                        style={{
+                          height: "6rem",
+                        }}
+                        value={field.value} // Pass value explicitly
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
                 </div>
               </div>
 
