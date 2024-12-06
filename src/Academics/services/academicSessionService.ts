@@ -1,6 +1,8 @@
 import apiRoute from "../../services/httpService";
+import { UpdateGradeInterface } from "./gradeService";
 
 export interface AcademicSessionInterface {
+  id?: number;
   name: string;
   start_date: string;
   start_date_np: string;
@@ -9,6 +11,7 @@ export interface AcademicSessionInterface {
   academic_level_id: number;
   academic_level?: string;
   is_active?: boolean;
+  grades?: UpdateGradeInterface[];
 }
 
 export interface UpdateAcademicSessionInterface

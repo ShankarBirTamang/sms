@@ -1,9 +1,8 @@
-// export interface AcademicLevelInterface {
-//   id: number;
-//   name: string;
-//   description: string | null;
-// }
-
+export interface MenuItem {
+  title: string;
+  icon: string;
+  route: string;
+}
 export interface PaginationAndSearch {
   search?: string | "";
   currentPage?: number;

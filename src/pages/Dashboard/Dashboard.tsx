@@ -1,11 +1,6 @@
 import Icon from "../../components/Icon/Icon.tsx";
+import { MenuItem } from "../../Interface/Interface.tsx";
 // import { usePermissions } from "../../hooks/usePermissions.ts";
-
-interface MenuItem {
-  title: string;
-  icon: string;
-  route: string;
-}
 
 const Dashboard = () => {
   // const { permissions } = usePermissions();

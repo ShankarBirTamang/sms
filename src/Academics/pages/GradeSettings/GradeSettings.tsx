@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import GradeGroup from "./GradeGroup/GradeGroup";
 import Faculty from "./Faculty/Faculty";
+import SubjectType from "./SubjectType/SubjectType";
 
 const GradeSettings = () => {
   const [tab, setTab] = useState("group");
@@ -33,6 +34,16 @@ const GradeSettings = () => {
                 Grade Faculties
               </span>
             </li>
+            <li className="nav-item mt-2">
+              <span
+                className={`nav-link text-active-primary ms-0 me-10 py-5 cursor-pointer  ${
+                  tab === "subject" && "active"
+                }`}
+                onClick={() => setTab("subject")}
+              >
+                Subject Types
+              </span>
+            </li>
           </ul>
         </div>
       </div>
@@ -41,6 +52,8 @@ const GradeSettings = () => {
           <GradeGroup />
         ) : tab === "faculty" ? (
           <Faculty />
+        ) : tab === "subject" ? (
+          <SubjectType />
         ) : (
           ""
         )}

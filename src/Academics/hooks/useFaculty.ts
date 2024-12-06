@@ -1,3 +1,4 @@
+import { ChangeFacultyStatusInterface } from "./../services/facultyService";
 import { useEffect, useState } from "react";
 import { CanceledError } from "../../services/apiClient";
 import {
@@ -25,12 +26,13 @@ const useFaculty = ({
 
   const [faculties, setFaculties] = useState<UpdateFacultyInterface[]>([]);
 
+  const params: Record<string, string | number | null> = {
+    per_page: itemsPerPage,
+    search: search,
+  };
   useEffect(() => {
     setLoading(true);
-    const params: Record<string, string | number | null> = {
-      per_page: itemsPerPage,
-      search: search,
-    };
+
     if (itemsPerPage !== null) {
       params.page = currentPage;
     }
@@ -110,6 +112,34 @@ const useFaculty = ({
     }
   };
 
+  const changeFacultyStatus = async ({ id }: ChangeFacultyStatusInterface) => {
+    try {
+      await facultyService.changeStatus<ChangeFacultyStatusInterface>({
+        id,
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      const { request } =
+        facultyService.getAll<ApiResponseInterface<UpdateFacultyInterface>>(
+          params
+        );
+
+      request
+        .then((result) => {
+          setFaculties(result.data.data);
+          setPagination(result.data.meta);
+          setEdgeLinks(result.data.links);
+          setLoading(false);
+        })
+        .catch((err) => {
+          if (err instanceof CanceledError) return;
+          setError(err.message);
+          setLoading(false);
+        });
+    }
+  };
+
   return {
     isLoading,
     pagination,
@@ -120,6 +150,7 @@ const useFaculty = ({
     setError,
     saveFaculty,
     updateFaculty,
+    changeFacultyStatus,
   };
 };
 

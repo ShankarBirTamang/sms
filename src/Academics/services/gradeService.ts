@@ -1,4 +1,4 @@
-import create from "../../services/httpService";
+import apiRoute from "../../services/httpService";
 import { UpdateAcademicSessionInterface } from "./academicSessionService";
 
 export interface SectionData {
@@ -69,15 +69,17 @@ interface GradeInterface {
 }
 
 export interface UpdateGradeInterface {
+  length: number;
   id: number;
   name: string;
   grade_group_id: number;
   short_name: string;
   is_active: number;
   has_faculties: number;
+  total_students?: number;
   section_type: "standard" | "custom";
   session: UpdateAcademicSessionInterface;
   sections: SectionsInterface;
 }
 
-export default create("/academics/grades");
+export default apiRoute("/academics/grades");

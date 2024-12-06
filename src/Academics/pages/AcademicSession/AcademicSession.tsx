@@ -15,21 +15,22 @@ import CustomSelect, {
 } from "../../../components/CustomSelect/CustomSelect";
 import {
   AcademicSessionInterface,
-  ChangeAcademicSessionStatusInterface,
   UpdateAcademicSessionInterface,
 } from "../../services/academicSessionService";
 import useDocumentTitle from "../../../hooks/useDocumentTitle";
+import ProcessingButton from "../../../components/ProcessingButton/ProcessingButton";
+import toast from "react-hot-toast";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const AcademicSession = () => {
   useDocumentTitle("Academic Sessions");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
-  const [searchTerm, setSearchTerm] = useState(""); // New state for search term
-  const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  //for datepicker
   const [startValueAD, setStartValueAD] = useState("");
   const [startValueBS, setStartValueBS] = useState("");
 
@@ -37,9 +38,7 @@ const AcademicSession = () => {
   const [endValueBS, setEndValueBS] = useState("");
   const [currentSessionId, setCurrentSessionId] = useState<number | null>(null);
 
-  //get academic Levels
   const { academicLevels } = useAcademicLevels({});
-  //key to rerender components if required
   const [renderKey, setRenderKey] = useState("");
 
   const [selectedAcademicLevel, setSelectedAcademicLevel] =
@@ -71,33 +70,32 @@ const AcademicSession = () => {
     saveAcademicSession,
     updateAcademicSession,
     changeAcademicSessionStatus,
-    // setError,
   } = useAcademicSession({
     search: debouncedSearchTerm,
     currentPage,
     itemsPerPage,
   });
 
-  const academicLevelOptions = academicLevels.map((level) => ({
-    value: level.id,
-    label: level.name,
-  }));
+  const academicLevelOptions = academicLevels
+    .filter((level) => level)
+    .map((level) => ({
+      value: level.id,
+      label: level.name,
+    }));
 
   const handleAcademicLevelChange = (
     selectedOption: { value: number; label: string } | null
   ) => {
     if (selectedOption) {
-      setValue("academic_level_id", selectedOption.value); // Update form value
+      setValue("academic_level_id", selectedOption.value);
     }
   };
 
-  // header functions
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
   const handleItemsPerPageChange = (value: number | null) => {
-    // (true);
     setItemsPerPage(value);
     setCurrentPage(1);
   };
@@ -106,7 +104,6 @@ const AcademicSession = () => {
     setSearchTerm(event.target.value);
     setCurrentPage(1);
   };
-  // Add Academic Session Form
   const {
     register,
     handleSubmit,
@@ -115,16 +112,18 @@ const AcademicSession = () => {
     setValue,
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
-  const onSubmit = (
+  const onSubmit = async (
     data: AcademicSessionInterface | UpdateAcademicSessionInterface
   ) => {
     try {
       setIsSubmitting(true);
       if (formMode === "create") {
-        saveAcademicSession(data);
+        await saveAcademicSession(data);
+        toast.success("Academic Session Added Successfully.");
       } else if (formMode === "edit") {
         if (currentSessionId) {
-          updateAcademicSession({ ...data, id: currentSessionId });
+          await updateAcademicSession({ ...data, id: currentSessionId });
+          toast.success("Academic Session Updated Successfully.");
         }
       }
     } catch (error) {
@@ -161,7 +160,6 @@ const AcademicSession = () => {
       end_date: session.end_date,
       end_date_np: session.end_date_np,
     });
-    // setStartValueAD(session.start_date);
     setValue("academic_level_id", session.academic_level_id);
     handleDateChange(
       {
@@ -181,7 +179,7 @@ const AcademicSession = () => {
     const academicLevel = academicLevelOptions.find(
       (level) => level.value === session.academic_level_id
     );
-    setSelectedAcademicLevel(academicLevel || null); // Update the selected academic level
+    setSelectedAcademicLevel(academicLevel || null);
     setCurrentSessionId(session.id);
     setRenderKey(Math.floor((Math.random() + 1) * 10).toString());
   };
@@ -201,14 +199,25 @@ const AcademicSession = () => {
     setRenderKey(Math.floor((Math.random() + 1) * 10).toString());
   };
 
-  const [hoveredSessionId, setHoveredSessionId] = useState<number | null>(null);
+  const [processingSessionId, setProcessingSessionId] = useState<number | null>(
+    null
+  );
   const toggleSessionStatus = async (sessionId: number) => {
     try {
+      setProcessingSessionId(sessionId);
       console.log(sessionId);
       await changeAcademicSessionStatus({ id: sessionId });
+      toast.success("Academic Session Status Changed Successfully.");
     } catch (error) {
       console.error("Error updating session status:", error);
+    } finally {
+      setProcessingSessionId(null);
     }
+  };
+  const navigate = useNavigate();
+
+  const handleNavigate = (sessionId: number) => {
+    navigate(`${sessionId}/show`);
   };
 
   return (
@@ -316,7 +325,7 @@ const AcademicSession = () => {
                     title="submit"
                     type="submit"
                     className="btn btn-primary"
-                    disabled={isSubmitting} // Disable button while submitting
+                    disabled={isSubmitting}
                   >
                     {isSubmitting
                       ? "Saving..."
@@ -414,40 +423,38 @@ const AcademicSession = () => {
                               A.D.:{session.end_date}
                             </td>
                             <td>
-                              <a href="#">
-                                <button
-                                  className={`btn btn-sm ${
-                                    session.is_active
-                                      ? "btn-success"
-                                      : "btn-danger"
-                                  } w-100px`}
-                                  onMouseEnter={() =>
-                                    setHoveredSessionId(session.id)
-                                  } // Set hovered session ID
-                                  onMouseLeave={() => setHoveredSessionId(null)} // Reset hovered session ID
-                                  onClick={() =>
-                                    toggleSessionStatus(session.id)
-                                  } // Add onClick event
-                                >
-                                  {hoveredSessionId === session.id
-                                    ? session.is_active
-                                      ? "Deactivate"
-                                      : "Activate" // Change text on hover
-                                    : session.is_active
-                                    ? "Active"
-                                    : "Inactive"}
-                                </button>
-                              </a>
+                              <ProcessingButton
+                                isProcessing={
+                                  processingSessionId === session.id
+                                }
+                                isActive={session.is_active ?? false}
+                                onClick={() => toggleSessionStatus(session.id)}
+                                hoverText={
+                                  session.is_active ? "Deactivate" : "Activate"
+                                }
+                                activeText="Active"
+                                inactiveText="Inactive"
+                              />
                             </td>
                             <td className="text-end">
-                              <button
-                                title="edit academic level"
-                                type="button"
-                                onClick={() => handleEditClick(session)}
-                                className="btn btn-light-info btn-icon btn-sm"
-                              >
-                                <Icon name={"edit"} className={"svg-icon"} />
-                              </button>
+                              <div className="d-flex gap-2">
+                                <button
+                                  title="edit academic level"
+                                  type="button"
+                                  onClick={() => handleEditClick(session)}
+                                  className="btn btn-light-info btn-icon btn-sm"
+                                >
+                                  <Icon name={"edit"} className={"svg-icon"} />
+                                </button>
+                                <button
+                                  title="View Details"
+                                  type="button"
+                                  onClick={() => handleNavigate(session.id)}
+                                  className="btn btn-sm btn-light-success btn-icon"
+                                >
+                                  <Icon name={"eye"} className={"svg-icon"} />
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -457,7 +464,7 @@ const AcademicSession = () => {
                 </div>
               </div>
             </div>
-            {/* Pagination */}
+            {}
             <div className="card-footer">
               {pagination && (
                 <Pagination

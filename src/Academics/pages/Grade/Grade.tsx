@@ -140,7 +140,9 @@ const Grade = () => {
                         {Object.entries(grade.sections).map(
                           ([sectionGroup, sections], sci) => (
                             <div key={`SEC-${sci}`} className="mb-1">
-                              <strong>{sectionGroup}:</strong>
+                              <strong>
+                                {sectionGroup.split(",")[0].trim()}:
+                              </strong>
                               <div className="d-flex flex-wrap gap-3">
                                 {sections.map((section, si) => (
                                   <span
@@ -170,7 +172,7 @@ const Grade = () => {
                         Add Educator
                       </button>
                     </td>
-                    <td className="text-center">44</td>
+                    <td className="text-center">{grade.total_students ?? 0}</td>
 
                     <td className="text-end">
                       <a

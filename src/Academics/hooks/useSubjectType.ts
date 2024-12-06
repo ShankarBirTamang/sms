@@ -1,35 +1,32 @@
+import { ChangeSubjectTypeStatusInterface } from "./../services/subjectTypeService";
 import { useEffect, useState } from "react";
 import {
   ApiResponseInterface,
   PaginationAndSearch,
 } from "../../Interface/Interface";
-import academicSessionService, {
-  AcademicSessionInterface,
-  ChangeAcademicSessionStatusInterface,
-  UpdateAcademicSessionInterface,
-} from "../services/academicSessionService";
 
 import { CanceledError } from "../../services/apiClient";
 import { PaginationProps } from "../../components/Pagination/Pagination";
+import subjectTypeService, {
+  SubjectTypeInterface,
+  UpdateSubjectTypeInterface,
+} from "../services/subjectTypeService";
 
-const useAcademicSession = ({
+const useSubjectType = ({
   search = "",
   currentPage = 1,
   itemsPerPage = null,
 }: PaginationAndSearch) => {
-  const [academicSessions, setAcademicSessions] = useState<
-    UpdateAcademicSessionInterface[]
-  >([]);
-
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setLoading] = useState(false);
-  const [statusChanged, setStatusChanged] = useState(false); // State to track status changes
+  const [statusChanged, setStatusChanged] = useState(false);
 
   // For Pagination
   const [pagination, setPagination] =
     useState<PaginationProps["pagination"]>(null);
   const [edgeLinks, setEdgeLinks] = useState<PaginationProps["edgeLinks"]>();
-  //end for Pagination
+
+  const [subjectTypes, setSubjectTypes] = useState<SubjectTypeInterface[]>([]);
 
   useEffect(() => {
     setLoading(true);
@@ -43,13 +40,13 @@ const useAcademicSession = ({
     }
 
     const { request, cancel } =
-      academicSessionService.getAll<
-        ApiResponseInterface<UpdateAcademicSessionInterface>
+      subjectTypeService.getAll<
+        ApiResponseInterface<UpdateSubjectTypeInterface>
       >(params);
 
     request
       .then((result) => {
-        setAcademicSessions(result.data.data);
+        setSubjectTypes(result.data.data);
         setPagination(result.data.meta);
         setEdgeLinks(result.data.links);
         setLoading(false);
@@ -59,31 +56,23 @@ const useAcademicSession = ({
         setError(err.message);
         setLoading(false);
       });
-
     return () => cancel();
-  }, [search, currentPage, itemsPerPage, statusChanged]);
+  }, [currentPage, itemsPerPage, search, statusChanged]);
 
-  const saveAcademicSession = async ({
+  const saveSubjectType = async ({
     name,
-    start_date,
-    start_date_np,
-    end_date,
-    end_date_np,
-    academic_level_id,
-  }: AcademicSessionInterface) => {
+    marking_scheme,
+    is_marks_added,
+  }: SubjectTypeInterface) => {
     const params = {
       name,
-      start_date,
-      start_date_np,
-      end_date,
-      end_date_np,
-      academic_level_id,
+      marking_scheme,
+      is_marks_added,
     };
     try {
-      const result =
-        await academicSessionService.create<AcademicSessionInterface>(params);
+      await subjectTypeService.create<SubjectTypeInterface>(params);
       // Update state only after successful creation
-      setAcademicSessions([...academicSessions, result.data.data]);
+      setStatusChanged((prev) => !prev);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -93,34 +82,26 @@ const useAcademicSession = ({
     }
   };
 
-  const updateAcademicSession = async ({
+  const updateSubjectType = async ({
     id,
     name,
-    start_date,
-    start_date_np,
-    end_date,
-    end_date_np,
-    academic_level_id,
-  }: UpdateAcademicSessionInterface) => {
+    marking_scheme,
+    is_marks_added,
+  }: UpdateSubjectTypeInterface) => {
     const params = {
       id,
       name,
-      start_date,
-      start_date_np,
-      end_date,
-      end_date_np,
-      academic_level_id,
+      marking_scheme,
+      is_marks_added,
     };
     // const originalAcademicLevel = [...academicSessions];
 
     try {
       const result =
-        await academicSessionService.update<UpdateAcademicSessionInterface>(
-          params
-        );
-      setAcademicSessions(
-        academicSessions.map((session) =>
-          session.id === result.data.data.id ? result.data.data : session
+        await subjectTypeService.update<UpdateSubjectTypeInterface>(params);
+      setSubjectTypes(
+        subjectTypes.map((type) =>
+          type.id === result.data.data.id ? result.data.data : type
         )
       );
     } catch (err) {
@@ -129,41 +110,41 @@ const useAcademicSession = ({
       } else {
         setError("An unknown error occurred.");
       }
-    } finally {
-      // console.log(params, result);
     }
   };
 
-  const changeAcademicSessionStatus = async ({
+  const changeSubjectTypeStatus = async ({
     id,
-  }: ChangeAcademicSessionStatusInterface) => {
+  }: ChangeSubjectTypeStatusInterface) => {
     try {
       // Update the status of the academic session
-      await academicSessionService.changeStatus<ChangeAcademicSessionStatusInterface>(
-        {
-          id,
-        }
+      const result =
+        await subjectTypeService.changeStatus<ChangeSubjectTypeStatusInterface>(
+          {
+            id,
+          }
+        );
+      setSubjectTypes(
+        subjectTypes.map((type) =>
+          type.id === result.data.data.id ? result.data.data : type
+        )
       );
     } catch (error) {
       console.error("Error changing academic session status:", error);
-    } finally {
-      setStatusChanged((prev) => !prev);
     }
   };
 
   return {
-    academicSessions,
-    error,
     isLoading,
-    setAcademicSessions,
-    setError,
+    subjectTypes,
     pagination,
     edgeLinks,
     currentPage,
-    saveAcademicSession,
-    updateAcademicSession,
-    changeAcademicSessionStatus,
+    saveSubjectType,
+    updateSubjectType,
+    changeSubjectTypeStatus,
+    setError,
   };
 };
 
-export default useAcademicSession;
+export default useSubjectType;

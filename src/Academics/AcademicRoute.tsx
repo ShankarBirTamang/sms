@@ -6,6 +6,8 @@ import AcademicLevel from "../Academics/pages/AcademicLevel/AcademicLevel";
 import AcademicSession from "../Academics/pages/AcademicSession/AcademicSession";
 import Grade from "../Academics/pages/Grade/Grade";
 import GradeSettings from "./pages/GradeSettings/GradeSettings";
+import AcademicSessionDetail from "./pages/AcademicSession/AcademicSessionDetail";
+import SubjectType from "./pages/GradeSettings/SubjectType/SubjectType";
 
 const routes = [
   {
@@ -33,6 +35,16 @@ const routes = [
     title: "Grades",
     element: <Grade />,
   },
+  {
+    path: "academic-sessions/:sessionId/show",
+    title: "Academic Session Details",
+    element: <AcademicSessionDetail />,
+  },
+  // {
+  //   path: "subject-types",
+  //   title: "Subject Types",
+  //   element: <SubjectType />,
+  // },
 ];
 
 const AcademicRoute = () => {

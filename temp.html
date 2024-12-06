@@ -1,141 +1,85 @@
-<div className="col-12">
-  <div className="fv-row mb-7">
-    <label className="required fw-bold fs-6 mb-2">Select Faculties</label>
-    <div className="d-flex gap-5 flex-wrap">
-      <div className="">
-        <div className="form-check">
-          <input
-            className="form-check-input sectionCheckbox"
-            type="checkbox"
-            value="Science"
-            id="Science"
-            n=""
-            wire:model.live="newGrade.faculties"
-          />
-          <label className="form-check-label" for="Science"> Science </label>
-        </div>
-      </div>
-      <div className="">
-        <div className="form-check">
-          <input
-            className="form-check-input sectionCheckbox"
-            type="checkbox"
-            value="Management"
-            id="Management"
-            n=""
-            wire:model.live="newGrade.faculties"
-          />
-          <label className="form-check-label" for="Management">
-            Management
-          </label>
-        </div>
-      </div>
-      <div className="">
-        <div className="form-check">
-          <input
-            className="form-check-input sectionCheckbox"
-            type="checkbox"
-            value="Humanities"
-            id="Humanities"
-            n=""
-            wire:model.live="newGrade.faculties"
-          />
-          <label className="form-check-label" for="Humanities">
-            Humanities
-          </label>
-        </div>
-      </div>
-      <div className="">
-        <div className="form-check">
-          <input
-            className="form-check-input sectionCheckbox"
-            type="checkbox"
-            value="Computer Science"
-            id="Computer Science"
-            n=""
-            wire:model.live="newGrade.faculties"
-          />
-          <label className="form-check-label" for="Computer Science">
-            Computer Science
-          </label>
-        </div>
-      </div>
-      <div className="">
-        <div className="form-check">
-          <input
-            className="form-check-input sectionCheckbox"
-            type="checkbox"
-            value="Hotel Management"
-            id="Hotel Management"
-            n=""
-            wire:model.live="newGrade.faculties"
-          />
-          <label className="form-check-label" for="Hotel Management">
-            Hotel Management
-          </label>
-        </div>
-      </div>
-      <div className="">
-        <div className="form-check">
-          <input
-            className="form-check-input sectionCheckbox"
-            type="checkbox"
-            value="Education"
-            id="Education"
-            n=""
-            wire:model.live="newGrade.faculties"
-          />
-          <label className="form-check-label" for="Education">
-            Education
-          </label>
-        </div>
-      </div>
-      <div className="">
-        <div className="form-check">
-          <input
-            className="form-check-input sectionCheckbox"
-            type="checkbox"
-            value="Electrical Engineering"
-            id="Electrical Engineering"
-            n=""
-            wire:model.live="newGrade.faculties"
-          />
-          <label className="form-check-label" for="Electrical Engineering">
-            Electrical Engineering
-          </label>
-        </div>
-      </div>
-      <div className="">
-        <div className="form-check">
-          <input
-            className="form-check-input sectionCheckbox"
-            type="checkbox"
-            value="Computer Engineering"
-            id="Computer Engineering"
-            n=""
-            wire:model.live="newGrade.faculties"
-          />
-          <label className="form-check-label" for="Computer Engineering">
-            Computer Engineering
-          </label>
-        </div>
-      </div>
-      <div className="">
-        <div className="form-check">
-          <input
-            className="form-check-input sectionCheckbox"
-            type="checkbox"
-            value="Civil Engineering"
-            id="Civil Engineering"
-            n=""
-            wire:model.live="newGrade.faculties"
-          />
-          <label className="form-check-label" for="Civil Engineering">
-            Civil Engineering
-          </label>
-        </div>
-      </div>
-    </div>
+<div className="card">
+  <div className="card-header border-0 pt-6">
+    <h2></h2>
   </div>
-  <hr />
+  <div className="card-body pt-0">
+    <table
+      className="table align-middle table-row-dashed fs-6 gy-5"
+      id="kt_table_users"
+    >
+      <thead>
+        <tr
+          className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0"
+        >
+          <th className="min-w-125px">Grade Name</th>
+          <th className="min-w-125px">Sections</th>
+          <th className="min-w-125px">Total Students</th>
+          <th className="text-end min-w-100px">Actions</th>
+        </tr>
+      </thead>
+      <tbody className="text-gray-600 fw-bold">
+        <tr>
+          <td>Grade 12 (12)</td>
+          <td>
+            <span className="badge badge-primary">SA1</span>
+            <span className="badge badge-primary">SA2</span>
+            <span className="badge badge-primary">SA3-CS</span>
+            <span className="badge badge-primary">MA1</span>
+            <span className="badge badge-primary">MA2</span>
+            <span className="badge badge-primary">MA3-HM</span>
+            <span className="badge badge-primary">MA4-CM</span>
+            <span className="badge badge-primary">MA5</span>
+            <span className="badge badge-primary">MB1</span>
+            <span className="badge badge-primary">MB2</span>
+            <span className="badge badge-primary">MB3</span>
+            <span className="badge badge-primary">HUM</span>
+            <span className="badge badge-primary">EA1</span>
+            <span className="badge badge-primary">EA2</span>
+            <span className="badge badge-primary">EA3</span>
+            <span className="badge badge-primary">ELE</span>
+          </td>
+          <td>732</td>
+
+          <td className="text-end">
+            <a
+              href="https://sms.aanshtech.com/sms/settings/academics/sessions/2/grades/14/students"
+              className="btn btn-light-info btn-active-light-primary btn-sm"
+            >
+              View Details
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td>Grade 11 (11)</td>
+          <td>
+            <span className="badge badge-primary">SA1</span>
+            <span className="badge badge-primary">SA2</span>
+            <span className="badge badge-primary">SA3</span>
+            <span className="badge badge-primary">MA1</span>
+            <span className="badge badge-primary">MA2-HM</span>
+            <span className="badge badge-primary">MA3-CM</span>
+            <span className="badge badge-primary">MA4</span>
+            <span className="badge badge-primary">MA5-CM</span>
+            <span className="badge badge-primary">MB1</span>
+            <span className="badge badge-primary">HUM</span>
+            <span className="badge badge-primary">EA1</span>
+            <span className="badge badge-primary">ELE</span>
+            <span className="badge badge-primary">EA2</span>
+            <span className="badge badge-primary">MB2</span>
+            <span className="badge badge-primary">EA3</span>
+          </td>
+          <td>697</td>
+
+          <td className="text-end">
+            <a
+              href="https://sms.aanshtech.com/sms/settings/academics/sessions/2/grades/15/students"
+              className="btn btn-light-info btn-active-light-primary btn-sm"
+            >
+              View Details
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

@@ -29,10 +29,12 @@ const AddEditGrade = ({ onSave, editData, formType }: AddEditGradeProps) => {
   const { saveGrade } = useGrade({});
   const [formMode, setFormMode] = useState<"create" | "edit">(formType);
 
-  const academicSessionOptions = academicSessions.map((session) => ({
-    value: session.id,
-    label: session.name,
-  }));
+  const academicSessionOptions = academicSessions
+    .filter((session) => session.is_active)
+    .map((session) => ({
+      value: session.id,
+      label: session.name,
+    }));
 
   const gradeGroupOptions = gradeGroups.map((group) => ({
     value: group.id,

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Icon from "../../../../components/Icon/Icon";
 import Loading from "../../../../components/Loading/Loading";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,47 +8,65 @@ import { useForm } from "react-hook-form";
 import Pagination from "../../../../components/Pagination/Pagination";
 import useDebounce from "../../../../hooks/useDebounce";
 import useDocumentTitle from "../../../../hooks/useDocumentTitle";
-import useFaculty from "../../../hooks/useFaculty";
-import {
-  FacultyInterface,
-  UpdateFacultyInterface,
-} from "../../../services/facultyService";
+
 import ProcessingButton from "../../../../components/ProcessingButton/ProcessingButton";
 import toast from "react-hot-toast";
+import useSubjectType from "../../../hooks/useSubjectType";
+import {
+  SubjectTypeInterface,
+  UpdateSubjectTypeInterface,
+} from "../../../services/subjectTypeService";
+import useHelpers from "../../../../hooks/useHelpers";
 
 const schema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
-  code: z.string().min(1, { message: "Code is required" }),
-  description: z.string(),
+  marking_scheme: z.enum(["grade", "marks"]).default("marks"),
+  is_marks_added: z.boolean().default(true),
 });
-
 type FormData = z.infer<typeof schema>;
 
-const Faculty = () => {
-  useDocumentTitle("Faculties");
+const SubjectType = () => {
+  useDocumentTitle("Subject Types");
+  const { capitalizeFirstLetter } = useHelpers();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
   const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [processingSubjectTypeId, setProcessingSubjectTypeId] = useState<
+    number | null
+  >(null);
+
+  const [markingScheme, setMarkingScheme] = useState<"grade" | "marks">(
+    "marks"
+  );
+
+  const [marksAdded, setMarksAdded] = useState<boolean>(true);
 
   const {
-    faculties,
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm<FormData>({ resolver: zodResolver(schema) });
+
+  const {
+    subjectTypes,
     isLoading,
     pagination,
     edgeLinks,
-    saveFaculty,
-    updateFaculty,
+    saveSubjectType,
+    updateSubjectType,
+    changeSubjectTypeStatus,
     setError,
-    changeFacultyStatus,
-  } = useFaculty({
+  } = useSubjectType({
     search: debouncedSearchTerm,
     currentPage,
     itemsPerPage,
   });
 
-  // header functions
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -63,24 +81,32 @@ const Faculty = () => {
     setCurrentPage(1); // Reset to the first page on new search
   };
 
-  const handleEditClick = (faculty: UpdateFacultyInterface) => {
+  const handleEditClick = (type: SubjectTypeInterface) => {
     reset({
-      name: faculty.name,
-      code: faculty.code,
-      description: faculty.description ?? "",
+      name: type.name,
+      marking_scheme: type.marking_scheme,
+      is_marks_added: type.is_marks_added,
     });
+    setMarkingScheme(type.marking_scheme);
+    if (type.is_marks_added) {
+      setMarksAdded(true);
+    } else {
+      setMarksAdded(false);
+    }
     setFormMode("edit");
-    setCurrentFacultyId(faculty.id);
+    setCurrentSubjectTypeId(type.id ?? 0);
   };
 
-  const onSubmit = (data: FacultyInterface | UpdateFacultyInterface) => {
+  const onSubmit = (
+    data: SubjectTypeInterface | UpdateSubjectTypeInterface
+  ) => {
     try {
       setIsSubmitting(true);
       if (formMode === "create") {
-        saveFaculty(data);
+        saveSubjectType(data);
       } else if (formMode === "edit") {
-        if (currentFacultyId) {
-          updateFaculty({ ...data, id: currentFacultyId });
+        if (currentSubjectTypeId) {
+          updateSubjectType({ ...data, id: currentSubjectTypeId });
         } else {
           setError("Error Updating Data");
         }
@@ -93,40 +119,47 @@ const Faculty = () => {
       setIsSubmitting(false);
     }
   };
-  const [currentFacultyId, setCurrentFacultyId] = useState<number | null>(null);
+  const [currentSubjectTypeId, setCurrentSubjectTypeId] = useState<
+    number | null
+  >(null);
   const resetForm = () => {
     reset({
       name: "",
-      code: "",
-      description: "",
+      marking_scheme: "marks",
+      is_marks_added: false,
     });
     setFormMode("create");
-    setCurrentFacultyId(null);
+    setCurrentSubjectTypeId(null);
     setError("");
   };
 
-  // Add Academic Level Form
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormData>({ resolver: zodResolver(schema) });
-
-  const [processingFacultyId, setProcessingFacultyId] = useState<number | null>(
-    null
-  );
-  const toggleFacultyStatus = async (facultyId: number) => {
+  const toggleSubjectTypeStatus = async (typeId: number) => {
     try {
-      setProcessingFacultyId(facultyId);
-      console.log(facultyId);
-      await changeFacultyStatus({ id: facultyId });
-      toast.success("Faculty Default set Successfully.");
+      setProcessingSubjectTypeId(typeId);
+      console.log(typeId);
+      await changeSubjectTypeStatus({ id: typeId });
+      toast.success("Subject Type Status Changed Successfully.");
     } catch (error) {
-      console.error("Error updating Faculty status:", error);
+      console.error("Error updating Subject Type status:", error);
     } finally {
-      setProcessingFacultyId(null);
+      setProcessingSubjectTypeId(null);
     }
+  };
+
+  const handleMarkingSchemeChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = event.target.value as "grade" | "marks";
+    setMarkingScheme(value);
+    setValue("marking_scheme", value);
+  };
+
+  const handleMarksAddedChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = event.target.value === "true";
+    setMarksAdded(value);
+    setValue("is_marks_added", value);
   };
 
   return (
@@ -137,7 +170,7 @@ const Faculty = () => {
             <div className="card-header mb-6">
               <div className="card-title">
                 <h1 className="d-flex align-items-center position-relative my-1">
-                  {formMode === "create" ? "Add New" : "Edit"} Faculty
+                  {formMode === "create" ? "Add New" : "Edit"} Subject Type
                 </h1>
               </div>
             </div>
@@ -149,7 +182,7 @@ const Faculty = () => {
                   <div className="col-12">
                     <div className="fv-row mb-7">
                       <label className="required fw-bold fs-6 mb-2">
-                        Faculty Name
+                        SubjectType Name
                       </label>
                       <input
                         type="text"
@@ -165,33 +198,97 @@ const Faculty = () => {
                         </span>
                       )}
                     </div>
+                  </div>
+                  <div className="col-12">
                     <div className="fv-row mb-7">
-                      <label className="required fw-bold fs-6 mb-2">Code</label>
-                      <input
-                        type="text"
-                        {...register("code")}
-                        className={`form-control ${
-                          errors.code && "is-invalid"
-                        } form-control mb-3 mb-lg-0`}
-                        placeholder="Ex: Educator"
-                      />
-                      {errors.code && (
+                      <label
+                        className="required fw-bold fs-6 mb-2"
+                        htmlFor="grade"
+                      >
+                        Exam Marking Scheme
+                      </label>
+                      <div className="d-flex gap-5 mt-3">
+                        <div className="form-check">
+                          <input
+                            title="Standard"
+                            className="form-check-input"
+                            type="radio"
+                            value="grade"
+                            id="grade"
+                            name="marking_scheme"
+                            checked={markingScheme === "grade"}
+                            onChange={handleMarkingSchemeChange}
+                          />
+                          <label className="form-check-label" htmlFor="grade">
+                            Grade i.e.: A+, A
+                          </label>
+                        </div>
+                        <div className="form-check">
+                          <input
+                            title="Custom"
+                            className="form-check-input"
+                            type="radio"
+                            value="marks"
+                            name="marking_scheme"
+                            id="marks"
+                            checked={markingScheme === "marks"}
+                            onChange={handleMarkingSchemeChange}
+                          />
+                          <label className="form-check-label" htmlFor="marks">
+                            Marks
+                          </label>
+                        </div>
+                      </div>
+                      {errors.marking_scheme && (
                         <span className="text-danger">
-                          {errors.code.message}
+                          {errors.marking_scheme.message}
                         </span>
                       )}
                     </div>
+                  </div>
+                  <div className="col-12">
                     <div className="fv-row mb-7">
-                      <label className="fw-bold fs-6 mb-2">Description</label>
-                      <textarea
-                        {...register("description")}
-                        className="form-control form-control mb-3 mb-lg-0"
-                        placeholder="Ex: Detailed description"
-                        rows={4} // Adjust the rows to fit your design
-                      ></textarea>
-                      {errors.description && (
+                      <label
+                        className="required fw-bold fs-6 mb-2"
+                        htmlFor="grade"
+                      >
+                        Marks added in Result?
+                      </label>
+                      <div className="d-flex gap-5 mt-3">
+                        <div className="form-check">
+                          <input
+                            title="Yes"
+                            className="form-check-input"
+                            type="radio"
+                            value="true"
+                            id="yes"
+                            name="marks_added"
+                            checked={marksAdded === true}
+                            onChange={handleMarksAddedChange}
+                          />
+                          <label className="form-check-label" htmlFor="yes">
+                            Yes
+                          </label>
+                        </div>
+                        <div className="form-check">
+                          <input
+                            title="No"
+                            className="form-check-input"
+                            type="radio"
+                            value="false"
+                            name="marks_added"
+                            id="no"
+                            checked={marksAdded === false}
+                            onChange={handleMarksAddedChange}
+                          />
+                          <label className="form-check-label" htmlFor="no">
+                            No
+                          </label>
+                        </div>
+                      </div>
+                      {errors.is_marks_added && (
                         <span className="text-danger">
-                          {errors.description.message}
+                          {errors.is_marks_added.message}
                         </span>
                       )}
                     </div>
@@ -227,7 +324,7 @@ const Faculty = () => {
             <div className="card-header mb-6">
               <div className="card-title w-100">
                 <h1 className="d-flex justify-content-between align-items-center position-relative my-1 w-100">
-                  <span>Faculties</span>
+                  <span>All Subject Types</span>
                   <div className="d-flex gap-2">
                     <div className="d-flex align-items-center position-relative h-100">
                       <Icon
@@ -272,7 +369,7 @@ const Faculty = () => {
               <div className="table">
                 <div className="table-responsive">
                   {isLoading && <Loading />}
-                  {!isLoading && faculties.length === 0 && (
+                  {!isLoading && subjectTypes.length === 0 && (
                     <div className="alert alert-info">
                       No Academic Levels Found
                     </div>
@@ -285,43 +382,48 @@ const Faculty = () => {
                         }}
                       >
                         <tr>
-                          <th className="text-center">SN</th>
                           <th>Name</th>
-                          <th>Description</th>
+                          <th className="text-center">Marking Scheme</th>
                           <th className="text-center">Default</th>
+                          <th className="text-center">Marks Added</th>
                           <th className="text-end">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {faculties.map((faculty, index) => (
+                        {subjectTypes.map((type, index) => (
                           <tr key={index}>
+                            <td>{type.name}</td>
                             <td className="text-center">
-                              {" "}
-                              {/* {(currentPage - 1) * itemsPerPage ?? 0 + index + 1} */}
+                              {capitalizeFirstLetter(type.marking_scheme)}
                             </td>
-                            <td>
-                              {faculty.name} ({faculty.code})
-                            </td>
-                            <td>{faculty.description}</td>
-                            <td>
+                            <td className="text-center">
                               <ProcessingButton
                                 isProcessing={
-                                  processingFacultyId === faculty.id
+                                  processingSubjectTypeId === type.id
                                 }
-                                isActive={faculty.is_default ?? false}
-                                onClick={() => toggleFacultyStatus(faculty.id)}
+                                isActive={type.is_active ?? false}
+                                onClick={() =>
+                                  toggleSubjectTypeStatus(type.id ?? 0)
+                                }
                                 hoverText={
-                                  faculty.is_default ? "Default" : "Set Default"
+                                  type.is_active ? "Deactive" : "Activate"
                                 }
-                                activeText="Default"
-                                inactiveText="Set Default"
+                                activeText="Active"
+                                inactiveText="Inactive"
                               />
+                            </td>
+                            <td className="text-center">
+                              {type.is_marks_added == true ? (
+                                <span className="badge bg-success">Yes</span>
+                              ) : (
+                                <span className="badge bg-danger">No</span>
+                              )}
                             </td>
                             <td className="text-end">
                               <button
-                                title="edit faculty"
+                                title="edit type"
                                 type="button"
-                                onClick={() => handleEditClick(faculty)}
+                                onClick={() => handleEditClick(type)}
                                 className="btn btn-light-info btn-icon btn-sm"
                               >
                                 <Icon name={"edit"} className={"svg-icon"} />
@@ -351,4 +453,4 @@ const Faculty = () => {
   );
 };
 
-export default Faculty;
+export default SubjectType;
