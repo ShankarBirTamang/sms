@@ -20,7 +20,7 @@ import {
 import useDocumentTitle from "../../../hooks/useDocumentTitle";
 import ProcessingButton from "../../../components/ProcessingButton/ProcessingButton";
 import toast from "react-hot-toast";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const AcademicSession = () => {
   useDocumentTitle("Academic Sessions");
@@ -464,7 +464,6 @@ const AcademicSession = () => {
                 </div>
               </div>
             </div>
-            {}
             <div className="card-footer">
               {pagination && (
                 <Pagination

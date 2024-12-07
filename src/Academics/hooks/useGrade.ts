@@ -23,8 +23,6 @@ const useGrade = ({
 
   const [grades, setGrades] = useState<UpdateGradeInterface[]>([]);
 
-  const [testData, setTestData] = useState<UpdateGradeInterface[]>([]);
-
   useEffect(() => {
     setLoading(true);
     const params: Record<string, string | number | null> = {

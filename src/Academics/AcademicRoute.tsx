@@ -7,7 +7,7 @@ import AcademicSession from "../Academics/pages/AcademicSession/AcademicSession"
 import Grade from "../Academics/pages/Grade/Grade";
 import GradeSettings from "./pages/GradeSettings/GradeSettings";
 import AcademicSessionDetail from "./pages/AcademicSession/AcademicSessionDetail";
-import SubjectType from "./pages/GradeSettings/SubjectType/SubjectType";
+import Subject from "./pages/Grade/Subject/Subject";
 
 const routes = [
   {
@@ -26,6 +26,11 @@ const routes = [
     element: <AcademicSession />,
   },
   {
+    path: "academic-sessions/:sessionId/show",
+    title: "Academic Session Details",
+    element: <AcademicSessionDetail />,
+  },
+  {
     path: "grade-settings",
     title: "Grade Settings",
     element: <GradeSettings />,
@@ -36,9 +41,9 @@ const routes = [
     element: <Grade />,
   },
   {
-    path: "academic-sessions/:sessionId/show",
-    title: "Academic Session Details",
-    element: <AcademicSessionDetail />,
+    path: "grades/:gradeId/subjects",
+    title: "Grades",
+    element: <Subject />,
   },
   // {
   //   path: "subject-types",

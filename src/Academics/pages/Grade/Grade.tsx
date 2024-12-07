@@ -8,6 +8,7 @@ import Loading from "../../../components/Loading/Loading";
 import Pagination from "../../../components/Pagination/Pagination";
 import Icon from "../../../components/Icon/Icon";
 import { UpdateGradeInterface } from "../../services/gradeService";
+import { useNavigate } from "react-router-dom";
 
 const Grade = () => {
   useDocumentTitle("All Grades");
@@ -22,6 +23,7 @@ const Grade = () => {
     currentPage,
     itemsPerPage,
   });
+  const navigate = useNavigate();
 
   const [editGrade, setEditGrade] = useState<UpdateGradeInterface>();
 
@@ -50,6 +52,10 @@ const Grade = () => {
   const handleEditClick = (grade: UpdateGradeInterface) => {
     toggleEditGradeDrawer();
     setEditGrade(grade);
+  };
+
+  const handleSubjectNavigate = (gradeId: number) => {
+    navigate(`${gradeId}/subjects`);
   };
   return (
     <>
@@ -175,13 +181,13 @@ const Grade = () => {
                     <td className="text-center">{grade.total_students ?? 0}</td>
 
                     <td className="text-end">
-                      <a
-                        href="#"
+                      <button
                         className="btn btn-light-danger btn-sm"
-                        type="link"
+                        type="button"
+                        onClick={() => handleSubjectNavigate(grade.id)}
                       >
                         Subjects
-                      </a>
+                      </button>
                       <a
                         href="#"
                         className="btn btn-light-info btn-sm"

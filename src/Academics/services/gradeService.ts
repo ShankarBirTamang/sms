@@ -57,7 +57,8 @@ interface SectionsInterface {
   [key: string]: SectionInterface[];
 }
 
-interface GradeInterface {
+export interface GradeInterface {
+  id?: number;
   name: string;
   grade_group_id: number;
   short_name: string;
@@ -80,6 +81,10 @@ export interface UpdateGradeInterface {
   section_type: "standard" | "custom";
   session: UpdateAcademicSessionInterface;
   sections: SectionsInterface;
+}
+
+export interface SingleGradeInterface {
+  id: number;
 }
 
 export default apiRoute("/academics/grades");

@@ -1,83 +1,64 @@
-<div className="card">
-  <div className="card-header border-0 pt-6">
-    <h2></h2>
-  </div>
-  <div className="card-body pt-0">
-    <table
-      className="table align-middle table-row-dashed fs-6 gy-5"
-      id="kt_table_users"
-    >
+<div className="row">
+  <div className="col-12">
+    <table className="table align-middle table-row-dashed w-100">
       <thead>
-        <tr
-          className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0"
-        >
-          <th className="min-w-125px">Grade Name</th>
-          <th className="min-w-125px">Sections</th>
-          <th className="min-w-125px">Total Students</th>
-          <th className="text-end min-w-100px">Actions</th>
+        <tr>
+          <th>Rank</th>
+          <th>Subject Name</th>
         </tr>
       </thead>
-      <tbody className="text-gray-600 fw-bold">
+      <tbody>
         <tr>
-          <td>Grade 12 (12)</td>
-          <td>
-            <span className="badge badge-primary">SA1</span>
-            <span className="badge badge-primary">SA2</span>
-            <span className="badge badge-primary">SA3-CS</span>
-            <span className="badge badge-primary">MA1</span>
-            <span className="badge badge-primary">MA2</span>
-            <span className="badge badge-primary">MA3-HM</span>
-            <span className="badge badge-primary">MA4-CM</span>
-            <span className="badge badge-primary">MA5</span>
-            <span className="badge badge-primary">MB1</span>
-            <span className="badge badge-primary">MB2</span>
-            <span className="badge badge-primary">MB3</span>
-            <span className="badge badge-primary">HUM</span>
-            <span className="badge badge-primary">EA1</span>
-            <span className="badge badge-primary">EA2</span>
-            <span className="badge badge-primary">EA3</span>
-            <span className="badge badge-primary">ELE</span>
+          <td className="p-0">
+            <input
+              type="text"
+              className="form-control form-control-solid mb-3 mb-lg-0 w-100px marks-field h-35px"
+              name="subject[0][rank]"
+              value="1"
+              placeholder="Rank"
+            />
+            <input type="hidden" name="subject[0][id]" value="1" />
           </td>
-          <td>732</td>
-
-          <td className="text-end">
-            <a
-              href="https://sms.aanshtech.com/sms/settings/academics/sessions/2/grades/14/students"
-              className="btn btn-light-info btn-active-light-primary btn-sm"
-            >
-              View Details
-            </a>
-          </td>
+          <td>Comp. Nepali</td>
         </tr>
         <tr>
-          <td>Grade 11 (11)</td>
-          <td>
-            <span className="badge badge-primary">SA1</span>
-            <span className="badge badge-primary">SA2</span>
-            <span className="badge badge-primary">SA3</span>
-            <span className="badge badge-primary">MA1</span>
-            <span className="badge badge-primary">MA2-HM</span>
-            <span className="badge badge-primary">MA3-CM</span>
-            <span className="badge badge-primary">MA4</span>
-            <span className="badge badge-primary">MA5-CM</span>
-            <span className="badge badge-primary">MB1</span>
-            <span className="badge badge-primary">HUM</span>
-            <span className="badge badge-primary">EA1</span>
-            <span className="badge badge-primary">ELE</span>
-            <span className="badge badge-primary">EA2</span>
-            <span className="badge badge-primary">MB2</span>
-            <span className="badge badge-primary">EA3</span>
+          <td className="p-0">
+            <input
+              type="text"
+              className="form-control form-control-solid mb-3 mb-lg-0 w-100px marks-field h-35px"
+              name="subject[1][rank]"
+              value="2"
+              placeholder="Rank"
+            />
+            <input type="hidden" name="subject[1][id]" value="2" />
           </td>
-          <td>697</td>
-
-          <td className="text-end">
-            <a
-              href="https://sms.aanshtech.com/sms/settings/academics/sessions/2/grades/15/students"
-              className="btn btn-light-info btn-active-light-primary btn-sm"
-            >
-              View Details
-            </a>
+          <td>Comp. English</td>
+        </tr>
+        <tr>
+          <td className="p-0">
+            <input
+              type="text"
+              className="form-control form-control-solid mb-3 mb-lg-0 w-100px marks-field h-35px"
+              name="subject[2][rank]"
+              value="3"
+              placeholder="Rank"
+            />
+            <input type="hidden" name="subject[2][id]" value="3" />
           </td>
+          <td>Com. Mathematics</td>
+        </tr>
+        <tr>
+          <td className="p-0">
+            <input
+              type="text"
+              className="form-control form-control-solid mb-3 mb-lg-0 w-100px marks-field h-35px"
+              name="subject[3][rank]"
+              value="4"
+              placeholder="Rank"
+            />
+            <input type="hidden" name="subject[3][id]" value="4" />
+          </td>
+          <td>Drawing</td>
         </tr>
       </tbody>
     </table>
