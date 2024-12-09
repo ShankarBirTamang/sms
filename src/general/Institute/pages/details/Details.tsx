@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import InputField from "../components/InputField";
+import InputField from "../../components/InputField";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import axiosInstance from "../../../axiosConfig";
+import axiosInstance from "../../../../../axiosConfig";
 const baseUrl = import.meta.env.VITE_API_URL;
+import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
+import defaultLogo from "../../../../../public/img/logo.png";
 
 interface FormData {
   email: string;
@@ -17,22 +20,17 @@ interface FormData {
   website: string;
   short_desc: string;
   long_desc: string;
-  logo: File | null;
-  cover: File | null;
+  logo: FileList | null;
+  cover: FileList | null;
 }
 
-const defaultLogo =
-  "https://sms.aanshtech.com/storage/1/PUBLIC-LOGO.nO.bACKGROUND.webp";
-const defaultCover =
-  "https://images.pexels.com/photos/207684/pexels-photo-207684.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
-
 const Details = () => {
-  const [logoFile, setLogoFile] = useState<File | null>(null); // Initially set to null
-  const [logoUrl, setLogoUrl] = useState<string>(defaultLogo); // Set to default logo URL
-  const [coverFile, setCoverFile] = useState<File | null>(null); // Initially set to null
-  const [coverUrl, setCoverUrl] = useState<string>(defaultCover); // Set to default cover URL
-  const [isLogoSelected, setIsLogoSelected] = useState(false);
-  const [isCoverSelected, setIsCoverSelected] = useState(false);
+  const [backendLogo, setBackendLogo] = useState<string>(defaultLogo); // State for backend logo URL
+  const [previewLogo, setPreviewLogo] = useState<string>(""); // Set to default logo URL
+  const [previewCover, setPreviewCover] = useState<string>(""); // Set to default cover URL
+  const [instituteDetails, setInstituteDetails] = useState<null | FormData>(
+    null
+  );
 
   const schema = z.object({
     name: z
@@ -47,15 +45,17 @@ const Details = () => {
     longitude: z.string().min(1, "Longitude is required"),
     short_desc: z.string().optional(),
     long_desc: z.string().optional(),
-    logo: z.instanceof(File).nullable().optional(),
-    cover: z.instanceof(File).nullable().optional(),
+    logo: z.instanceof(FileList).nullable().optional(),
+    cover: z.instanceof(FileList).nullable().optional(),
   });
 
   const {
     register,
     handleSubmit,
     control,
+    watch,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -67,102 +67,99 @@ const Details = () => {
       address: "",
       contact: "",
       email: "",
-      // website: "",
       short_desc: "",
       long_desc: "",
     },
   });
 
-  useEffect(() => {
-    return () => {
-      if (logoFile) {
-        URL.revokeObjectURL(logoUrl);
-      }
-      if (coverFile) {
-        URL.revokeObjectURL(coverUrl);
-      }
-    };
-  }, [logoFile, coverFile]);
+  const getInstituteDetails = async () => {
+    try {
+      const response = await axiosInstance.get(`${baseUrl}/general/institute`);
+      const details = response.data.data;
+      setInstituteDetails(details);
 
-  const handleFileChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    field: "logo" | "cover"
-  ) => {
-    if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
-      const imageUrl = URL.createObjectURL(file);
-
-      if (field === "logo") {
-        setLogoFile(file); // Set the file
-        setLogoUrl(imageUrl); // Set the URL for display
-        setValue("logo", file);
-        setIsLogoSelected(true);
-      } else if (field === "cover") {
-        setCoverFile(file); // Set the file
-        setCoverUrl(imageUrl); // Set the URL for display
-        setValue("cover", file);
-        setIsCoverSelected(true);
+      if (details.logo) {
+        setPreviewLogo(details.logo);
+        setBackendLogo(details.logo);
+      } else {
+        setBackendLogo(""); // Reset to empty if no logo
       }
+
+      if (details.cover) {
+        setPreviewCover(details.cover); // Set cover URL from details
+      } else {
+        setPreviewCover(""); // Reset to empty if no cover
+      }
+    } catch (error) {
+      console.error("Error fetching Institute Details:", error);
+    } finally {
+      console.log(
+        "Institute Details from getInstitute state",
+        instituteDetails
+      );
     }
   };
 
-  const handleCancelLogo = () => {
-    setLogoFile(null); // Reset the logo file
-    setLogoUrl(defaultLogo); // Reset to default logo URL
-    setValue("logo", null);
-    setIsLogoSelected(false);
-  };
+  useEffect(() => {
+    getInstituteDetails();
+  }, []);
 
-  const handleRemoveLogo = () => {
-    setLogoFile(null); // Reset the logo file
-    setLogoUrl(defaultLogo); // Reset to default logo URL
+  const watchLogo = watch("logo");
+  useEffect(() => {
+    console.log("watchlogo", watchLogo);
+    if (watchLogo && watchLogo[0]) {
+      const file = watchLogo[0];
+      const objectUrl = URL.createObjectURL(file);
+      setPreviewLogo(objectUrl);
+    }
+  }, [watchLogo]);
+
+  const watchCover = watch("cover");
+  useEffect(() => {
+    console.log("watchcover", watchCover);
+
+    if (watchCover && watchCover[0]) {
+      const file = watchCover[0];
+      const objectUrl = URL.createObjectURL(file);
+      setPreviewCover(objectUrl);
+    }
+  }, [watchCover]);
+
+  const handleCancelLogo = () => {
+    setPreviewLogo(""); // Reset to default logo
     setValue("logo", null);
-    setIsLogoSelected(false);
+    console.log("logo cancelled");
   };
 
   const handleCancelCover = () => {
-    setCoverFile(null); // Reset the logo file
-    setCoverUrl(defaultCover); // Reset to default logo URL
+    setPreviewCover("");
     setValue("cover", null);
-    setIsCoverSelected(false);
-  };
-
-  const handleRemoveCover = () => {
-    setCoverFile(null); // Reset the logo file
-    setCoverUrl(defaultCover); // Reset to default logo URL
-    setValue("cover", null);
-    setIsCoverSelected(false);
+    console.log("cover cancelled");
   };
 
   const onSubmit = async (data: any) => {
     console.log("raw data", data);
     const formData = new FormData();
 
+    // Append non-file fields to FormData
     for (const key in data) {
       if (key !== "logo" && key !== "cover") {
         formData.append(key, data[key]);
       }
     }
 
-    // Handle logo
-    if (logoFile) {
-      formData.append("logo", logoFile);
-    } else if (logoUrl) {
-      formData.append("logo_url", logoUrl); // Use a different field for URLs to avoid ambiguity.
+    // Handle logo file
+    if (data.logo && data.logo[0]) {
+      formData.append("logo", data.logo[0]);
     }
 
-    // Handle cover
-    if (coverFile) {
-      formData.append("cover", coverFile);
-    } else if (coverUrl) {
-      formData.append("cover_url", coverUrl); // Use a different field for URLs to avoid ambiguity.
+    // Handle cover file
+    if (data.cover && data.cover[0]) {
+      formData.append("cover", data.cover[0]);
     }
 
+    console.log("formdata entries", formData.entries);
     // Log all FormData key-value pairs
-
-    for (const [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
-    }
 
     try {
       const response = await axiosInstance.post(
@@ -175,9 +172,12 @@ const Details = () => {
         }
       );
 
+      toast.success("Institute Details submitted successfully");
       console.log("Response from Details:", response.data);
+      reset();
     } catch (error) {
       console.error("Error submitting form:", error);
+      toast.error("Error submitting form");
     }
   };
 
@@ -188,22 +188,19 @@ const Details = () => {
           <div className="d-flex flex-wrap flex-sm-nowrap mb-3 align-items-center">
             <div className="me-7 mb-4">
               <div className="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative">
-                <img
-                  src="https://sms.aanshtech.com/storage/1/PUBLIC-LOGO.nO.bACKGROUND.webp"
-                  alt="Institute Logo"
-                />
+                <img src={backendLogo ?? defaultLogo} alt="Institute Logo" />
               </div>
             </div>
             <div className="flex-grow-1">
               <div className="d-flex justify-content-between align-items-start flex-wrap mb-2">
                 <div className="d-flex flex-column">
                   <div className="d-flex align-items-center mb-2">
-                    <a
-                      href="#"
+                    <Link
+                      to={"/institute/pages"}
                       className="text-gray-900 text-hover-primary fs-2 fw-bold me-1"
                     >
-                      Shree Public High School (S.P.H.S)
-                    </a>
+                      {instituteDetails?.name}
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -255,9 +252,7 @@ const Details = () => {
                     <div
                       className="image-input-wrapper w-125px h-125px"
                       style={{
-                        backgroundImage: logoFile
-                          ? `url(${logoUrl})`
-                          : `url(${defaultLogo})`,
+                        backgroundImage: `url(${previewLogo})`,
                       }}
                     ></div>
                     <label
@@ -275,11 +270,11 @@ const Details = () => {
                         type="file"
                         accept=".png, .jpg, .jpeg"
                         style={{ display: "none" }}
-                        onChange={(event) => handleFileChange(event, "logo")}
+                        {...register("logo")}
                       />
                       <input type="hidden" name="avatar_remove" />
                     </label>
-                    {logoFile && isLogoSelected ? (
+                    {previewLogo ? (
                       <span
                         className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
                         aria-label="Cancel avatar"
@@ -290,20 +285,6 @@ const Details = () => {
                         }}
                         title="Cancel"
                         onClick={handleCancelLogo}
-                      >
-                        <i className="bi bi-x fs-2"></i>
-                      </span>
-                    ) : logoFile ? (
-                      <span
-                        className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                        aria-label="Remove avatar"
-                        style={{
-                          position: "absolute",
-                          bottom: "-7%",
-                          right: "-7%",
-                        }}
-                        title="Remove"
-                        onClick={handleRemoveLogo}
                       >
                         <i className="bi bi-x fs-2"></i>
                       </span>
@@ -336,9 +317,7 @@ const Details = () => {
                     <div
                       className="image-input-wrapper w-125px h-125px"
                       style={{
-                        backgroundImage: coverFile
-                          ? `url(${coverUrl})`
-                          : `url(${defaultCover})`,
+                        backgroundImage: `url(${previewCover})`,
                       }}
                     ></div>
                     <label
@@ -356,11 +335,11 @@ const Details = () => {
                         type="file"
                         accept=".png, .jpg, .jpeg"
                         style={{ display: "none" }}
-                        onChange={(event) => handleFileChange(event, "cover")}
+                        {...register("cover")}
                       />
                       <input type="hidden" name="avatar_remove" />
                     </label>
-                    {coverFile && isCoverSelected ? (
+                    {previewCover ? (
                       <span
                         className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
                         aria-label="Cancel avatar"
@@ -371,20 +350,6 @@ const Details = () => {
                         }}
                         title="Cancel"
                         onClick={handleCancelCover}
-                      >
-                        <i className="bi bi-x fs-2"></i>
-                      </span>
-                    ) : coverFile ? (
-                      <span
-                        className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                        aria-label="Remove avatar"
-                        style={{
-                          position: "absolute",
-                          bottom: "-7%",
-                          right: "-7%",
-                        }}
-                        title="Remove"
-                        onClick={handleRemoveCover}
                       >
                         <i className="bi bi-x fs-2"></i>
                       </span>
@@ -547,26 +512,6 @@ const Details = () => {
                 </div>
               </div>
 
-              {/* Website Input */}
-              {/* <div className="row mb-6">
-                <label className="col-lg-4 col-form-label fw-semibold fs-6">
-                  Website
-                </label>
-                <div className="col-lg-8">
-                  <input
-                    type="url"
-                    className="form-control form-control-lg form-control-solid"
-                    placeholder="Enter Website URL"
-                    {...register("website")}
-                  />
-                  {
-                    <div className="fv-plugins-message-container mt-2 text-danger">
-                      {errors.website?.message}
-                    </div>
-                  }
-                </div>
-              </div> */}
-
               <div
                 className="row mb-6 h-20"
                 style={{
@@ -608,7 +553,7 @@ const Details = () => {
                 <label className="col-lg-4 col-form-label fw-semibold fs-6">
                   Long Description
                 </label>
-                <div className="col-lg-8 fv-row">
+                <div className="col-lg-8 fv-row text-editor">
                   <Controller
                     name="long_desc"
                     control={control}

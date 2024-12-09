@@ -1,10 +1,11 @@
 import { Route, Routes } from "react-router-dom";
-import Layout from "../layout/Layout";
-import ProtectectedRoute from "../components/Icon/ProtectedRoute";
-import Details from "./pages/Details";
+
+import Details from "./pages/details/Details";
 import RoomHalls from "./pages/RoomHalls";
 import Laboratories from "./pages/Laboratories";
 import Boardings from "./pages/Boardings";
+import Layout from "../../layout/Layout";
+import ProtectectedRoute from "../../components/Icon/ProtectedRoute";
 
 const routes = [
   {
