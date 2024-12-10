@@ -1,37 +1,5 @@
-import { StrictMode } from "react";
+// index.tsx or main.tsx (your entry file)
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./layout/Layout";
-import Dashboard from "./pages/Dashboard/Dashboard";
-import ProtectedRoute from "./components/Icon/ProtectedRoute";
-import Login from "./pages/Authentication/Login";
-import AcademicRoute from "./Academics/AcademicRoute";
-import { PermissionProvider } from "./context/permissionContext";
-import InstituteRoute from "./Institute/InstituteRoute";
-import NotFound from "./pages/error/NotFound";
-
-const App: React.FC = () => {
-  return (
-    <StrictMode>
-      <BrowserRouter>
-        <PermissionProvider>
-          <Routes>
-            {/* Login route */}
-            <Route path="/login" element={<Login />} />
-            <Route element={<ProtectedRoute />}>
-              <Route element={<Layout />}>
-                <Route path="/" element={<Dashboard />} />
-                {/* Include academic routes */}
-              </Route>
-              <Route path="academics/*" element={<AcademicRoute />} />
-              <Route path="institute/*" element={<InstituteRoute />} />
-            </Route>
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </PermissionProvider>
-      </BrowserRouter>
-    </StrictMode>
-  );
-};
+import App from "./App"; // Adjust the path as necessary
 
 createRoot(document.getElementById("root")!).render(<App />);

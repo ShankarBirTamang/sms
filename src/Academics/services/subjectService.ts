@@ -15,8 +15,28 @@ export interface SubjectInterface {
   sections?: number[];
 }
 
+export interface UpdateSubjectInterface extends SubjectInterface {
+  id: number;
+}
+
 export interface changeSubjectStatusInterface {
   id: number;
+}
+
+export interface UpdateRankProps {
+  grade_id: number;
+  onSave: () => void;
+  subjects: SubjectInterface[];
+}
+
+export interface UpdateRankData {
+  subjects: UpdateRankDataProps[];
+}
+
+export interface UpdateRankDataProps {
+  subjectId: number;
+  name: string;
+  rank: string;
 }
 
 export default apiRoute("/academics/subjects");

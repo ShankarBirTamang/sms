@@ -1,7 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import Layout from "../layout/Layout";
 import ProtectedRoute from "../components/Icon/ProtectedRoute";
-import Students from "../pages/Students/Students";
 import AcademicLevel from "../Academics/pages/AcademicLevel/AcademicLevel";
 import AcademicSession from "../Academics/pages/AcademicSession/AcademicSession";
 import Grade from "../Academics/pages/Grade/Grade";
@@ -10,11 +9,6 @@ import AcademicSessionDetail from "./pages/AcademicSession/AcademicSessionDetail
 import Subject from "./pages/Grade/Subject/Subject";
 
 const routes = [
-  {
-    path: "students",
-    title: "Students",
-    element: <Students />,
-  },
   {
     path: "academic-levels",
     title: "Academic Levels",

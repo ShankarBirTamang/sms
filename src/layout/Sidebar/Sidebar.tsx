@@ -20,12 +20,12 @@ const Sidebar = () => {
     {
       title: "Students",
       icon: "student",
-      route: "students",
+      route: "/students",
     },
     {
       title: "Employees",
       icon: "users",
-      route: "employees",
+      route: "/employees",
     },
   ];
 

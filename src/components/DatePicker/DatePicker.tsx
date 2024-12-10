@@ -70,6 +70,9 @@ const DatePicker = ({
         <Calendar
           key={renderKey}
           className={`form-control mb-3 mb-lg-0 ${errorBS && "is-invalid"}`}
+          style={{
+            fontSize: "1rem",
+          }}
           language="en"
           onChange={handleDate}
           defaultDate={bsDate}

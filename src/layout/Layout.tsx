@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import axiosInstance from "../../axiosConfig";
 import { usePermissions } from "../hooks/usePermissions.ts";
+import Loading from "../components/Loading/Loading.tsx";
 
 const Layout = () => {
   const { setPermissions } = usePermissions();
@@ -26,7 +27,11 @@ const Layout = () => {
     validateToken();
   }, [setPermissions]);
   if (isAuthenticated === null) {
-    return <div>Loading...</div>;
+    return (
+      <div className="d-flex justify-content-center align-items-center w-100">
+        <Loading />
+      </div>
+    );
   }
   if (!isAuthenticated) {
     return <Navigate to="/login" />;

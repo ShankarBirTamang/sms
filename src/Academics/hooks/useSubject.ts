@@ -1,10 +1,12 @@
 import subjectService, {
   changeSubjectStatusInterface,
   SubjectInterface,
+  UpdateRankData,
+  UpdateSubjectInterface,
 } from "./../services/subjectService";
-import { AddGradeInterface } from "./../services/gradeService";
+
 import { useEffect, useState } from "react";
-import { CanceledError } from "../../services/apiClient";
+import axiosInstance, { CanceledError } from "../../services/apiClient";
 import {
   ApiResponseInterface,
   PaginationAndSearch,
@@ -27,12 +29,12 @@ const useSubject = ({
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setLoading] = useState(false);
 
-  // For Pagination
   const [pagination, setPagination] =
     useState<PaginationProps["pagination"]>(null);
   const [edgeLinks, setEdgeLinks] = useState<PaginationProps["edgeLinks"]>();
 
   const [subjects, setSubjects] = useState<SubjectInterface[]>([]);
+  const [statusChanged, setStatusChanged] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -62,7 +64,14 @@ const useSubject = ({
       });
 
     return () => cancel();
-  }, [search, currentPage, itemsPerPage, grade_id, withInactive]);
+  }, [
+    search,
+    currentPage,
+    itemsPerPage,
+    grade_id,
+    withInactive,
+    statusChanged,
+  ]);
 
   const saveSubject = async ({
     name,
@@ -97,9 +106,49 @@ const useSubject = ({
     }
   };
 
+  const updateSubject = async ({
+    id,
+    name,
+    code,
+    credit_hour,
+    subject_type_id,
+    is_chooseable,
+    is_section_specific,
+    sections,
+  }: UpdateSubjectInterface) => {
+    const params = {
+      id,
+      grade_id,
+      name,
+      code,
+      credit_hour,
+      subject_type_id,
+      is_chooseable,
+      is_section_specific,
+      sections,
+    };
+    try {
+      const result = await subjectService.update<UpdateSubjectInterface>(
+        params
+      );
+      setSubjects(
+        subjects.map((subject) =>
+          subject.id === result.data.data.id ? result.data.data : subject
+        )
+      );
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred.");
+      }
+    } finally {
+      toast.success("Subject Updated Successfully.");
+    }
+  };
+
   const changeSubjectStatus = async ({ id }: changeSubjectStatusInterface) => {
     try {
-      // Update the status of the academic session
       const result =
         await subjectService.changeStatus<changeSubjectStatusInterface>({
           id,
@@ -114,6 +163,20 @@ const useSubject = ({
     }
   };
 
+  const updateSubjectRank = async (data: UpdateRankData) => {
+    try {
+      const result = await axiosInstance.post(
+        "academics/subjects/update-rank",
+        data
+      );
+      console.log("Update Rank Success:", result.data);
+    } catch (error) {
+      console.error("Error Updating Subject Rank:", error);
+    } finally {
+      await setStatusChanged((prev) => !prev);
+    }
+  };
+
   return {
     subjects,
     pagination,
@@ -125,6 +188,8 @@ const useSubject = ({
     setLoading,
     changeSubjectStatus,
     saveSubject,
+    updateSubjectRank,
+    updateSubject,
   };
 };
 

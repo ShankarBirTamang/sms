@@ -1,4 +1,5 @@
-import Icon from "../../components/Icon/Icon.tsx";
+import { useNavigate } from "react-router-dom";
+import Icon from "../../../../components/Icon/Icon";
 
 interface Student {
   id: number;
@@ -12,6 +13,7 @@ interface Student {
 }
 
 const Students = () => {
+  const navigate = useNavigate();
   const students: Student[] = [
     {
       id: 1,
@@ -24,6 +26,10 @@ const Students = () => {
       address: "Dharan 8",
     },
   ];
+
+  const addStudentRoute = () => {
+    navigate("/students/create-edit");
+  };
   return (
     <>
       <div className="row g-5 g-xl-8">
@@ -51,15 +57,15 @@ const Students = () => {
                   className="d-flex justify-content-end"
                   data-kt-user-table-toolbar="base"
                 >
-                  <a
-                    href="#"
+                  <button
                     className="btn btn-primary"
-                    type="link"
+                    type="button"
                     title="Add Student"
+                    onClick={addStudentRoute}
                   >
                     <Icon name={"add"} />
                     Add Student
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
@@ -125,10 +131,15 @@ const Students = () => {
                             justifyContent: "flex-end",
                           }}
                         >
-                          <a href="#" className="btn btn-light-info btn-icon">
+                          <a
+                            title="search"
+                            href="#"
+                            className="btn btn-light-info btn-icon"
+                          >
                             <Icon name={"search"} className={"svg-icon-2"} />
                           </a>
                           <a
+                            title="dd"
                             href="#"
                             className="btn btn-light-success btn-icon"
                           >

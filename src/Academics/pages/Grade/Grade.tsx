@@ -82,7 +82,7 @@ const Grade = () => {
                     value={searchTerm}
                     onChange={handleSearchChange}
                     className="form-control w-250px ps-14"
-                    placeholder="Search Academic Levels"
+                    placeholder="Search Grades"
                   />
                 </div>
 
@@ -122,7 +122,7 @@ const Grade = () => {
           )}
 
           {!isLoading && grades.length > 0 && (
-            <table className="table align-middle table-row-dashed fs-6 gy-5">
+            <table className="table align-middle table-row-dashed fs-6 gy-1">
               <thead>
                 <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                   <th className="">SN</th>
@@ -165,11 +165,6 @@ const Grade = () => {
                       </div>
                     </td>
                     <td className="text-center w-300px">
-                      <div className="">
-                        <br />
-
-                        <br />
-                      </div>
                       <button
                         type="button"
                         className="btn btn-light-info btn-sm d-inline"

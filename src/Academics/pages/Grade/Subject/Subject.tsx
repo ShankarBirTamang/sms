@@ -15,6 +15,7 @@ import ProcessingButton from "../../../../components/ProcessingButton/Processing
 import Pagination from "../../../../components/Pagination/Pagination";
 import AddSubject from "./AddSubject";
 import UpdateRank from "./UpdateRank";
+import { UpdateSubjectInterface } from "../../../services/subjectService";
 
 const Subject = () => {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ const Subject = () => {
   const [processingSubjectId, setProcessingSubjectId] = useState<number | null>(
     null
   );
+  const [editSubject, setEditSubject] = useState<UpdateSubjectInterface>();
 
   const [addSubjectDrawer, setAddSubjectDrawer] = useState(false);
   const [editSubjectDrawer, setEditSubjectDrawer] = useState(false);
@@ -251,6 +253,10 @@ const Subject = () => {
                         type="button"
                         className="btn btn-light-danger btn-sm"
                         title="Edit"
+                        onClick={() => {
+                          setEditSubject(subject);
+                          toggleEditSubjectDrawer();
+                        }}
                       >
                         <Icon name="edit" className="svg-icon" />
                         Edit
@@ -279,7 +285,26 @@ const Subject = () => {
         width="900px"
         title="Add Subject"
       >
-        <AddSubject grade={grade} onSave={toggleAddSubjectDrawer} />
+        <AddSubject
+          grade={grade}
+          onSave={toggleAddSubjectDrawer}
+          formMode="create"
+        />
+      </DrawerModal>
+
+      <DrawerModal
+        isOpen={editSubjectDrawer}
+        onClose={toggleEditSubjectDrawer}
+        position="right"
+        width="900px"
+        title="Update Subject"
+      >
+        <AddSubject
+          grade={grade}
+          onSave={toggleEditSubjectDrawer}
+          formMode="edit"
+          subject={editSubject}
+        />
       </DrawerModal>
 
       <DrawerModal
@@ -289,7 +314,11 @@ const Subject = () => {
         width="500px"
         title="Update Subject Rank"
       >
-        <UpdateRank subjects={subjects} onSave={toggleUpdateRankDrawer} />
+        <UpdateRank
+          grade_id={gradeId ? Number(gradeId) : -1}
+          subjects={subjects}
+          onSave={toggleUpdateRankDrawer}
+        />
       </DrawerModal>
     </>
   );

@@ -1,4 +1,5 @@
 import apiRoute from "../../services/httpService";
+import { UpdateAcademicSessionInterface } from "./academicSessionService";
 
 // export interface AcademicLevelInterface {
 //   id?: number;
@@ -9,6 +10,7 @@ import apiRoute from "../../services/httpService";
 export interface CreateAcademicLevelInterface {
   name: string;
   description: string;
+  academic_sessions?: UpdateAcademicSessionInterface[];
 }
 
 export interface UpdateAcademicLevelInterface

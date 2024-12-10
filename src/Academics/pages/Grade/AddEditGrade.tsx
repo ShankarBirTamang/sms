@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { number, z } from "zod";
+import { z } from "zod";
 import { useForm } from "react-hook-form";
 import useAcademicSession from "../../hooks/useAcademicSession";
 import CustomSelect, {
@@ -20,7 +20,7 @@ import EditSectionComponent, {
 
 interface AddEditGradeProps {
   onSave: () => void;
-  editData: UpdateGradeInterface;
+  editData: AddGradeInterface;
   formType: "create" | "edit";
 }
 const AddEditGrade = ({ onSave, editData, formType }: AddEditGradeProps) => {
@@ -54,15 +54,15 @@ const AddEditGrade = ({ onSave, editData, formType }: AddEditGradeProps) => {
       z.string().min(1, { message: "Section name cannot be empty" })
     ),
   });
-  const EditSectionSchema = z.object({
-    id: z.number(),
-    name: z.string(),
-  });
+  // const EditSectionSchema = z.object({
+  //   id: z.number(),
+  //   name: z.string(),
+  // });
 
-  const EditFacultySectionSchema = z.object({
-    facultyId: z.number().int({ message: "Faculty ID must be an integer" }),
-    sections: z.array(EditSectionSchema),
-  });
+  // const EditFacultySectionSchema = z.object({
+  //   facultyId: z.number().int({ message: "Faculty ID must be an integer" }),
+  //   sections: z.array(EditSectionSchema),
+  // });
 
   const GradeSchema = z.object({
     academic_session_id: z
@@ -89,10 +89,8 @@ const AddEditGrade = ({ onSave, editData, formType }: AddEditGradeProps) => {
     section_type: z.enum(["standard", "custom"], {
       errorMap: () => ({ message: "This field is required" }),
     }),
-    sections: z.array(formMode === "create" ? z.string() : EditSectionSchema),
-    facultySections: z.array(
-      formMode === "create" ? FacultySectionSchema : EditFacultySectionSchema
-    ),
+    sections: z.array(z.string()),
+    facultySections: z.array(FacultySectionSchema),
   });
   type FormData = z.infer<typeof GradeSchema>;
   const {
@@ -156,15 +154,15 @@ const AddEditGrade = ({ onSave, editData, formType }: AddEditGradeProps) => {
     }
   };
 
-  const handleEditSectionDataChange = (
-    data: EditSectionDataInterface,
-    isValid: boolean
-  ) => {
-    if (isValid) {
-      setValue("section_type", data.sectionType);
-      setValue("has_faculties", data.hasFaculties);
-    }
-  };
+  // const handleEditSectionDataChange = (
+  //   data: EditSectionDataInterface,
+  //   isValid: boolean
+  // ) => {
+  //   if (isValid) {
+  //     setValue("section_type", data.sectionType);
+  //     setValue("has_faculties", data.hasFaculties);
+  //   }
+  // };
   const onSubmit = async (data: FormData) => {
     setisSubmitting(true);
 
@@ -272,12 +270,12 @@ const AddEditGrade = ({ onSave, editData, formType }: AddEditGradeProps) => {
           {formType === "create" && (
             <SectionComponent onSectionDataChange={handleSectionDataChange} />
           )}
-          {formType === "edit" && (
-            <EditSectionComponent
-              editData={editData}
-              onSectionDataChange={handleEditSectionDataChange}
-            />
-          )}
+          {/* {formType === "edit" && (
+            // <EditSectionComponent
+            //   editData={editData}
+            //   onSectionDataChange={handleEditSectionDataChange}
+            // />
+          )} */}
         </div>
         <div className="text-center pt-15">
           <button type="button" className="btn btn-light me-3" onClick={onSave}>

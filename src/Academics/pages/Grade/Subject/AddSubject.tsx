@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { number, z } from "zod";
-import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Controller, useForm } from "react-hook-form";
 import { GradeInterface } from "../../../services/gradeService";
-import { SubjectInterface } from "../../../services/subjectService";
+import {
+  SubjectInterface,
+  UpdateSubjectInterface,
+} from "../../../services/subjectService";
 import useSubject from "../../../hooks/useSubject";
 import useSubjectType from "../../../hooks/useSubjectType";
 
@@ -22,9 +25,13 @@ type FormData = z.infer<typeof SubjectSchema>;
 interface AddSubjectProps {
   grade?: GradeInterface;
   onSave: () => void;
+  formMode: "create" | "edit";
+  subject?: UpdateSubjectInterface;
 }
-const AddSubject = ({ grade, onSave }: AddSubjectProps) => {
-  const { saveSubject } = useSubject({ grade_id: grade?.id ?? -1 });
+const AddSubject = ({ grade, onSave, formMode, subject }: AddSubjectProps) => {
+  const { saveSubject, updateSubject } = useSubject({
+    grade_id: grade?.id ?? -1,
+  });
 
   const { subjectTypes } = useSubjectType({});
   const [isChooseable, setIsChooseable] = useState<boolean>(false);
@@ -33,6 +40,7 @@ const AddSubject = ({ grade, onSave }: AddSubjectProps) => {
     register,
     handleSubmit,
     setValue,
+    control,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(SubjectSchema),
@@ -54,6 +62,34 @@ const AddSubject = ({ grade, onSave }: AddSubjectProps) => {
     setValue("is_section_specific", value);
   };
 
+  useEffect(() => {
+    if (formMode === "edit" && subject) {
+      console.log(subject);
+
+      setValue("name", subject.name);
+      setValue("credit_hour", subject.credit_hour ?? 0);
+      const code = subject.code.split(",");
+      setValue("code_th", code[0] ?? null);
+      setValue("code_pr", code[1] ?? null);
+      setValue("subject_type_id", subject.subject_type?.id ?? -1);
+      if (subject.is_chooseable) {
+        setValue("is_chooseable", true);
+        setIsChooseable(true);
+      } else {
+        setValue("is_chooseable", false);
+        setIsChooseable(false);
+      }
+
+      if (subject.is_section_specific) {
+        setValue("is_section_specific", true);
+        setIsSectionSpecific(true);
+      } else {
+        setValue("is_section_specific", false);
+        setIsSectionSpecific(false);
+      }
+    }
+  }, [formMode, subject, setValue]);
+
   const onSubmit = async (data: FormData) => {
     console.log("Form submitted", data);
     try {
@@ -67,18 +103,25 @@ const AddSubject = ({ grade, onSave }: AddSubjectProps) => {
         sections: data.sections,
       };
 
-      console.log(subjectData);
-
-      await saveSubject(subjectData);
+      if (formMode === "create") {
+        await saveSubject(subjectData);
+      } else if (formMode === "edit" && subject) {
+        const updateData: UpdateSubjectInterface = {
+          id: subject.id as number,
+          ...subjectData,
+        };
+        console.log(subjectData);
+        await updateSubject(updateData);
+      }
       onSave(); // Callback after save
     } catch (error) {
       console.error("Error saving subject:", error);
     }
   };
-  if (Object.keys(errors).length > 0) {
-    console.log("Form has validation errors:", errors);
-    return; // Prevent submission if there are errors
-  }
+  // if (Object.keys(errors).length > 0) {
+  //   console.log("Form has validation errors:", errors);
+  //   return; // Prevent submission if there are errors
+  // }
 
   return (
     <>
@@ -157,23 +200,33 @@ const AddSubject = ({ grade, onSave }: AddSubjectProps) => {
               <label className="required fw-bold fs-6 mb-2">
                 Select Subject Type
               </label>
-              <select
-                {...register("subject_type_id", {
-                  valueAsNumber: true,
-                })}
-                className={`form-control form-select mb-3 mb-lg-0 ${
-                  errors.code_pr && "is-invalid"
-                }`}
-              >
-                {subjectTypes.map(
-                  (type, t) =>
-                    type.is_active && (
-                      <option key={t} value={type.id}>
-                        {type.name}
-                      </option>
-                    )
+              <Controller
+                name="subject_type_id"
+                control={control}
+                render={({ field }) => (
+                  <select
+                    {...field}
+                    className={`form-control form-select mb-3 mb-lg-0 ${
+                      errors.subject_type_id ? "is-invalid" : ""
+                    }`}
+                    // Ensure the value is treated as a number by setting valueAsNumber
+                    value={field.value ? Number(field.value) : ""}
+                    onChange={(e) => field.onChange(Number(e.target.value))}
+                  >
+                    {subjectTypes.map((type, t) =>
+                      type.is_active ? (
+                        <option key={t} value={type.id}>
+                          {type.name}
+                        </option>
+                      ) : null
+                    )}
+                  </select>
                 )}
-              </select>
+              />
+
+              {errors.subject_type_id && (
+                <span>{errors.subject_type_id.message}</span>
+              )}
             </div>
           </div>
           <div className="col-4">
