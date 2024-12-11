@@ -15,7 +15,7 @@
     "@sbmdkl/nepali-date-converter": "^2.0.3",
     "@sbmdkl/nepali-datepicker-reactjs": "^1.2.2",
     "@types/styled-components": "^5.1.34",
-    "axios": "^1.7.7",
+    "axios": "^1.7.9",
     "dotenv": "^16.4.5",
     "react": "^18.3.1",
     "react-data-table-component": "^7.6.2",

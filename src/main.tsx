@@ -7,7 +7,7 @@ import ProtectedRoute from "./components/Icon/ProtectedRoute";
 import Login from "./pages/Authentication/Login";
 import AcademicRoute from "./Academics/AcademicRoute";
 import { PermissionProvider } from "./context/permissionContext";
-import Address from "./pages/Address/Address";
+import Address from "./General/pages/Address/Address";
 
 const App: React.FC = () => {
   return (
