@@ -6,8 +6,16 @@ import AcademicLevel from "../Academics/pages/AcademicLevel/AcademicLevel";
 import AcademicSession from "../Academics/pages/AcademicSession/AcademicSession";
 import Grade from "../Academics/pages/Grade/Grade";
 import GradeSettings from "./pages/GradeSettings/GradeSettings";
+import TimeTable from "./pages/Routine/TimeTable/TimeTable";
+import AddTimeTable from "./pages/Routine/TimeTable/AddTimeTable";
 
-const routes = [
+interface RouteConfig {
+  path: string;
+  title: string;
+  element: JSX.Element;
+}
+
+const routes: RouteConfig[] = [
   {
     path: "students",
     title: "Students",
@@ -32,6 +40,16 @@ const routes = [
     path: "grades",
     title: "Grades",
     element: <Grade />,
+  },
+  {
+    path: "routine/time-table",
+    title: "Time Table",
+    element: <TimeTable />,
+  },
+  {
+    path: "routine/time-table/create",
+    title: "Time Table",
+    element: <AddTimeTable />,
   },
 ];
 

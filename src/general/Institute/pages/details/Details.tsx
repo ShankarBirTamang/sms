@@ -7,7 +7,7 @@ import axiosInstance from "../../../../../axiosConfig";
 const baseUrl = import.meta.env.VITE_API_URL;
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
-import defaultLogo from "../../../../../public/img/logo.png";
+import defaultLogo from "../../../../../src/img/logo.png";
 
 interface FormData {
   email: string;
