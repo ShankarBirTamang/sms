@@ -7,9 +7,9 @@ import ProtectedRoute from "./components/Icon/ProtectedRoute";
 import Login from "./pages/Authentication/Login";
 import AcademicRoute from "./Academics/AcademicRoute";
 import { PermissionProvider } from "./context/permissionContext";
-import InstituteRoute from "./Institute/InstituteRoute";
 import NotFound from "./pages/error/NotFound";
 import StudentRoute from "./Modules/Student/StudentRoute";
+import InstituteRoute from "./General/Institute/InstituteRoute";
 
 const App = () => {
   return (
