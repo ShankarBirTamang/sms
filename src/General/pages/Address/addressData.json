@@ -1,0 +1,4137 @@
+{
+    "data": [
+        {
+            "id": 1,
+            "name": "Nepal",
+            "provinces": [
+                {
+                    "id": 1,
+                    "name": "Koshi Province",
+                    "districts": [
+                        {
+                            "id": 1,
+                            "name": "Taplejung",
+                            "cities": [
+                                {
+                                    "id": 1,
+                                    "name": "Taplejung(Phungling) Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 2,
+                                    "name": "Sirijangha Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 3,
+                                    "name": "AathraiTriveni Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 4,
+                                    "name": "PathibharaYangwarak Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 5,
+                                    "name": "Meringden Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 6,
+                                    "name": "Sidingwa Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 7,
+                                    "name": "Phaktanglung Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 8,
+                                    "name": "MaiwaKhola Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 9,
+                                    "name": "MikwaKhola Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 722,
+                                    "name": "Updated New City",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 2,
+                            "name": "Panchthar",
+                            "cities": [
+                                {
+                                    "id": 10,
+                                    "name": "Miklajung Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 11,
+                                    "name": "Phalgunanda Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 12,
+                                    "name": "Hilihang Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 13,
+                                    "name": "Phalelung Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 14,
+                                    "name": "Yangwarak Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 15,
+                                    "name": "Kummayak Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 3,
+                            "name": "Ilam",
+                            "cities": [
+                                {
+                                    "id": 16,
+                                    "name": "Suryodaya Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 17,
+                                    "name": "Ilam Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 18,
+                                    "name": "Deumai Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 19,
+                                    "name": "Mai Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 20,
+                                    "name": "Phakphokthum Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 21,
+                                    "name": "MaiJogmai Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 22,
+                                    "name": "Chulachuli Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 23,
+                                    "name": "Rong Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 24,
+                                    "name": "Mangsebung Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 25,
+                                    "name": "Sandakpur Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 4,
+                            "name": "Jhapa",
+                            "cities": [
+                                {
+                                    "id": 26,
+                                    "name": "Mechinagar Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 27,
+                                    "name": "Birtamod Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 28,
+                                    "name": "Damak Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 29,
+                                    "name": "Bhadrapur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 30,
+                                    "name": "Shivasatakshi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 31,
+                                    "name": "Arjundhara Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 32,
+                                    "name": "Gauradaha Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 33,
+                                    "name": "Kankai Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 34,
+                                    "name": "Kamal Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 35,
+                                    "name": "BuddhaShanti Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 36,
+                                    "name": "Kachankawal Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 37,
+                                    "name": "Jhapa Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 38,
+                                    "name": "Barhadashi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 39,
+                                    "name": "Gaurigunj Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 40,
+                                    "name": "Haldibari Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 5,
+                            "name": "Morang",
+                            "cities": [
+                                {
+                                    "id": 41,
+                                    "name": "Biratnagar Ma.Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 42,
+                                    "name": "SundarHaraincha Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 43,
+                                    "name": "Belbari Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 44,
+                                    "name": "Pathari-Shanischare Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 45,
+                                    "name": "Ratuwamai Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 46,
+                                    "name": "Urlabari Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 47,
+                                    "name": "Rangeli Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 48,
+                                    "name": "Sunawarshi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 49,
+                                    "name": "LetangBhogateni Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 50,
+                                    "name": "Jahada Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 51,
+                                    "name": "BudiGanga Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 52,
+                                    "name": "Katahari Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 53,
+                                    "name": "Dhanpalthan Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 54,
+                                    "name": "Kanepokhari Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 55,
+                                    "name": "Gramthan Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 56,
+                                    "name": "Kerabari Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 57,
+                                    "name": "Miklajung Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 6,
+                            "name": "Sunsari",
+                            "cities": [
+                                {
+                                    "id": 58,
+                                    "name": "Itahari Upa.Ma.Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 59,
+                                    "name": "Dharan Upa.Ma.Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 60,
+                                    "name": "Barahachhetra Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 61,
+                                    "name": "Inaruwa Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 62,
+                                    "name": "Duhabi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 63,
+                                    "name": "Ramdhuni Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 64,
+                                    "name": "Koshi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 65,
+                                    "name": "Harinagara Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 66,
+                                    "name": "Bhokraha Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 67,
+                                    "name": "Dewanganj Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 68,
+                                    "name": "Gadhi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 69,
+                                    "name": "Barju Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 7,
+                            "name": "Dhankuta",
+                            "cities": [
+                                {
+                                    "id": 70,
+                                    "name": "Dhankuta Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 71,
+                                    "name": "Mahalaxmi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 72,
+                                    "name": "Pakhribas Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 73,
+                                    "name": "Sangurigadhi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 74,
+                                    "name": "Chaubise Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 75,
+                                    "name": "Sahidbhumi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 76,
+                                    "name": "ChhatharJorpati Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 8,
+                            "name": "Terhathum",
+                            "cities": [
+                                {
+                                    "id": 77,
+                                    "name": "Aathrai Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 78,
+                                    "name": "Phedap Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 79,
+                                    "name": "Chhathar Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 80,
+                                    "name": "Menchayayem Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 9,
+                            "name": "Sankhuwasabha",
+                            "cities": [
+                                {
+                                    "id": 81,
+                                    "name": "Khandbari Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 82,
+                                    "name": "Chainpur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 83,
+                                    "name": "Dharmadevi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 84,
+                                    "name": "Panchkhapan Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 85,
+                                    "name": "Madi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 86,
+                                    "name": "Makalu Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 87,
+                                    "name": "Silichong Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 88,
+                                    "name": "Sabhapokhari Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 89,
+                                    "name": "Chichila Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 90,
+                                    "name": "BhotKhola Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 10,
+                            "name": "Bhojpur",
+                            "cities": [
+                                {
+                                    "id": 91,
+                                    "name": "Shadanand Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 92,
+                                    "name": "Bhojpur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 93,
+                                    "name": "Hatuwagadhi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 94,
+                                    "name": "RamprasadRai Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 95,
+                                    "name": "Aamchok Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 96,
+                                    "name": "TyamkeMaiyum Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 97,
+                                    "name": "Arun Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 98,
+                                    "name": "Pauwadungma Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 99,
+                                    "name": "Salpasilichho Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 11,
+                            "name": "Solukhumbu",
+                            "cities": [
+                                {
+                                    "id": 100,
+                                    "name": "SoluDudhkunda Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 101,
+                                    "name": "Dudhakaushika Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 102,
+                                    "name": "NechaSalyan Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 103,
+                                    "name": "Dudhkoshi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 104,
+                                    "name": "MahaKulung Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 105,
+                                    "name": "Sotang Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 106,
+                                    "name": "KhumbuPasangLhamu Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 107,
+                                    "name": "LikhuPike Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 12,
+                            "name": "Okhaldhunga",
+                            "cities": [
+                                {
+                                    "id": 108,
+                                    "name": "Siddhicharan Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 109,
+                                    "name": "Manebhanjyang Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 110,
+                                    "name": "Champadevi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 111,
+                                    "name": "Sunkoshi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 112,
+                                    "name": "Molung Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 113,
+                                    "name": "Chisankhugadhi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 114,
+                                    "name": "KhijiDemba Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 115,
+                                    "name": "Likhu Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 13,
+                            "name": "Khotang",
+                            "cities": [
+                                {
+                                    "id": 116,
+                                    "name": "RupakotMajhuwagadhi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 117,
+                                    "name": "HalesiTuwachung Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 118,
+                                    "name": "Khotehang Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 119,
+                                    "name": "Diprung Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 120,
+                                    "name": "Aiselukharka Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 121,
+                                    "name": "Jantedhunga Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 122,
+                                    "name": "Kepilasgadhi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 123,
+                                    "name": "Barahpokhari Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 124,
+                                    "name": "Rawabesi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 125,
+                                    "name": "Sakela Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 14,
+                            "name": "Udayapur",
+                            "cities": [
+                                {
+                                    "id": 126,
+                                    "name": "Triyuga Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 127,
+                                    "name": "Katari Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 128,
+                                    "name": "Chaudandigadhi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 129,
+                                    "name": "Belaka Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 130,
+                                    "name": "Udayapurgadhi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 131,
+                                    "name": "Rautamai Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 132,
+                                    "name": "Tapli Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 133,
+                                    "name": "Limchungbung Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 78,
+                            "name": "Update New District",
+                            "cities": []
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "name": "Madhesh Province",
+                    "districts": [
+                        {
+                            "id": 15,
+                            "name": "Saptari",
+                            "cities": [
+                                {
+                                    "id": 134,
+                                    "name": "Rajbiraj Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 135,
+                                    "name": "HanumannagarKankalini Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 136,
+                                    "name": "Khadak Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 137,
+                                    "name": "Dakneshwari Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 138,
+                                    "name": "Surunga Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 139,
+                                    "name": "Bodebarsain Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 140,
+                                    "name": "Shambhunath Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 141,
+                                    "name": "Kanchanrup Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 142,
+                                    "name": "Saptakoshi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 143,
+                                    "name": "TilathiKoiladi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 144,
+                                    "name": "Rajgadh Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 145,
+                                    "name": "Chhinnamasta Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 146,
+                                    "name": "Mahadeva Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 147,
+                                    "name": "AgnisairaKrishnasavaran Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 148,
+                                    "name": "Rupani Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 149,
+                                    "name": "Balan-Bihul Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 150,
+                                    "name": "Bishnupur Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 151,
+                                    "name": "Tirhut Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 16,
+                            "name": "Siraha",
+                            "cities": [
+                                {
+                                    "id": 152,
+                                    "name": "Lahan Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 153,
+                                    "name": "Siraha Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 154,
+                                    "name": "Golbazar Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 155,
+                                    "name": "Mirchaiya Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 156,
+                                    "name": "Kalyanpur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 157,
+                                    "name": "Dhangadimai Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 158,
+                                    "name": "Sukhipur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 159,
+                                    "name": "Karjanha Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 160,
+                                    "name": "LaksmipurPatari Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 161,
+                                    "name": "Bariyarpatti Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 162,
+                                    "name": "Aurahi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 163,
+                                    "name": "Arnama Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 164,
+                                    "name": "Bhagwanpur Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 165,
+                                    "name": "Naraha Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 166,
+                                    "name": "Navarajpur Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 167,
+                                    "name": "Sakhuwanankarkatti Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 168,
+                                    "name": "Bishnupur Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 17,
+                            "name": "Dhanusa",
+                            "cities": [
+                                {
+                                    "id": 169,
+                                    "name": "MithilaBihari Na.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 18,
+                            "name": "Mahottari",
+                            "cities": [
+                                {
+                                    "id": 170,
+                                    "name": "Gaushala Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 171,
+                                    "name": "Bardibas Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 172,
+                                    "name": "Jaleshwar Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 173,
+                                    "name": "ManaraShiswa Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 174,
+                                    "name": "Bhangaha Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 175,
+                                    "name": "Balawa Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 176,
+                                    "name": "Loharpatti Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 177,
+                                    "name": "Aurahi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 178,
+                                    "name": "Matihani Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 179,
+                                    "name": "Ramgopalpur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 180,
+                                    "name": "Sonama Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 181,
+                                    "name": "Pipra Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 182,
+                                    "name": "Samsi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 183,
+                                    "name": "Ekdara Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 184,
+                                    "name": "Mahottari Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 19,
+                            "name": "Sarlahi",
+                            "cities": [
+                                {
+                                    "id": 185,
+                                    "name": "Barahathwa Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 186,
+                                    "name": "Ishwarpur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 187,
+                                    "name": "Lalbandi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 188,
+                                    "name": "Godaita Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 189,
+                                    "name": "Malangwa Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 190,
+                                    "name": "Balara Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 191,
+                                    "name": "Hariwan Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 192,
+                                    "name": "Kabilasi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 193,
+                                    "name": "Bagmati Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 194,
+                                    "name": "Haripur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 195,
+                                    "name": "Haripurwa Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 196,
+                                    "name": "Chandranagar Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 197,
+                                    "name": "Brahampuri Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 198,
+                                    "name": "Ramnagar Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 199,
+                                    "name": "Chakraghatta Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 200,
+                                    "name": "Kaudena Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 201,
+                                    "name": "Dhankaul Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 202,
+                                    "name": "Bishnu Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 203,
+                                    "name": "Basbariya Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 204,
+                                    "name": "Parsa Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 20,
+                            "name": "Bara",
+                            "cities": [
+                                {
+                                    "id": 205,
+                                    "name": "Kalaiya Upa.Ma.Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 206,
+                                    "name": "Jitpursimara Upa.Ma.Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 207,
+                                    "name": "Mahagadhimai Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 208,
+                                    "name": "Simraungadh Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 209,
+                                    "name": "Kolhabi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 210,
+                                    "name": "Nijgadh Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 211,
+                                    "name": "Pacharauta Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 212,
+                                    "name": "Suwarna Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 213,
+                                    "name": "AdarshaKotwal Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 214,
+                                    "name": "Baragadhi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 215,
+                                    "name": "Pheta Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 216,
+                                    "name": "Karaiyamai Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 217,
+                                    "name": "Prasauni Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 218,
+                                    "name": "Bishrampur Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 219,
+                                    "name": "Devtal Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 220,
+                                    "name": "Parwanipur Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 21,
+                            "name": "Parsa",
+                            "cities": [
+                                {
+                                    "id": 221,
+                                    "name": "Birgunj Ma.Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 222,
+                                    "name": "Bahudarmai Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 223,
+                                    "name": "Parsagadhi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 224,
+                                    "name": "Pokhariya Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 225,
+                                    "name": "SakhuwaPrasauni Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 226,
+                                    "name": "Jagarnathpur Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 227,
+                                    "name": "Chhipahrmai Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 228,
+                                    "name": "Bindabasini Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 229,
+                                    "name": "PaterwaSugauli Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 230,
+                                    "name": "Jirabhawani Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 231,
+                                    "name": "Kalikamai Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 232,
+                                    "name": "PakahaMainpur Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 233,
+                                    "name": "Thori Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 234,
+                                    "name": "Dhobini Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 22,
+                            "name": "Rautahat",
+                            "cities": [
+                                {
+                                    "id": 235,
+                                    "name": "Chandrapur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 236,
+                                    "name": "Garuda Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 237,
+                                    "name": "Gujara Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 238,
+                                    "name": "Brindaban Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 239,
+                                    "name": "Ishnath Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 240,
+                                    "name": "Rajpur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 241,
+                                    "name": "Gadhimai Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 242,
+                                    "name": "Katahariya Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 243,
+                                    "name": "Paroha Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 244,
+                                    "name": "PhatuwaBijayapur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 245,
+                                    "name": "Baudhimai Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 246,
+                                    "name": "MadhavNarayan Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 247,
+                                    "name": "Gaur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 248,
+                                    "name": "DewahiGonahi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 249,
+                                    "name": "Rajdevi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 250,
+                                    "name": "Maulapur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 251,
+                                    "name": "DurgaBhagawati Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 252,
+                                    "name": "Yamunamai Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": 3,
+                    "name": "Bagmati Province",
+                    "districts": [
+                        {
+                            "id": 23,
+                            "name": "Sindhuli",
+                            "cities": [
+                                {
+                                    "id": 253,
+                                    "name": "Dudhauli Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 254,
+                                    "name": "Kamalamai Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 255,
+                                    "name": "Tinpatan Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 256,
+                                    "name": "Marin Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 257,
+                                    "name": "Hariharpurgadhi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 258,
+                                    "name": "Sunkoshi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 259,
+                                    "name": "Golanjor Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 260,
+                                    "name": "Phikkal Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 261,
+                                    "name": "Ghyanglekh Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 24,
+                            "name": "Ramechhap",
+                            "cities": [
+                                {
+                                    "id": 262,
+                                    "name": "Manthali Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 263,
+                                    "name": "Ramechhap Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 264,
+                                    "name": "Khandadevi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 265,
+                                    "name": "LikhuTamakoshi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 266,
+                                    "name": "Doramba Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 267,
+                                    "name": "Gokulganga Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 268,
+                                    "name": "Sunapati Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 269,
+                                    "name": "Umakunda Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 25,
+                            "name": "Dolakha",
+                            "cities": [
+                                {
+                                    "id": 270,
+                                    "name": "Bhimeshwar Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 271,
+                                    "name": "Jiri Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 272,
+                                    "name": "Kalinchok Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 273,
+                                    "name": "Melung Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 274,
+                                    "name": "Shailung Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 275,
+                                    "name": "Baiteshwar Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 276,
+                                    "name": "Tamakoshi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 277,
+                                    "name": "Bigu Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 278,
+                                    "name": "Gaurishankar Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 26,
+                            "name": "Sindhupalchok",
+                            "cities": [
+                                {
+                                    "id": 279,
+                                    "name": "ChautaraSangachokgadhi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 280,
+                                    "name": "Melamchi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 281,
+                                    "name": "Barhabise Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 282,
+                                    "name": "Indrawati Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 283,
+                                    "name": "PanchpokhariThangpal Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 284,
+                                    "name": "Jugal Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 285,
+                                    "name": "Balephi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 286,
+                                    "name": "Helambu Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 287,
+                                    "name": "Bhotekoshi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 288,
+                                    "name": "Sunkoshi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 289,
+                                    "name": "LisankhuPakhar Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 290,
+                                    "name": "Tripurasundari Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 27,
+                            "name": "Kavrepalanchok",
+                            "cities": [
+                                {
+                                    "id": 291,
+                                    "name": "Banepa Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 292,
+                                    "name": "Paunauti Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 293,
+                                    "name": "Panchkhal Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 294,
+                                    "name": "Mandandeupur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 295,
+                                    "name": "Dhulikhel Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 296,
+                                    "name": "Namobuddha Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 297,
+                                    "name": "Roshi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 298,
+                                    "name": "Temal Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 299,
+                                    "name": "ChaunriDeurali Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 300,
+                                    "name": "Bhumlu Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 301,
+                                    "name": "Mahabharat Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 302,
+                                    "name": "Bethanchok Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 303,
+                                    "name": "Khanikhola Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 28,
+                            "name": "Lalitpur",
+                            "cities": [
+                                {
+                                    "id": 304,
+                                    "name": "Lalitpur Ma.Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 305,
+                                    "name": "Mahalaxmi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 306,
+                                    "name": "Godawari Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 307,
+                                    "name": "Bagmati Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 308,
+                                    "name": "Konjyosom Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 309,
+                                    "name": "Mahankal Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 29,
+                            "name": "Bhaktapur",
+                            "cities": [
+                                {
+                                    "id": 310,
+                                    "name": "Suryabinayak Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 311,
+                                    "name": "MadhyapurThimi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 312,
+                                    "name": "Bhaktapur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 313,
+                                    "name": "Changunarayan Na.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 30,
+                            "name": "Kathmandu",
+                            "cities": [
+                                {
+                                    "id": 314,
+                                    "name": "Kathmandu Ma.Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 315,
+                                    "name": "Budhanilkantha Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 316,
+                                    "name": "Tarakeshwar Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 317,
+                                    "name": "Gokarneshwar Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 318,
+                                    "name": "Chandragiri Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 319,
+                                    "name": "Tokha Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 320,
+                                    "name": "Kageshwari-Manohara Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 321,
+                                    "name": "Nagarjun Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 322,
+                                    "name": "Kirtipur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 323,
+                                    "name": "Shankharapur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 324,
+                                    "name": "Dakshinkali Na.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 31,
+                            "name": "Nuwakot",
+                            "cities": [
+                                {
+                                    "id": 325,
+                                    "name": "Bidur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 326,
+                                    "name": "Belkotgadhi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 327,
+                                    "name": "Kakani Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 328,
+                                    "name": "Dupcheshwar Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 329,
+                                    "name": "Shivapuri Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 330,
+                                    "name": "Tadi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 331,
+                                    "name": "Likhu Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 332,
+                                    "name": "Suryagadhi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 333,
+                                    "name": "Panchakanya Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 334,
+                                    "name": "Tarkeshwar Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 335,
+                                    "name": "Kispang Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 336,
+                                    "name": "Myagang Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 32,
+                            "name": "Rasuwa",
+                            "cities": [
+                                {
+                                    "id": 337,
+                                    "name": "Naukunda Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 338,
+                                    "name": "Kalika Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 339,
+                                    "name": "Uttargaya Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 340,
+                                    "name": "Gosaikund Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 341,
+                                    "name": "Aamachodingmo Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 33,
+                            "name": "Dhading",
+                            "cities": [
+                                {
+                                    "id": 342,
+                                    "name": "Nilkantha Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 343,
+                                    "name": "Dhunibeshi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 344,
+                                    "name": "Thakre Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 345,
+                                    "name": "BenighatRorang Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 346,
+                                    "name": "Galchhi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 347,
+                                    "name": "Gajuri Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 348,
+                                    "name": "Jwalamukhi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 349,
+                                    "name": "Siddhalekh Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 350,
+                                    "name": "Tripurasundari Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 351,
+                                    "name": "Gangajamuna Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 352,
+                                    "name": "NetrawatiDabjong Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 353,
+                                    "name": "Khaniyabas Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 354,
+                                    "name": "RubiValley Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 34,
+                            "name": "Makwanpur",
+                            "cities": [
+                                {
+                                    "id": 355,
+                                    "name": "Bakaiya Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 356,
+                                    "name": "Manahari Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 357,
+                                    "name": "Bagmati Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 358,
+                                    "name": "Raksirang Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 359,
+                                    "name": "Makawanpurgadhi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 360,
+                                    "name": "Kailash Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 361,
+                                    "name": "Bhimphedi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 362,
+                                    "name": "Indrasarowar Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 35,
+                            "name": "Chitwan",
+                            "cities": [
+                                {
+                                    "id": 363,
+                                    "name": "Bharatpur Ma.Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 364,
+                                    "name": "Ratnanagar Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 365,
+                                    "name": "Rapti Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 366,
+                                    "name": "Khairhani Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 367,
+                                    "name": "Kalika Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 368,
+                                    "name": "Madi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 369,
+                                    "name": "Ichchhakamana Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": 4,
+                    "name": "Gandaki Province",
+                    "districts": [
+                        {
+                            "id": 36,
+                            "name": "Gorkha",
+                            "cities": [
+                                {
+                                    "id": 370,
+                                    "name": "Gorkha Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 371,
+                                    "name": "Palungtar Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 372,
+                                    "name": "ShahidLakhan Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 373,
+                                    "name": "BarpakSulikot Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 374,
+                                    "name": "Aarughat Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 375,
+                                    "name": "Siranchowk Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 376,
+                                    "name": "Gandaki Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 377,
+                                    "name": "BhimsenThapa Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 378,
+                                    "name": "Ajirkot Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 379,
+                                    "name": "Dharche Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 380,
+                                    "name": "TsumNubri Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 37,
+                            "name": "Lamjung",
+                            "cities": [
+                                {
+                                    "id": 381,
+                                    "name": "Besisahar Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 382,
+                                    "name": "Sundarbazar Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 383,
+                                    "name": "MadhyaNepal Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 384,
+                                    "name": "Rainas Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 385,
+                                    "name": "Marsyangdi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 386,
+                                    "name": "Dordi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 387,
+                                    "name": "Dudhpokhari Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 388,
+                                    "name": "Kwaholasothar Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 38,
+                            "name": "Tanahun",
+                            "cities": [
+                                {
+                                    "id": 389,
+                                    "name": "Vyas Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 390,
+                                    "name": "Shuklagandaki Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 391,
+                                    "name": "Bhanu Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 392,
+                                    "name": "Bhimad Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 393,
+                                    "name": "Rishing Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 394,
+                                    "name": "Myagde Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 395,
+                                    "name": "AanbuKhaireni Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 396,
+                                    "name": "Bandipur Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 397,
+                                    "name": "Ghiring Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 398,
+                                    "name": "Devghat Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 39,
+                            "name": "Syangja",
+                            "cities": [
+                                {
+                                    "id": 399,
+                                    "name": "Waling Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 400,
+                                    "name": "Putalibazar Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 401,
+                                    "name": "Galyang Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 402,
+                                    "name": "Chapakot Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 403,
+                                    "name": "Bhirkot Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 404,
+                                    "name": "Kaligandaki Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 405,
+                                    "name": "Biruwa Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 406,
+                                    "name": "Harinas Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 407,
+                                    "name": "Aandhikhola Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 408,
+                                    "name": "ArjunChaupari Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 409,
+                                    "name": "Phedikhola Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 40,
+                            "name": "Kaski",
+                            "cities": [
+                                {
+                                    "id": 410,
+                                    "name": "Pokhara Ma.Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 411,
+                                    "name": "Annapurna Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 412,
+                                    "name": "Machhapuchhre Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 413,
+                                    "name": "Madi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 414,
+                                    "name": "Rupa Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 41,
+                            "name": "Manang",
+                            "cities": [
+                                {
+                                    "id": 415,
+                                    "name": "ManangDisyang Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 416,
+                                    "name": "Nason Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 417,
+                                    "name": "Chame Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 418,
+                                    "name": "NarpaBhumi Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 42,
+                            "name": "Mustang",
+                            "cities": [
+                                {
+                                    "id": 419,
+                                    "name": "Gharapjhong Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 420,
+                                    "name": "Thasang Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 421,
+                                    "name": "BaragungMuktichhetra Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 422,
+                                    "name": "Lomanthang Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 423,
+                                    "name": "Lo-GhekarDamodarkunda Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 43,
+                            "name": "Myagdi",
+                            "cities": [
+                                {
+                                    "id": 424,
+                                    "name": "Beni Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 425,
+                                    "name": "Malika Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 426,
+                                    "name": "Mangala Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 427,
+                                    "name": "Raghuganga Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 428,
+                                    "name": "Dhaulagiri Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 429,
+                                    "name": "Annapurna Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 44,
+                            "name": "Nawalpur",
+                            "cities": [
+                                {
+                                    "id": 430,
+                                    "name": "Kawasoti Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 431,
+                                    "name": "Gaindakot Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 432,
+                                    "name": "Madhyabindu Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 433,
+                                    "name": "Devchuli Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 434,
+                                    "name": "Hupsekot Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 435,
+                                    "name": "BinayiTriveni Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 436,
+                                    "name": "Bulingtar Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 437,
+                                    "name": "Baudikali Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 45,
+                            "name": "Parbat",
+                            "cities": [
+                                {
+                                    "id": 438,
+                                    "name": "Kushma Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 439,
+                                    "name": "Phalewas Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 440,
+                                    "name": "Jaljala Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 441,
+                                    "name": "Modi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 442,
+                                    "name": "Paiyun Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 443,
+                                    "name": "Bihadi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 444,
+                                    "name": "Mahashila Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 46,
+                            "name": "Baglung",
+                            "cities": [
+                                {
+                                    "id": 445,
+                                    "name": "Baglung Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 446,
+                                    "name": "Galkot Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 447,
+                                    "name": "Jaimini Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 448,
+                                    "name": "Dhorpatan Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 449,
+                                    "name": "Badigad Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 450,
+                                    "name": "Kathekhola Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 451,
+                                    "name": "Nisikhola Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 452,
+                                    "name": "Bareng Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 453,
+                                    "name": "Tarakhola Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 454,
+                                    "name": "Tamankhola Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": 5,
+                    "name": "Lumbini Province",
+                    "districts": [
+                        {
+                            "id": 47,
+                            "name": "Gulmi",
+                            "cities": [
+                                {
+                                    "id": 455,
+                                    "name": "Musikot Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 456,
+                                    "name": "Resunga Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 457,
+                                    "name": "Satyawati Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 458,
+                                    "name": "Dhurkot Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 459,
+                                    "name": "GulmiDarbar Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 460,
+                                    "name": "Madane Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 461,
+                                    "name": "Chandrakot Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 462,
+                                    "name": "Malika Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 463,
+                                    "name": "Chhatrakot Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 464,
+                                    "name": "Isma Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 465,
+                                    "name": "Kaligandaki Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 466,
+                                    "name": "Ruru Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 48,
+                            "name": "Palpa",
+                            "cities": [
+                                {
+                                    "id": 467,
+                                    "name": "Tansen Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 468,
+                                    "name": "Rampur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 469,
+                                    "name": "RainadeviChhahara Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 470,
+                                    "name": "Mathagadhi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 471,
+                                    "name": "Nisdi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 472,
+                                    "name": "Bagnaskali Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 473,
+                                    "name": "Rambha Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 474,
+                                    "name": "Purbakhola Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 475,
+                                    "name": "Tinau Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 476,
+                                    "name": "Ribdikot Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 49,
+                            "name": "Parasi",
+                            "cities": [
+                                {
+                                    "id": 477,
+                                    "name": "Ramgram Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 478,
+                                    "name": "Sunwal Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 479,
+                                    "name": "Bardghat Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 480,
+                                    "name": "Susta Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 481,
+                                    "name": "Pratappur Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 482,
+                                    "name": "Sarawal Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 483,
+                                    "name": "Palhinandan Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 50,
+                            "name": "Rupandehi",
+                            "cities": [
+                                {
+                                    "id": 484,
+                                    "name": "Butwal Upa.Ma.Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 485,
+                                    "name": "Tilottama Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 486,
+                                    "name": "LumbiniSanskritik Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 487,
+                                    "name": "Siddharthanagar Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 488,
+                                    "name": "Sainamaina Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 489,
+                                    "name": "Devdaha Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 490,
+                                    "name": "Gaidhawa Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 491,
+                                    "name": "Mayadevi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 492,
+                                    "name": "Kotahimai Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 493,
+                                    "name": "Marchawarimai Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 494,
+                                    "name": "Siyari Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 495,
+                                    "name": "Sammarimai Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 496,
+                                    "name": "Rohini Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 497,
+                                    "name": "Shuddhodhan Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 498,
+                                    "name": "Omsatiya Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 499,
+                                    "name": "Kanchan Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 51,
+                            "name": "Kapilvastu",
+                            "cities": [
+                                {
+                                    "id": 500,
+                                    "name": "Kapilvastu Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 501,
+                                    "name": "Banganga Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 502,
+                                    "name": "Shivaraj Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 503,
+                                    "name": "Buddhabhumi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 504,
+                                    "name": "Krishnanagar Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 505,
+                                    "name": "Maharajganj Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 506,
+                                    "name": "Mayadevi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 507,
+                                    "name": "Suddhodhan Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 508,
+                                    "name": "Yasodhara Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 509,
+                                    "name": "Bijaynagar Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 52,
+                            "name": "Arghakhanchi",
+                            "cities": [
+                                {
+                                    "id": 510,
+                                    "name": "Sitganga Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 511,
+                                    "name": "Sandhikharka Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 512,
+                                    "name": "Bhumikasthan Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 513,
+                                    "name": "Malarani Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 514,
+                                    "name": "Panini Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 515,
+                                    "name": "Chhatradev Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 53,
+                            "name": "Pyuthan",
+                            "cities": [
+                                {
+                                    "id": 516,
+                                    "name": "Pyuthan Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 517,
+                                    "name": "Swargadwari Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 518,
+                                    "name": "Naubahini Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 519,
+                                    "name": "Jhimruk Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 520,
+                                    "name": "Gaumukhi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 521,
+                                    "name": "Airawati Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 522,
+                                    "name": "Sarumarani Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 523,
+                                    "name": "Mallarani Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 524,
+                                    "name": "Mandavi Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 54,
+                            "name": "Rolpa",
+                            "cities": [
+                                {
+                                    "id": 525,
+                                    "name": "Rolpa Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 526,
+                                    "name": "Sunilsmriti Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 527,
+                                    "name": "Runtigadhi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 528,
+                                    "name": "Lungri Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 529,
+                                    "name": "Triveni Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 530,
+                                    "name": "Paribartan Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 531,
+                                    "name": "Gangadev Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 532,
+                                    "name": "Madi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 533,
+                                    "name": "Sunchhahari Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 534,
+                                    "name": "Thabang Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 55,
+                            "name": "Eastern Rukum",
+                            "cities": []
+                        },
+                        {
+                            "id": 56,
+                            "name": "Banke",
+                            "cities": [
+                                {
+                                    "id": 535,
+                                    "name": "Nepalgunj Upa.Ma.Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 536,
+                                    "name": "Kohalpur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 537,
+                                    "name": "Raptisonari Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 538,
+                                    "name": "Baijanath Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 539,
+                                    "name": "Khajura Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 540,
+                                    "name": "Janaki Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 541,
+                                    "name": "Duduwa Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 542,
+                                    "name": "Narainapur Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 57,
+                            "name": "Bardiya",
+                            "cities": [
+                                {
+                                    "id": 543,
+                                    "name": "Barbardiya Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 544,
+                                    "name": "Gulariya Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 545,
+                                    "name": "Rajapur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 546,
+                                    "name": "Bansgadhi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 547,
+                                    "name": "Madhuwan Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 548,
+                                    "name": "Thakurbaba Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 549,
+                                    "name": "Badhaiyatal Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 550,
+                                    "name": "Geruwa Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 58,
+                            "name": "Dang",
+                            "cities": [
+                                {
+                                    "id": 551,
+                                    "name": "Ghorahi Upa.Ma.Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 552,
+                                    "name": "Tulsipur Upa.Ma.Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 553,
+                                    "name": "Lamahi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 554,
+                                    "name": "Rapti Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 555,
+                                    "name": "Gadhawa Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 556,
+                                    "name": "Babai Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 557,
+                                    "name": "Shantinagar Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 558,
+                                    "name": "Rajpur Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 559,
+                                    "name": "Banglachuli Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 560,
+                                    "name": "Dangisharan Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": 6,
+                    "name": "Karnali Province",
+                    "districts": [
+                        {
+                            "id": 59,
+                            "name": "Western Rukum",
+                            "cities": []
+                        },
+                        {
+                            "id": 60,
+                            "name": "Salyan",
+                            "cities": [
+                                {
+                                    "id": 561,
+                                    "name": "BangadKupinde Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 562,
+                                    "name": "Bagchaur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 563,
+                                    "name": "Shaarda Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 564,
+                                    "name": "Kumakh Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 565,
+                                    "name": "Kalimati Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 566,
+                                    "name": "Chhatreshwari Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 567,
+                                    "name": "Darma Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 568,
+                                    "name": "Kapurkot Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 569,
+                                    "name": "Tribeni Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 570,
+                                    "name": "SiddhaKumakh Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 61,
+                            "name": "Surkhet",
+                            "cities": [
+                                {
+                                    "id": 571,
+                                    "name": "Birendranagar Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 572,
+                                    "name": "Gurbhakot Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 573,
+                                    "name": "Bheriganga Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 574,
+                                    "name": "Panchapuri Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 575,
+                                    "name": "Lekbeshi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 576,
+                                    "name": "Barahatal Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 577,
+                                    "name": "Simta Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 578,
+                                    "name": "Chaukune Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 579,
+                                    "name": "Chingad Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 62,
+                            "name": "Dailekh",
+                            "cities": [
+                                {
+                                    "id": 580,
+                                    "name": "Dullu Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 581,
+                                    "name": "Aathabis Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 582,
+                                    "name": "Narayan Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 583,
+                                    "name": "ChamundaBindrasaini Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 584,
+                                    "name": "Gurans Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 585,
+                                    "name": "Bhairabi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 586,
+                                    "name": "Naumule Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 587,
+                                    "name": "Mahabu Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 588,
+                                    "name": "Thantikandh Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 589,
+                                    "name": "Bhagawatimai Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 590,
+                                    "name": "Dungeshwar Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 63,
+                            "name": "Jajarkot",
+                            "cities": [
+                                {
+                                    "id": 591,
+                                    "name": "Chhedagad Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 592,
+                                    "name": "Bheri Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 593,
+                                    "name": "Nalgad Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 594,
+                                    "name": "Junichande Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 595,
+                                    "name": "Kushe Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 596,
+                                    "name": "Barekot Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 597,
+                                    "name": "Shivalaya Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 64,
+                            "name": "Dolpa",
+                            "cities": [
+                                {
+                                    "id": 598,
+                                    "name": "TripuraSundari Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 599,
+                                    "name": "ThuliBheri Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 600,
+                                    "name": "Mudkechula Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 601,
+                                    "name": "Kaike Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 602,
+                                    "name": "ShePhoksundo Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 603,
+                                    "name": "Jagadulla Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 604,
+                                    "name": "DolpoBuddha Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 605,
+                                    "name": "ChharkaTangsong Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 65,
+                            "name": "Jumla",
+                            "cities": [
+                                {
+                                    "id": 606,
+                                    "name": "Chandannath Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 607,
+                                    "name": "Tatopani Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 608,
+                                    "name": "Patarasi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 609,
+                                    "name": "Tila Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 610,
+                                    "name": "Kankasundari Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 611,
+                                    "name": "Sinja Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 612,
+                                    "name": "Hima Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 613,
+                                    "name": "Guthichaur Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 66,
+                            "name": "Kalikot",
+                            "cities": [
+                                {
+                                    "id": 614,
+                                    "name": "Khandachakra Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 615,
+                                    "name": "Raskot Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 616,
+                                    "name": "Tilagupha Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 617,
+                                    "name": "Narharinath Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 618,
+                                    "name": "Palata Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 619,
+                                    "name": "ShubhaKalika Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 620,
+                                    "name": "SanniTriveni Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 621,
+                                    "name": "Pachaljharana Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 622,
+                                    "name": "Mahawai Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 67,
+                            "name": "Mugu",
+                            "cities": [
+                                {
+                                    "id": 623,
+                                    "name": "ChhayanathRara Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 624,
+                                    "name": "Khatyad Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 625,
+                                    "name": "Soru Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 626,
+                                    "name": "MugumKarmarong Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 68,
+                            "name": "Humla",
+                            "cities": [
+                                {
+                                    "id": 627,
+                                    "name": "Simkot Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 628,
+                                    "name": "Sarkegad Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 629,
+                                    "name": "Adanchuli Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 630,
+                                    "name": "Kharpunath Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 631,
+                                    "name": "Tanjakot Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 632,
+                                    "name": "Chankheli Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 633,
+                                    "name": "Namkha Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": 7,
+                    "name": "Sudurpashchim Province",
+                    "districts": [
+                        {
+                            "id": 69,
+                            "name": "Bajura",
+                            "cities": [
+                                {
+                                    "id": 634,
+                                    "name": "Budhiganga Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 635,
+                                    "name": "Budhinanda Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 636,
+                                    "name": "Tribeni Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 637,
+                                    "name": "Badimalika Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 638,
+                                    "name": "KhaptadChhededaha Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 639,
+                                    "name": "SwamiKartikKhapar Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 640,
+                                    "name": "Jagannath Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 641,
+                                    "name": "Himali Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 642,
+                                    "name": "Gaumul Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 70,
+                            "name": "Bajhang",
+                            "cities": [
+                                {
+                                    "id": 643,
+                                    "name": "Bungal Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 644,
+                                    "name": "JayaPrithvi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 645,
+                                    "name": "Kedarsyu Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 646,
+                                    "name": "Thalara Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 647,
+                                    "name": "Bitthadchir Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 648,
+                                    "name": "ChhabisPathibhera Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 649,
+                                    "name": "KhaptadChhanna Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 650,
+                                    "name": "Masta Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 651,
+                                    "name": "Durgathali Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 652,
+                                    "name": "Talkot Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 653,
+                                    "name": "Surma Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 654,
+                                    "name": "Saipal Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 71,
+                            "name": "Achham",
+                            "cities": [
+                                {
+                                    "id": 655,
+                                    "name": "Sanphebagar Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 656,
+                                    "name": "Mangalsen Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 657,
+                                    "name": "PanchadewalBinayak Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 658,
+                                    "name": "Kamalbazar Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 659,
+                                    "name": "Ramaroshan Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 660,
+                                    "name": "Chaurpati Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 661,
+                                    "name": "Turmakhand Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 662,
+                                    "name": "Mellekh Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 663,
+                                    "name": "Dhankari Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 664,
+                                    "name": "BannigadiJayagad Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 72,
+                            "name": "Doti",
+                            "cities": [
+                                {
+                                    "id": 665,
+                                    "name": "DipayalSilgadhi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 666,
+                                    "name": "Shikhar Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 667,
+                                    "name": "Aadarsha Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 668,
+                                    "name": "Purbichauki Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 669,
+                                    "name": "K.I.Singh Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 670,
+                                    "name": "Jorayal Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 671,
+                                    "name": "Sayal Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 672,
+                                    "name": "Bogatan-Phudsil Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 673,
+                                    "name": "Badikedar Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 73,
+                            "name": "Kailali",
+                            "cities": [
+                                {
+                                    "id": 674,
+                                    "name": "Dhangadhi Upa.Ma.Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 675,
+                                    "name": "Tikapur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 676,
+                                    "name": "Godawari Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 677,
+                                    "name": "LamkiChuha Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 678,
+                                    "name": "Ghodaghodi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 679,
+                                    "name": "Gauriganga Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 680,
+                                    "name": "Bhajani Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 681,
+                                    "name": "Janaki Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 682,
+                                    "name": "Kailari Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 683,
+                                    "name": "Joshipur Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 684,
+                                    "name": "Bardagoriya Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 685,
+                                    "name": "Mohanyal Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 686,
+                                    "name": "Chure Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 74,
+                            "name": "Kanchanpur",
+                            "cities": [
+                                {
+                                    "id": 687,
+                                    "name": "Bhimdatta Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 688,
+                                    "name": "Krishnapur Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 689,
+                                    "name": "Punarbas Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 690,
+                                    "name": "Belauri Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 691,
+                                    "name": "Bedkot Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 692,
+                                    "name": "Shuklaphanta Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 693,
+                                    "name": "Mahakali Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 694,
+                                    "name": "Laljhadi Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 695,
+                                    "name": "Beldandi Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 75,
+                            "name": "Dadeldhura",
+                            "cities": [
+                                {
+                                    "id": 696,
+                                    "name": "Parshuram Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 697,
+                                    "name": "Amargadhi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 698,
+                                    "name": "Navadurga Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 699,
+                                    "name": "Aalitaal Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 700,
+                                    "name": "Ganyapadhura Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 701,
+                                    "name": "Bhageshwar Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 702,
+                                    "name": "Ajaymeru Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 76,
+                            "name": "Baitadi",
+                            "cities": [
+                                {
+                                    "id": 703,
+                                    "name": "Purchaudi Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 704,
+                                    "name": "Dasharathchand Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 705,
+                                    "name": "Patan Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 706,
+                                    "name": "Melauli Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 707,
+                                    "name": "Dogdakedar Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 708,
+                                    "name": "Dilashaini Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 709,
+                                    "name": "Sigas Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 710,
+                                    "name": "Pancheshwar Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 711,
+                                    "name": "Surnaya Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 712,
+                                    "name": "Shivanath Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 77,
+                            "name": "Darchula",
+                            "cities": [
+                                {
+                                    "id": 713,
+                                    "name": "Shailyashikhar Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 714,
+                                    "name": "Mahakali Na.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 715,
+                                    "name": "Naugad Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 716,
+                                    "name": "Malikarjun Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 717,
+                                    "name": "Marma Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 718,
+                                    "name": "Lekam Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 719,
+                                    "name": "DuhunRuralMunicipality Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 720,
+                                    "name": "Vyans(Byans) Ga.Pa.",
+                                    "no_of_wards": null
+                                },
+                                {
+                                    "id": 721,
+                                    "name": "ApiHimal Ga.Pa.",
+                                    "no_of_wards": null
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": 8,
+                    "name": "Update New Province",
+                    "districts": []
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "name": "Update New Country",
+            "provinces": []
+        }
+    ]
+}
