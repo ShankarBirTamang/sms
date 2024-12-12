@@ -12,37 +12,24 @@ import {
 const TimeTableForm = () => {
   const [numberOfPeriods, setNumberOfPeriods] = useState(1);
   const [sameTimeForAllDays, setSameTimeForAllDays] = useState(false);
-  const [startTimeValues, setStartTimeValues] = useState(
-    Array(numberOfPeriods)
-      .fill("")
-      .map(() => Array(daysOfWeek.length).fill(""))
-  );
-  const [endTimeValues, setEndTimeValues] = useState(
-    Array(numberOfPeriods)
-      .fill("")
-      .map(() => Array(daysOfWeek.length).fill(""))
-  );
+  // const [startTimeValues, setStartTimeValues] = useState(
+  //   Array(numberOfPeriods)
+  //     .fill("")
+  //     .map(() => Array(daysOfWeek.length).fill(""))
+  // );
+  // const [endTimeValues, setEndTimeValues] = useState(
+  //   Array(numberOfPeriods)
+  //     .fill("")
+  //     .map(() => Array(daysOfWeek.length).fill(""))
+  // );
 
   const {
     register,
     handleSubmit,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm<TimetableFormValues>({ resolver: zodResolver(timeTableSchema) });
-
-  // Update start and end times when number of periods change
-  useEffect(() => {
-    setStartTimeValues(
-      Array(numberOfPeriods)
-        .fill("")
-        .map(() => Array(daysOfWeek.length).fill(""))
-    );
-    setEndTimeValues(
-      Array(numberOfPeriods)
-        .fill("")
-        .map(() => Array(daysOfWeek.length).fill(""))
-    );
-  }, [numberOfPeriods]);
 
   const handleNumberOfPeriodsChange = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -63,19 +50,59 @@ const TimeTableForm = () => {
     setValue(fieldName, value); // Directly update form state
   };
 
+  // const handleCheckBoxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const isChecked = e.target.checked;
+  //   setSameTimeForAllDays(isChecked);
+
+  //   if (isChecked) {
+  //     const firstStartField = startTimeValues[0][0];
+  //     const firstEndField = endTimeValues[0][0];
+
+  //     const syncedStartTime = Array(numberOfPeriods).fill(firstStartField);
+  //     const syncedEndTime = Array(numberOfPeriods).fill(firstEndField);
+
+  //     setStartTimeValues(syncedStartTime);
+  //     setEndTimeValues(syncedEndTime);
+  //   }
+  // };
+
   const handleCheckBoxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isChecked = e.target.checked;
     setSameTimeForAllDays(isChecked);
 
     if (isChecked) {
-      const firstStartField = startTimeValues[0][0];
-      const firstEndField = endTimeValues[0][0];
+      [...Array(numberOfPeriods)].forEach((_, periodIndex) => {
+        // Get start and end times from the first day of the current period
+        const firstStartTime = getValues(
+          `periods.${periodIndex}.days.${daysOfWeek[0]}.start_time` as const
+        );
+        const firstEndTime = getValues(
+          `periods.${periodIndex}.days.${daysOfWeek[0]}.end_time` as const
+        );
 
-      const syncedStartTime = Array(numberOfPeriods).fill(firstStartField);
-      const syncedEndTime = Array(numberOfPeriods).fill(firstEndField);
-
-      setStartTimeValues(syncedStartTime);
-      setEndTimeValues(syncedEndTime);
+        // Set the same start and end times for all days in the current period
+        daysOfWeek.forEach((day) => {
+          setValue(
+            `periods.${periodIndex}.days.${day}.start_time` as const,
+            firstStartTime || ""
+          );
+          setValue(
+            `periods.${periodIndex}.days.${day}.end_time` as const,
+            firstEndTime || ""
+          );
+        });
+      });
+    } else {
+      // Optionally clear the time fields for all days when unchecking
+      [...Array(numberOfPeriods)].forEach((_, periodIndex) => {
+        daysOfWeek.forEach((day) => {
+          setValue(
+            `periods.${periodIndex}.days.${day}.start_time` as const,
+            ""
+          );
+          setValue(`periods.${periodIndex}.days.${day}.end_time` as const, "");
+        });
+      });
     }
   };
 
@@ -209,9 +236,8 @@ const TimeTableForm = () => {
                               type="time"
                               className="form-control form-control-solid"
                               {...register(
-                                `periods.${periodIndex}.days.${dayIndex}.start_time`
+                                `periods.${periodIndex}.days.${daysOfWeek[dayIndex]}.start_time` as const
                               )}
-                              value={startTimeValues[periodIndex][dayIndex]}
                               onChange={(e) =>
                                 handleTimeChange(
                                   e,
@@ -220,14 +246,13 @@ const TimeTableForm = () => {
                                   "start"
                                 )
                               }
-                              disabled={sameTimeForAllDays}
                             />
                             <button
                               type="button"
                               className="btn btn-light-danger btn-sm btn-icon"
                               onClick={() =>
                                 handleClearInput(
-                                  `periods.${periodIndex}.days.${dayIndex}.start_time`
+                                  `periods.${periodIndex}.days.${daysOfWeek[dayIndex]}.start_time`
                                 )
                               }
                             >
@@ -248,9 +273,8 @@ const TimeTableForm = () => {
                               type="time"
                               className="form-control form-control-solid"
                               {...register(
-                                `periods.${periodIndex}.days.${dayIndex}.end_time`
+                                `periods.${periodIndex}.days.${daysOfWeek[dayIndex]}.end_time` as const
                               )}
-                              value={endTimeValues[periodIndex][dayIndex]}
                               onChange={(e) =>
                                 handleTimeChange(
                                   e,
@@ -259,14 +283,13 @@ const TimeTableForm = () => {
                                   "end"
                                 )
                               }
-                              disabled={sameTimeForAllDays}
                             />
                             <button
                               type="button"
                               className="btn btn-light-danger btn-sm btn-icon"
                               onClick={() =>
                                 handleClearInput(
-                                  `periods.${periodIndex}.days.${dayIndex}.end_time`
+                                  `periods.${periodIndex}.days.${daysOfWeek[dayIndex]}.end_time`
                                 )
                               }
                             >
