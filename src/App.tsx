@@ -9,7 +9,7 @@ import AcademicRoute from "./Academics/AcademicRoute";
 import { PermissionProvider } from "./context/permissionContext";
 import NotFound from "./pages/error/NotFound";
 import StudentRoute from "./Modules/Student/StudentRoute";
-import InstituteRoute from "./General/Institute/InstituteRoute";
+import InstituteRoute from "./general/Institute/InstituteRoute";
 
 const App = () => {
   return (
