@@ -29,7 +29,14 @@ const TimeTableForm = () => {
     setValue,
     reset,
     formState: { errors },
-  } = useForm<TimetableFormValues>();
+  } = useForm<TimetableFormValues>({
+    resolver: zodResolver(timeTableSchema),
+    defaultValues: {
+      timetable_name: "",
+      number_of_periods: 1,
+      periods: [],
+    },
+  });
 
   useEffect(() => {
     const updatedStartTimeValues = Array(numberOfPeriods)
