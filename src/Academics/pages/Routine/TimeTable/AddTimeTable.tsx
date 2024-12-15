@@ -75,7 +75,8 @@ const TimeTableForm = () => {
         });
       }
     });
-  }, [sameTimeForAllDays, localStartTimeValues, localEndTimeValues, setValue]);
+  }, [sameTimeForAllDays, setValue]);
+  //[sameTimeForAllDays, localStartTimeValues, localEndTimeValues, setValue]
 
   const handleNumberOfPeriodsChange = (
     e: React.ChangeEvent<HTMLInputElement>
