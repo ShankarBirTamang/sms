@@ -10,6 +10,8 @@ import { PermissionProvider } from "./context/permissionContext";
 import NotFound from "./pages/error/NotFound";
 import StudentRoute from "./Modules/Student/StudentRoute";
 import InstituteRoute from "./General/Institute/InstituteRoute";
+import Address from "./General/pages/Address/Address";
+import Vehicles from "./Transportation/pages/Vehicles";
 
 const App = () => {
   return (
@@ -22,7 +24,10 @@ const App = () => {
             <Route element={<ProtectedRoute />}>
               <Route element={<Layout />}>
                 <Route path="/" element={<Dashboard />} />
+
                 {/* Include academic routes */}
+                <Route path="vehicles/*" element={<Vehicles />} />
+                <Route path="address/*" element={<Address />} />
               </Route>
               <Route path="academics/*" element={<AcademicRoute />} />
               <Route path="institute/*" element={<InstituteRoute />} />
