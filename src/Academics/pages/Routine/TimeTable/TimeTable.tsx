@@ -133,7 +133,7 @@ const TimeTable = () => {
                     </tr>
                   </thead>
                   <tbody className="text-gray-600 fw-bold">
-                    {timeTables.map((timeTable, index) => (
+                    {[...Array(15)].fill("").map((timeTable, index) => (
                       <tr key={index} className="odd">
                         <td className="sorting_1">{timeTable.name}</td>
                         <td>

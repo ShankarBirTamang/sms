@@ -31,6 +31,7 @@ export const daysOfWeek = [
   "Wednesday",
   "Thursday",
   "Friday",
+  "Saturday",
 ];
 
 export const timeTableSchema = z.object({

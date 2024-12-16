@@ -20,26 +20,52 @@ const TimeTableForm = () => {
     setValue,
     reset,
     formState: { errors },
-  } = useForm<TimetableFormValues>();
+  } = useForm<TimetableFormValues>({
+    defaultValues: {
+      timetable_name: "",
+      number_of_periods: 1,
+      periods: Array.from({ length: numberOfPeriods }, () => ({
+        period_name: "",
+        days: daysOfWeek.reduce((acc, day) => {
+          acc[day] = { start_time: "", end_time: "" };
+          return acc;
+        }, {} as Record<string, { start_time: string; end_time: string }>),
+      })),
+    },
+  });
 
   // Initialize state for new periods
   useEffect(() => {
-    setSameTimeForAllDays((prev) => [
-      ...prev,
-      ...Array(numberOfPeriods - prev.length).fill(false),
-    ]);
-    setLocalStartTimeValues((prev) => [
-      ...prev,
-      ...Array(numberOfPeriods - prev.length).fill(
-        Array(daysOfWeek.length).fill("")
-      ),
-    ]);
-    setLocalEndTimeValues((prev) => [
-      ...prev,
-      ...Array(numberOfPeriods - prev.length).fill(
-        Array(daysOfWeek.length).fill("")
-      ),
-    ]);
+    setSameTimeForAllDays(
+      (prev) =>
+        prev.length < numberOfPeriods
+          ? [...prev, ...Array(numberOfPeriods - prev.length).fill(false)]
+          : prev.slice(0, numberOfPeriods) // Truncate if reducing
+    );
+
+    setLocalStartTimeValues(
+      (prev) =>
+        prev.length < numberOfPeriods
+          ? [
+              ...prev,
+              ...Array(numberOfPeriods - prev.length).fill(
+                Array(daysOfWeek.length).fill("")
+              ),
+            ]
+          : prev.slice(0, numberOfPeriods) // Truncate if reducing
+    );
+
+    setLocalEndTimeValues(
+      (prev) =>
+        prev.length < numberOfPeriods
+          ? [
+              ...prev,
+              ...Array(numberOfPeriods - prev.length).fill(
+                Array(daysOfWeek.length).fill("")
+              ),
+            ]
+          : prev.slice(0, numberOfPeriods) // Truncate if reducing
+    );
   }, [numberOfPeriods]);
 
   // Sync start and end time when checkbox is checked
@@ -82,8 +108,35 @@ const TimeTableForm = () => {
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = Number(e.target.value);
-    setNumberOfPeriods(value);
-    setValue("number_of_periods", value);
+
+    if (value > 0) {
+      setNumberOfPeriods(value);
+      setValue("number_of_periods", value);
+
+      // Adjust the periods array in the form state
+      setValue("periods", (currentPeriods) => {
+        const newPeriods =
+          value > numberOfPeriods
+            ? // If increasing, add new empty periods
+              [
+                ...currentPeriods,
+                ...Array.from(
+                  { length: value - currentPeriods.length },
+                  () => ({
+                    period_name: "",
+                    days: daysOfWeek.reduce((acc, day) => {
+                      acc[day] = { start_time: "", end_time: "" };
+                      return acc;
+                    }, {} as Record<string, { start_time: string; end_time: string }>),
+                  })
+                ),
+              ]
+            : // If decreasing, retain only the required number of periods
+              currentPeriods.slice(0, value);
+
+        return newPeriods;
+      });
+    }
   };
 
   const handleTimeChange = (
@@ -156,6 +209,24 @@ const TimeTableForm = () => {
   const handleFormSubmit = (data: TimetableFormValues) => {
     console.log("Form submitted with data:", data);
     toast.success("Form successfully submitted!");
+  };
+
+  const handleDiscard = () => {
+    reset({
+      timetable_name: "",
+      number_of_periods: 1,
+      periods: Array.from({ length: 1 }, () => ({
+        period_name: "",
+        days: daysOfWeek.reduce((acc, day) => {
+          acc[day] = { start_time: "", end_time: "" };
+          return acc;
+        }, {} as Record<string, { start_time: string; end_time: string }>),
+      })),
+    });
+    setNumberOfPeriods(1);
+    setSameTimeForAllDays([false]); // Reset to a single period
+    setLocalStartTimeValues([Array(daysOfWeek.length).fill("")]); // Reset to a single period
+    setLocalEndTimeValues([Array(daysOfWeek.length).fill("")]); // Reset to a single period
   };
 
   return (
@@ -352,7 +423,7 @@ const TimeTableForm = () => {
             <button
               type="button"
               className="btn btn-light"
-              onClick={() => reset()}
+              onClick={handleDiscard}
             >
               Discard
             </button>
