@@ -5,6 +5,8 @@ import { Vehicle, VehicleForm } from "../services/transportService";
 import useDebounce from "../../hooks/useDebounce";
 import useVehicle from "../hooks/useVehicle";
 import toast from "react-hot-toast";
+import Icon from "../../components/Icon/Icon";
+import Pagination from "../../components/Pagination/Pagination";
 
 const Vehicles = () => {
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
@@ -22,13 +24,33 @@ const Vehicles = () => {
     clearForm,
     setForm,
     setIsEditing,
+    addVehicle,
+    updateVehicle,
     setEditingVehicleId,
-  } = useVehicle();
-  // {
-  // search: debouncedSearchTerm,
-  // currentPage,
-  // itemsPerPage,
-  // }
+    handleReset,
+    pagination,
+    edgeLinks,
+  } = useVehicle({
+    search: debouncedSearchTerm,
+    currentPage,
+    itemsPerPage,
+  });
+
+  // header functions
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (value: number | null) => {
+    setItemsPerPage(value);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+    setCurrentPage(1); // Reset to the first page on new search
+  };
+  //header funtions end
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -39,11 +61,24 @@ const Vehicles = () => {
       setVehicles(
         vehicles.map((vehicle) =>
           vehicle.id === editingVehicleId
-            ? { ...vehicle, ...form, capacity: Number(form.capacity) }
+            ? { ...vehicle, ...form, year_made: form.year_made }
             : vehicle
         )
       );
-      toast.success("Vehicle updated Succesfully!");
+      const updatedVehicles = {
+        id: editingVehicleId,
+        name: form.name,
+        description: "",
+        vehicle_type: form.vehicle_type,
+        vehicle_condition: "",
+        max_capacity: form.max_capacity,
+        chassis_number: form.chassis_number,
+        model_number: form.model_number,
+        year_made: form.year_made,
+        vehicle_number: form.vehicle_number,
+        note: "",
+      };
+      updateVehicle(updatedVehicles);
       setIsEditing(false);
       setEditingVehicleId(null);
     } else {
@@ -51,27 +86,35 @@ const Vehicles = () => {
       const newVehicle: Vehicle = {
         id: vehicles.length + 1,
         name: form.name,
-        type: form.type,
-        number: form.number,
-        capacity: Number(form.capacity),
+        description: "",
+        vehicle_type: form.vehicle_type,
+        vehicle_condition: "",
+        max_capacity: form.max_capacity,
+        chassis_number: form.chassis_number,
+        model_number: form.model_number,
+        year_made: form.year_made,
+        vehicle_number: form.vehicle_number,
+        note: "",
       };
-      toast.success("Vehicle added succesfully!");
+
+      addVehicle(newVehicle);
       console.log("Adding new vehicle:", newVehicle);
-      setVehicles([...vehicles, newVehicle]);
     }
-    console.log("Form reset after submit:");
+    console.log("Form reset after submit!");
     clearForm();
   };
-  const handleEdit = (vehicle: Vehicle) => {
+
+  //Handling edit click
+  const handleEditClick = (vehicle: Vehicle) => {
     console.log("Editing vehicle:", vehicle);
     setForm({
       name: vehicle.name,
-      type: vehicle.type,
-      number: vehicle.number,
-      capacity: vehicle.capacity.toString(),
-      chassis: "",
-      model: "",
-      year: "",
+      vehicle_type: vehicle.vehicle_type,
+      vehicle_number: vehicle.vehicle_number,
+      max_capacity: vehicle.max_capacity,
+      chassis_number: vehicle.chassis_number,
+      model_number: vehicle.model_number,
+      year_made: vehicle.year_made,
     });
 
     setIsEditing(true);
@@ -129,8 +172,8 @@ const Vehicles = () => {
                       </label>
                       <input
                         type="text"
-                        name="type"
-                        value={form.type}
+                        name="vehicle_type"
+                        value={form.vehicle_type}
                         className="form-control form-control-solid mb-3 mb-lg-0 "
                         placeholder="Eg: Bus, Car"
                         required
@@ -148,8 +191,8 @@ const Vehicles = () => {
                       </label>
                       <input
                         type="text"
-                        name="number"
-                        value={form.number}
+                        name="vehicle_number"
+                        value={form.vehicle_number}
                         className="form-control form-control-solid mb-3 mb-lg-0 "
                         placeholder="Eg: Ko 2 Pa 0202"
                         required
@@ -165,8 +208,8 @@ const Vehicles = () => {
                       </label>
                       <input
                         type="number"
-                        name="capacity"
-                        value={form.capacity}
+                        name="max_capacity"
+                        value={form.max_capacity}
                         className="form-control form-control-solid mb-3 mb-lg-0 "
                         placeholder="Eg: 40"
                         required
@@ -181,8 +224,8 @@ const Vehicles = () => {
                     <label className=" fw-bold fs-6 mb-2">Chassis Number</label>
                     <input
                       type="text"
-                      name="chassis"
-                      value={form.chassis}
+                      name="chassis_number"
+                      value={form.chassis_number}
                       className="form-control form-control-solid mb-3 mb-lg-0 "
                       placeholder="Eg: 40"
                       onChange={handleChange}
@@ -196,8 +239,8 @@ const Vehicles = () => {
                       <label className=" fw-bold fs-6 mb-2">Model Number</label>
                       <input
                         type="text"
-                        name="model"
-                        value={form.model}
+                        name="model_number"
+                        value={form.model_number}
                         className="form-control form-control-solid mb-3 mb-lg-0 "
                         placeholder="Eg: 40"
                         onChange={handleChange}
@@ -209,9 +252,9 @@ const Vehicles = () => {
                     <div className="fv-row mb-7">
                       <label className=" fw-bold fs-6 mb-2">Year Made</label>
                       <input
-                        type="number"
-                        name="year"
-                        value={form.year}
+                        type="text"
+                        name="year_made"
+                        value={form.year_made}
                         className="form-control form-control-solid mb-3 mb-lg-0 "
                         placeholder="Eg: 2000"
                         onChange={handleChange}
@@ -224,7 +267,7 @@ const Vehicles = () => {
                   <button
                     type="reset"
                     className="btn btn-secondary"
-                    onClick={clearForm}
+                    onClick={handleReset}
                   >
                     Reset
                   </button>
@@ -238,11 +281,47 @@ const Vehicles = () => {
         </div>
         {/* Transport Vehicles Table */}
         <div className="col-xl-8 col-md-8  mb-xl-10">
-          <div className="card ">
+          <div className="card mb-3">
             <div className="card-header border-0 px-6">
-              <div className="card-title">
-                <h1 className="d-flex align-items-center position-relative my-1">
-                  Transport Vehicles
+              <div className="card-title w-100">
+                <h1 className="d-flex justify-content-between align-items-center position-relative my-1 w-100">
+                  <span>Transport Vehicles</span>
+                  <div className="d-flex gap-2">
+                    <div className="d-flex align-items-center position-relative h-100">
+                      <Icon
+                        name="searchDark"
+                        className="svg-icon svg-icon-1 position-absolute ms-6"
+                      />
+
+                      <input
+                        type="text"
+                        id="data_search"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        className="form-control w-250px ps-14"
+                        placeholder="Search Vehicles"
+                      />
+                    </div>
+
+                    <select
+                      className="form-control w-50px"
+                      title="Items per Page"
+                      id="itemsPerPage"
+                      value={itemsPerPage ?? "all"}
+                      onChange={(e) =>
+                        handleItemsPerPageChange(
+                          e.target.value === "all"
+                            ? null
+                            : parseInt(e.target.value)
+                        )
+                      }
+                    >
+                      <option value="all">All</option>
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                    </select>
+                  </div>
                 </h1>
               </div>
             </div>
@@ -271,18 +350,18 @@ const Vehicles = () => {
                         {vehicle.name}
                       </td>
                       <td className="text-center align-middle">
-                        {vehicle.type}
+                        {vehicle.vehicle_type}
                       </td>
                       <td className="text-center align-middle">
-                        {vehicle.number}
+                        {vehicle.vehicle_number}
                       </td>
                       <td className="text-center align-middle">
-                        {vehicle.capacity}
+                        {vehicle.max_capacity}
                       </td>
                       <td className="text-center ">
                         <button
                           className="btn btn-link "
-                          onClick={() => handleEdit(vehicle)}
+                          onClick={() => handleEditClick(vehicle)}
                         >
                           {icons.edit}
                         </button>
@@ -291,6 +370,14 @@ const Vehicles = () => {
                   ))}
                 </tbody>
               </table>
+            </div>
+            {/* Pagination */}
+            <div className="card-footer">
+              <Pagination
+                pagination={pagination}
+                edgeLinks={edgeLinks}
+                onPageChange={handlePageChange}
+              />
             </div>
           </div>
         </div>

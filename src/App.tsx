@@ -12,6 +12,7 @@ import StudentRoute from "./Modules/Student/StudentRoute";
 import InstituteRoute from "./General/Institute/InstituteRoute";
 import Address from "./General/pages/Address/Address";
 import Vehicles from "./Transportation/pages/Vehicles";
+import TransportRoutes from "./Transportation/pages/TransportRoutes";
 
 const App = () => {
   return (
@@ -26,7 +27,11 @@ const App = () => {
                 <Route path="/" element={<Dashboard />} />
 
                 {/* Include academic routes */}
-                <Route path="vehicles/*" element={<Vehicles />} />
+                <Route
+                  path="/transportation/vehicles/*"
+                  element={<Vehicles />}
+                />
+                <Route path="transportRoutes/*" element={<TransportRoutes />} />
                 <Route path="address/*" element={<Address />} />
               </Route>
               <Route path="academics/*" element={<AcademicRoute />} />
