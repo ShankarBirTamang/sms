@@ -1,4 +1,5 @@
 import { z } from "zod";
+import apiRoute from "../../services/httpService";
 
 export interface TimeTableInterface {
   name: string;
@@ -10,9 +11,8 @@ export interface UpdateTimeTableInterface extends TimeTableInterface {
 }
 
 export interface TimetableFormValues {
-  timetable_name: string;
-  number_of_periods: number;
-  sameTimeForAllDays: boolean;
+  name: string;
+  no_of_periods: number;
   periods: {
     period_name: string;
     days: {
@@ -35,8 +35,8 @@ export const daysOfWeek = [
 ];
 
 export const timeTableSchema = z.object({
-  timetable_name: z.string().min(1, "Timetable name is required"),
-  number_of_periods: z.number().min(1, "At least one period is required"),
+  name: z.string().min(1, "Timetable name is required"),
+  no_of_periods: z.number().min(1, "At least one period is required"),
   sameTimeForAllDays: z.boolean(),
   periods: z.array(
     z.object({
@@ -52,3 +52,5 @@ export const timeTableSchema = z.object({
     })
   ),
 });
+
+export default apiRoute("/schedule/time-tables");

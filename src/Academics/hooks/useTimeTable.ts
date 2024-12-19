@@ -3,8 +3,12 @@ import {
   ApiResponseInterface,
   PaginationAndSearch,
 } from "../../Interface/Interface";
-import { UpdateTimeTableInterface } from "../services/timeTableServic";
+import timeTableService, {
+  TimeTableInterface,
+  UpdateTimeTableInterface,
+} from "../services/timeTableServic";
 import { PaginationProps } from "../../components/Pagination/Pagination";
+import { CanceledError } from "../../services/apiClient";
 
 const useTimeTable = ({
   search = "",
@@ -22,7 +26,7 @@ const useTimeTable = ({
   //end for Pagination
 
   useEffect(() => {
-    // setIsLoading(true);
+    setIsLoading(true);
     const params: Record<string, string | number | null> = {
       per_page: itemsPerPage,
       search: search,
@@ -31,34 +35,44 @@ const useTimeTable = ({
       params.page = currentPage;
     }
 
-    // const { request, cancel } =
-    //   academicLevelService.getAll<
-    //     ApiResponseInterface<UpdateTimeTableInterface>
-    //   >(params);
+    const { request, cancel } =
+      timeTableService.getAll<ApiResponseInterface<UpdateTimeTableInterface>>(
+        params
+      );
 
-    // request
-    //   .then((result) => {
-    //     setTimeTable(result.data.data);
-    //     setPagination(result.data.meta);
-    //     setEdgeLinks(result.data.links);
-    //     setLoading(false);
-    //   })
-    //   .catch((err) => {
-    //     if (err instanceof CanceledError) return;
-    //     setError(err.message);
-    //     setLoading(false);
-    //   });
+    request
+      .then((result) => {
+        console.log("timetables", result.data.data);
+        setTimeTables(result.data.data);
+        setPagination(result.data.meta);
+        setEdgeLinks(result.data.links);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        if (err instanceof CanceledError) return;
+        setError(err.message);
+        setIsLoading(false);
+      });
   }, [search, currentPage, itemsPerPage]);
+
+  // useEffect(() => {
+  //   const { request, cancel } = timeTableService.getOne<TimeTableInterface>({
+  // })}, [newTimeTableId]);
+
+  // const saveTimeTable = async () => {
+  //   const response = await timeTableService.create<TimeTableInterface>(params);
+  // };
 
   return {
     error,
-    setIsLoading,
     isLoading,
-    setError,
     timeTables,
     pagination,
     edgeLinks,
+    setIsLoading,
+    setError,
     setTimeTables,
+    setPagination,
   };
 };
 

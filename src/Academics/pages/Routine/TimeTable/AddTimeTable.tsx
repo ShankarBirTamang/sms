@@ -22,15 +22,17 @@ const TimeTableForm = () => {
     formState: { errors },
   } = useForm<TimetableFormValues>({
     defaultValues: {
-      timetable_name: "",
-      number_of_periods: 1,
-      periods: Array.from({ length: numberOfPeriods }, () => ({
-        period_name: "",
-        days: daysOfWeek.reduce((acc, day) => {
-          acc[day] = { start_time: "", end_time: "" };
-          return acc;
-        }, {} as Record<string, { start_time: string; end_time: string }>),
-      })),
+      name: "",
+      no_of_periods: 1,
+      periods: [
+        {
+          period_name: "",
+          days: daysOfWeek.reduce((acc, day) => {
+            acc[day] = { start_time: "", end_time: "" };
+            return acc;
+          }, {} as TimetableFormValues["periods"][0]["days"]),
+        },
+      ],
     },
   });
 
@@ -89,7 +91,7 @@ const TimeTableForm = () => {
         });
 
         // Ensure the start time and end time in form are updated
-        daysOfWeek.forEach((day, dayIndex) => {
+        daysOfWeek.forEach((day) => {
           setValue(
             `periods.${periodIndex}.days.${day}.start_time`,
             syncedStartTime
@@ -111,28 +113,27 @@ const TimeTableForm = () => {
 
     if (value > 0) {
       setNumberOfPeriods(value);
-      setValue("number_of_periods", value);
+      setValue("no_of_periods", value);
 
-      // Adjust the periods array in the form state
-      setValue("periods", (currentPeriods) => {
+      setValue("periods", (currentPeriods?: TimetableFormValues["periods"]) => {
+        const existingPeriods = currentPeriods || []; // Ensure we have a default array
+
         const newPeriods =
-          value > numberOfPeriods
-            ? // If increasing, add new empty periods
-              [
-                ...currentPeriods,
+          value > existingPeriods.length
+            ? [
+                ...existingPeriods,
                 ...Array.from(
-                  { length: value - currentPeriods.length },
+                  { length: value - existingPeriods.length },
                   () => ({
                     period_name: "",
                     days: daysOfWeek.reduce((acc, day) => {
                       acc[day] = { start_time: "", end_time: "" };
                       return acc;
-                    }, {} as Record<string, { start_time: string; end_time: string }>),
+                    }, {} as TimetableFormValues["periods"][0]["days"]),
                   })
                 ),
               ]
-            : // If decreasing, retain only the required number of periods
-              currentPeriods.slice(0, value);
+            : existingPeriods.slice(0, value);
 
         return newPeriods;
       });
@@ -213,8 +214,8 @@ const TimeTableForm = () => {
 
   const handleDiscard = () => {
     reset({
-      timetable_name: "",
-      number_of_periods: 1,
+      name: "",
+      no_of_periods: 1,
       periods: Array.from({ length: 1 }, () => ({
         period_name: "",
         days: daysOfWeek.reduce((acc, day) => {
@@ -239,33 +240,28 @@ const TimeTableForm = () => {
           </div>
           <div className="d-flex justify-content-between">
             <div className="mb-7 col-md-8">
-              <label htmlFor="timetable_name" className="required form-label">
+              <label htmlFor="name" className="required form-label">
                 Time Table Name
               </label>
               <input
-                id="timetable_name"
-                {...register("timetable_name")}
+                id="name"
+                {...register("name")}
                 type="text"
                 className="form-control form-control-solid"
                 placeholder="Eg: Summer Season"
                 required
               />
-              {errors.timetable_name && (
-                <span className="text-danger">
-                  {errors.timetable_name.message}
-                </span>
+              {errors.name && (
+                <span className="text-danger">{errors.name.message}</span>
               )}
             </div>
             <div className="mb-7 col-md-3">
-              <label
-                htmlFor="number_of_periods"
-                className="required form-label"
-              >
+              <label htmlFor="no_of_periods" className="required form-label">
                 Number of Periods
               </label>
               <input
-                id="number_of_periods"
-                {...register("number_of_periods")}
+                id="no_of_periods"
+                {...register("no_of_periods")}
                 type="number"
                 className="form-control form-control-solid"
                 min="1"
@@ -273,9 +269,9 @@ const TimeTableForm = () => {
                 onChange={handleNumberOfPeriodsChange}
                 required
               />
-              {errors.number_of_periods && (
+              {errors.no_of_periods && (
                 <span className="text-danger">
-                  {errors.number_of_periods.message}
+                  {errors.no_of_periods.message}
                 </span>
               )}
             </div>

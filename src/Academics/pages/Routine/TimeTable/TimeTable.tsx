@@ -4,7 +4,7 @@ import Loading from "../../../../components/Loading/Loading";
 import Pagination from "../../../../components/Pagination/Pagination";
 import useDebounce from "../../../../hooks/useDebounce";
 import useAcademicLevels from "../../../hooks/useAcademicLevels";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useTimeTable from "../../../hooks/useTimeTable";
 import { UpdateTimeTableInterface } from "../../../services/timeTableServic";
 
@@ -15,6 +15,7 @@ const TimeTable = () => {
   const [hoveredSessionId, setHoveredSessionId] = useState<number | null>(null);
   const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
   const { academicLevels } = useAcademicLevels({});
+  const navigate = useNavigate();
   const [formMode, setFormMode] = useState<"create" | "edit" | "view">(
     "create"
   );
@@ -52,6 +53,7 @@ const TimeTable = () => {
 
   const handleViewClick = (updatedTimeTable: UpdateTimeTableInterface) => {
     setFormMode("view");
+    navigate(`/academics/routine/time-table/${updatedTimeTable.id}/view`);
   };
 
   return (
@@ -132,8 +134,8 @@ const TimeTable = () => {
                       <th className="text-end">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="text-gray-600 fw-bold">
-                    {[...Array(15)].fill("").map((timeTable, index) => (
+                  <tbody className="text-gray-600 fw-bold table">
+                    {timeTables.map((timeTable, index) => (
                       <tr key={index} className="odd">
                         <td className="sorting_1">{timeTable.name}</td>
                         <td>
@@ -164,6 +166,7 @@ const TimeTable = () => {
                           >
                             <Icon name={"edit"} className={"svg-icon"} />
                           </button>
+
                           <button
                             title="view academic level"
                             type="button"
