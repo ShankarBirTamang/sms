@@ -286,7 +286,6 @@ const AcademicLevel = () => {
                 </div>
               </div>
             </div>
-
             {/* Pagination */}
             <div className="card-footer">
               <Pagination

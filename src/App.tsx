@@ -9,7 +9,10 @@ import AcademicRoute from "./Academics/AcademicRoute";
 import { PermissionProvider } from "./context/permissionContext";
 import NotFound from "./pages/error/NotFound";
 import StudentRoute from "./Modules/Student/StudentRoute";
-import InstituteRoute from "./general/Institute/InstituteRoute";
+import InstituteRoute from "./General/Institute/InstituteRoute";
+import Address from "./General/pages/Address/Address";
+import Vehicles from "./Transportation/pages/Vehicles";
+import TransportRoutes from "./Transportation/pages/TransportRoutes";
 
 const App = () => {
   return (
@@ -22,7 +25,14 @@ const App = () => {
             <Route element={<ProtectedRoute />}>
               <Route element={<Layout />}>
                 <Route path="/" element={<Dashboard />} />
+
                 {/* Include academic routes */}
+                <Route
+                  path="/transportation/vehicles/*"
+                  element={<Vehicles />}
+                />
+                <Route path="transportRoutes/*" element={<TransportRoutes />} />
+                <Route path="address/*" element={<Address />} />
               </Route>
               <Route path="academics/*" element={<AcademicRoute />} />
               <Route path="institute/*" element={<InstituteRoute />} />
