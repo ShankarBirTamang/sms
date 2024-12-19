@@ -67,13 +67,17 @@ const Pagination = ({
               key={index}
               className={`page-item ${link.active ? "active" : ""}`}
             >
-              <button
-                title="Page Link"
-                type="button"
-                className="page-link"
-                onClick={() => onPageChange(Number(link.label))}
-                dangerouslySetInnerHTML={{ __html: link.label }}
-              />
+              {/* {link.label} */}
+              {link.label !== "Next &raquo;" &&
+                link.label !== "&laquo; Previous" && (
+                  <button
+                    title="Page Link"
+                    type="button"
+                    className="page-link"
+                    onClick={() => onPageChange(Number(link.label))}
+                    dangerouslySetInnerHTML={{ __html: link.label }}
+                  />
+                )}
             </li>
           ) : null
         )}
