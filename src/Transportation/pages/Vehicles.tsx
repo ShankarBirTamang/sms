@@ -1,7 +1,7 @@
 // Vehicles.tsx
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, FormEvent } from "react";
 import { icons } from "../../components/Icon/icons";
-import { Vehicle, VehicleForm } from "../services/transportService";
+import { Vehicle } from "../services/transportService";
 import useDebounce from "../../hooks/useDebounce";
 import useVehicle from "../hooks/useVehicle";
 import Icon from "../../components/Icon/Icon";

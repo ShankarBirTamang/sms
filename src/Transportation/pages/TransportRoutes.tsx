@@ -23,13 +23,13 @@ const TransportRoutes = () => {
     setNewRouteName,
     currentRouteId,
     setCurrentRouteId,
-    checkpointName,
+
     setCheckpointForm,
     checkpointForm,
-    setCheckpointName,
+
     pagination,
     edgeLinks,
-    handleReset,
+
     addCheckpoint,
     updateCheckPoint,
     addRoutes,
