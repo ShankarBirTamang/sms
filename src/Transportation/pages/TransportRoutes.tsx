@@ -4,8 +4,16 @@ import { icons } from "../../components/Icon/icons";
 import { Checkpoint, Route } from "../services/routeService";
 import useTransportRoute from "../hooks/useTransportRoute";
 import toast from "react-hot-toast";
+import useDebounce from "../../hooks/useDebounce";
+import Pagination from "../../components/Pagination/Pagination";
+import Icon from "../../components/Icon/Icon";
 
 const TransportRoutes = () => {
+  const [searchTerm, setSearchTerm] = useState(""); // New state for search term
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
+  const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
+
   const {
     routes,
     setRoutes,
@@ -19,12 +27,36 @@ const TransportRoutes = () => {
     setCheckpointForm,
     checkpointForm,
     setCheckpointName,
+    pagination,
+    edgeLinks,
     handleReset,
-    handleEditRoute,
+    addCheckpoint,
+    updateCheckPoint,
+    addRoutes,
+    updateRoutes,
     editingCheckpoint,
     setEditingCheckpoint,
     handleCancelEdit,
-  } = useTransportRoute();
+  } = useTransportRoute({
+    search: debouncedSearchTerm,
+    currentPage,
+    itemsPerPage,
+  });
+
+  // header functions
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (value: number | null) => {
+    setItemsPerPage(value);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+    setCurrentPage(1); // Reset to the first page on new search
+  };
 
   // Save the edited route name
   const handleSaveRouteName = () => {
@@ -34,11 +66,11 @@ const TransportRoutes = () => {
           ? { ...route, name: editingRoute.name }
           : route
       );
+      updateRoutes(editingRoute);
       setRoutes(updatedRoutes);
       setEditingRoute(null);
       console.log("Edited route :", editingRoute.name);
       console.log("Current status of routes: ", routes);
-      toast.success("Updated Successfully");
     }
   };
 
@@ -48,13 +80,21 @@ const TransportRoutes = () => {
       const newRoute: Route = {
         id: routes.length + 1,
         name: newRouteName,
-        checkpoints: [],
+        route_checkpoints: [],
       };
+      addRoutes(newRoute);
       setRoutes([...routes, newRoute]);
       setNewRouteName("");
       console.log(`new route Added: ${newRoute.name}`);
       toast.success("Added Successfully !");
     }
+  };
+
+  // Open the form to edit a route name
+  const handleEditRoute = (route: Route) => {
+    const updatedRoute = { id: route.id, name: route.name };
+
+    setEditingRoute(updatedRoute);
   };
 
   // Populate the form to edit an existing checkpoint
@@ -65,49 +105,69 @@ const TransportRoutes = () => {
     setCurrentRouteId(routeId);
     setCheckpointForm({
       id: checkpoint.id,
-      name: checkpoint.name,
+      location_name: checkpoint.location_name,
       latitude: checkpoint.latitude,
       longitude: checkpoint.longitude,
     });
     setEditingCheckpoint(true);
   };
+
   // Open the form to add a checkpoint for a route
   const handleOpenCheckpointForm = (routeId: number) => {
     setCurrentRouteId(routeId);
-    setCheckpointForm({ id: 0, name: "", latitude: 0, longitude: 0 });
+    setCheckpointForm({ id: 0, location_name: "", latitude: 0, longitude: 0 });
     setEditingCheckpoint(false);
     console.log("Adding Checkpoint ");
   };
+
   // Handle saving the checkpoint (add or edit)
   const handleSaveCheckpoint = () => {
     const updatedRoutes = routes.map((route) => {
       if (route.id === currentRouteId) {
         const updatedCheckpoints = editingCheckpoint
-          ? route.checkpoints.map((cp) =>
+          ? route.route_checkpoints.map((cp) =>
               cp.id === checkpointForm.id ? { ...checkpointForm } : cp
             )
           : [
-              ...route.checkpoints,
+              ...route.route_checkpoints,
               {
-                id: route.checkpoints.length + 1,
-                name: checkpointForm.name || "New Checkpoint",
+                id: route.route_checkpoints.length + 1,
+                location_name: checkpointForm.location_name || "New Checkpoint",
                 latitude: checkpointForm.latitude,
                 longitude: checkpointForm.longitude,
               },
             ];
         console.log("Checkpoints status: ", updatedCheckpoints);
-        return { ...route, checkpoints: updatedCheckpoints };
+        return { ...route, route_checkpoints: updatedCheckpoints };
       }
       return route;
     });
+    //API integration for checkpoint(Add /Edit)
     if (editingCheckpoint) {
-      toast.success("Edited successfully!");
+      const updatedCheckpoint = {
+        id: checkpointForm.id,
+        location_name: checkpointForm.location_name,
+        latitude: checkpointForm.latitude,
+        longitude: checkpointForm.longitude,
+      };
+      updateCheckPoint(updatedCheckpoint);
     } else {
-      toast.success("Added successfully!");
+      const newId =
+        Math.max(
+          ...updatedRoutes.map((route) => route.route_checkpoints.length)
+        ) + 1;
+      const newCheckpoint = {
+        transport_route_id: currentRouteId ?? 0,
+        id: newId,
+        location_name: checkpointForm.location_name,
+        latitude: checkpointForm.latitude,
+        longitude: checkpointForm.longitude,
+      };
+      addCheckpoint(newCheckpoint);
     }
-    setRoutes(updatedRoutes);
+    // setRoutes(updatedRoutes);
     setCurrentRouteId(null);
-    setCheckpointForm({ id: 0, name: "", latitude: 0, longitude: 0 });
+    setCheckpointForm({ id: 0, location_name: "", latitude: 0, longitude: 0 });
   };
 
   //Delete checkpoints
@@ -116,12 +176,12 @@ const TransportRoutes = () => {
       if (route.id === routeId) {
         return {
           ...route,
-          checkpoints: route.checkpoints.filter(
+          checkpoints: route.route_checkpoints.filter(
             (checkpoint) => checkpoint.id !== checkpointId
           ),
         };
       }
-      console.log("After Delete: ", route.checkpoints);
+      console.log("After Delete: ", route.route_checkpoints);
       return route;
     });
     setRoutes(updatedRoutes);
@@ -186,11 +246,11 @@ const TransportRoutes = () => {
                     <Form.Control
                       required
                       type="text"
-                      value={checkpointForm.name}
+                      value={checkpointForm.location_name}
                       onChange={(e) =>
                         setCheckpointForm({
                           ...checkpointForm,
-                          name: e.target.value,
+                          location_name: e.target.value,
                         })
                       }
                     />
@@ -273,9 +333,45 @@ const TransportRoutes = () => {
         <div className="col-xl-8 col-md-8  mb-xl-10">
           <div className="card mb-3">
             <div className="card-header border-0 px-6">
-              <div className="card-title">
-                <h1 className="d-flex align-items-center position-relative my-1">
-                  Transport Routes
+              <div className="card-title w-100">
+                <h1 className="d-flex justify-content-between align-items-center position-relative my-1 w-100">
+                  <span>Transport Routes</span>
+                  <div className="d-flex gap-2">
+                    <div className="d-flex align-items-center position-relative h-100">
+                      <Icon
+                        name="searchDark"
+                        className="svg-icon svg-icon-1 position-absolute ms-6"
+                      />
+
+                      <input
+                        type="text"
+                        id="data_search"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        className="form-control w-250px ps-14"
+                        placeholder="Search Vehicles"
+                      />
+                    </div>
+
+                    <select
+                      className="form-control w-50px"
+                      title="Items per Page"
+                      id="itemsPerPage"
+                      value={itemsPerPage ?? "all"}
+                      onChange={(e) =>
+                        handleItemsPerPageChange(
+                          e.target.value === "all"
+                            ? null
+                            : parseInt(e.target.value)
+                        )
+                      }
+                    >
+                      <option value="all">All</option>
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                    </select>
+                  </div>
                 </h1>
               </div>
             </div>
@@ -303,9 +399,9 @@ const TransportRoutes = () => {
                       <td>{index + 1}</td>
                       <td>{route.name}</td>
                       <td>
-                        {route.checkpoints.map((cp) => (
+                        {route.route_checkpoints.map((cp) => (
                           <div key={cp.id} className="d-flex gap-2 my-2 ">
-                            {cp.name} ({cp.latitude}, {cp.longitude})
+                            {cp.location_name} ({cp.latitude}, {cp.longitude})
                             <Button
                               variant="success"
                               className="ms-2"
@@ -349,6 +445,14 @@ const TransportRoutes = () => {
                   ))}
                 </tbody>
               </Table>
+            </div>
+            {/* Pagination */}
+            <div className="card-footer">
+              <Pagination
+                pagination={pagination}
+                edgeLinks={edgeLinks}
+                onPageChange={handlePageChange}
+              />
             </div>
           </div>
         </div>

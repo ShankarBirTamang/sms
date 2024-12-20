@@ -4,7 +4,6 @@ import { icons } from "../../components/Icon/icons";
 import { Vehicle, VehicleForm } from "../services/transportService";
 import useDebounce from "../../hooks/useDebounce";
 import useVehicle from "../hooks/useVehicle";
-import toast from "react-hot-toast";
 import Icon from "../../components/Icon/Icon";
 import Pagination from "../../components/Pagination/Pagination";
 
