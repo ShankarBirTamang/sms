@@ -21,6 +21,18 @@ export interface StudentInterface {
   religion?: string | null;
   ethnicity: string;
   is_active: boolean;
+  guardians?: StudentGuardianInterface[];
+}
+
+export interface StudentGuardianInterface {
+  id?: number;
+  name: string;
+  relation: string;
+  contact: string;
+  email?: string;
+  address?: string;
+  occupation?: string;
+  education?: string;
 }
 
 export default apiRoute("/students");
