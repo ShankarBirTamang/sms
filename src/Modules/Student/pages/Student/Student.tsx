@@ -1,7 +1,6 @@
 import useStudent from "../../hooks/useStudent";
 
 import React, { useState } from "react";
-import DrawerModal from "../../../../components/DrawerModal/DrawerModal";
 import useDocumentTitle from "../../../../hooks/useDocumentTitle";
 import useDebounce from "../../../../hooks/useDebounce";
 import Loading from "../../../../components/Loading/Loading";
@@ -9,24 +8,13 @@ import Icon from "../../../../components/Icon/Icon";
 import { useNavigate } from "react-router-dom";
 import Pagination from "../../../../components/Pagination/Pagination";
 
-interface Student {
-  id: number;
-  photo: string;
-  name: string;
-  grade: number;
-  section: string;
-  gender: string;
-  contact: string;
-  address: string;
-}
-
 const Students = () => {
   useDocumentTitle("All Students");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
   const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
-  const { students, isLoading, pagination, edgeLinks, error } = useStudent({
+  const { students, isLoading, pagination, edgeLinks } = useStudent({
     search: debouncedSearchTerm,
     currentPage,
     itemsPerPage,
@@ -68,6 +56,10 @@ const Students = () => {
       ...prevStates,
       [id]: true, // Mark the image as loading
     }));
+  };
+
+  const handleStudentOverviewNavigate = (studentId: number) => {
+    navigate(`details/${studentId}/overview`);
   };
 
   return (
@@ -209,13 +201,16 @@ const Students = () => {
                               justifyContent: "flex-end",
                             }}
                           >
-                            <a
+                            <button
+                              onClick={() =>
+                                handleStudentOverviewNavigate(student.id)
+                              }
+                              type="button"
                               title="search"
-                              href="#"
                               className="btn btn-light-info btn-sm btn-icon"
                             >
                               <Icon name={"search"} className={"svg-icon-2"} />
-                            </a>
+                            </button>
                             <a
                               title="edit"
                               href="#"

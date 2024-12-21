@@ -5,7 +5,8 @@ import {
   PaginationAndSearch,
 } from "../../../Interface/Interface";
 import { PaginationProps } from "../../../components/Pagination/Pagination";
-import studentService, { StudentInterfce } from "../services/studentService";
+import studentService, { StudentInterface } from "../services/studentService";
+import { number } from "zod";
 
 const useStudent = ({
   search = "",
@@ -20,7 +21,7 @@ const useStudent = ({
     useState<PaginationProps["pagination"]>(null);
   const [edgeLinks, setEdgeLinks] = useState<PaginationProps["edgeLinks"]>();
 
-  const [students, setStudents] = useState<StudentInterfce[]>([]);
+  const [students, setStudents] = useState<StudentInterface[]>([]);
 
   useEffect(() => {
     setLoading(true);
@@ -33,7 +34,7 @@ const useStudent = ({
     }
 
     const { request, cancel } =
-      studentService.getAll<ApiResponseInterface<StudentInterfce>>(params);
+      studentService.getAll<ApiResponseInterface<StudentInterface>>(params);
     request
       .then((result) => {
         setStudents(result.data.data);
@@ -50,12 +51,23 @@ const useStudent = ({
     return () => cancel();
   }, [search, currentPage, itemsPerPage]);
 
+  const getSingleStudent = async (id: number) => {
+    try {
+      const student = await studentService.item<{ id: number }>({ id });
+      return student.data;
+    } catch (error) {
+      console.error("Error fetching single student:", error);
+      throw error;
+    }
+  };
+
   return {
     students,
     pagination,
     isLoading,
     error,
     edgeLinks,
+    getSingleStudent,
   };
 };
 

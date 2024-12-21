@@ -1,6 +1,6 @@
 import apiRoute from "../../../services/httpService";
 
-export interface StudentInterfce {
+export interface StudentInterface {
   id: number;
   iemis: string | null;
   full_name?: string;

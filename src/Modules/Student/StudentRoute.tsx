@@ -4,12 +4,18 @@ import Student from "./pages/Student/Student";
 import StudentAddEdit from "./pages/Student/StudentAddEdit";
 import Layout from "../../layout/Layout";
 import ProtectectedRoute from "../../components/Icon/ProtectedRoute";
+import Overview from "./pages/Student/Details/Overview";
 
 const routes = [
   {
     path: "/",
     title: "Students",
     element: <Student />,
+  },
+  {
+    path: "/details/:studentId/overview",
+    title: "Students",
+    element: <Overview />,
   },
   {
     path: "/create-edit",

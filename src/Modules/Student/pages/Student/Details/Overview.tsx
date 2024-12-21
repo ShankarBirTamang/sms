@@ -1,0 +1,501 @@
+import React, { useCallback, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import useStudent from "../../../hooks/useStudent";
+import { StudentInterface } from "../../../services/studentService";
+import Loading from "../../../../../components/Loading/Loading";
+
+const Overview = () => {
+  const [student, setStudent] = useState<StudentInterface>();
+  const { studentId } = useParams<{ studentId: string }>();
+  const { getSingleStudent, isLoading } = useStudent({});
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchStudent = useCallback(async () => {
+    try {
+      const data = await getSingleStudent(Number(studentId));
+      setStudent(data.data);
+    } catch {
+      setError("Failed to fetch student data");
+    }
+  }, [getSingleStudent, studentId]);
+
+  useEffect(() => {
+    if (studentId) {
+      fetchStudent();
+    }
+  }, [fetchStudent, studentId]);
+
+  if (isLoading) return <Loading />;
+  if (error) return <div>{error}</div>;
+
+  if (isLoading) return <Loading />;
+  if (error) return <div>{error}</div>;
+  return (
+    <>
+      {!student && <Loading />}
+      {student && (
+        <div className="d-flex flex-column flex-lg-row">
+          <div className="flex-column flex-lg-row-auto w-lg-250px w-xl-350px mb-10">
+            <div className="card mb-5 mb-xl-8">
+              <div className="card-body">
+                <div className="d-flex flex-center flex-column py-5">
+                  <div className="symbol symbol-100px symbol-circle mb-7">
+                    <img src={student.photo} alt="image" />
+                  </div>
+                  <a
+                    href="#"
+                    className="fs-3 text-gray-800 text-hover-primary fw-bold mb-3"
+                  >
+                    {student.full_name}
+                  </a>
+                  <div className="mb-9 text-center">
+                    <span className="badge badge-lg badge-light-primary d-inline">
+                      Grade 4 (A3)
+                    </span>
+                    <br />
+                    <span className="badge badge-light-info mt-2 badge-lg">
+                      Roll No: 1
+                    </span>
+                  </div>
+                </div>
+                <div className="d-flex flex-stack fs-4 py-3">
+                  <div
+                    className="fw-bold rotate collapsible"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="kt_user_view_details"
+                  >
+                    Details
+                    <span className="ms-2 rotate-180">
+                      <span className="svg-icon svg-icon-3">
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z"
+                            fill="currentColor"
+                          ></path>
+                        </svg>
+                      </span>
+                    </span>
+                  </div>
+                  <span>
+                    <span
+                      data-bs-toggle="tooltip"
+                      data-bs-trigger="hover"
+                      data-kt-initialized="1"
+                    >
+                      <a
+                        href="https://sms.aanshtech.com/sms/students/506/edit"
+                        className="btn btn-sm btn-light-primary"
+                      >
+                        Edit
+                      </a>
+                    </span>
+                    <span
+                      data-bs-toggle="tooltip"
+                      data-bs-trigger="hover"
+                      data-kt-initialized="1"
+                    >
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-light-danger"
+                        data-bs-toggle="modal"
+                        data-bs-target="#changeSection"
+                      >
+                        Change Section
+                      </button>
+                    </span>
+                  </span>
+                </div>
+                <div className="separator"></div>
+                <div id="kt_user_view_details" className="collapse show">
+                  <div className="row">
+                    <div className="col-md-4 pb-5 fs-6">
+                      <div className="fw-bold mt-5">Student ID</div>
+                      <div className="text-gray-600">ID-{student.id}</div>
+                    </div>
+                    <div className="col-md-8 pb-5 fs-6">
+                      <div className="fw-bold mt-5">IEMIS</div>
+                      <div className="text-gray-600">{student.iemis}</div>
+                    </div>
+                    <div className="col-md-6 pb-5 fs-6">
+                      <div className="fw-bold mt-5">Contact</div>
+                      <div className="text-gray-600">
+                        <a
+                          href="tel:9866798832"
+                          className="text-gray-600 text-hover-primary"
+                        >
+                          {student.contact}
+                        </a>
+                      </div>
+                    </div>
+                    <div className="col-md-12 pb-5 fs-6">
+                      <div className="fw-bold mt-5">Date of Birth</div>
+                      <div className="text-gray-600">
+                        {student.dob_np} | {student.dob_en}
+                      </div>
+                    </div>
+                    <div className="col-md-6 pb-5 fs-6">
+                      <div className="fw-bold mt-5">Gender</div>
+                      <div className="text-gray-600">{student.gender}</div>
+                    </div>
+                    <div className="col-md-6 pb-5 fs-6">
+                      <div className="fw-bold mt-5">Blood Group</div>
+                      <div className="text-gray-600">
+                        <a
+                          href="#"
+                          className="text-gray-600 text-hover-primary"
+                        >
+                          {student.blood_group}
+                        </a>
+                      </div>
+                    </div>
+                    <div className="col-md-6 pb-5 fs-6">
+                      <div className="fw-bold mt-5">Nationality</div>
+                      <div className="text-gray-600">{student.nationality}</div>
+                    </div>
+                    <div className="col-md-6 pb-5 fs-6">
+                      <div className="fw-bold mt-5">Mother Tongue</div>
+                      <div className="text-gray-600">
+                        {student.mother_tongue}
+                      </div>
+                    </div>
+                    <div className="col-md-12 pb-5 fs-6">
+                      <div className="fw-bold mt-5">Address</div>
+                      <div className="text-gray-600">{student.address}</div>
+                    </div>
+                  </div>
+                  <div className="pb-5 fs-6"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex-lg-row-fluid ms-lg-15">
+            <ul className="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-8">
+              <li className="nav-item">
+                <a
+                  className="nav-link text-active-primary pb-4 active"
+                  href="#"
+                >
+                  Overview
+                </a>
+              </li>
+
+              <li className="nav-item">
+                <a className="nav-link text-active-primary pb-4" href="#">
+                  Qualification
+                </a>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link text-active-primary pb-4" href="#">
+                  Documents
+                </a>
+              </li>
+
+              <li className="nav-item">
+                <a className="nav-link text-active-primary pb-4" href="#">
+                  Exam Records
+                </a>
+              </li>
+
+              <li className="nav-item">
+                <a className="nav-link text-active-primary pb-4" href="#">
+                  Subjects
+                </a>
+              </li>
+
+              <li className="nav-item ms-auto">
+                <div
+                  className="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-semibold py-4 w-250px fs-6"
+                  data-kt-menu="true"
+                >
+                  <div className="menu-item px-5">
+                    <div className="menu-content text-muted pb-2 px-5 fs-7 text-uppercase">
+                      Payments
+                    </div>
+                  </div>
+                  <div className="menu-item px-5">
+                    <a href="#" className="menu-link px-5">
+                      Create invoice
+                    </a>
+                  </div>
+                  <div className="menu-item px-5">
+                    <a href="#" className="menu-link flex-stack px-5">
+                      Create payments
+                      <i
+                        className="fas fa-exclamation-circle ms-2 fs-7"
+                        data-bs-toggle="tooltip"
+                        aria-label="Specify a target name for future usage and reference"
+                        data-kt-initialized="1"
+                      ></i>
+                    </a>
+                  </div>
+                  <div
+                    className="menu-item px-5"
+                    data-kt-menu-trigger="hover"
+                    data-kt-menu-placement="left-start"
+                  >
+                    <a href="#" className="menu-link px-5">
+                      <span className="menu-title">Subscription</span>
+                      <span className="menu-arrow"></span>
+                    </a>
+                    <div className="menu-sub menu-sub-dropdown w-175px py-4">
+                      <div className="menu-item px-3">
+                        <a href="#" className="menu-link px-5">
+                          Apps
+                        </a>
+                      </div>
+                      <div className="menu-item px-3">
+                        <a href="#" className="menu-link px-5">
+                          Billing
+                        </a>
+                      </div>
+                      <div className="menu-item px-3">
+                        <a href="#" className="menu-link px-5">
+                          Statements
+                        </a>
+                      </div>
+                      <div className="separator my-2"></div>
+                      <div className="menu-item px-3">
+                        <div className="menu-content px-3">
+                          <label className="form-check form-switch form-check-custom form-check-solid">
+                            <input
+                              className="form-check-input w-30px h-20px"
+                              type="checkbox"
+                              value=""
+                              name="notifications"
+                              id="kt_user_menu_notifications"
+                            />
+                            <span className="form-check-label text-muted fs-6">
+                              Notifications
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="separator my-3"></div>
+                  <div className="menu-item px-5">
+                    <div className="menu-content text-muted pb-2 px-5 fs-7 text-uppercase">
+                      Account
+                    </div>
+                  </div>
+                  <div className="menu-item px-5">
+                    <a href="#" className="menu-link px-5">
+                      Reports
+                    </a>
+                  </div>
+                  <div className="menu-item px-5 my-1">
+                    <a href="#" className="menu-link px-5">
+                      Account Settings
+                    </a>
+                  </div>
+                  <div className="menu-item px-5">
+                    <a href="#" className="menu-link text-danger px-5">
+                      Delete customer
+                    </a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <div className="tab-content" id="myTabContent">
+              <div
+                className="tab-pane fade show active"
+                id="overview_tab"
+                role="tabpanel"
+              >
+                <div className="card card-flush mb-6 mb-xl-9">
+                  <div className="card-header mt-6 align-items-center">
+                    <div className="card-title flex-column">
+                      <h2 className="mb-1">Student's Attendance</h2>
+                      <div className="d-flex gap-3">
+                        <span className="badge badge-success">Present</span>
+                        <span className="badge badge-danger">Absent</span>
+                        <span className="badge badge-secondary">Holiday</span>
+                      </div>
+                    </div>
+
+                    <div className="d-flex g-3">
+                      <a href="#" className="btn btn-secondary btn-sm">
+                        View All
+                      </a>
+                    </div>
+                  </div>
+                  <div className="card-body p-9 pt-4">
+                    <ul className="nav nav-pills d-flex flex-nowrap hover-scroll-x py-2 justify-content-center attendance-navs">
+                      <li className="me-1">
+                        <span className="btn d-flex flex-column flex-center rounded-pill min-w-40px me-2 py-4 btn-active-danger active">
+                          <span className="opacity-50 fs-7 fw-semibold">
+                            Su
+                          </span>
+                          <span className="fs-6 fw-bolder">21</span>
+                        </span>
+                      </li>
+                      <li className="me-1">
+                        <span className="btn d-flex flex-column flex-center rounded-pill min-w-40px me-2 py-4 btn-active-success active">
+                          <span className="opacity-50 fs-7 fw-semibold">
+                            Mo
+                          </span>
+                          <span className="fs-6 fw-bolder">21</span>
+                        </span>
+                      </li>
+                      <li className="me-1">
+                        <span className="btn d-flex flex-column flex-center rounded-pill min-w-40px me-2 py-4 btn-active-secondary active">
+                          <span className="opacity-50 fs-7 fw-semibold">
+                            Mo
+                          </span>
+                          <span className="fs-6 fw-bolder">21</span>
+                        </span>
+                      </li>
+                      <li className="me-1">
+                        <span className="btn d-flex flex-column flex-center rounded-pill min-w-40px me-2 py-4 btn-active-secondary">
+                          <span className="opacity-50 fs-7 fw-semibold">
+                            Mo
+                          </span>
+                          <span className="fs-6 fw-bolder">21</span>
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div>
+                  <div className="card card-flush mb-6 mb-xl-9">
+                    <div className="card-header mt-6">
+                      <div className="card-title flex-column">
+                        <h2 className="mb-1">Student's Guardians</h2>
+                        <div className="fs-6 fw-semibold text-muted">
+                          Family Members / Guardians
+                        </div>
+                      </div>
+                      <div className="card-toolbar d-flex gap-3">
+                        <a
+                          href="#"
+                          className="btn btn-secondary mr-3"
+                          type="link"
+                          title="Refresh"
+                        >
+                          Refresh
+                        </a>
+
+                        <button type="button" className="btn btn-primary">
+                          Add Guardian
+                        </button>
+                      </div>
+                    </div>
+                    <div className="card-body d-flex flex-column">
+                      <table className="table align-middle table-row-dashed fs-6 gy-5">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Relation</th>
+                            <th>Type</th>
+                            <th>Contact</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Dinesh Budhathoki</td>
+                            <td>Father</td>
+                            <td>Parent</td>
+                            <td></td>
+                            <td></td>
+                            <td>Dharan -17</td>
+                            <td className="text-end">
+                              <a
+                                href="#"
+                                className="btn btn-light-success btn-icon"
+                                type="link"
+                              >
+                                <span className="svg-icon m-0">
+                                  <svg
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      opacity="0.3"
+                                      fill-rule="evenodd"
+                                      clip-rule="evenodd"
+                                      d="M2 4.63158C2 3.1782 3.1782 2 4.63158 2H13.47C14.0155 2 14.278 2.66919 13.8778 3.04006L12.4556 4.35821C11.9009 4.87228 11.1726 5.15789 10.4163 5.15789H7.1579C6.05333 5.15789 5.15789 6.05333 5.15789 7.1579V16.8421C5.15789 17.9467 6.05333 18.8421 7.1579 18.8421H16.8421C17.9467 18.8421 18.8421 17.9467 18.8421 16.8421V13.7518C18.8421 12.927 19.1817 12.1387 19.7809 11.572L20.9878 10.4308C21.3703 10.0691 22 10.3403 22 10.8668V19.3684C22 20.8218 20.8218 22 19.3684 22H4.63158C3.1782 22 2 20.8218 2 19.3684V4.63158Z"
+                                      fill="currentColor"
+                                    ></path>
+                                    <path
+                                      d="M10.9256 11.1882C10.5351 10.7977 10.5351 10.1645 10.9256 9.77397L18.0669 2.6327C18.8479 1.85165 20.1143 1.85165 20.8953 2.6327L21.3665 3.10391C22.1476 3.88496 22.1476 5.15129 21.3665 5.93234L14.2252 13.0736C13.8347 13.4641 13.2016 13.4641 12.811 13.0736L10.9256 11.1882Z"
+                                      fill="currentColor"
+                                    ></path>
+                                    <path
+                                      d="M8.82343 12.0064L8.08852 14.3348C7.8655 15.0414 8.46151 15.7366 9.19388 15.6242L11.8974 15.2092C12.4642 15.1222 12.6916 14.4278 12.2861 14.0223L9.98595 11.7221C9.61452 11.3507 8.98154 11.5055 8.82343 12.0064Z"
+                                      fill="currentColor"
+                                    ></path>
+                                  </svg>
+                                </span>
+                              </a>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Deepana Katuwal</td>
+                            <td>Mother</td>
+                            <td>Parent</td>
+                            <td></td>
+                            <td></td>
+                            <td>Dharan -17</td>
+                            <td className="text-end">
+                              <a
+                                href="#"
+                                className="btn btn-light-success btn-icon"
+                                type="link"
+                              >
+                                <span className="svg-icon m-0">
+                                  <svg
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      opacity="0.3"
+                                      fill-rule="evenodd"
+                                      clip-rule="evenodd"
+                                      d="M2 4.63158C2 3.1782 3.1782 2 4.63158 2H13.47C14.0155 2 14.278 2.66919 13.8778 3.04006L12.4556 4.35821C11.9009 4.87228 11.1726 5.15789 10.4163 5.15789H7.1579C6.05333 5.15789 5.15789 6.05333 5.15789 7.1579V16.8421C5.15789 17.9467 6.05333 18.8421 7.1579 18.8421H16.8421C17.9467 18.8421 18.8421 17.9467 18.8421 16.8421V13.7518C18.8421 12.927 19.1817 12.1387 19.7809 11.572L20.9878 10.4308C21.3703 10.0691 22 10.3403 22 10.8668V19.3684C22 20.8218 20.8218 22 19.3684 22H4.63158C3.1782 22 2 20.8218 2 19.3684V4.63158Z"
+                                      fill="currentColor"
+                                    ></path>
+                                    <path
+                                      d="M10.9256 11.1882C10.5351 10.7977 10.5351 10.1645 10.9256 9.77397L18.0669 2.6327C18.8479 1.85165 20.1143 1.85165 20.8953 2.6327L21.3665 3.10391C22.1476 3.88496 22.1476 5.15129 21.3665 5.93234L14.2252 13.0736C13.8347 13.4641 13.2016 13.4641 12.811 13.0736L10.9256 11.1882Z"
+                                      fill="currentColor"
+                                    ></path>
+                                    <path
+                                      d="M8.82343 12.0064L8.08852 14.3348C7.8655 15.0414 8.46151 15.7366 9.19388 15.6242L11.8974 15.2092C12.4642 15.1222 12.6916 14.4278 12.2861 14.0223L9.98595 11.7221C9.61452 11.3507 8.98154 11.5055 8.82343 12.0064Z"
+                                      fill="currentColor"
+                                    ></path>
+                                  </svg>
+                                </span>
+                              </a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
+export default Overview;
