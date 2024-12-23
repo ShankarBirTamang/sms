@@ -9,11 +9,15 @@ export interface TimeTableInterface {
 export interface UpdateTimeTableInterface extends TimeTableInterface {
   id: number;
 }
+export interface UpdateTimetableFormValues extends TimetableFormValues {
+  id: number;
+}
 
 export interface TimetableFormValues {
   name: string;
   no_of_periods: number;
   periods: {
+    id: number;
     period_name: string;
     days: {
       [day: string]: {
@@ -40,6 +44,7 @@ export const timeTableSchema = z.object({
   sameTimeForAllDays: z.boolean(),
   periods: z.array(
     z.object({
+      id: z.number(),
       period_name: z.string(),
       days: z.record(
         z.object({

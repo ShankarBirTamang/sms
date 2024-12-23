@@ -20,13 +20,7 @@ const TimeTable = () => {
     "create"
   );
 
-  const {
-    timeTables,
-    isLoading,
-    pagination,
-    edgeLinks,
-    // setError,
-  } = useTimeTable({
+  const { timeTables, isLoading, pagination, edgeLinks } = useTimeTable({
     search: debouncedSearchTerm,
     currentPage,
     itemsPerPage,
@@ -49,6 +43,7 @@ const TimeTable = () => {
 
   const handleEditClick = (updatedTimeTable: UpdateTimeTableInterface) => {
     setFormMode("edit");
+    navigate(`/academics/routine/time-table/${updatedTimeTable.id}/edit`);
   };
 
   const handleViewClick = (updatedTimeTable: UpdateTimeTableInterface) => {
@@ -129,6 +124,7 @@ const TimeTable = () => {
                 >
                   <thead>
                     <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+                      <th> #</th>
                       <th className="min-w-225px">Session Name</th>
                       <th>Status</th>
                       <th className="text-end">Actions</th>
@@ -137,6 +133,12 @@ const TimeTable = () => {
                   <tbody className="text-gray-600 fw-bold table">
                     {timeTables.map((timeTable, index) => (
                       <tr key={index} className="odd">
+                        <td>
+                          {currentPage * (itemsPerPage ?? 0) +
+                            index +
+                            1 -
+                            (itemsPerPage ?? 0)}
+                        </td>
                         <td className="sorting_1">{timeTable.name}</td>
                         <td>
                           <button

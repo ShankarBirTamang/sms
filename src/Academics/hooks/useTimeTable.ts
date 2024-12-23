@@ -4,7 +4,7 @@ import {
   PaginationAndSearch,
 } from "../../Interface/Interface";
 import timeTableService, {
-  TimeTableInterface,
+  UpdateTimetableFormValues,
   UpdateTimeTableInterface,
 } from "../services/timeTableServic";
 import { PaginationProps } from "../../components/Pagination/Pagination";
@@ -17,6 +17,10 @@ const useTimeTable = ({
 }: PaginationAndSearch) => {
   const [timeTables, setTimeTables] = useState<UpdateTimeTableInterface[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [timeTable, setTimeTable] = useState<
+    UpdateTimetableFormValues | undefined
+  >(undefined);
+
   const [isLoading, setIsLoading] = useState(false);
 
   // For Pagination
@@ -55,13 +59,25 @@ const useTimeTable = ({
       });
   }, [search, currentPage, itemsPerPage]);
 
-  // useEffect(() => {
-  //   const { request, cancel } = timeTableService.getOne<TimeTableInterface>({
-  // })}, [newTimeTableId]);
+  // Fetch the one timetable by id
+  const getOneTimeTable = (id: number) => {
+    const { request, cancel } =
+      timeTableService.getOne<ApiResponseInterface<UpdateTimetableFormValues>>(
+        id
+      );
 
-  // const saveTimeTable = async () => {
-  //   const response = await timeTableService.create<TimeTableInterface>(params);
-  // };
+    request
+      .then((result) => {
+        console.log("time table one", result.data.data); // Logs the object
+        setTimeTable(result.data.data);
+      })
+      .catch((err) => {
+        if (err instanceof CanceledError) return;
+        setError(err.message);
+      });
+
+    return () => cancel();
+  };
 
   return {
     error,
@@ -69,10 +85,14 @@ const useTimeTable = ({
     timeTables,
     pagination,
     edgeLinks,
+    itemsPerPage,
+    timeTable,
     setIsLoading,
     setError,
+    setTimeTable,
     setTimeTables,
     setPagination,
+    getOneTimeTable,
   };
 };
 
