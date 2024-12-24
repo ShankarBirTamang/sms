@@ -1,12 +1,8 @@
-import {
-  GradeInterface,
-  SectionInterface,
-} from "../../../Academics/services/gradeService";
 import apiRoute from "../../../services/httpService";
+import { EmployeeTypeInterface } from "./employeeTypeService";
 
-export interface StudentInterface {
+export interface EmployeeInterface {
   id: number;
-  iemis: string | null;
   full_name?: string;
   first_name: string;
   last_name: string;
@@ -25,20 +21,7 @@ export interface StudentInterface {
   religion?: string | null;
   ethnicity: string;
   is_active: boolean;
-  guardians?: StudentGuardianInterface[];
-  grade?: GradeInterface;
-  section?: SectionInterface;
+  employee_type?: EmployeeTypeInterface;
 }
 
-export interface StudentGuardianInterface {
-  id?: number;
-  name: string;
-  relation: string;
-  contact: string;
-  email?: string;
-  address?: string;
-  occupation?: string;
-  education?: string;
-}
-
-export default apiRoute("/students");
+export default apiRoute("/employees");

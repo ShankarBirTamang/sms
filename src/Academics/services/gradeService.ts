@@ -4,8 +4,8 @@ import { UpdateAcademicSessionInterface } from "./academicSessionService";
 export interface SectionData {
   hasFaculties: boolean;
   sectionType: "standard" | "custom";
-  facultySections: { facultyId: number; sections: string[] }[];
-  sections: string[];
+  facultySections: { facultyId: number; sections: string[] }[] | null;
+  sections: string[] | UpdateSectionData[];
 }
 export interface AddSectionInterface {
   onSectionDataChange: (data: SectionData, isValid: boolean) => void;
@@ -51,6 +51,7 @@ export interface SectionInterface {
   type: string | null;
   is_active: number;
   faculty: FacultyInterface;
+  student_count?: number;
 }
 
 interface SectionsInterface {
@@ -69,6 +70,11 @@ export interface GradeInterface {
   sections: SectionsInterface;
 }
 
+enum SectionType {
+  STANDARD = "standard",
+  CUSTOM = "custom",
+}
+
 export interface UpdateGradeInterface {
   length: number;
   id: number;
@@ -78,9 +84,29 @@ export interface UpdateGradeInterface {
   is_active: number;
   has_faculties: number;
   total_students?: number;
-  section_type: "standard" | "custom";
+  section_type: SectionType;
   session: UpdateAcademicSessionInterface;
   sections: SectionsInterface;
+}
+
+export interface UpdateSectionData {
+  id: number | null;
+  name: string;
+  isNew?: boolean;
+}
+
+export interface EditGradeInterface extends SectionData {
+  length: number;
+  id: number;
+  name: string;
+  grade_group_id: number;
+  short_name: string;
+  is_active: number;
+  has_faculties: number;
+  total_students?: number;
+  section_type: SectionType;
+  session: UpdateAcademicSessionInterface;
+  sections: UpdateSectionData[];
 }
 
 export interface SingleGradeInterface {

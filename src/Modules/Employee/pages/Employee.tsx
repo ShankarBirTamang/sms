@@ -1,28 +1,27 @@
-import useStudent from "../../hooks/useStudent";
-
 import React, { useState } from "react";
-import useDocumentTitle from "../../../../hooks/useDocumentTitle";
-import useDebounce from "../../../../hooks/useDebounce";
-import Loading from "../../../../components/Loading/Loading";
-import Icon from "../../../../components/Icon/Icon";
+import useDocumentTitle from "../../../hooks/useDocumentTitle";
+import useDebounce from "../../../hooks/useDebounce";
+import Loading from "../../../components/Loading/Loading";
+import Icon from "../../../components/Icon/Icon";
 import { useNavigate } from "react-router-dom";
-import Pagination from "../../../../components/Pagination/Pagination";
+import Pagination from "../../../components/Pagination/Pagination";
+import useEmployee from "../hooks/useEmployee";
 
-const Students = () => {
-  useDocumentTitle("All Students");
+const Employee = () => {
+  useDocumentTitle("All Employees");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
   const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
-  const { students, isLoading, pagination, edgeLinks } = useStudent({
+  const { employees, isLoading, pagination, edgeLinks } = useEmployee({
     search: debouncedSearchTerm,
     currentPage,
     itemsPerPage,
   });
   const navigate = useNavigate();
 
-  const addStudentRoute = () => {
-    navigate("/students/create-edit");
+  const addEmployeeRoute = () => {
+    navigate("/employees/create");
   };
 
   // header functions
@@ -58,8 +57,8 @@ const Students = () => {
     }));
   };
 
-  const handleStudentOverviewNavigate = (studentId: number) => {
-    navigate(`details/${studentId}/overview`);
+  const handleEmployeeOverviewNavigate = (employeeId: number) => {
+    navigate(`details/${employeeId}/overview`);
   };
 
   return (
@@ -69,7 +68,7 @@ const Students = () => {
           <div className="card card-flush">
             <div className="card-header border-0 pt-6">
               <div className="card-title">
-                <h2>All Students</h2>
+                <h2>All Employees</h2>
               </div>
               <div className="card-toolbar">
                 <div
@@ -89,7 +88,7 @@ const Students = () => {
                         value={searchTerm}
                         onChange={handleSearchChange}
                         className="form-control w-250px ps-14"
-                        placeholder="Search Students"
+                        placeholder="Search Employees"
                       />
                     </div>
 
@@ -114,11 +113,11 @@ const Students = () => {
                     <button
                       type="button"
                       className="btn btn-primary"
-                      title="Add Student"
-                      onClick={addStudentRoute}
+                      title="Add Employee"
+                      onClick={addEmployeeRoute}
                     >
                       <Icon name="add" className="svg-icon" />
-                      Add Student
+                      Add Employee
                     </button>
                   </div>
                 </div>
@@ -127,18 +126,19 @@ const Students = () => {
 
             <div className="card-body">
               {isLoading && <Loading />}
-              {!isLoading && students.length === 0 && (
-                <div className="alert alert-info">No Student Records Found</div>
+              {!isLoading && employees.length === 0 && (
+                <div className="alert alert-info">
+                  No Employee Records Found
+                </div>
               )}
 
-              {!isLoading && students.length > 0 && (
+              {!isLoading && employees.length > 0 && (
                 <table className="table align-middle table-row-dashed fs-6 gy-2">
                   <thead>
                     <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                       <th className="">S.N.</th>
 
                       <th className="w-300px">Name</th>
-                      <th className="">Grade / Section</th>
                       <th className="w-125px">Gender</th>
                       <th className="w-125px">Contact</th>
                       <th className="w-250px">Address</th>
@@ -146,32 +146,34 @@ const Students = () => {
                     </tr>
                   </thead>
                   <tbody className="text-gray-600 fw-bold">
-                    {students.map((student) => (
-                      <tr key={student.id}>
+                    {employees.map((employee) => (
+                      <tr key={employee.id}>
                         <td>1</td>
                         <td>
                           <div className="d-flex align-items-center">
-                            {student.photo ? (
+                            {employee.photo ? (
                               <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
                                 <a href="#">
                                   <div className="symbol-label">
-                                    {imageLoadStates[student.id] ? (
+                                    {imageLoadStates[employee.id] ? (
                                       <div className="loading-spinner" />
                                     ) : null}
                                     <img
-                                      src={student.photo}
-                                      alt={student.full_name}
+                                      src={employee.photo}
+                                      alt={employee.full_name}
                                       className={`w-100 ${
-                                        imageLoadStates[student.id]
+                                        imageLoadStates[employee.id]
                                           ? "d-none"
                                           : ""
                                       }`}
-                                      onLoad={() => handleImageLoad(student.id)}
+                                      onLoad={() =>
+                                        handleImageLoad(employee.id)
+                                      }
                                       onError={() =>
-                                        handleImageLoad(student.id)
+                                        handleImageLoad(employee.id)
                                       } // Handle errors gracefully
                                       onLoadStart={() =>
-                                        handleImageLoading(student.id)
+                                        handleImageLoading(employee.id)
                                       }
                                     />
                                   </div>
@@ -179,25 +181,22 @@ const Students = () => {
                               </div>
                             ) : null}
                             <div className="d-flex flex-column">
-                              <a
-                                href="#"
-                                className="text-gray-800 text-hover-primary mb-1"
+                              {employee.full_name}
+
+                              <span
+                                className="badge bg-info fw-bold"
+                                style={{
+                                  width: "fit-content",
+                                }}
                               >
-                                {student.full_name}
-                              </a>
+                                {employee.employee_type?.name}
+                              </span>
                             </div>
                           </div>
                         </td>
-                        <td>
-                          {student.grade?.name} (
-                          {student.section?.faculty.name !== "General"
-                            ? `: ${student.section?.faculty.name}`
-                            : ""}
-                          {student.section?.name})
-                        </td>
-                        <td>{student.gender}</td>
-                        <td>{student.contact}</td>
-                        <td>{student.address}</td>
+                        <td>{employee.gender}</td>
+                        <td>{employee.contact}</td>
+                        <td>{employee.address}</td>
 
                         <td className="text-end">
                           <div
@@ -209,7 +208,7 @@ const Students = () => {
                           >
                             <button
                               onClick={() =>
-                                handleStudentOverviewNavigate(student.id)
+                                handleEmployeeOverviewNavigate(employee.id)
                               }
                               type="button"
                               title="search"
@@ -246,4 +245,4 @@ const Students = () => {
   );
 };
 
-export default Students;
+export default Employee;

@@ -5,9 +5,11 @@ import {
   PaginationAndSearch,
 } from "../../../Interface/Interface";
 import { PaginationProps } from "../../../components/Pagination/Pagination";
-import studentService, { StudentInterface } from "../services/studentService";
+import employeeService, {
+  EmployeeInterface,
+} from "../services/employeeService";
 
-const useStudent = ({
+const useEmployee = ({
   search = "",
   currentPage = 1,
   itemsPerPage = null,
@@ -20,7 +22,7 @@ const useStudent = ({
     useState<PaginationProps["pagination"]>(null);
   const [edgeLinks, setEdgeLinks] = useState<PaginationProps["edgeLinks"]>();
 
-  const [students, setStudents] = useState<StudentInterface[]>([]);
+  const [employees, setEmployees] = useState<EmployeeInterface[]>([]);
 
   useEffect(() => {
     setLoading(true);
@@ -33,10 +35,10 @@ const useStudent = ({
     }
 
     const { request, cancel } =
-      studentService.getAll<ApiResponseInterface<StudentInterface>>(params);
+      employeeService.getAll<ApiResponseInterface<EmployeeInterface>>(params);
     request
       .then((result) => {
-        setStudents(result.data.data);
+        setEmployees(result.data.data);
         setPagination(result.data.meta);
         setEdgeLinks(result.data.links);
         setLoading(false);
@@ -50,24 +52,24 @@ const useStudent = ({
     return () => cancel();
   }, [search, currentPage, itemsPerPage]);
 
-  const getSingleStudent = async (id: number) => {
+  const getSingleEmployee = async (id: number) => {
     try {
-      const student = await studentService.item<{ id: number }>({ id });
-      return student.data;
+      const employee = await employeeService.item<{ id: number }>({ id });
+      return employee.data;
     } catch (error) {
-      console.error("Error fetching single student:", error);
+      console.error("Error fetching single employee:", error);
       throw error;
     }
   };
 
   return {
-    students,
+    employees,
     pagination,
     isLoading,
     error,
     edgeLinks,
-    getSingleStudent,
+    getSingleEmployee,
   };
 };
 
-export default useStudent;
+export default useEmployee;

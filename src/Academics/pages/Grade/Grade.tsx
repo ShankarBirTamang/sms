@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import DrawerModal from "../../../components/DrawerModal/DrawerModal";
-import AddEditGrade from "./AddEditGrade";
 import useDocumentTitle from "../../../hooks/useDocumentTitle";
 import useGrade from "../../hooks/useGrade";
 import useDebounce from "../../../hooks/useDebounce";
@@ -9,6 +8,8 @@ import Pagination from "../../../components/Pagination/Pagination";
 import Icon from "../../../components/Icon/Icon";
 import { UpdateGradeInterface } from "../../services/gradeService";
 import { useNavigate } from "react-router-dom";
+import AddGrade from "./AddGrade";
+import EditGrade from "./EditGrade";
 
 const Grade = () => {
   useDocumentTitle("All Grades");
@@ -222,21 +223,19 @@ const Grade = () => {
         width="900px"
         title="Add Grade"
       >
-        <AddEditGrade formType={"create"} onSave={toggleAddGradeDrawer} />
+        <AddGrade onSave={toggleAddGradeDrawer} />
       </DrawerModal>
-      <DrawerModal
-        isOpen={editGradeDrawer}
-        onClose={toggleEditGradeDrawer}
-        position="right"
-        width="900px"
-        title="Edit Grade Details"
-      >
-        <AddEditGrade
-          formType={"edit"}
-          onSave={toggleAddGradeDrawer}
-          editData={editGrade}
-        />
-      </DrawerModal>
+      {editGrade && (
+        <DrawerModal
+          isOpen={editGradeDrawer}
+          onClose={toggleEditGradeDrawer}
+          position="right"
+          width="900px"
+          title="Edit Grade Details"
+        >
+          <EditGrade onSave={toggleEditGradeDrawer} editData={editGrade} />
+        </DrawerModal>
+      )}
     </>
   );
 };

@@ -1,29 +1,29 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import useStudent from "../../../hooks/useStudent";
-import { StudentInterface } from "../../../services/studentService";
-import Loading from "../../../../../components/Loading/Loading";
+import Loading from "../../../../components/Loading/Loading";
 import { Outlet } from "react-router-dom";
+import useEmployee from "../../hooks/useEmployee";
+import { EmployeeInterface } from "../../services/employeeService";
 
-const StudentDetailLayout = () => {
-  const [student, setStudent] = useState<StudentInterface>();
-  const { studentId } = useParams<{ studentId: string }>();
-  const { getSingleStudent, isLoading } = useStudent({});
+const ShowEmployeeLayout = () => {
+  const [employee, setEmployee] = useState<EmployeeInterface>();
+  const { employeeId } = useParams<{ employeeId: string }>();
+  const { getSingleEmployee, isLoading } = useEmployee({});
   const [error, setError] = useState<string | null>(null);
-  const fetchStudent = useCallback(async () => {
+  const fetchEmployee = useCallback(async () => {
     try {
-      const data = await getSingleStudent(Number(studentId));
-      setStudent(data.data);
+      const data = await getSingleEmployee(Number(employeeId));
+      setEmployee(data.data);
     } catch {
-      setError("Failed to fetch student data");
+      setError("Failed to fetch employee data");
     }
-  }, [getSingleStudent, studentId]);
+  }, [getSingleEmployee, employeeId]);
 
   useEffect(() => {
-    if (studentId) {
-      fetchStudent();
+    if (employeeId) {
+      fetchEmployee();
     }
-  }, [fetchStudent, studentId]);
+  }, [fetchEmployee, employeeId]);
 
   if (isLoading) return <Loading />;
   if (error) return <div>{error}</div>;
@@ -32,29 +32,25 @@ const StudentDetailLayout = () => {
   if (error) return <div>{error}</div>;
   return (
     <>
-      {!student && <Loading />}
-      {student && (
+      {!employee && <Loading />}
+      {employee && (
         <div className="d-flex flex-column flex-lg-row">
           <div className="flex-column flex-lg-row-auto w-lg-250px w-xl-350px mb-10">
             <div className="card mb-5 mb-xl-8">
               <div className="card-body">
                 <div className="d-flex flex-center flex-column py-5">
                   <div className="symbol symbol-100px symbol-circle mb-7">
-                    <img src={student.photo} alt="image" />
+                    <img src={employee.photo} alt="image" />
                   </div>
                   <a
                     href="#"
                     className="fs-3 text-gray-800 text-hover-primary fw-bold mb-3"
                   >
-                    {student.full_name}
+                    {employee.full_name}
                   </a>
                   <div className="mb-9 text-center">
                     <span className="badge badge-lg badge-light-primary d-inline">
-                      {student.grade?.name} (
-                      {student.section?.faculty.name !== "General"
-                        ? `: ${student.section?.faculty.name}`
-                        : ""}
-                      {student.section?.name})
+                      Grade 4 (A3)
                     </span>
                     <br />
                     <span className="badge badge-light-info mt-2 badge-lg">
@@ -95,7 +91,7 @@ const StudentDetailLayout = () => {
                       data-kt-initialized="1"
                     >
                       <a
-                        href="https://sms.aanshtech.com/sms/students/506/edit"
+                        href="https://sms.aanshtech.com/sms/employees/506/edit"
                         className="btn btn-sm btn-light-primary"
                       >
                         Edit
@@ -121,12 +117,8 @@ const StudentDetailLayout = () => {
                 <div id="kt_user_view_details" className="collapse show">
                   <div className="row">
                     <div className="col-md-4 pb-5 fs-6">
-                      <div className="fw-bold mt-5">Student ID</div>
-                      <div className="text-gray-600">ID-{student.id}</div>
-                    </div>
-                    <div className="col-md-8 pb-5 fs-6">
-                      <div className="fw-bold mt-5">IEMIS</div>
-                      <div className="text-gray-600">{student.iemis}</div>
+                      <div className="fw-bold mt-5">Employee ID</div>
+                      <div className="text-gray-600">ID-{employee.id}</div>
                     </div>
                     <div className="col-md-6 pb-5 fs-6">
                       <div className="fw-bold mt-5">Contact</div>
@@ -135,19 +127,19 @@ const StudentDetailLayout = () => {
                           href="tel:9866798832"
                           className="text-gray-600 text-hover-primary"
                         >
-                          {student.contact}
+                          {employee.contact}
                         </a>
                       </div>
                     </div>
                     <div className="col-md-12 pb-5 fs-6">
                       <div className="fw-bold mt-5">Date of Birth</div>
                       <div className="text-gray-600">
-                        {student.dob_np} | {student.dob_en}
+                        {employee.dob_np} | {employee.dob_en}
                       </div>
                     </div>
                     <div className="col-md-6 pb-5 fs-6">
                       <div className="fw-bold mt-5">Gender</div>
-                      <div className="text-gray-600">{student.gender}</div>
+                      <div className="text-gray-600">{employee.gender}</div>
                     </div>
                     <div className="col-md-6 pb-5 fs-6">
                       <div className="fw-bold mt-5">Blood Group</div>
@@ -156,23 +148,25 @@ const StudentDetailLayout = () => {
                           href="#"
                           className="text-gray-600 text-hover-primary"
                         >
-                          {student.blood_group}
+                          {employee.blood_group}
                         </a>
                       </div>
                     </div>
                     <div className="col-md-6 pb-5 fs-6">
                       <div className="fw-bold mt-5">Nationality</div>
-                      <div className="text-gray-600">{student.nationality}</div>
+                      <div className="text-gray-600">
+                        {employee.nationality}
+                      </div>
                     </div>
                     <div className="col-md-6 pb-5 fs-6">
                       <div className="fw-bold mt-5">Mother Tongue</div>
                       <div className="text-gray-600">
-                        {student.mother_tongue}
+                        {employee.mother_tongue}
                       </div>
                     </div>
                     <div className="col-md-12 pb-5 fs-6">
                       <div className="fw-bold mt-5">Address</div>
-                      <div className="text-gray-600">{student.address}</div>
+                      <div className="text-gray-600">{employee.address}</div>
                     </div>
                   </div>
                   <div className="pb-5 fs-6"></div>
@@ -310,7 +304,7 @@ const StudentDetailLayout = () => {
             </ul>
             <div className="tab-content">
               <div className="tab-pane show active">
-                <Outlet context={{ student }} />
+                <Outlet context={{ employee }} />
               </div>
             </div>
           </div>
@@ -320,4 +314,4 @@ const StudentDetailLayout = () => {
   );
 };
 
-export default StudentDetailLayout;
+export default ShowEmployeeLayout;
