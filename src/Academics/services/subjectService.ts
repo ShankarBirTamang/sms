@@ -12,7 +12,7 @@ export interface SubjectInterface {
   is_active?: boolean;
   is_chooseable: boolean;
   is_section_specific: boolean;
-  sections?: number[];
+  sections?: string[];
 }
 
 export interface UpdateSubjectInterface extends SubjectInterface {

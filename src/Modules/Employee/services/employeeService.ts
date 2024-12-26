@@ -3,7 +3,7 @@ import { EmployeeTypeInterface } from "./employeeTypeService";
 
 export interface EmployeeInterface {
   id: number;
-  full_name?: string;
+  full_name: string;
   first_name: string;
   last_name: string;
   middle_name?: string | null;

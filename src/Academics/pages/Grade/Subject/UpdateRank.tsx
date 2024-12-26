@@ -19,6 +19,8 @@ const UpdateRank = ({ grade_id, onSave }: UpdateRankProps) => {
   const [updateData, setUpdateData] = useState<UpdateRankDataProps[]>([]);
   const [errors, setErrors] = useState<{ [key: number]: string }>({});
 
+  const [isSaving, setIsSaving] = useState(false);
+
   useEffect(() => {
     const newUpdateData = subjects
       .filter((subject) => subject.id != null)
@@ -66,6 +68,7 @@ const UpdateRank = ({ grade_id, onSave }: UpdateRankProps) => {
   };
 
   const saveData = async (e: React.FormEvent) => {
+    setIsSaving(true);
     e.preventDefault();
     const validationErrors: { [key: number]: string } = {};
 
@@ -84,6 +87,7 @@ const UpdateRank = ({ grade_id, onSave }: UpdateRankProps) => {
       };
 
       await updateSubjectRank(updateRankData);
+      setIsSaving(false);
       onSave();
       setErrors({});
     }
@@ -129,11 +133,19 @@ const UpdateRank = ({ grade_id, onSave }: UpdateRankProps) => {
         <div className="col-12">
           <hr />
           <div className="d-flex gap-3">
-            <button type="button" className="btn btn-secondary">
+            <button
+              type="button"
+              className="btn btn-secondary"
+              disabled={isSaving}
+            >
               Close
             </button>
-            <button type="submit" className="btn btn-primary">
-              Save
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={isSaving}
+            >
+              {isSaving ? "Saving.." : "Save"}
             </button>
           </div>
         </div>

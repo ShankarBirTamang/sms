@@ -32,11 +32,6 @@ const AddGrade = ({ onSave }: AddGradeProps) => {
   }));
   const [isSubmitting, setisSubmitting] = useState<boolean>(false);
   const [renderKey, setRenderKey] = useState("");
-  const [selectedAcademicLevel, setSelectedAcademicLevel] =
-    useState<Option | null>(null);
-  const [selectedGradeGroup, setSelectedGradeGroup] = useState<Option | null>(
-    null
-  );
 
   const FacultySectionSchema = z.object({
     facultyId: z.number().int({ message: "Faculty ID must be an integer" }),
@@ -155,7 +150,6 @@ const AddGrade = ({ onSave }: AddGradeProps) => {
                 options={academicSessionOptions}
                 onChange={handleAcademicSessionChange}
                 error={errors.academic_session_id?.message}
-                defaultValue={selectedAcademicLevel}
                 placeholder="Select Academic Level"
               />
             </div>
@@ -171,7 +165,6 @@ const AddGrade = ({ onSave }: AddGradeProps) => {
                 options={gradeGroupOptions}
                 onChange={handleGradeGroupChange}
                 error={errors.grade_group_id?.message}
-                defaultValue={selectedGradeGroup}
                 placeholder="Select Grade Group"
               />
             </div>

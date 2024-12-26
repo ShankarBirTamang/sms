@@ -39,7 +39,6 @@ const EditSectionComponent = ({
   const generalSections = ["A", "B", "C", "D", "E", "F", "G"];
 
   useEffect(() => {
-    setIsLoading(true);
     setSectionType(editData.section_type);
     if (editData.has_faculties) {
       setFacultySections(
@@ -66,7 +65,6 @@ const EditSectionComponent = ({
 
       setSections(allSections);
     }
-    setIsLoading(false);
   }, [editData]);
 
   const handleFacultyChange = useCallback(
