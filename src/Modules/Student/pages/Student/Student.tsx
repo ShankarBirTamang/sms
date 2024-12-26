@@ -153,34 +153,34 @@ const Students = () => {
                           <div className="d-flex align-items-center">
                             {student.photo ? (
                               <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
-                                <a href="#">
-                                  <div className="symbol-label">
-                                    {imageLoadStates[student.id] ? (
-                                      <div className="loading-spinner" />
-                                    ) : null}
-                                    <img
-                                      src={student.photo}
-                                      alt={student.full_name}
-                                      className={`w-100 ${
-                                        imageLoadStates[student.id]
-                                          ? "d-none"
-                                          : ""
-                                      }`}
-                                      onLoad={() => handleImageLoad(student.id)}
-                                      onError={() =>
-                                        handleImageLoad(student.id)
-                                      } // Handle errors gracefully
-                                      onLoadStart={() =>
-                                        handleImageLoading(student.id)
-                                      }
-                                    />
-                                  </div>
-                                </a>
+                                <div className="symbol-label">
+                                  {imageLoadStates[student.id] ? (
+                                    <div className="loading-spinner" />
+                                  ) : null}
+                                  <img
+                                    src={student.photo}
+                                    alt={student.full_name}
+                                    className={`w-100 ${
+                                      imageLoadStates[student.id]
+                                        ? "d-none"
+                                        : ""
+                                    }`}
+                                    onLoad={() => handleImageLoad(student.id)}
+                                    onError={() => handleImageLoad(student.id)} // Handle errors gracefully
+                                    onLoadStart={() =>
+                                      handleImageLoading(student.id)
+                                    }
+                                  />
+                                </div>
                               </div>
                             ) : null}
                             <div className="d-flex flex-column">
                               <a
                                 href="#"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  handleStudentOverviewNavigate(student.id);
+                                }}
                                 className="text-gray-800 text-hover-primary mb-1"
                               >
                                 {student.full_name}

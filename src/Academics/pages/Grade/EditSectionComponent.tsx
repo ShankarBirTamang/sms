@@ -1,37 +1,15 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useFaculty from "../../hooks/useFaculty";
-import { UpdateAcademicSessionInterface } from "../../services/academicSessionService";
 import Loading from "../../../components/Loading/Loading";
-import { UpdateSectionData } from "../../services/gradeService";
+import {
+  EditSectionData,
+  EditSectionDataInterface,
+  UpdateGradeInterface,
+} from "../../services/gradeService";
 
 enum SectionType {
   STANDARD = "standard",
   CUSTOM = "custom",
-}
-
-interface UpdateSections {
-  [key: string]: UpdateSectionData[];
-}
-
-interface UpdateGradeInterface {
-  id: number;
-  name: string;
-  grade_group_id: number;
-  short_name: string;
-  is_active: number;
-  has_faculties: number;
-  section_type: SectionType;
-  session: UpdateAcademicSessionInterface;
-  sections: UpdateSections;
-}
-
-export interface EditSectionDataInterface {
-  hasFaculties: boolean;
-  sectionType: SectionType;
-  facultySections:
-    | { facultyId: number; sections: UpdateSectionData[] }[]
-    | null;
-  sections: UpdateSectionData[] | null;
 }
 
 interface EditSectionResponse {
@@ -52,9 +30,9 @@ const EditSectionComponent = ({
     editData.section_type
   );
   const [facultySections, setFacultySections] = useState<
-    { facultyId: number; sections: UpdateSectionData[] }[]
+    { facultyId: number; sections: EditSectionData[] }[]
   >([]);
-  const [sections, setSections] = useState<UpdateSectionData[]>([]);
+  const [sections, setSections] = useState<EditSectionData[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
 
@@ -80,7 +58,7 @@ const EditSectionComponent = ({
       );
       setHasFaculties(true);
     } else {
-      const allSections: UpdateSectionData[] = Object.values(
+      const allSections: EditSectionData[] = Object.values(
         editData.sections || {}
       )
         .flat()
@@ -103,7 +81,7 @@ const EditSectionComponent = ({
   );
 
   const handleSectionChange = useCallback(
-    (facultyId: number, section: UpdateSectionData, checked: boolean) => {
+    (facultyId: number, section: EditSectionData, checked: boolean) => {
       setFacultySections((prev) =>
         prev.map((item) =>
           item.facultyId === facultyId
@@ -149,6 +127,7 @@ const EditSectionComponent = ({
       facultySections,
       sections,
     };
+
     onSectionDataChange(data, isValid);
   }, [
     hasFaculties,
@@ -160,12 +139,12 @@ const EditSectionComponent = ({
   ]);
 
   const handleStandardSectionCheckbox = (
-    section: { id: number | null; name: string; isNew: boolean },
+    section: { id: number; name: string; isNew: boolean },
     isChecked: boolean
   ) => {
     setSections((prev) =>
       isChecked
-        ? [...prev, section]
+        ? [...prev, { ...section, id: section.id ?? 0 }]
         : prev.filter((item) => item.name !== section.name)
     );
   };
@@ -186,7 +165,7 @@ const EditSectionComponent = ({
         item.facultyId === facultyId
           ? {
               ...item,
-              sections: [...item.sections, { id: null, name: "", isNew: true }],
+              sections: [...item.sections, { id: 0, name: "", isNew: true }],
             }
           : item
       )
@@ -194,24 +173,13 @@ const EditSectionComponent = ({
   };
 
   const addCustomSection = () => {
-    setSections([...sections, { id: null, name: "", isNew: true }]);
+    setSections([...sections, { id: 0, name: "", isNew: true }]);
   };
 
   const removeCustomSection = (index: number) => {
     const newSections = sections.filter((_, i) => i !== index);
     setSections(newSections);
   };
-
-  useEffect(() => {
-    console.log(
-      "facultySections at line 211 in Grade/EditSectionComponent.tsx:",
-      facultySections
-    );
-    console.log(
-      "sections at line 211 in Grade/EditSectionComponent.tsx:",
-      sections
-    );
-  }, [facultySections, sections]);
 
   return (
     <>
@@ -247,6 +215,7 @@ const EditSectionComponent = ({
                     name="section_type"
                     checked={sectionType === SectionType.STANDARD}
                     onChange={() => setSectionType(SectionType.STANDARD)}
+                    disabled={editData.section_type === SectionType.CUSTOM}
                   />
                   <label
                     className="form-check-label"
@@ -265,6 +234,7 @@ const EditSectionComponent = ({
                     name="section_type"
                     checked={sectionType === SectionType.CUSTOM}
                     onChange={() => setSectionType(SectionType.CUSTOM)}
+                    disabled={editData.section_type === SectionType.CUSTOM}
                   />
                   <label
                     className="form-check-label"
@@ -392,7 +362,7 @@ const EditSectionComponent = ({
                                           handleSectionChange(
                                             faculty.id,
                                             {
-                                              id: null,
+                                              id: 0,
                                               name: section,
                                               isNew: true,
                                             },
@@ -563,7 +533,7 @@ const EditSectionComponent = ({
                           )}
                           onChange={(e) =>
                             handleStandardSectionCheckbox(
-                              { id: null, name: section, isNew: true }, // This can be adjusted based on your logic for new sections
+                              { id: 0, name: section, isNew: true }, // This can be adjusted based on your logic for new sections
                               e.target.checked
                             )
                           }

@@ -8,9 +8,8 @@ import CustomSelect, {
 } from "../../../components/CustomSelect/CustomSelect";
 import useGradeGroup from "../../hooks/useGradeGroup";
 import {
-  AddGradeInterface,
-  EditGradeInterface,
-  SectionData,
+  EditSectionDataInterface,
+  UpdatedGradeInterface,
   UpdateGradeInterface,
 } from "../../services/gradeService";
 import useGrade from "../../hooks/useGrade";
@@ -24,8 +23,7 @@ interface EditGradeProps {
 const EditGrade = ({ onSave, editData }: EditGradeProps) => {
   const { academicSessions } = useAcademicSession({});
   const { gradeGroups } = useGradeGroup({});
-  const { saveGrade } = useGrade({});
-  const [toEditData, setToEditData] = useState<EditGradeInterface>([]);
+  const { updateGrade } = useGrade({});
 
   const academicSessionOptions = academicSessions
     .filter((session) => session.is_active)
@@ -48,11 +46,15 @@ const EditGrade = ({ onSave, editData }: EditGradeProps) => {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const UpdateSectionSchema = z.object({
+    id: z.number().int({ message: "Section ID must be an integer" }),
+    name: z.string().min(1, { message: "Section name cannot be empty" }),
+    isNew: z.boolean(),
+  });
+
   const FacultySectionSchema = z.object({
     facultyId: z.number().int({ message: "Faculty ID must be an integer" }),
-    sections: z.array(
-      z.string().min(1, { message: "Section name cannot be empty" })
-    ),
+    sections: z.array(UpdateSectionSchema),
   });
 
   const GradeSchema = z.object({
@@ -80,7 +82,7 @@ const EditGrade = ({ onSave, editData }: EditGradeProps) => {
     section_type: z.enum(["standard", "custom"], {
       errorMap: () => ({ message: "This field is required" }),
     }),
-    sections: z.array(z.string()),
+    sections: z.array(UpdateSectionSchema),
     facultySections: z.array(FacultySectionSchema),
   });
   type FormData = z.infer<typeof GradeSchema>;
@@ -146,17 +148,30 @@ const EditGrade = ({ onSave, editData }: EditGradeProps) => {
     }
   };
 
-  const handleEditSectionDataChange = (data: SectionData, isValid: boolean) => {
+  const handleEditSectionDataChange = (
+    data: EditSectionDataInterface,
+    isValid: boolean
+  ) => {
     if (isValid) {
       setValue("section_type", data.sectionType);
       setValue("has_faculties", data.hasFaculties);
       setValue(
         "sections",
-        data.sections?.map((section) =>
-          typeof section === "string" ? section : section.name
-        ) ?? []
+        data.sections?.map((section) => ({
+          ...section,
+          isNew: section.isNew ?? false,
+        })) ?? []
       );
-      setValue("facultySections", data.facultySections ?? []);
+      setValue(
+        "facultySections",
+        data.facultySections?.map((facultySection) => ({
+          ...facultySection,
+          sections: facultySection.sections.map((section) => ({
+            ...section,
+            isNew: section.isNew ?? false,
+          })),
+        })) ?? []
+      );
     }
   };
 
@@ -164,7 +179,8 @@ const EditGrade = ({ onSave, editData }: EditGradeProps) => {
     setisSubmitting(true);
 
     try {
-      const gradeData: AddGradeInterface = {
+      const gradeData: UpdatedGradeInterface = {
+        id: editData.id,
         name: data.name,
         short_name: data.short_name,
         academic_session_id: data.academic_session_id,
@@ -174,8 +190,7 @@ const EditGrade = ({ onSave, editData }: EditGradeProps) => {
         sections: data.sections,
         facultySections: data.facultySections,
       };
-      console.log("gradeData at line 157 in Grade/EditGrade.tsx:", gradeData);
-      //   await saveGrade(gradeData);
+      await updateGrade(editData.id, gradeData);
     } catch (error) {
       console.error("Error saving academic level:", error);
     } finally {

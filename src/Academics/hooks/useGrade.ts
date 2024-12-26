@@ -1,4 +1,7 @@
-import { AddGradeInterface } from "./../services/gradeService";
+import {
+  AddGradeInterface,
+  UpdatedGradeInterface,
+} from "./../services/gradeService";
 import { useEffect, useState } from "react";
 import { CanceledError } from "../../services/apiClient";
 import {
@@ -16,7 +19,6 @@ const useGrade = ({
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setLoading] = useState(false);
 
-  // For Pagination
   const [pagination, setPagination] =
     useState<PaginationProps["pagination"]>(null);
   const [edgeLinks, setEdgeLinks] = useState<PaginationProps["edgeLinks"]>();
@@ -74,7 +76,6 @@ const useGrade = ({
 
     try {
       const result = await gradeService.create<AddGradeInterface>(params);
-      // Update state only after successful creation
       setGrades([...grades, result.data.data]);
     } catch (err) {
       if (err instanceof Error) {
@@ -85,11 +86,44 @@ const useGrade = ({
     }
   };
 
-  // useEffect(() => {
-  //   console.log("Grades:", grades);
-  // }, [grades]);
+  const updateGrade = async (
+    id: number,
+    {
+      academic_session_id,
+      grade_group_id,
+      name,
+      short_name,
+      hasFaculties,
+      sectionType,
+      facultySections,
+      sections,
+    }: UpdatedGradeInterface
+  ) => {
+    const params = {
+      id,
+      academic_session_id,
+      grade_group_id,
+      name,
+      short_name,
+      hasFaculties,
+      sectionType,
+      facultySections,
+      sections,
+    };
+    try {
+      const result = await gradeService.update<UpdatedGradeInterface>(params);
+      setGrades(
+        grades.map((grade) => (grade.id === id ? result.data.data : grade))
+      );
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred.");
+      }
+    }
+  };
 
-  //end for Pagination
   return {
     grades,
     error,
@@ -99,6 +133,7 @@ const useGrade = ({
     edgeLinks,
     currentPage,
     saveGrade,
+    updateGrade,
   };
 };
 

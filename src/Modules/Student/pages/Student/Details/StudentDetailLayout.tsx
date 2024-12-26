@@ -4,6 +4,7 @@ import useStudent from "../../../hooks/useStudent";
 import { StudentInterface } from "../../../services/studentService";
 import Loading from "../../../../../components/Loading/Loading";
 import { Outlet } from "react-router-dom";
+import ImageHolder from "../../../../../components/ProfilePhoto/ImageHolder";
 
 const StudentDetailLayout = () => {
   const [student, setStudent] = useState<StudentInterface>();
@@ -39,9 +40,7 @@ const StudentDetailLayout = () => {
             <div className="card mb-5 mb-xl-8">
               <div className="card-body">
                 <div className="d-flex flex-center flex-column py-5">
-                  <div className="symbol symbol-100px symbol-circle mb-7">
-                    <img src={student.photo} alt="image" />
-                  </div>
+                  <ImageHolder photo={student.photo} />
                   <a
                     href="#"
                     className="fs-3 text-gray-800 text-hover-primary fw-bold mb-3"

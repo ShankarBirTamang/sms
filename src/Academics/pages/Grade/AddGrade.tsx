@@ -107,7 +107,7 @@ const AddGrade = ({ onSave }: AddGradeProps) => {
     if (isValid) {
       setValue("section_type", data.sectionType);
       setValue("has_faculties", data.hasFaculties);
-      setValue("sections", data.sections);
+      setValue("sections", data.sections ?? []);
       setValue("facultySections", data.facultySections ?? []);
     }
   };

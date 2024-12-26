@@ -4,6 +4,7 @@ import Loading from "../../../../components/Loading/Loading";
 import { Outlet } from "react-router-dom";
 import useEmployee from "../../hooks/useEmployee";
 import { EmployeeInterface } from "../../services/employeeService";
+import ImageHolder from "../../../../components/ProfilePhoto/ImageHolder";
 
 const ShowEmployeeLayout = () => {
   const [employee, setEmployee] = useState<EmployeeInterface>();
@@ -39,9 +40,7 @@ const ShowEmployeeLayout = () => {
             <div className="card mb-5 mb-xl-8">
               <div className="card-body">
                 <div className="d-flex flex-center flex-column py-5">
-                  <div className="symbol symbol-100px symbol-circle mb-7">
-                    <img src={employee.photo} alt="image" />
-                  </div>
+                  <ImageHolder photo={employee.photo} />
                   <a
                     href="#"
                     className="fs-3 text-gray-800 text-hover-primary fw-bold mb-3"
