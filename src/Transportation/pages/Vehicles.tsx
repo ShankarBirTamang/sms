@@ -265,12 +265,15 @@ const Vehicles = () => {
                 <div className="d-flex gap-3">
                   <button
                     type="reset"
-                    className="btn btn-secondary"
+                    className="btn btn-secondary btn-sm w-20 mb-2 d-flex"
                     onClick={handleReset}
                   >
                     Reset
                   </button>
-                  <button type="submit" className="btn btn-primary">
+                  <button
+                    type="submit"
+                    className="btn btn-sm btn-light-info w-20 mb-2 d-flex"
+                  >
                     {isEditing ? "Update" : "Submit"}
                   </button>
                 </div>
