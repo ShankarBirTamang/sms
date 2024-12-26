@@ -18,6 +18,7 @@ const TimeTableForm = () => {
     register,
     handleSubmit,
     setValue,
+    getValues,
     reset,
     formState: { errors },
   } = useForm<TimetableFormValues>({
@@ -94,11 +95,11 @@ const TimeTableForm = () => {
         daysOfWeek.forEach((day) => {
           setValue(
             `periods.${periodIndex}.days.${day}.start_time`,
-            syncedStartTime
+            syncedStartTime as unknown as never
           );
           setValue(
             `periods.${periodIndex}.days.${day}.end_time`,
-            syncedEndTime
+            syncedEndTime as unknown as never
           );
         });
       }
@@ -115,28 +116,32 @@ const TimeTableForm = () => {
       setNumberOfPeriods(value);
       setValue("no_of_periods", value);
 
-      setValue("periods", (currentPeriods?: TimetableFormValues["periods"]) => {
-        const existingPeriods = currentPeriods || []; // Ensure we have a default array
+      // Get the current periods or default to an empty array
+      const existingPeriods = getValues("periods") || [];
 
-        const newPeriods =
-          value > existingPeriods.length
-            ? [
-                ...existingPeriods,
-                ...Array.from(
-                  { length: value - existingPeriods.length },
-                  () => ({
-                    period_name: "",
-                    days: daysOfWeek.reduce((acc, day) => {
-                      acc[day] = { start_time: "", end_time: "" };
-                      return acc;
-                    }, {} as TimetableFormValues["periods"][0]["days"]),
-                  })
-                ),
-              ]
-            : existingPeriods.slice(0, value);
+      // Initialize the new periods array
+      const newPeriods = [];
 
-        return newPeriods;
-      });
+      // Loop through the new number of periods and populate them
+      for (let i = 0; i < value; i++) {
+        if (existingPeriods[i]) {
+          // If the period exists, keep the data
+          newPeriods.push({ ...existingPeriods[i], id: i + 1 });
+        } else {
+          // If the period doesn't exist (i.e., it's a new period), create a blank period
+          newPeriods.push({
+            id: i + 1,
+            period_name: "",
+            days: daysOfWeek.reduce((acc, day) => {
+              acc[day] = { start_time: "", end_time: "" };
+              return acc;
+            }, {} as Record<string, { start_time: string; end_time: string }>),
+          });
+        }
+      }
+
+      // Update the periods with the new array
+      setValue("periods", newPeriods);
     }
   };
 
@@ -208,7 +213,7 @@ const TimeTableForm = () => {
   };
 
   const handleFormSubmit = (data: TimetableFormValues) => {
-    console.log("Form submitted with data:", data);
+    console.log("Form submitted with data:", JSON.stringify(data));
     toast.success("Form successfully submitted!");
   };
 
