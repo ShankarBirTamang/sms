@@ -1,10 +1,9 @@
 // Vehicles.tsx
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, FormEvent } from "react";
 import { icons } from "../../components/Icon/icons";
-import { Vehicle, VehicleForm } from "../services/transportService";
+import { Vehicle } from "../services/transportService";
 import useDebounce from "../../hooks/useDebounce";
 import useVehicle from "../hooks/useVehicle";
-import toast from "react-hot-toast";
 import Icon from "../../components/Icon/Icon";
 import Pagination from "../../components/Pagination/Pagination";
 
@@ -266,12 +265,15 @@ const Vehicles = () => {
                 <div className="d-flex gap-3">
                   <button
                     type="reset"
-                    className="btn btn-secondary"
+                    className="btn btn-secondary btn-sm w-20 mb-2 d-flex"
                     onClick={handleReset}
                   >
                     Reset
                   </button>
-                  <button type="submit" className="btn btn-primary">
+                  <button
+                    type="submit"
+                    className="btn btn-sm btn-light-info w-20 mb-2 d-flex"
+                  >
                     {isEditing ? "Update" : "Submit"}
                   </button>
                 </div>

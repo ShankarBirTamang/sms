@@ -1,11 +1,18 @@
-import { useState } from "react";
-import { Button, Table, Form } from "react-bootstrap";
+import React, { useState } from "react";
 import { icons } from "../../components/Icon/icons";
 import { Checkpoint, Route } from "../services/routeService";
 import useTransportRoute from "../hooks/useTransportRoute";
 import toast from "react-hot-toast";
+import useDebounce from "../../hooks/useDebounce";
+import Pagination from "../../components/Pagination/Pagination";
+import Icon from "../../components/Icon/Icon";
 
 const TransportRoutes = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+
   const {
     routes,
     setRoutes,
@@ -15,17 +22,35 @@ const TransportRoutes = () => {
     setNewRouteName,
     currentRouteId,
     setCurrentRouteId,
-    checkpointName,
     setCheckpointForm,
     checkpointForm,
-    setCheckpointName,
-    handleReset,
-    handleEditRoute,
+    pagination,
+    edgeLinks,
+    addCheckpoint,
+    updateCheckPoint,
+    addRoutes,
+    updateRoutes,
     editingCheckpoint,
     setEditingCheckpoint,
     handleCancelEdit,
-  } = useTransportRoute();
+  } = useTransportRoute({
+    search: debouncedSearchTerm,
+    currentPage,
+    itemsPerPage,
+  });
 
+  // header functions
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+  const handleItemsPerPageChange = (value: number | null) => {
+    setItemsPerPage(value);
+    setCurrentPage(1);
+  };
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+    setCurrentPage(1); // Reset to the first page on new search
+  };
   // Save the edited route name
   const handleSaveRouteName = () => {
     if (editingRoute) {
@@ -34,29 +59,33 @@ const TransportRoutes = () => {
           ? { ...route, name: editingRoute.name }
           : route
       );
+      updateRoutes(editingRoute);
       setRoutes(updatedRoutes);
       setEditingRoute(null);
       console.log("Edited route :", editingRoute.name);
       console.log("Current status of routes: ", routes);
-      toast.success("Updated Successfully");
     }
   };
-
   //Handle Adding a New Route
   const handleAddRoute = () => {
     if (newRouteName.trim() !== "") {
       const newRoute: Route = {
         id: routes.length + 1,
         name: newRouteName,
-        checkpoints: [],
+        route_checkpoints: [],
       };
+      addRoutes(newRoute);
       setRoutes([...routes, newRoute]);
       setNewRouteName("");
       console.log(`new route Added: ${newRoute.name}`);
       toast.success("Added Successfully !");
     }
   };
-
+  // Open the form to edit a route name
+  const handleEditRoute = (route: Route) => {
+    const updatedRoute = { id: route.id, name: route.name };
+    setEditingRoute(updatedRoute);
+  };
   // Populate the form to edit an existing checkpoint
   const handleEditCheckpointForm = (
     routeId: number,
@@ -65,7 +94,7 @@ const TransportRoutes = () => {
     setCurrentRouteId(routeId);
     setCheckpointForm({
       id: checkpoint.id,
-      name: checkpoint.name,
+      location_name: checkpoint.location_name,
       latitude: checkpoint.latitude,
       longitude: checkpoint.longitude,
     });
@@ -74,7 +103,7 @@ const TransportRoutes = () => {
   // Open the form to add a checkpoint for a route
   const handleOpenCheckpointForm = (routeId: number) => {
     setCurrentRouteId(routeId);
-    setCheckpointForm({ id: 0, name: "", latitude: 0, longitude: 0 });
+    setCheckpointForm({ id: 0, location_name: "", latitude: 0, longitude: 0 });
     setEditingCheckpoint(false);
     console.log("Adding Checkpoint ");
   };
@@ -83,45 +112,62 @@ const TransportRoutes = () => {
     const updatedRoutes = routes.map((route) => {
       if (route.id === currentRouteId) {
         const updatedCheckpoints = editingCheckpoint
-          ? route.checkpoints.map((cp) =>
+          ? route.route_checkpoints.map((cp) =>
               cp.id === checkpointForm.id ? { ...checkpointForm } : cp
             )
           : [
-              ...route.checkpoints,
+              ...route.route_checkpoints,
               {
-                id: route.checkpoints.length + 1,
-                name: checkpointForm.name || "New Checkpoint",
+                id: route.route_checkpoints.length + 1,
+                location_name: checkpointForm.location_name || "New Checkpoint",
                 latitude: checkpointForm.latitude,
                 longitude: checkpointForm.longitude,
               },
             ];
         console.log("Checkpoints status: ", updatedCheckpoints);
-        return { ...route, checkpoints: updatedCheckpoints };
+        return { ...route, route_checkpoints: updatedCheckpoints };
       }
       return route;
     });
+    //API integration for checkpoint(Add /Edit)
     if (editingCheckpoint) {
-      toast.success("Edited successfully!");
+      const updatedCheckpoint = {
+        id: checkpointForm.id,
+        location_name: checkpointForm.location_name,
+        latitude: checkpointForm.latitude,
+        longitude: checkpointForm.longitude,
+      };
+      updateCheckPoint(updatedCheckpoint);
     } else {
-      toast.success("Added successfully!");
+      const newId =
+        Math.max(
+          ...updatedRoutes.map((route) => route.route_checkpoints.length)
+        ) + 1;
+      const newCheckpoint = {
+        transport_route_id: currentRouteId ?? 0,
+        id: newId,
+        location_name: checkpointForm.location_name,
+        latitude: checkpointForm.latitude,
+        longitude: checkpointForm.longitude,
+      };
+      addCheckpoint(newCheckpoint);
     }
-    setRoutes(updatedRoutes);
+    // setRoutes(updatedRoutes);
     setCurrentRouteId(null);
-    setCheckpointForm({ id: 0, name: "", latitude: 0, longitude: 0 });
+    setCheckpointForm({ id: 0, location_name: "", latitude: 0, longitude: 0 });
   };
-
   //Delete checkpoints
   const handleDeleteCheckpoint = (routeId: number, checkpointId: number) => {
     const updatedRoutes = routes.map((route) => {
       if (route.id === routeId) {
         return {
           ...route,
-          checkpoints: route.checkpoints.filter(
+          checkpoints: route.route_checkpoints.filter(
             (checkpoint) => checkpoint.id !== checkpointId
           ),
         };
       }
-      console.log("After Delete: ", route.checkpoints);
+      console.log("After Delete: ", route.route_checkpoints);
       return route;
     });
     setRoutes(updatedRoutes);
@@ -130,7 +176,6 @@ const TransportRoutes = () => {
   return (
     <div>
       <div className="row">
-        {/* Add Transport Route Form */}
         <div className="col-xl-4 col-md-4  mb-xl-10">
           <div className="card mb-3">
             <div className="card-header border-0 px-6">
@@ -149,122 +194,124 @@ const TransportRoutes = () => {
                     : "Add Transport Route"}
                 </h1>
               </div>
-              <div className="card-body pt-0 pb-4">
-                {editingRoute ? (
-                  <>
-                    <Form.Label className="required">
-                      <strong>Route Name</strong>
-                    </Form.Label>
-                    <Form.Control
-                      type="text"
-                      value={editingRoute.name}
-                      onChange={(e) =>
-                        setEditingRoute({
-                          ...editingRoute,
-                          name: e.target.value,
-                        })
-                      }
-                    />
-                    <div className="d-flex gap-3 mt-3">
-                      <button
-                        type="reset"
-                        className="btn btn-secondary"
-                        onClick={handleCancelEdit}
-                      >
-                        Cancel
-                      </button>
-                      <Button variant="primary" onClick={handleSaveRouteName}>
-                        Save
-                      </Button>
+            </div>
+            <div className="card-body pt-0 pb-4">
+              {editingRoute ? (
+                <>
+                  <label className="required mb-2">
+                    <strong>Route Name</strong>
+                  </label>
+                  <input
+                    className="form-control form-control-solid"
+                    type="text"
+                    value={editingRoute.name}
+                    onChange={(e) =>
+                      setEditingRoute({ ...editingRoute, name: e.target.value })
+                    }
+                  />
+                  <div className="d-flex gap-3 mt-8">
+                    <button
+                      onClick={handleCancelEdit}
+                      className="btn btn-secondary btn-sm w-20 mb-2 d-flex"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSaveRouteName}
+                      className="btn btn-sm btn-light-info w-20 mb-2 d-flex"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </>
+              ) : currentRouteId ? (
+                <>
+                  <label className="required mb-2">
+                    <strong>Checkpoint Name</strong>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control form-control-solid required"
+                    value={checkpointForm.location_name}
+                    onChange={(e) =>
+                      setCheckpointForm({
+                        ...checkpointForm,
+                        location_name: e.target.value,
+                      })
+                    }
+                  />
+                  <div className="row my-5">
+                    <div className="col-xl-6 col-md-6  mb-xl-5">
+                      <label className="required mb-2">
+                        <strong>Latitude</strong>
+                      </label>
+                      <input
+                        className="form-control form-control-solid required"
+                        type="number"
+                        value={checkpointForm.latitude}
+                        onChange={(e) =>
+                          setCheckpointForm({
+                            ...checkpointForm,
+                            latitude: parseFloat(e.target.value),
+                          })
+                        }
+                      />
                     </div>
-                  </>
-                ) : currentRouteId ? (
-                  <>
-                    <Form.Label className="required">
-                      <strong>Checkpoint Name</strong>
-                    </Form.Label>
-                    <Form.Control
-                      required
-                      type="text"
-                      value={checkpointForm.name}
-                      onChange={(e) =>
-                        setCheckpointForm({
-                          ...checkpointForm,
-                          name: e.target.value,
-                        })
-                      }
-                    />
-                    <div className="row my-5">
-                      <div className="col-xl-6 col-md-6  mb-xl-10">
-                        <Form.Label className="required">
-                          <strong>Latitude</strong>
-                        </Form.Label>
-                        <Form.Control
-                          required
-                          type="number"
-                          value={checkpointForm.latitude}
-                          onChange={(e) =>
-                            setCheckpointForm({
-                              ...checkpointForm,
-                              latitude: parseFloat(e.target.value),
-                            })
-                          }
-                        />
-                      </div>
-                      <div className="col-xl-6 col-md-6  mb-xl-10">
-                        <Form.Label className="required">
-                          <strong>Longitude</strong>
-                        </Form.Label>
-                        <Form.Control
-                          required
-                          type="number"
-                          value={checkpointForm.longitude}
-                          onChange={(e) =>
-                            setCheckpointForm({
-                              ...checkpointForm,
-                              longitude: parseFloat(e.target.value),
-                            })
-                          }
-                        />
-                      </div>
+                    <div className="col-xl-6 col-md-6  mb-xl-5">
+                      <label className="required mb-2">
+                        <strong>Longitude</strong>
+                      </label>
+                      <input
+                        className="form-control form-control-solid required"
+                        type="number"
+                        value={checkpointForm.longitude}
+                        onChange={(e) =>
+                          setCheckpointForm({
+                            ...checkpointForm,
+                            longitude: parseFloat(e.target.value),
+                          })
+                        }
+                      />
                     </div>
-                    <div className="d-flex gap-3 mt-5">
-                      <button
-                        type="reset"
-                        className="btn btn-secondary"
-                        onClick={handleCancelEdit}
-                      >
-                        Cancel
-                      </button>
-                      <Button variant="primary" onClick={handleSaveCheckpoint}>
-                        Save
-                      </Button>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <Form.Label className="required ">
-                      <strong>Route Name</strong>
-                    </Form.Label>
-                    <Form.Control
-                      required
-                      type="text"
-                      placeholder="Eg: Route 1"
-                      value={newRouteName}
-                      onChange={(e) => setNewRouteName(e.target.value)}
-                    />
-                    <div className="mt-5">
-                      <Button
-                        size="sm"
-                        variant="primary"
-                        onClick={handleAddRoute}
-                      >
-                        Add Route
-                      </Button>
-                    </div>
-                  </>
-                )}
-              </div>
+                  </div>
+
+                  <div className="d-flex gap-3 mt-2">
+                    <button
+                      className="btn btn-secondary btn-sm w-20 mb-2 d-flex"
+                      onClick={handleCancelEdit}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="btn btn-sm btn-light-info w-20 mb-2 d-flex"
+                      onClick={handleSaveCheckpoint}
+                    >
+                      Save
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <label className="required mb-2">
+                    <strong>Route Name</strong>
+                  </label>
+                  <input
+                    className="form-control form-control-solid"
+                    type="text"
+                    placeholder="Eg: Route 1"
+                    value={newRouteName}
+                    onChange={(e) => setNewRouteName(e.target.value)}
+                  />
+                  <div className="mt-5">
+                    <button
+                      className="btn btn-sm btn-light-info w-20 mb-2 d-flex"
+                      onClick={handleAddRoute}
+                    >
+                      Add Route
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -273,15 +320,50 @@ const TransportRoutes = () => {
         <div className="col-xl-8 col-md-8  mb-xl-10">
           <div className="card mb-3">
             <div className="card-header border-0 px-6">
-              <div className="card-title">
-                <h1 className="d-flex align-items-center position-relative my-1">
-                  Transport Routes
+              <div className="card-title w-100">
+                <h1 className="d-flex justify-content-between align-items-center position-relative my-1 w-100">
+                  <span>Transport Routes</span>
+
+                  <div className="d-flex gap-2">
+                    <div className="d-flex align-items-center position-relative h-100">
+                      <Icon
+                        name="searchDark"
+                        className="svg-icon svg-icon-1 position-absolute ms-6"
+                      />
+                      <input
+                        type="text"
+                        className="form-control form-control-solid w-250px ps-14"
+                        id="data_search"
+                        placeholder="Search Routes Name"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                      />
+                    </div>
+                    <select
+                      className="form-control w-50px"
+                      title="Items per Page"
+                      id="itemsPerPage"
+                      onChange={(e) =>
+                        handleItemsPerPageChange(
+                          e.target.value === "all"
+                            ? null
+                            : parseInt(e.target.value)
+                        )
+                      }
+                      value={itemsPerPage ?? "all"}
+                    >
+                      <option value="all">All</option>
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                    </select>
+                  </div>
                 </h1>
               </div>
             </div>
             <div className="card-body pt-0">
-              <Table bordered hover>
-                <thead>
+              <table className="table table-bordered table-hover">
+                <thead className="thead-light">
                   <tr>
                     <th>
                       <strong>SN</strong>
@@ -303,52 +385,61 @@ const TransportRoutes = () => {
                       <td>{index + 1}</td>
                       <td>{route.name}</td>
                       <td>
-                        {route.checkpoints.map((cp) => (
-                          <div key={cp.id} className="d-flex gap-2 my-2 ">
-                            {cp.name} ({cp.latitude}, {cp.longitude})
-                            <Button
-                              variant="success"
-                              className="ms-2"
-                              style={{ fontSize: "10px", padding: "2px 8px" }}
-                              onClick={() =>
-                                handleEditCheckpointForm(route.id, cp)
-                              }
-                            >
-                              Edit
-                            </Button>
-                            <Button
-                              variant="danger"
-                              style={{ fontSize: "10px", padding: "2px 8px" }}
-                              onClick={() =>
-                                handleDeleteCheckpoint(route.id, cp.id)
-                              }
-                            >
-                              Delete
-                            </Button>
+                        {route.route_checkpoints.map((cp) => (
+                          <div key={cp.id} className="d-flex gap-2 my-2">
+                            <span className="d-block">
+                              {cp.location_name} ({cp.latitude}, {cp.longitude})
+                            </span>
+                            <div className="btn-group" role="group">
+                              <button
+                                className="btn btn-success "
+                                style={{ fontSize: "10px", padding: "2px 8px" }}
+                                onClick={() =>
+                                  handleEditCheckpointForm(route.id, cp)
+                                }
+                              >
+                                Edit
+                              </button>
+                              <button
+                                style={{ fontSize: "10px", padding: "2px 8px" }}
+                                className="btn btn-danger"
+                                onClick={() =>
+                                  handleDeleteCheckpoint(route.id, cp.id)
+                                }
+                              >
+                                Delete
+                              </button>
+                            </div>
                           </div>
                         ))}
-                        <Button
-                          variant="primary"
-                          className="mt-2"
+                        <button
                           style={{ fontSize: "10px", padding: "2px 8px" }}
+                          className="btn btn-primary mt-2"
                           onClick={() => handleOpenCheckpointForm(route.id)}
                         >
                           Add Checkpoint
-                        </Button>
+                        </button>
                       </td>
                       <td>
-                        <Button
+                        <button
                           style={{ fontSize: "10px", padding: "4px 8px" }}
-                          variant="warning"
+                          className="btn btn-sm btn-light-info w-20 mb-2 d-flex"
                           onClick={() => handleEditRoute(route)}
                         >
                           {icons.edit}
-                        </Button>
+                        </button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
-              </Table>
+              </table>
+            </div>
+            <div className="card-footer">
+              <Pagination
+                pagination={pagination}
+                edgeLinks={edgeLinks}
+                onPageChange={handlePageChange}
+              />
             </div>
           </div>
         </div>
