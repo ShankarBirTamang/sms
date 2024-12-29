@@ -9,6 +9,7 @@ const EditTimeTable = () => {
   const { timeTableId } = useParams();
   const { getOneTimeTable, timeTable } = useTimeTable({});
 
+  console.log("Time Table Edit:", timeTable);
   useEffect(() => {
     if (timeTableId) {
       getOneTimeTable(Number(timeTableId));
@@ -27,13 +28,16 @@ const EditTimeTable = () => {
           handleSubmittedForm={handleEditSubmit}
           mode="edit"
           defaultValues={{
+            id: timeTable.id,
             name: timeTable.name,
             no_of_periods: timeTable.no_of_periods,
             periods: timeTable.periods.map((period: any) => ({
               ...period,
-              period_days: Object.keys(period.period_days).reduce(
+              days: Object.keys(period.period_days).reduce(
                 (acc: any, day: string) => {
                   acc[day] = {
+                    id: period.period_days[day].id,
+                    day: period.period_days[day].day,
                     start_time: period.period_days[day].start_time,
                     end_time: period.period_days[day].end_time,
                   };

@@ -7,28 +7,32 @@ import TimeTableForm from "./TimeTableForm";
 
 const AddTimeTableForm = () => {
   const handleAddSubmit = (data: TimetableFormValues) => {
-    toast.success('Time Table Added Successfully');
+    toast.success("Time Table Added Successfully");
     console.log("Submitted Data:", data);
   };
-
 
   return (
     <div className="col-md-12">
       <TimeTableForm
         mode="add"
         handleSubmittedForm={handleAddSubmit}
-        
         defaultValues={{
+          id: 1, // Root ID for the timetable
           name: "",
           no_of_periods: 1,
           periods: [
             {
-              id: 0,
+              id: 1, // Ensure the ID is set correctly for the first period
               period_name: "",
-              period_days: daysOfWeek.reduce((acc, day) => {
-                acc[day] = { start_time: "", end_time: "" };
+              days: daysOfWeek.reduce((acc, day, index) => {
+                acc[day] = {
+                  id: index + 1, // Unique ID for each day
+                  day, // Include the day name
+                  start_time: "",
+                  end_time: "",
+                };
                 return acc;
-              }, {} as TimetableFormValues["periods"][0]["period_days"]),
+              }, {} as TimetableFormValues["periods"][0]["days"]),
             },
           ],
         }}

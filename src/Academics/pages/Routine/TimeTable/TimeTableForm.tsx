@@ -38,19 +38,20 @@ const TimeTableForm = ({
   });
 
   // Initialize state for new periods
+  console.log("defaultValues:", defaultValues);
   useEffect(() => {
     if (defaultValues) {
       setNumberOfPeriods(defaultValues.no_of_periods || 1);
 
       setLocalStartTimeValues(
         defaultValues.periods.map((period) =>
-          daysOfWeek.map((day) => period.period_days[day]?.start_time || "")
+          daysOfWeek.map((day) => period.days[day]?.start_time || "")
         )
       );
 
       setLocalEndTimeValues(
         defaultValues.periods.map((period) =>
-          daysOfWeek.map((day) => period.period_days[day]?.end_time || "")
+          daysOfWeek.map((day) => period.days[day]?.end_time || "")
         )
       );
 
@@ -63,7 +64,7 @@ const TimeTableForm = ({
     localStartTimeValues.forEach((periodStartTimes, periodIndex) => {
       daysOfWeek.forEach((day, dayIndex) => {
         setValue(
-          `periods.${periodIndex}.period_days.${day}.start_time`,
+          `periods.${periodIndex}.days.${day}.start_time`,
           periodStartTimes[dayIndex] as unknown as never
         );
       });
@@ -72,7 +73,7 @@ const TimeTableForm = ({
     localEndTimeValues.forEach((periodEndTimes, periodIndex) => {
       daysOfWeek.forEach((day, dayIndex) => {
         setValue(
-          `periods.${periodIndex}.period_days.${day}.end_time`,
+          `periods.${periodIndex}.days.${day}.end_time`,
           periodEndTimes[dayIndex] as unknown as never
         );
       });
@@ -135,11 +136,11 @@ const TimeTableForm = ({
         // Ensure the start time and end time in form are updated
         daysOfWeek.forEach((day) => {
           setValue(
-            `periods.${periodIndex}.period_days.${day}.start_time`,
+            `periods.${periodIndex}.days.${day}.start_time`,
             syncedStartTime as unknown as never
           );
           setValue(
-            `periods.${periodIndex}.period_days.${day}.end_time`,
+            `periods.${periodIndex}.days.${day}.end_time`,
             syncedEndTime as unknown as never
           );
         });
@@ -152,6 +153,7 @@ const TimeTableForm = ({
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const newNumberOfPeriods = Number(e.target.value);
+
     if (newNumberOfPeriods > 0) {
       setNumberOfPeriods(newNumberOfPeriods);
 
@@ -162,12 +164,17 @@ const TimeTableForm = ({
         // Add new periods
         for (let i = currentPeriods.length; i < newNumberOfPeriods; i++) {
           updatedPeriods.push({
-            id: i + 1,
+            id: i + 1, // Root 'id' for the period
             period_name: "",
-            period_days: daysOfWeek.reduce((acc, day) => {
-              acc[day] = { start_time: "", end_time: "" };
+            days: daysOfWeek.reduce((acc, day, index) => {
+              acc[day] = {
+                id: index + 1, // Unique 'id' for the day
+                day, // Include the 'day' name
+                start_time: "",
+                end_time: "",
+              };
               return acc;
-            }, {} as Record<string, { start_time: string; end_time: string }>),
+            }, {} as Record<string, { id: number; day: string; start_time: string; end_time: string }>),
           });
         }
       } else if (newNumberOfPeriods < currentPeriods.length) {
@@ -175,7 +182,22 @@ const TimeTableForm = ({
         updatedPeriods.splice(newNumberOfPeriods);
       }
 
-      setValue("periods", updatedPeriods); // Update the form state
+      // Ensure all periods have correct IDs and structure
+      const normalizedPeriods = updatedPeriods.map((period, periodIndex) => ({
+        ...period,
+        id: periodIndex + 1, // Reassign correct period IDs
+        days: daysOfWeek.reduce((acc, day, index) => {
+          acc[day] = {
+            id: index + 1, // Ensure unique 'id' for each day
+            day, // Day name
+            start_time: period.days?.[day]?.start_time || "",
+            end_time: period.days?.[day]?.end_time || "",
+          };
+          return acc;
+        }, {} as Record<string, { id: number; day: string; start_time: string; end_time: string }>),
+      }));
+
+      setValue("periods", normalizedPeriods); // Update the form state
     }
   };
 
@@ -252,16 +274,22 @@ const TimeTableForm = ({
 
   const handleDiscard = () => {
     reset({
+      id: 1, // Root ID for the timetable
       name: "",
       no_of_periods: 1,
       periods: [
         {
-          id: 1, // Ensure the id is set correctly
+          id: 1, // Ensure the ID is set correctly for the period
           period_name: "",
-          period_days: daysOfWeek.reduce((acc, day) => {
-            acc[day] = { start_time: "", end_time: "" };
+          days: daysOfWeek.reduce((acc, day, index) => {
+            acc[day] = {
+              id: index + 1, // Unique ID for each day
+              day, // Include the day name
+              start_time: "",
+              end_time: "",
+            };
             return acc;
-          }, {} as Record<string, { start_time: string; end_time: string }>),
+          }, {} as Record<string, { id: number; day: string; start_time: string; end_time: string }>),
         },
       ],
     });
@@ -387,7 +415,7 @@ const TimeTableForm = ({
                             }
                             className="form-control form-control-solid"
                             {...register(
-                              `periods.${periodIndex}.period_days.${day}.start_time`
+                              `periods.${periodIndex}.days.${day}.start_time`
                             )}
                             onChange={(e) =>
                               handleTimeChange(
@@ -425,7 +453,7 @@ const TimeTableForm = ({
                             }
                             className="form-control form-control-solid"
                             {...register(
-                              `periods.${periodIndex}.period_days.${day}.end_time`
+                              `periods.${periodIndex}.days.${day}.end_time`
                             )}
                             onChange={(e) =>
                               handleTimeChange(e, periodIndex, dayIndex, "end")

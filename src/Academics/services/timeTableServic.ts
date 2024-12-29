@@ -7,13 +7,16 @@ export interface TimeTableInterface {
 }
 
 export interface TimetableFormValues {
+  id: number; // Add this field for the root 'id'
   name: string;
   no_of_periods: number;
   periods: {
     id: number;
     period_name: string;
-    period_days: {
+    days: {
       [day: string]: {
+        id: number; // Include 'id' for each day
+        day: string; // Include 'day' for each day
         start_time: string;
         end_time: string;
       };
@@ -32,18 +35,19 @@ export const daysOfWeek = [
 ];
 
 export const timeTableSchema = z.object({
+  id: z.number(), // Root 'id' for the timetable
   name: z.string().min(1, "Timetable name is required"),
   no_of_periods: z.number().min(1, "At least one period is required"),
   periods: z.array(
     z.object({
-      id: z.number(),
+      id: z.number(), // Root 'id' for each period
       period_name: z.string().min(2, "Period name is required"),
-      period_days: z.record(
+      days: z.record(
         z.object({
-          start_time: z.string(),
-          // .regex(/^([01]\d|2[0-3]):?([0-5]\d)$/, "Invalid time format"),
-          end_time: z.string(),
-          // .regex(/^([01]\d|2[0-3]):?([0-5]\d)$/, "Invalid time format"),
+          id: z.number(), // Unique 'id' for each day
+          day: z.string().refine((day) => daysOfWeek.includes(day)), // Include 'day' for each day
+          start_time: z.string(), // Add regex if needed for validation
+          end_time: z.string(), // Add regex if needed for validation
         })
       ),
     })
