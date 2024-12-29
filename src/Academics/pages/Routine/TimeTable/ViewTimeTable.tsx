@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import Loading from "../../../../components/Loading/Loading";
 import { Link, useParams } from "react-router-dom";
 import Icon from "../../../../components/Icon/Icon";
-import { daysOfWeek } from "../../../services/timeTableServic";
 import useTimeTable from "../../../hooks/useTimeTable";
 
 const ViewTimeTable = () => {
@@ -10,7 +9,8 @@ const ViewTimeTable = () => {
   const params = useParams();
   const timeTableId = params.timeTableId;
   const { getOneTimeTable, timeTable } = useTimeTable({});
-  console.log("view timetable", timeTable);
+  console.log("view timetable JSON", JSON.stringify(timeTable));
+  // console.log("view timetable", timeTable);
 
   useEffect(() => {
     if (timeTableId) {
@@ -49,17 +49,36 @@ const ViewTimeTable = () => {
                 aria-describedby="table_sessions_info"
               >
                 <thead>
-                  <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+                  {/* <tr
+                    className="text-start border border-2 fw-bolder fs-7 text-uppercase gs-0"
+                    style={{ backgroundColor: "rgba(0, 0, 255, 0.2)" }}
+                  >
                     <th>Period\Day</th>
                     {daysOfWeek.map((day, dayIndex) => (
                       <th key={dayIndex}>{day}</th>
                     ))}
-                  </tr>
+                  </tr> */}
                 </thead>
                 <tbody className="text-gray-600 fw-bold table">
                   {timeTable?.periods.map((period, periodIndex) => (
                     <tr key={periodIndex} className="odd">
                       <td className="sorting_1">{period.period_name}</td>
+                      {Object.entries(period.period_days).map(
+                        ([day, detail]) => (
+                          <td>
+                            <p
+                              className=""
+                              style={{
+                                backgroundColor: "rgba(0, 0, 255, 0.1)",
+                              }}
+                            >
+                              {day}
+                            </p>
+                            <p>Start Time:{detail.start_time}</p>
+                            <p>End Time:{detail.end_time}</p>
+                          </td>
+                        )
+                      )}
                     </tr>
                   ))}
                 </tbody>
