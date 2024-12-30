@@ -13,6 +13,7 @@ import InstituteRoute from "./General/Institute/InstituteRoute";
 import Address from "./General/pages/Address/Address";
 import Vehicles from "./Transportation/pages/Vehicles";
 import TransportRoutes from "./Transportation/pages/TransportRoutes";
+import ExamSession from "./Modules/Examination/pages/ExamSession";
 
 const App = () => {
   return (
@@ -34,6 +35,10 @@ const App = () => {
                 <Route
                   path="/transportation/routes/*"
                   element={<TransportRoutes />}
+                />
+                <Route
+                  path="/examination/session/*"
+                  element={<ExamSession />}
                 />
                 <Route path="address/*" element={<Address />} />
               </Route>
