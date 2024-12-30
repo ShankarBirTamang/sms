@@ -4,6 +4,7 @@ import DrawerModal from "../../../../components/DrawerModal/DrawerModal";
 import gradeService, {
   GradeInterface,
   SingleGradeInterface,
+  UpdateGradeInterface,
 } from "../../../services/gradeService";
 import { useEffect, useState } from "react";
 import useSubject from "../../../hooks/useSubject";
@@ -16,6 +17,7 @@ import Pagination from "../../../../components/Pagination/Pagination";
 import AddSubject from "./AddSubject";
 import UpdateRank from "./UpdateRank";
 import { UpdateSubjectInterface } from "../../../services/subjectService";
+import SubjectTeacher from "../Drawers/SubjectTeacher";
 
 const Subject = () => {
   const navigate = useNavigate();
@@ -24,6 +26,8 @@ const Subject = () => {
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
+
+  const [subjectTeacherDrawer, setSubjectTeacherDrawer] = useState(false);
 
   const { gradeId } = useParams<{ gradeId: string }>();
   const [grade, setGrade] = useState<GradeInterface>();
@@ -81,6 +85,10 @@ const Subject = () => {
 
   const toggleEditSubjectDrawer = () => {
     setEditSubjectDrawer(!editSubjectDrawer);
+  };
+
+  const toggleSubjectTeacherDrawer = () => {
+    setSubjectTeacherDrawer(!subjectTeacherDrawer);
   };
 
   useEffect(() => {
@@ -223,14 +231,21 @@ const Subject = () => {
                       </span>
                     </td>
                     <td>
-                      <a
+                      {/* <a
                         href="#"
                         className="badge badge-primary remove-teacher"
                       >
                         <span className="educator-name">BIMITA ACHARYA</span>
-                      </a>
+                      </a> */}
 
-                      <a href="#" className="badge badge-danger">
+                      <a
+                        href="#"
+                        className="badge badge-danger"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          toggleSubjectTeacherDrawer();
+                        }}
+                      >
                         +
                       </a>
                     </td>
@@ -260,7 +275,7 @@ const Subject = () => {
                         className="btn btn-light-danger btn-sm"
                         title="Edit"
                         onClick={() => {
-                          setEditSubject(subject);
+                          setEditSubject(subject as UpdateSubjectInterface);
                           toggleEditSubjectDrawer();
                         }}
                       >
@@ -320,6 +335,21 @@ const Subject = () => {
           subjects={subjects}
           onSave={toggleUpdateRankDrawer}
         />
+      </DrawerModal>
+
+      <DrawerModal
+        isOpen={subjectTeacherDrawer}
+        onClose={toggleSubjectTeacherDrawer}
+        position="right"
+        width="800px"
+        title="Assign Subject Teachers"
+      >
+        {grade && (
+          <SubjectTeacher
+            grade={grade as unknown as UpdateGradeInterface}
+            onSave={toggleSubjectTeacherDrawer}
+          />
+        )}
       </DrawerModal>
     </>
   );

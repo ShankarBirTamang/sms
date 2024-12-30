@@ -2,8 +2,8 @@ import {
   AddGradeInterface,
   UpdatedGradeInterface,
 } from "./../services/gradeService";
-import { useEffect, useState } from "react";
-import { CanceledError } from "../../services/apiClient";
+import { useCallback, useEffect, useState } from "react";
+import axiosInstance, { CanceledError } from "../../services/apiClient";
 import {
   ApiResponseInterface,
   PaginationAndSearch,
@@ -25,7 +25,7 @@ const useGrade = ({
 
   const [grades, setGrades] = useState<UpdateGradeInterface[]>([]);
 
-  useEffect(() => {
+  const fetchGrades = useCallback(async () => {
     setLoading(true);
     const params: Record<string, string | number | null> = {
       per_page: itemsPerPage,
@@ -35,7 +35,7 @@ const useGrade = ({
       params.page = currentPage;
     }
 
-    const { request, cancel } =
+    const { request } =
       gradeService.getAll<ApiResponseInterface<UpdateGradeInterface>>(params);
     request
       .then((result) => {
@@ -49,9 +49,11 @@ const useGrade = ({
         setError(err.message);
         setLoading(false);
       });
-
-    return () => cancel();
   }, [search, currentPage, itemsPerPage]);
+
+  useEffect(() => {
+    fetchGrades();
+  }, [fetchGrades]);
 
   const saveGrade = async ({
     academic_session_id,
@@ -124,8 +126,23 @@ const useGrade = ({
     }
   };
 
+  interface SetClassTeacher {
+    gradeId: number;
+    data: any;
+  }
+
+  const setClassTeacher = async ({ gradeId, data }: SetClassTeacher) => {
+    console.log("data at line 127 in hooks/useGrade.ts:", data);
+    const result = await axiosInstance.post(
+      `academics/grades/${gradeId}/set-class-teacher`,
+      data
+    );
+    console.log("result at line 134 in hooks/useGrade.ts:", result);
+  };
+
   return {
     grades,
+    fetchGrades,
     error,
     setError,
     isLoading,
@@ -134,6 +151,7 @@ const useGrade = ({
     currentPage,
     saveGrade,
     updateGrade,
+    setClassTeacher,
   };
 };
 

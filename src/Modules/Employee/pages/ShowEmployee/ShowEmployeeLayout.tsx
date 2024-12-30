@@ -27,7 +27,7 @@ const ShowEmployeeLayout = () => {
   }, [fetchEmployee, employeeId]);
 
   if (isLoading) return <Loading />;
-  if (error) return <div>{error}</div>;
+  if (error) return <div className="bg-white">{error}</div>;
 
   if (isLoading) return <Loading />;
   if (error) return <div>{error}</div>;
@@ -47,15 +47,20 @@ const ShowEmployeeLayout = () => {
                   >
                     {employee.full_name}
                   </a>
-                  <div className="mb-9 text-center">
-                    <span className="badge badge-lg badge-light-primary d-inline">
-                      Grade 4 (A3)
-                    </span>
-                    <br />
-                    <span className="badge badge-light-info mt-2 badge-lg">
-                      Roll No: 1
-                    </span>
-                  </div>
+                  {employee.class?.grade && (
+                    <div className="mb-9 text-center">
+                      <span className="badge badge-lg badge-light-primary d-inline">
+                        {employee.class?.faculty &&
+                        employee.class?.faculty !== "General"
+                          ? `${employee.class?.faculty} : `
+                          : ""}
+                        {employee.class?.grade}
+                        {employee.class?.section
+                          ? `: ${employee.class?.section}`
+                          : null}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="d-flex flex-stack fs-4 py-3">
                   <div
@@ -66,51 +71,7 @@ const ShowEmployeeLayout = () => {
                     aria-controls="kt_user_view_details"
                   >
                     Details
-                    <span className="ms-2 rotate-180">
-                      <span className="svg-icon svg-icon-3">
-                        <svg
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z"
-                            fill="currentColor"
-                          ></path>
-                        </svg>
-                      </span>
-                    </span>
                   </div>
-                  <span>
-                    <span
-                      data-bs-toggle="tooltip"
-                      data-bs-trigger="hover"
-                      data-kt-initialized="1"
-                    >
-                      <a
-                        href="https://sms.aanshtech.com/sms/employees/506/edit"
-                        className="btn btn-sm btn-light-primary"
-                      >
-                        Edit
-                      </a>
-                    </span>
-                    <span
-                      data-bs-toggle="tooltip"
-                      data-bs-trigger="hover"
-                      data-kt-initialized="1"
-                    >
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-light-danger"
-                        data-bs-toggle="modal"
-                        data-bs-target="#changeSection"
-                      >
-                        Change Section
-                      </button>
-                    </span>
-                  </span>
                 </div>
                 <div className="separator"></div>
                 <div id="kt_user_view_details" className="collapse show">

@@ -182,15 +182,31 @@ const Employee = () => {
                             ) : null}
                             <div className="d-flex flex-column">
                               {employee.full_name}
-
-                              <span
-                                className="badge bg-info fw-bold"
-                                style={{
-                                  width: "fit-content",
-                                }}
-                              >
-                                {employee.employee_type?.name}
-                              </span>
+                              <div className="d-flex gap-2">
+                                <span
+                                  className="badge bg-info fw-bold"
+                                  style={{
+                                    width: "fit-content",
+                                  }}
+                                >
+                                  {employee.employee_type?.name}
+                                </span>
+                                <span
+                                  className="badge bg-info fw-bold"
+                                  style={{
+                                    width: "fit-content",
+                                  }}
+                                >
+                                  {employee.class?.faculty &&
+                                  employee.class?.faculty !== "General"
+                                    ? `${employee.class?.faculty} : `
+                                    : ""}
+                                  {employee.class?.grade}
+                                  {employee.class?.section
+                                    ? `: ${employee.class?.section}`
+                                    : null}
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </td>
