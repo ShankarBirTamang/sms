@@ -13,6 +13,14 @@ export interface SubjectInterface {
   is_chooseable: boolean;
   is_section_specific: boolean;
   sections?: string[];
+  teachers?: {
+    id: number;
+    name: string;
+    sections?: {
+      id: string;
+      name: string;
+    }[];
+  }[];
 }
 
 export interface UpdateSubjectInterface extends SubjectInterface {
