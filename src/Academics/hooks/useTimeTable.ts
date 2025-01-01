@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
 import {
+  ApiResponse,
   ApiResponseInterface,
   PaginationAndSearch,
 } from "../../Interface/Interface";
 import timeTableService, {
   TimetableFormValues,
   TimeTableInterface,
+  UpdateTimetableFormValues,
 } from "../services/timeTableServic";
 import { PaginationProps } from "../../components/Pagination/Pagination";
 import { CanceledError } from "../../services/apiClient";
+import toast from "react-hot-toast";
+
+//This solves the error
 
 const useTimeTable = ({
   search = "",
@@ -22,6 +27,8 @@ const useTimeTable = ({
   );
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingSave, setIsLoadingSave] = useState(false);
+  const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
 
   // For Pagination
   const [pagination, setPagination] =
@@ -60,7 +67,7 @@ const useTimeTable = ({
   // Fetch the one timetable by id
   const getOneTimeTable = (id: number) => {
     const { request, cancel } =
-      timeTableService.getOne<ApiResponseInterface<TimetableFormValues>>(id);
+      timeTableService.getOne<ApiResponse<TimetableFormValues>>(id);
 
     request
       .then((result) => {
@@ -75,6 +82,43 @@ const useTimeTable = ({
     return () => cancel();
   };
 
+  const saveTimeTable = async (data: TimetableFormValues) => {
+    setIsLoadingSave(true);
+    try {
+      const result = await timeTableService.create<TimetableFormValues>(data);
+      toast.success("Time-Table Added Successfully");
+      console.log("TimeTable Added Successfully", result);
+      return result;
+    } catch (err) {
+      console.log("error", err);
+      if (err instanceof Error) {
+        setError(err.message);
+        toast.error("Failed to add Time Table");
+      } else {
+        toast.error("Failed to add Time Table");
+      }
+    } finally {
+      setIsLoadingSave(false);
+    }
+  };
+
+  const updateTimeTable = async (data: TimetableFormValues) => {
+    setIsLoadingUpdate(true);
+    try {
+      console.log("Data to be submitted", data);
+      const result = await timeTableService.update<UpdateTimetableFormValues>(
+        data
+      );
+      toast.success("Time-Table Updated Successfully");
+      setIsLoadingUpdate(false);
+      return result;
+    } catch (error) {
+      toast.error("Failed to update Time Table");
+    } finally {
+      setIsLoadingUpdate(false);
+    }
+  };
+
   return {
     error,
     isLoading,
@@ -83,12 +127,16 @@ const useTimeTable = ({
     edgeLinks,
     itemsPerPage,
     timeTable,
+    isLoadingSave,
+    isLoadingUpdate,
     setIsLoading,
     setError,
     setTimeTable,
     setTimeTables,
     setPagination,
     getOneTimeTable,
+    saveTimeTable,
+    updateTimeTable,
   };
 };
 

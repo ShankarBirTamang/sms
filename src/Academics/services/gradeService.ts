@@ -38,6 +38,7 @@ export interface AddGradeInterface extends SectionData {
   name: string;
   short_name: string;
 }
+
 interface FacultyInterface {
   id: number;
   name: string;

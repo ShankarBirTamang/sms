@@ -1,9 +1,22 @@
 import { z } from "zod";
 import apiRoute from "../../services/httpService";
 
+export const daysOfWeek = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 export interface TimeTableInterface {
   name: string;
   is_active?: boolean;
+}
+
+export interface UpdateTimetableFormValues extends TimetableFormValues {
+  id: number;
 }
 
 export interface TimetableFormValues {
@@ -23,16 +36,6 @@ export interface TimetableFormValues {
     };
   }[];
 }
-
-export const daysOfWeek = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-];
 
 export const timeTableSchema = z.object({
   id: z.number(), // Root 'id' for the timetable

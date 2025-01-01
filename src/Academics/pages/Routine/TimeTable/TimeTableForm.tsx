@@ -11,12 +11,14 @@ interface TimeTableFormProps {
   defaultValues: TimetableFormValues;
   mode: "add" | "edit";
   handleSubmittedForm: (data: TimetableFormValues) => void;
+  isLoadingSaveOrUpdate?: boolean;
 }
 
 const TimeTableForm = ({
   defaultValues,
   mode,
   handleSubmittedForm,
+  isLoadingSaveOrUpdate,
 }: TimeTableFormProps) => {
   const [numberOfPeriods, setNumberOfPeriods] = useState(1);
   const [sameTimeForAllDays, setSameTimeForAllDays] = useState<boolean[]>([]);
@@ -268,7 +270,11 @@ const TimeTableForm = ({
     }
   };
 
-  const handleFormSubmit = (data: TimetableFormValues) => {
+  const handleFormSubmit = (
+    data: TimetableFormValues
+    // event: React.FormEvent
+  ) => {
+    // event.preventDefault();
     handleSubmittedForm(data);
   };
 
@@ -490,7 +496,11 @@ const TimeTableForm = ({
           </button>
 
           <button type="submit" className="btn btn-primary">
-            {mode === "add" ? "Save" : "Update"}
+            {isLoadingSaveOrUpdate
+              ? "Saving..."
+              : mode === "add"
+              ? "Save"
+              : "Update"}
           </button>
         </div>
       </div>
