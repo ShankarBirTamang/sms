@@ -6,8 +6,8 @@ import {
 } from "../../Interface/Interface";
 import timeTableService, {
   TimetableFormValues,
-  TimeTableInterface,
   UpdateTimetableFormValues,
+  UpdateTimeTableInterface,
 } from "../services/timeTableServic";
 import { PaginationProps } from "../../components/Pagination/Pagination";
 import { CanceledError } from "../../services/apiClient";
@@ -20,7 +20,7 @@ const useTimeTable = ({
   currentPage = 2,
   itemsPerPage = null,
 }: PaginationAndSearch) => {
-  const [timeTables, setTimeTables] = useState<TimeTableInterface[]>([]);
+  const [timeTables, setTimeTables] = useState<UpdateTimeTableInterface[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [timeTable, setTimeTable] = useState<TimetableFormValues | undefined>(
     undefined
@@ -47,7 +47,9 @@ const useTimeTable = ({
     }
 
     const { request, cancel } =
-      timeTableService.getAll<ApiResponseInterface<TimeTableInterface>>(params);
+      timeTableService.getAll<ApiResponseInterface<UpdateTimeTableInterface>>(
+        params
+      );
 
     request
       .then((result) => {

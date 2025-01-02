@@ -1,9 +1,9 @@
 import { Route, Routes } from "react-router-dom";
 
 import Details from "./pages/details/Details";
-import RoomHalls from "./pages/RoomHalls";
-import Laboratories from "./pages/Laboratories";
-import Boardings from "./pages/Boardings";
+import RoomHalls from "./pages/room-halls/RoomHalls";
+import Laboratories from "./pages/laboratory/Laboratory";
+import Boardings from "./pages/boardings/Boardings";
 import Layout from "../../layout/Layout";
 import ProtectectedRoute from "../../components/Icon/ProtectedRoute";
 

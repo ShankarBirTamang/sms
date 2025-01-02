@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import toast from "react-hot-toast";
 import TimeTableForm from "./TimeTableForm";
 import useTimeTable from "../../../hooks/useTimeTable";
 import { TimetableFormValues } from "../../../services/timeTableServic";

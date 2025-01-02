@@ -15,6 +15,10 @@ export interface TimeTableInterface {
   is_active?: boolean;
 }
 
+export interface UpdateTimeTableInterface extends TimeTableInterface {
+  id: number;
+}
+
 export interface UpdateTimetableFormValues extends TimetableFormValues {
   id: number;
 }
