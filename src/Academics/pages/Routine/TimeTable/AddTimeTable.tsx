@@ -15,7 +15,7 @@ const AddTimeTableForm = () => {
     periods: [
       {
         id: 1, // Ensure the ID is set correctly for the first period
-        period_name: "",
+        period_name: "Period 1",
         days: daysOfWeek.reduce((acc, day, index) => {
           acc[day] = {
             id: index + 1, // Unique ID for each day
