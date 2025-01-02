@@ -29,6 +29,7 @@ const useTimeTable = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingSave, setIsLoadingSave] = useState(false);
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
+  const [statusChanged, setStatusChanged] = useState(false); // State to track status changes
 
   // For Pagination
   const [pagination, setPagination] =
@@ -121,6 +122,18 @@ const useTimeTable = ({
     }
   };
 
+  const changeTimeTableStatus = async (id: number) => {
+    try {
+      console.log("id during changing Timetable Status", id);
+      const result = await timeTableService.changeStatus({ id });
+      console.log("result during changing Timetable Status", result);
+    } catch (error) {
+      console.log("error changing Timetable Status", error);
+    } finally {
+      setStatusChanged((prev) => !prev);
+    }
+  };
+
   return {
     error,
     isLoading,
@@ -139,6 +152,7 @@ const useTimeTable = ({
     getOneTimeTable,
     saveTimeTable,
     updateTimeTable,
+    changeTimeTableStatus,
   };
 };
 
