@@ -47,15 +47,21 @@ const Grade = () => {
 
   const toggleAddGradeDrawer = () => {
     setAddGradeDrawer(!addGradeDrawer);
+    if (addGradeDrawer) {
+      fetchGrades();
+    }
   };
 
   const toggleEditGradeDrawer = () => {
     setEditGradeDrawer(!editGradeDrawer);
+    if (editGradeDrawer) {
+      fetchGrades();
+    }
   };
 
   const toggleSetClassTeacherDrawer = () => {
     setClassTeacherDrawer(!classTeacherDrawer);
-    if (classTeacherDrawer == true) {
+    if (classTeacherDrawer) {
       fetchGrades();
     }
   };
@@ -86,6 +92,9 @@ const Grade = () => {
 
   const handleSubjectNavigate = (gradeId: number) => {
     navigate(`${gradeId}/subjects`);
+  };
+  const handleStudentsNavigate = (gradeId: number) => {
+    navigate(`${gradeId}/students`);
   };
   return (
     <>
@@ -230,14 +239,14 @@ const Grade = () => {
                       >
                         Subjects
                       </button>
-                      <a
-                        href="#"
+                      <button
                         className="btn btn-light-info btn-sm"
-                        type="link"
+                        type="button"
                         title="Students"
+                        onClick={() => handleStudentsNavigate(grade.id)}
                       >
                         Students
-                      </a>
+                      </button>
                       <button
                         type="button"
                         className="btn btn-light-success btn-sm"

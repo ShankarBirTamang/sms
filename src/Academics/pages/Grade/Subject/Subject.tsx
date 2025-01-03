@@ -7,7 +7,7 @@ import gradeService, {
   TeacherInterface,
   UpdateGradeInterface,
 } from "../../../services/gradeService";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import useSubject from "../../../hooks/useSubject";
 import useDebounce from "../../../../hooks/useDebounce";
 import useDocumentTitle from "../../../../hooks/useDocumentTitle";
@@ -23,6 +23,7 @@ import {
 } from "../../../services/subjectService";
 import SubjectTeacher from "../Drawers/SubjectTeacher";
 import useEmployee from "../../../../Modules/Employee/hooks/useEmployee";
+import EditSubject from "./EditSubject";
 
 const Subject = () => {
   const navigate = useNavigate();
@@ -94,8 +95,12 @@ const Subject = () => {
     }
   };
 
-  const toggleEditSubjectDrawer = () => {
+  const toggleEditSubjectDrawer = (subject?: UpdateSubjectInterface) => {
+    setEditSubject(subject);
     setEditSubjectDrawer(!editSubjectDrawer);
+    if (editSubjectDrawer) {
+      fetchData();
+    }
   };
 
   const toggleSubjectTeacherDrawer = (subject?: SubjectInterface) => {
@@ -242,7 +247,7 @@ const Subject = () => {
                   <th className="w-250px">Subject Name</th>
                   <th className="w-125px">Subject Type</th>
                   <th className="w-125px">Subject Code</th>
-                  <th className="min-w-125px">Subject Educator</th>
+                  <th className="min-w-125px">Subject Teacher</th>
                   <th className="text-center">Is Chooseable</th>
                   <th className="w-55px">Status</th>
                   <th className="text-end w-100px">Actions</th>
@@ -263,6 +268,18 @@ const Subject = () => {
                           </span>
                         </span>
                         <br />
+                        <div className="d-flex flex-wrap gap-2">
+                          {subject.sections &&
+                            subject.sections?.length > 0 &&
+                            subject.sections.map((section, s) => (
+                              <span className="badge badge-primary badge-sm">
+                                {section.faculty &&
+                                  section.faculty.name !== "General" &&
+                                  `${section.faculty.name} : `}{" "}
+                                {section.name}
+                              </span>
+                            ))}
+                        </div>
                       </span>
                     </td>
                     <td>{subject.subject_type?.name}</td>
@@ -279,20 +296,24 @@ const Subject = () => {
                       <div className="d-flex gap-1 flex-wrap">
                         {subject.teachers && (
                           <>
-                            {subject.teachers.map((teacher) => (
+                            {subject.teachers.map((teacher, t) => (
                               <span
                                 className="badge badge-primary cursor-pointer"
                                 onClick={(e) => {
                                   e.preventDefault();
-                                  toggleSubjectTeacherDrawer(subject);
+                                  toggleSubjectTeacherDrawer(
+                                    subject as SubjectInterface
+                                  );
                                 }}
-                                key={teacher.id}
+                                key={`${index}-${t} `}
                               >
                                 {teacher.name}
                                 {teacher.sections && (
                                   <>
-                                    {teacher.sections.map((section) => (
-                                      <> | {section.name} </>
+                                    {teacher.sections.map((section, s) => (
+                                      <React.Fragment key={s}>
+                                        | {section.name}{" "}
+                                      </React.Fragment>
                                     ))}
                                   </>
                                 )}
@@ -306,7 +327,9 @@ const Subject = () => {
                           className="badge badge-danger"
                           onClick={(e) => {
                             e.preventDefault();
-                            toggleSubjectTeacherDrawer(subject);
+                            toggleSubjectTeacherDrawer(
+                              subject as SubjectInterface
+                            );
                           }}
                         >
                           +
@@ -339,8 +362,9 @@ const Subject = () => {
                         className="btn btn-light-danger btn-sm"
                         title="Edit"
                         onClick={() => {
-                          setEditSubject(subject as UpdateSubjectInterface);
-                          toggleEditSubjectDrawer();
+                          toggleEditSubjectDrawer(
+                            subject as UpdateSubjectInterface
+                          );
                         }}
                       >
                         <Icon name="edit" className="svg-icon" />
@@ -373,33 +397,37 @@ const Subject = () => {
         <AddSubject grade={grade} onSave={toggleAddSubjectDrawer} />
       </DrawerModal>
 
-      <DrawerModal
-        isOpen={editSubjectDrawer}
-        onClose={toggleEditSubjectDrawer}
-        position="right"
-        width="900px"
-        title="Update Subject"
-      >
-        <AddSubject
-          grade={grade}
-          onSave={toggleEditSubjectDrawer}
-          subject={editSubject}
-        />
-      </DrawerModal>
+      {editSubject && (
+        <DrawerModal
+          isOpen={editSubjectDrawer}
+          onClose={toggleEditSubjectDrawer}
+          position="right"
+          width="900px"
+          title="Update Subject"
+        >
+          <EditSubject
+            grade={grade}
+            onSave={toggleEditSubjectDrawer}
+            subject={editSubject}
+          />
+        </DrawerModal>
+      )}
 
-      <DrawerModal
-        isOpen={updateRankDrawer}
-        onClose={toggleUpdateRankDrawer}
-        position="right"
-        width="500px"
-        title="Update Subject Rank"
-      >
-        <UpdateRank
-          grade_id={gradeId ? Number(gradeId) : -1}
-          subjects={subjects}
-          onSave={toggleUpdateRankDrawer}
-        />
-      </DrawerModal>
+      {gradeId && (
+        <DrawerModal
+          isOpen={updateRankDrawer}
+          onClose={toggleUpdateRankDrawer}
+          position="right"
+          width="500px"
+          title="Update Subject Rank"
+        >
+          <UpdateRank
+            grade_id={Number(gradeId)}
+            subjects={subjects}
+            onSave={toggleUpdateRankDrawer}
+          />
+        </DrawerModal>
+      )}
       {grade && teachers && addTeacherSubject && (
         <DrawerModal
           isOpen={subjectTeacherDrawer}

@@ -1,5 +1,6 @@
 import {
   AddGradeInterface,
+  GradeInterface,
   UpdatedGradeInterface,
 } from "./../services/gradeService";
 import { useCallback, useEffect, useState } from "react";
@@ -126,19 +127,55 @@ const useGrade = ({
     }
   };
 
+  const getGrade = useCallback(
+    async (gradeId: number): Promise<GradeInterface | null> => {
+      try {
+        const { request } =
+          gradeService.getOne<ApiResponseInterface<GradeInterface>>(gradeId);
+        const result = await request;
+        const grade = Array.isArray(result.data.data)
+          ? result.data.data[0]
+          : result.data.data;
+
+        return grade || null;
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unknown error occurred.");
+        }
+        return null;
+      }
+    },
+    []
+  );
   interface SetClassTeacher {
     gradeId: number;
     data: any;
   }
 
   const setClassTeacher = async ({ gradeId, data }: SetClassTeacher) => {
-    console.log("data at line 127 in hooks/useGrade.ts:", data);
-    const result = await axiosInstance.post(
+    await axiosInstance.post(
       `academics/grades/${gradeId}/set-class-teacher`,
       data
     );
-    console.log("result at line 134 in hooks/useGrade.ts:", result);
   };
+
+  const getSectionStudents = useCallback(async (sectionId: number) => {
+    try {
+      const result = await axiosInstance.get(
+        `academics/grades/section/${sectionId}/students`
+      );
+
+      return result.data;
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred.");
+      }
+    }
+  }, []);
 
   return {
     grades,
@@ -152,6 +189,8 @@ const useGrade = ({
     saveGrade,
     updateGrade,
     setClassTeacher,
+    getSectionStudents,
+    getGrade,
   };
 };
 

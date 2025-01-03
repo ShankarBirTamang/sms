@@ -1,6 +1,7 @@
 import subjectService, {
   changeSubjectStatusInterface,
-  SubjectInterface,
+  EditSubjectInterface,
+  SubjectInterface as OriginalSubjectInterface,
   UpdateRankData,
   UpdateSubjectInterface,
 } from "./../services/subjectService";
@@ -19,6 +20,10 @@ interface GradeSubjectProps extends PaginationAndSearch {
   withInactive?: number;
 }
 
+interface SubjectInterface extends OriginalSubjectInterface {
+  id: number;
+}
+
 const useSubject = ({
   search = "",
   currentPage = 1,
@@ -33,7 +38,7 @@ const useSubject = ({
     useState<PaginationProps["pagination"]>(null);
   const [edgeLinks, setEdgeLinks] = useState<PaginationProps["edgeLinks"]>();
 
-  const [subjects, setSubjects] = useState<SubjectInterface[]>([]);
+  const [subjects, setSubjects] = useState<UpdateSubjectInterface[]>([]);
   const [statusChanged, setStatusChanged] = useState(false);
 
   const fetchData = useCallback(async () => {
@@ -108,7 +113,7 @@ const useSubject = ({
     is_chooseable,
     is_section_specific,
     sections,
-  }: UpdateSubjectInterface) => {
+  }: EditSubjectInterface) => {
     const params = {
       id,
       grade_id,
@@ -121,9 +126,8 @@ const useSubject = ({
       sections,
     };
     try {
-      const result = await subjectService.update<UpdateSubjectInterface>(
-        params
-      );
+      const result = await subjectService.update<EditSubjectInterface>(params);
+      console.log("result at line 125 in hooks/useSubject.ts:", result);
       setSubjects(
         subjects.map((subject) =>
           subject.id === result.data.data.id ? result.data.data : subject

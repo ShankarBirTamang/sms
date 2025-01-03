@@ -1,4 +1,5 @@
 import apiRoute from "../../services/httpService";
+import { SectionInterface } from "./gradeService";
 import { SubjectTypeInterface } from "./subjectTypeService";
 
 export interface SubjectInterface {
@@ -23,8 +24,30 @@ export interface SubjectInterface {
   }[];
 }
 
-export interface UpdateSubjectInterface extends SubjectInterface {
+export interface EditSubjectInterface extends SubjectInterface {
   id: number;
+}
+
+export interface UpdateSubjectInterface {
+  id: number;
+  rank?: number;
+  name: string;
+  subject_type_id?: number;
+  subject_type?: SubjectTypeInterface;
+  code: string;
+  credit_hour: number | null;
+  is_active?: boolean;
+  is_chooseable: boolean;
+  is_section_specific: boolean;
+  sections?: SectionInterface[];
+  teachers?: {
+    id: number;
+    name: string;
+    sections?: {
+      id: string;
+      name: string;
+    }[];
+  }[];
 }
 
 export interface changeSubjectStatusInterface {
