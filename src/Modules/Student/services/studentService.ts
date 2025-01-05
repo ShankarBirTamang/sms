@@ -6,6 +6,7 @@ import apiRoute from "../../../services/httpService";
 
 export interface StudentInterface {
   id: number;
+  roll_no?: string | number;
   iemis: string | null;
   full_name?: string;
   first_name: string;

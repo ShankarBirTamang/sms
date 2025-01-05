@@ -513,10 +513,10 @@ const Details = () => {
               </div>
 
               <div
-                className="row mb-6 h-20"
-                style={{
-                  height: "12rem",
-                }}
+                className="row mb-6"
+                // style={{
+                //   height: "12rem",
+                // }}
               >
                 <label className="col-lg-4 col-form-label fw-semibold fs-6">
                   Short Description
@@ -528,9 +528,9 @@ const Details = () => {
                     render={({ field }) => (
                       <InputField
                         placeholder="Input Short Description"
-                        style={{
-                          height: "6rem",
-                        }}
+                        // style={{
+                        //   height: "6rem",
+                        // }}
                         value={field.value} // Pass value explicitly
                         onChange={field.onChange}
                       />
@@ -546,9 +546,9 @@ const Details = () => {
 
               <div
                 className="row mb-6"
-                style={{
-                  height: "12rem",
-                }}
+                // style={{
+                //   height: "12rem",
+                // }}
               >
                 <label className="col-lg-4 col-form-label fw-semibold fs-6">
                   Long Description
@@ -560,9 +560,9 @@ const Details = () => {
                     render={({ field }) => (
                       <InputField
                         placeholder="Input Long Description"
-                        style={{
-                          height: "6rem",
-                        }}
+                        // style={{
+                        //   height: "6rem",
+                        // }}
                         value={field.value} // Pass value explicitly
                         onChange={field.onChange}
                       />

@@ -19,7 +19,6 @@ const SubjectSchema = z.object({
   code_pr: z.string().min(1, { message: "Subject Code PR is required," }),
   credit_hour: z.number().min(1),
   subject_type_id: z.number(),
-  teacher_id: z.number().optional(),
   is_chooseable: z.boolean().default(false),
   is_section_specific: z.boolean().default(false),
   sections: z.array(z.string()).optional(),
@@ -113,13 +112,6 @@ const AddSubject = ({ grade, onSave }: AddSubjectProps) => {
     // return;
   }
 
-  const handleTeacherSelectChange =
-    () => (selectedOption: { value: number; label: string } | null) => {
-      if (selectedOption) {
-        setValue("teacher_id", selectedOption.value as number);
-      }
-    };
-
   return (
     <>
       {isLoading && <Loading />}
@@ -183,21 +175,7 @@ const AddSubject = ({ grade, onSave }: AddSubjectProps) => {
                 />
               </div>
             </div>
-            <div className="col-4">
-              <div className="fv-row mb-7">
-                <label className="fw-bold fs-6 mb-2" htmlFor="subject_educator">
-                  Select Subject Educator
-                </label>
 
-                <CustomSelect
-                  key={renderKey}
-                  options={teachers}
-                  onChange={handleTeacherSelectChange}
-                  error={errors.teacher_id?.message}
-                  placeholder="Select Teacher"
-                />
-              </div>
-            </div>
             <div className="col-4">
               <div className="fv-row mb-7">
                 <label className="required fw-bold fs-6 mb-2">

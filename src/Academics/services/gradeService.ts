@@ -59,6 +59,10 @@ export interface SectionInterface {
   is_active: number;
   faculty: FacultyInterface;
   student_count?: number;
+  teacher?: {
+    id: number;
+    full_name: string;
+  };
 }
 
 interface SectionsInterface {
@@ -98,6 +102,26 @@ export interface UpdateGradeInterface {
 
 export interface SingleGradeInterface {
   id: number;
+}
+
+export interface OldGradeInterface {
+  name: string;
+  short_name: string;
+}
+
+export interface AddClassTeacher {
+  grade: UpdateGradeInterface;
+  onSave: () => void;
+}
+
+export interface TeacherInterface {
+  value: number;
+  label: string;
+}
+
+export interface Section {
+  sectionId: number;
+  classTeacherId: number;
 }
 
 export default apiRoute("/academics/grades");

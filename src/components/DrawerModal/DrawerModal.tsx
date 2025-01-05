@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 type DrawerProps = {
   isOpen: boolean;
   onClose: () => void;
-  position?: "left" | "right" | "top" | "bottom" | "center"; // Added "center"
+  position?: "left" | "right" | "top" | "bottom" | "center";
   width?: string;
   height?: string;
   children: React.ReactNode;
@@ -24,8 +24,10 @@ const DrawerModal = ({
   useEffect(() => {
     if (isOpen) {
       setIsVisible(true);
+      document.body.classList.add("no-scroll");
     } else {
       const timer = setTimeout(() => setIsVisible(false), 300);
+      document.body.classList.remove("no-scroll");
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
@@ -68,7 +70,7 @@ const DrawerModal = ({
         : position === "bottom"
         ? "translateY(100%)"
         : position === "center"
-        ? "translate(-50%, -50%)" // Centering transform
+        ? "translate(-50%, -50%)"
         : undefined,
     opacity: 0,
   };

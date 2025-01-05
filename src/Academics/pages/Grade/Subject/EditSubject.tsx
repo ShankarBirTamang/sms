@@ -4,6 +4,7 @@ import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { GradeInterface } from "../../../services/gradeService";
 import {
+  EditSubjectInterface,
   SubjectInterface,
   UpdateSubjectInterface,
 } from "../../../services/subjectService";
@@ -19,17 +20,16 @@ const SubjectSchema = z.object({
   subject_type_id: z.number(),
   is_chooseable: z.boolean().default(false),
   is_section_specific: z.boolean().default(false),
-  sections: z.array(z.number()).optional(),
+  sections: z.array(z.string()).optional(),
 });
 type FormData = z.infer<typeof SubjectSchema>;
 
-interface AddSubjectProps {
+interface EditSubjectProps {
   grade?: GradeInterface;
   onSave: () => void;
-  formMode: "create" | "edit";
-  subject?: UpdateSubjectInterface;
+  subject: UpdateSubjectInterface;
 }
-const AddSubject = ({ grade, onSave, formMode, subject }: AddSubjectProps) => {
+const EditSubject = ({ grade, onSave, subject }: EditSubjectProps) => {
   const { saveSubject, updateSubject } = useSubject({
     grade_id: grade?.id ?? -1,
   });
@@ -67,57 +67,60 @@ const AddSubject = ({ grade, onSave, formMode, subject }: AddSubjectProps) => {
 
   useEffect(() => {
     setIsLoading(true);
-    if (formMode === "edit" && subject) {
-      console.log(subject);
+    console.log(subject);
 
-      setValue("name", subject.name);
-      setValue("credit_hour", subject.credit_hour ?? 0);
-      const code = subject.code.split(",");
+    setValue("name", subject.name);
+    setValue("credit_hour", subject.credit_hour ?? 0);
+    const code = subject.code?.split(",");
+    if (code) {
+      code[0] = code[0].trim();
       setValue("code_th", code[0] ?? null);
+      code[1] = code[1].trim();
       setValue("code_pr", code[1] ?? null);
-      setValue("subject_type_id", subject.subject_type?.id ?? -1);
-      if (subject.is_chooseable) {
-        setValue("is_chooseable", true);
-        setIsChooseable(true);
-      } else {
-        setValue("is_chooseable", false);
-        setIsChooseable(false);
-      }
-
-      if (subject.is_section_specific) {
-        setValue("is_section_specific", true);
-        setIsSectionSpecific(true);
-      } else {
-        setValue("is_section_specific", false);
-        setIsSectionSpecific(false);
-      }
     }
+    setValue("subject_type_id", subject.subject_type?.id ?? -1);
+    if (subject.is_chooseable) {
+      setValue("is_chooseable", true);
+      setIsChooseable(true);
+    } else {
+      setValue("is_chooseable", false);
+      setIsChooseable(false);
+    }
+
+    if (subject.is_section_specific) {
+      setValue("is_section_specific", true);
+      setIsSectionSpecific(true);
+    } else {
+      setValue("is_section_specific", false);
+      setIsSectionSpecific(false);
+    }
+    if (subject.sections) {
+      setValue(
+        "sections",
+        subject.sections.map((section) => String(section.id))
+      );
+    }
+
     setIsLoading(false);
-  }, [formMode, subject, setValue]);
+  }, [subject, setValue]);
 
   const onSubmit = async (data: FormData) => {
     console.log("Form submitted", data);
     try {
-      const subjectData: SubjectInterface = {
+      const subjectData: EditSubjectInterface = {
+        id: subject.id as number,
         name: data.name,
         code: [data.code_th, data.code_pr].join(","),
         credit_hour: data.credit_hour,
         subject_type_id: data.subject_type_id,
         is_chooseable: data.is_chooseable,
         is_section_specific: data.is_section_specific,
-        sections: data.sections,
+        sections: data.sections?.map(String),
       };
 
-      if (formMode === "create") {
-        await saveSubject(subjectData);
-      } else if (formMode === "edit" && subject) {
-        const updateData: UpdateSubjectInterface = {
-          id: subject.id as number,
-          ...subjectData,
-        };
-        console.log(subjectData);
-        await updateSubject(updateData);
-      }
+      console.log(subjectData);
+      await updateSubject(subjectData);
+
       onSave();
     } catch (error) {
       console.error("Error saving subject:", error);
@@ -125,7 +128,6 @@ const AddSubject = ({ grade, onSave, formMode, subject }: AddSubjectProps) => {
   };
   if (Object.keys(errors).length > 0) {
     console.log("Form has validation errors:", errors);
-    return;
   }
 
   return (
@@ -184,21 +186,6 @@ const AddSubject = ({ grade, onSave, formMode, subject }: AddSubjectProps) => {
                 }`}
                 placeholder="4"
               />
-            </div>
-          </div>
-          <div className="col-4">
-            <div className="fv-row mb-7">
-              <label className="fw-bold fs-6 mb-2" htmlFor="subject_educator">
-                Select Subject Educator
-              </label>
-              <select
-                className={`form-control form-select mb-3 mb-lg-0`}
-                id="subject_educator"
-                name="select"
-              >
-                <option value="1">Default User</option>
-                <option value="2">Default User2</option>
-              </select>
             </div>
           </div>
           <div className="col-4">
@@ -366,4 +353,4 @@ const AddSubject = ({ grade, onSave, formMode, subject }: AddSubjectProps) => {
   );
 };
 
-export default AddSubject;
+export default EditSubject;

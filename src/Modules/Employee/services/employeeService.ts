@@ -22,6 +22,11 @@ export interface EmployeeInterface {
   ethnicity: string;
   is_active: boolean;
   employee_type?: EmployeeTypeInterface;
+  class?: {
+    grade: string;
+    section: string;
+    faculty: string;
+  };
 }
 
 export default apiRoute("/employees");
