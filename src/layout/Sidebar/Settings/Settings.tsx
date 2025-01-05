@@ -78,6 +78,16 @@ const menuItems: MenuItem[] = [
     route: "iemis",
     submenu: [{ title: "Export Photograph", route: "export-photograph" }],
   },
+  {
+    title: "Design Services",
+    prefix: "design-services",
+    submenu: [
+      { title: "ID Cards", route: "id-cards" },
+      { title: "Certificates", route: "certificates" },
+      { title: "Admit Cards", route: "admit-cards" },
+      { title: "Marksheets", route: "marksheets" },
+    ],
+  },
 ];
 
 const Settings = () => {

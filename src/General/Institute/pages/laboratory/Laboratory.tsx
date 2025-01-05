@@ -185,7 +185,7 @@ const Laboratory = () => {
           <div className="card-header mb-6">
             <div className="card-title w-100">
               <h1 className="d-flex justify-content-between align-items-center position-relative my-1 w-100">
-                <span>Laboratorys</span>
+                <span>Laboratories</span>
                 <div className="d-flex gap-2">
                   <div className="d-flex align-items-center position-relative h-100">
                     <Icon

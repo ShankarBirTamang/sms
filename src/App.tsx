@@ -10,6 +10,7 @@ import { PermissionProvider } from "./context/permissionContext";
 import NotFound from "./pages/error/NotFound";
 import StudentRoute from "./Modules/Student/StudentRoute";
 import InstituteRoute from "./general/Institute/InstituteRoute";
+import DesignServicesRoute from "./DesignServices/DesignServicesRoute";
 
 const App = () => {
   return (
@@ -25,6 +26,10 @@ const App = () => {
                 {/* Include academic routes */}
               </Route>
               <Route path="academics/*" element={<AcademicRoute />} />
+              <Route
+                path="design-services/*"
+                element={<DesignServicesRoute />}
+              />
               <Route path="institute/*" element={<InstituteRoute />} />
               <Route path="students/*" element={<StudentRoute />} />
             </Route>

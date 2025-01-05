@@ -13,11 +13,9 @@ import { PaginationProps } from "../../components/Pagination/Pagination";
 import { CanceledError } from "../../services/apiClient";
 import toast from "react-hot-toast";
 
-//This solves the error
-
 const useTimeTable = ({
   search = "",
-  currentPage = 2,
+  currentPage = 1,
   itemsPerPage = null,
 }: PaginationAndSearch) => {
   const [timeTables, setTimeTables] = useState<UpdateTimeTableInterface[]>([]);
