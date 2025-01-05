@@ -10,22 +10,22 @@ const Dashboard = () => {
     {
       title: "Grade",
       icon: "grades",
-      route: "",
+      route: "/academics/grades",
     },
     {
       title: "Students",
       icon: "student",
-      route: "",
+      route: "/students",
     },
     {
       title: "Employee",
       icon: "users",
-      route: "",
+      route: "/employees",
     },
     {
       title: "Examination",
       icon: "exam",
-      route: "",
+      route: "/examination/session",
     },
   ];
   const totalStudents = 1000;

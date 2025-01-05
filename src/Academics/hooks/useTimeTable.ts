@@ -3,8 +3,12 @@ import {
   ApiResponseInterface,
   PaginationAndSearch,
 } from "../../Interface/Interface";
-import { UpdateTimeTableInterface } from "../services/timeTableServic";
+import timeTableService, {
+  UpdateTimetableFormValues,
+  UpdateTimeTableInterface,
+} from "../services/timeTableServic";
 import { PaginationProps } from "../../components/Pagination/Pagination";
+import { CanceledError } from "../../services/apiClient";
 
 const useTimeTable = ({
   search = "",
@@ -13,6 +17,10 @@ const useTimeTable = ({
 }: PaginationAndSearch) => {
   const [timeTables, setTimeTables] = useState<UpdateTimeTableInterface[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [timeTable, setTimeTable] = useState<
+    UpdateTimetableFormValues | undefined
+  >(undefined);
+
   const [isLoading, setIsLoading] = useState(false);
 
   // For Pagination
@@ -22,7 +30,7 @@ const useTimeTable = ({
   //end for Pagination
 
   useEffect(() => {
-    // setIsLoading(true);
+    setIsLoading(true);
     const params: Record<string, string | number | null> = {
       per_page: itemsPerPage,
       search: search,
@@ -31,34 +39,60 @@ const useTimeTable = ({
       params.page = currentPage;
     }
 
-    // const { request, cancel } =
-    //   academicLevelService.getAll<
-    //     ApiResponseInterface<UpdateTimeTableInterface>
-    //   >(params);
+    const { request, cancel } =
+      timeTableService.getAll<ApiResponseInterface<UpdateTimeTableInterface>>(
+        params
+      );
 
-    // request
-    //   .then((result) => {
-    //     setTimeTable(result.data.data);
-    //     setPagination(result.data.meta);
-    //     setEdgeLinks(result.data.links);
-    //     setLoading(false);
-    //   })
-    //   .catch((err) => {
-    //     if (err instanceof CanceledError) return;
-    //     setError(err.message);
-    //     setLoading(false);
-    //   });
+    request
+      .then((result) => {
+        console.log("timetables", result.data.data);
+        setTimeTables(result.data.data);
+        setPagination(result.data.meta);
+        setEdgeLinks(result.data.links);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        if (err instanceof CanceledError) return;
+        setError(err.message);
+        setIsLoading(false);
+      });
   }, [search, currentPage, itemsPerPage]);
+
+  // Fetch the one timetable by id
+  const getOneTimeTable = (id: number) => {
+    const { request, cancel } =
+      timeTableService.getOne<ApiResponseInterface<UpdateTimetableFormValues>>(
+        id
+      );
+
+    request
+      .then((result) => {
+        console.log("time table one", result.data.data); // Logs the object
+        setTimeTable(result.data.data);
+      })
+      .catch((err) => {
+        if (err instanceof CanceledError) return;
+        setError(err.message);
+      });
+
+    return () => cancel();
+  };
 
   return {
     error,
-    setIsLoading,
     isLoading,
-    setError,
     timeTables,
     pagination,
     edgeLinks,
+    itemsPerPage,
+    timeTable,
+    setIsLoading,
+    setError,
+    setTimeTable,
     setTimeTables,
+    setPagination,
+    getOneTimeTable,
   };
 };
 

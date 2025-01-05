@@ -13,7 +13,8 @@ import InstituteRoute from "./General/Institute/InstituteRoute";
 import Address from "./General/pages/Address/Address";
 import Vehicles from "./Transportation/pages/Vehicles";
 import TransportRoutes from "./Transportation/pages/TransportRoutes";
-import ExamSession from "./Modules/Examination/pages/ExamSession";
+import EmployeeRoute from "./Modules/Employee/EmployeeRoute";
+import ExamRoute from "./Modules/Examination/examRoute";
 
 const App = () => {
   return (
@@ -27,7 +28,7 @@ const App = () => {
               <Route element={<Layout />}>
                 <Route path="/" element={<Dashboard />} />
 
-                {/* Include academic routes */}
+                {/* Include transportation routes */}
                 <Route
                   path="/transportation/vehicles/*"
                   element={<Vehicles />}
@@ -36,15 +37,14 @@ const App = () => {
                   path="/transportation/routes/*"
                   element={<TransportRoutes />}
                 />
-                <Route
-                  path="/examination/session/*"
-                  element={<ExamSession />}
-                />
+
                 <Route path="address/*" element={<Address />} />
               </Route>
               <Route path="academics/*" element={<AcademicRoute />} />
+              <Route path="examination/*" element={<ExamRoute />} />
               <Route path="institute/*" element={<InstituteRoute />} />
               <Route path="students/*" element={<StudentRoute />} />
+              <Route path="employees/*" element={<EmployeeRoute />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

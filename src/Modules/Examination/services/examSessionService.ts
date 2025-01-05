@@ -1,22 +1,25 @@
+import { UpdateAcademicSessionInterface } from "../../../Academics/services/academicSessionService";
 import apiRoute from "../../../services/httpService";
 // import { UpdateGradeInterface } from "./gradeService";
 
-export interface AcademicSessionInterface {
+export interface ExamInterface {
   id?: number;
   name: string;
-  start_date: string;
+  start_date_ad: string;
   start_date_np: string;
-  end_date: string;
+  end_date_ad: string;
   end_date_np: string;
-  academic_level_id: number;
-  academic_level?: string;
-  is_active?: boolean;
-  // grades?: UpdateGradeInterface[];
+  exam_level : string;
+  // session: UpdateAcademicSessionInterface;
+  session: string;
+  is_completed?: boolean;
+  
 }
 
-export interface UpdateAcademicSessionInterface
-  extends AcademicSessionInterface {
+export interface UpdateExamInterface
+  extends ExamInterface {
   id: number; // id is required for updates
+  length:number;
 }
 
 export interface ChangeAcademicSessionStatusInterface {

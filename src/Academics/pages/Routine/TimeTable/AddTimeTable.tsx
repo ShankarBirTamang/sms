@@ -1,41 +1,148 @@
 import React, { useEffect, useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import toast from "react-hot-toast";
-
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import {
   daysOfWeek,
   TimetableFormValues,
-  timeTableSchema,
 } from "../../../services/timeTableServic";
 
 const TimeTableForm = () => {
   const [numberOfPeriods, setNumberOfPeriods] = useState(1);
-  const [sameTimeForAllDays, setSameTimeForAllDays] = useState(false);
-  // const [startTimeValues, setStartTimeValues] = useState(
-  //   Array(numberOfPeriods)
-  //     .fill("")
-  //     .map(() => Array(daysOfWeek.length).fill(""))
-  // );
-  // const [endTimeValues, setEndTimeValues] = useState(
-  //   Array(numberOfPeriods)
-  //     .fill("")
-  //     .map(() => Array(daysOfWeek.length).fill(""))
-  // );
+  const [sameTimeForAllDays, setSameTimeForAllDays] = useState<boolean[]>([]);
+  const [localStartTimeValues, setLocalStartTimeValues] = useState<string[][]>(
+    []
+  );
+  const [localEndTimeValues, setLocalEndTimeValues] = useState<string[][]>([]);
 
   const {
     register,
     handleSubmit,
     setValue,
     getValues,
+    reset,
     formState: { errors },
-  } = useForm<TimetableFormValues>({ resolver: zodResolver(timeTableSchema) });
+  } = useForm<TimetableFormValues>({
+    defaultValues: {
+      name: "",
+      no_of_periods: 1,
+      periods: [
+        {
+          period_name: "",
+          days: daysOfWeek.reduce((acc, day) => {
+            acc[day] = { start_time: "", end_time: "" };
+            return acc;
+          }, {} as TimetableFormValues["periods"][0]["days"]),
+        },
+      ],
+    },
+  });
+
+  // Initialize state for new periods
+  useEffect(() => {
+    setSameTimeForAllDays(
+      (prev) =>
+        prev.length < numberOfPeriods
+          ? [...prev, ...Array(numberOfPeriods - prev.length).fill(false)]
+          : prev.slice(0, numberOfPeriods) // Truncate if reducing
+    );
+
+    setLocalStartTimeValues(
+      (prev) =>
+        prev.length < numberOfPeriods
+          ? [
+              ...prev,
+              ...Array(numberOfPeriods - prev.length).fill(
+                Array(daysOfWeek.length).fill("")
+              ),
+            ]
+          : prev.slice(0, numberOfPeriods) // Truncate if reducing
+    );
+
+    setLocalEndTimeValues(
+      (prev) =>
+        prev.length < numberOfPeriods
+          ? [
+              ...prev,
+              ...Array(numberOfPeriods - prev.length).fill(
+                Array(daysOfWeek.length).fill("")
+              ),
+            ]
+          : prev.slice(0, numberOfPeriods) // Truncate if reducing
+    );
+  }, [numberOfPeriods]);
+
+  // Sync start and end time when checkbox is checked
+  useEffect(() => {
+    sameTimeForAllDays.forEach((isChecked, periodIndex) => {
+      if (isChecked) {
+        // Sync both start time and end time across all days for the specific period
+        const syncedStartTime = localStartTimeValues[periodIndex]?.[0] || "";
+        const syncedEndTime = localEndTimeValues[periodIndex]?.[0] || "";
+
+        setLocalStartTimeValues((prev) => {
+          const updated = [...prev];
+          updated[periodIndex] = Array(daysOfWeek.length).fill(syncedStartTime);
+          return updated;
+        });
+
+        setLocalEndTimeValues((prev) => {
+          const updated = [...prev];
+          updated[periodIndex] = Array(daysOfWeek.length).fill(syncedEndTime);
+          return updated;
+        });
+
+        // Ensure the start time and end time in form are updated
+        daysOfWeek.forEach((day) => {
+          setValue(
+            `periods.${periodIndex}.days.${day}.start_time`,
+            syncedStartTime as unknown as never
+          );
+          setValue(
+            `periods.${periodIndex}.days.${day}.end_time`,
+            syncedEndTime as unknown as never
+          );
+        });
+      }
+    });
+  }, [sameTimeForAllDays, setValue]);
+  //[sameTimeForAllDays, localStartTimeValues, localEndTimeValues, setValue]
 
   const handleNumberOfPeriodsChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setNumberOfPeriods(Number(e.target.value));
-    setValue("number_of_periods", Number(e.target.value));
+    const value = Number(e.target.value);
+
+    if (value > 0) {
+      setNumberOfPeriods(value);
+      setValue("no_of_periods", value);
+
+      // Get the current periods or default to an empty array
+      const existingPeriods = getValues("periods") || [];
+
+      // Initialize the new periods array
+      const newPeriods = [];
+
+      // Loop through the new number of periods and populate them
+      for (let i = 0; i < value; i++) {
+        if (existingPeriods[i]) {
+          // If the period exists, keep the data
+          newPeriods.push({ ...existingPeriods[i], id: i + 1 });
+        } else {
+          // If the period doesn't exist (i.e., it's a new period), create a blank period
+          newPeriods.push({
+            id: i + 1,
+            period_name: "",
+            days: daysOfWeek.reduce((acc, day) => {
+              acc[day] = { start_time: "", end_time: "" };
+              return acc;
+            }, {} as Record<string, { start_time: string; end_time: string }>),
+          });
+        }
+      }
+
+      // Update the periods with the new array
+      setValue("periods", newPeriods);
+    }
   };
 
   const handleTimeChange = (
@@ -45,121 +152,121 @@ const TimeTableForm = () => {
     action: "start" | "end"
   ) => {
     const value = e.target.value;
-    const fieldName =
-      `periods.${periodIndex}.days.${dayIndex}.${action}_time` as keyof TimetableFormValues;
-    setValue(fieldName, value); // Directly update form state
-  };
 
-  // const handleCheckBoxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const isChecked = e.target.checked;
-  //   setSameTimeForAllDays(isChecked);
-
-  //   if (isChecked) {
-  //     const firstStartField = startTimeValues[0][0];
-  //     const firstEndField = endTimeValues[0][0];
-
-  //     const syncedStartTime = Array(numberOfPeriods).fill(firstStartField);
-  //     const syncedEndTime = Array(numberOfPeriods).fill(firstEndField);
-
-  //     setStartTimeValues(syncedStartTime);
-  //     setEndTimeValues(syncedEndTime);
-  //   }
-  // };
-
-  const handleCheckBoxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const isChecked = e.target.checked;
-    setSameTimeForAllDays(isChecked);
-
-    if (isChecked) {
-      [...Array(numberOfPeriods)].forEach((_, periodIndex) => {
-        // Get start and end times from the first day of the current period
-        const firstStartTime = getValues(
-          `periods.${periodIndex}.days.${daysOfWeek[0]}.start_time` as const
-        );
-        const firstEndTime = getValues(
-          `periods.${periodIndex}.days.${daysOfWeek[0]}.end_time` as const
-        );
-
-        // Set the same start and end times for all days in the current period
-        daysOfWeek.forEach((day) => {
-          setValue(
-            `periods.${periodIndex}.days.${day}.start_time` as const,
-            firstStartTime || ""
-          );
-          setValue(
-            `periods.${periodIndex}.days.${day}.end_time` as const,
-            firstEndTime || ""
-          );
-        });
+    if (action === "start") {
+      setLocalStartTimeValues((prev) => {
+        const updated = [...prev];
+        updated[periodIndex][dayIndex] = value;
+        return updated;
       });
     } else {
-      // Optionally clear the time fields for all days when unchecking
-      [...Array(numberOfPeriods)].forEach((_, periodIndex) => {
-        daysOfWeek.forEach((day) => {
-          setValue(
-            `periods.${periodIndex}.days.${day}.start_time` as const,
-            ""
-          );
-          setValue(`periods.${periodIndex}.days.${day}.end_time` as const, "");
-        });
+      setLocalEndTimeValues((prev) => {
+        const updated = [...prev];
+        updated[periodIndex][dayIndex] = value;
+        return updated;
       });
+    }
+
+    const fieldName = `periods.${periodIndex}.days.${daysOfWeek[dayIndex]}.${action}_time`;
+    setValue(fieldName as keyof TimetableFormValues, value);
+  };
+
+  const handleCheckBoxChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    periodIndex: number
+  ) => {
+    const isChecked = e.target.checked;
+    setSameTimeForAllDays((prev) => {
+      const updated = [...prev];
+      updated[periodIndex] = isChecked;
+      return updated;
+    });
+  };
+
+  const handleClearInput = (fieldPath: string) => {
+    const match = fieldPath.match(
+      /periods\.(\d+)\.days\.(\w+)\.(start_time|end_time)/
+    );
+    if (match) {
+      const [, periodIndex, day, action] = match;
+      const periodIdx = parseInt(periodIndex, 10);
+      const dayIndex = daysOfWeek.indexOf(day);
+
+      if (dayIndex !== -1) {
+        if (action === "start_time") {
+          setLocalStartTimeValues((prev) => {
+            const updated = [...prev];
+            updated[periodIdx][dayIndex] = "";
+            return updated;
+          });
+        } else if (action === "end_time") {
+          setLocalEndTimeValues((prev) => {
+            const updated = [...prev];
+            updated[periodIdx][dayIndex] = "";
+            return updated;
+          });
+        }
+
+        setValue(fieldPath as keyof TimetableFormValues, "");
+      }
     }
   };
 
-  const handleClearInput = (field: string) => {
-    // Type narrow the field
+  const handleFormSubmit = (data: TimetableFormValues) => {
+    console.log("Form submitted with data:", JSON.stringify(data));
+    toast.success("Form successfully submitted!");
   };
 
   const handleDiscard = () => {
-    // Logic to reset or clear the form
-    toast("Form discarded!");
-    // Optionally, reset the form state using reset() from react-hook-form
-  };
-
-  const handleFormSubmit = (data: TimetableFormValues) => {
-    // Handle form submission logic
-    console.log("Form submitted with data:", data);
-    toast.success("Form successfully submitted!");
+    reset({
+      name: "",
+      no_of_periods: 1,
+      periods: Array.from({ length: 1 }, () => ({
+        period_name: "",
+        days: daysOfWeek.reduce((acc, day) => {
+          acc[day] = { start_time: "", end_time: "" };
+          return acc;
+        }, {} as Record<string, { start_time: string; end_time: string }>),
+      })),
+    });
+    setNumberOfPeriods(1);
+    setSameTimeForAllDays([false]); // Reset to a single period
+    setLocalStartTimeValues([Array(daysOfWeek.length).fill("")]); // Reset to a single period
+    setLocalEndTimeValues([Array(daysOfWeek.length).fill("")]); // Reset to a single period
   };
 
   return (
     <div className="col-md-12">
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="">
+      <form onSubmit={handleSubmit(handleFormSubmit)}>
+        {/* Time Table Name */}
         <div className="card px-12 py-8 my-6">
           <div className="card-title w-100">
-            <h1 className="d-flex justify-content-between align-items-center position-relative my-1 w-100">
-              <span>Time Table</span>
-            </h1>
+            <h1>Time Table</h1>
           </div>
           <div className="d-flex justify-content-between">
             <div className="mb-7 col-md-8">
-              <label htmlFor="timetable_name" className="required form-label">
+              <label htmlFor="name" className="required form-label">
                 Time Table Name
               </label>
               <input
-                id="timetable_name"
-                {...register("timetable_name")}
+                id="name"
+                {...register("name")}
                 type="text"
                 className="form-control form-control-solid"
                 placeholder="Eg: Summer Season"
                 required
               />
-              {errors.timetable_name && (
-                <span className="text-danger">
-                  {errors.timetable_name.message}
-                </span>
+              {errors.name && (
+                <span className="text-danger">{errors.name.message}</span>
               )}
             </div>
             <div className="mb-7 col-md-3">
-              <label
-                htmlFor="number_of_periods"
-                className="required form-label"
-              >
+              <label htmlFor="no_of_periods" className="required form-label">
                 Number of Periods
               </label>
               <input
-                id="number_of_periods"
-                {...register("number_of_periods")}
+                id="no_of_periods"
+                {...register("no_of_periods")}
                 type="number"
                 className="form-control form-control-solid"
                 min="1"
@@ -167,15 +274,16 @@ const TimeTableForm = () => {
                 onChange={handleNumberOfPeriodsChange}
                 required
               />
-              {errors.number_of_periods && (
+              {errors.no_of_periods && (
                 <span className="text-danger">
-                  {errors.number_of_periods.message}
+                  {errors.no_of_periods.message}
                 </span>
               )}
             </div>
           </div>
         </div>
 
+        {/* Periods Table */}
         <div className="card px-12 py-8 my-6">
           <div className="table-responsive mb-7">
             <div className="mb-7">
@@ -192,8 +300,8 @@ const TimeTableForm = () => {
                   style={{ backgroundColor: "rgba(0, 0, 255, 0.2)" }}
                 >
                   <th className="mx-auto">Period\Day</th>
-                  {daysOfWeek.map((days, index) => (
-                    <th key={index}>{days}</th>
+                  {daysOfWeek.map((day, index) => (
+                    <th key={index}>{day}</th>
                   ))}
                 </tr>
               </thead>
@@ -205,7 +313,7 @@ const TimeTableForm = () => {
                       <input
                         type="text"
                         {...register(`periods.${periodIndex}.period_name`)}
-                        value={`Period ${periodIndex + 1}`}
+                        placeholder={`Period ${periodIndex + 1}`}
                         className="form-control form-control-solid"
                         required
                       />
@@ -213,9 +321,8 @@ const TimeTableForm = () => {
                         <input
                           type="checkbox"
                           className="form-check-input w-30px h-20px"
-                          id="timeTable_periods_0_all_same"
-                          checked={sameTimeForAllDays}
-                          onChange={handleCheckBoxChange}
+                          checked={sameTimeForAllDays[periodIndex]}
+                          onChange={(e) => handleCheckBoxChange(e, periodIndex)}
                         />
                         <span className="form-check-label fs-6">
                           Assign same time to all days
@@ -234,9 +341,13 @@ const TimeTableForm = () => {
                           >
                             <input
                               type="time"
+                              value={
+                                localStartTimeValues[periodIndex]?.[dayIndex] ||
+                                ""
+                              }
                               className="form-control form-control-solid"
                               {...register(
-                                `periods.${periodIndex}.days.${daysOfWeek[dayIndex]}.start_time` as const
+                                `periods.${periodIndex}.days.${day}.start_time`
                               )}
                               onChange={(e) =>
                                 handleTimeChange(
@@ -252,7 +363,7 @@ const TimeTableForm = () => {
                               className="btn btn-light-danger btn-sm btn-icon"
                               onClick={() =>
                                 handleClearInput(
-                                  `periods.${periodIndex}.days.${daysOfWeek[dayIndex]}.start_time`
+                                  `periods.${periodIndex}.days.${day}.start_time`
                                 )
                               }
                             >
@@ -271,9 +382,13 @@ const TimeTableForm = () => {
                           >
                             <input
                               type="time"
+                              value={
+                                localEndTimeValues[periodIndex]?.[dayIndex] ||
+                                ""
+                              }
                               className="form-control form-control-solid"
                               {...register(
-                                `periods.${periodIndex}.days.${daysOfWeek[dayIndex]}.end_time` as const
+                                `periods.${periodIndex}.days.${day}.end_time`
                               )}
                               onChange={(e) =>
                                 handleTimeChange(
@@ -289,7 +404,7 @@ const TimeTableForm = () => {
                               className="btn btn-light-danger btn-sm btn-icon"
                               onClick={() =>
                                 handleClearInput(
-                                  `periods.${periodIndex}.days.${daysOfWeek[dayIndex]}.end_time`
+                                  `periods.${periodIndex}.days.${day}.end_time`
                                 )
                               }
                             >

@@ -22,8 +22,8 @@ const Subject = () => {
   useDocumentTitle("All Grade Subjects");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(null);
-  const [searchTerm, setSearchTerm] = useState(""); // New state for search term
-  const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const { gradeId } = useParams<{ gradeId: string }>();
   const [grade, setGrade] = useState<GradeInterface>();
@@ -36,6 +36,20 @@ const Subject = () => {
   const [addSubjectDrawer, setAddSubjectDrawer] = useState(false);
   const [editSubjectDrawer, setEditSubjectDrawer] = useState(false);
   const [updateRankDrawer, setUpdateRankDrawer] = useState(false);
+  const {
+    subjects,
+    pagination,
+    isLoading,
+    setLoading,
+    changeSubjectStatus,
+    edgeLinks,
+    fetchData,
+  } = useSubject({
+    search: debouncedSearchTerm,
+    currentPage,
+    itemsPerPage,
+    grade_id: gradeId ? Number(gradeId) : -1,
+  });
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -53,29 +67,21 @@ const Subject = () => {
 
   const toggleAddSubjectDrawer = () => {
     setAddSubjectDrawer(!addSubjectDrawer);
+    if (addSubjectDrawer) {
+      fetchData();
+    }
   };
 
   const toggleUpdateRankDrawer = () => {
     setUpdateRankDrawer(!updateRankDrawer);
+    if (updateRankDrawer) {
+      fetchData();
+    }
   };
 
   const toggleEditSubjectDrawer = () => {
     setEditSubjectDrawer(!editSubjectDrawer);
   };
-
-  const {
-    subjects,
-    pagination,
-    isLoading,
-    setLoading,
-    changeSubjectStatus,
-    edgeLinks,
-  } = useSubject({
-    search: debouncedSearchTerm,
-    currentPage,
-    itemsPerPage,
-    grade_id: gradeId ? Number(gradeId) : -1,
-  });
 
   useEffect(() => {
     setLoading(true);
@@ -285,11 +291,7 @@ const Subject = () => {
         width="900px"
         title="Add Subject"
       >
-        <AddSubject
-          grade={grade}
-          onSave={toggleAddSubjectDrawer}
-          formMode="create"
-        />
+        <AddSubject grade={grade} onSave={toggleAddSubjectDrawer} />
       </DrawerModal>
 
       <DrawerModal
@@ -302,7 +304,6 @@ const Subject = () => {
         <AddSubject
           grade={grade}
           onSave={toggleEditSubjectDrawer}
-          formMode="edit"
           subject={editSubject}
         />
       </DrawerModal>

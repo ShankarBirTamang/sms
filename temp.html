@@ -1,254 +1,116 @@
-<div className="card-body pt-4">
-  <div className="row">
-    <div className="col-10">
-      <div className="row">
-        <div className="col-3">
-          <div className="fv-row mb-7">
-            <label className="required fw-bold fs-6 mb-2">IEMIS-No.</label>
-            <input
-              type="text"
-              name="iemis"
-              value=""
-              className="form-control form-control-solid mb-3 mb-lg-0"
-              placeholder=""
-            />
-          </div>
-        </div>
-        <div className="col-3">
-          <div className="fv-row mb-7">
-            <label className="required fw-bold fs-6 mb-2">Nickname</label>
-            <input
-              type="text"
-              name="nickname"
-              value=""
-              className="form-control form-control-solid mb-3 mb-lg-0"
-              placeholder=""
-            />
-          </div>
-        </div>
-        <div className="col-md-6">
-          <div
-            wire:snapshot='{"data":{"value":null,"ADDate":"2024-12-10","valueNp":null,"BSDate":null,"title":"Date of Birth","inputName":"dob","englishDateId":"K3n0l6EGug","nepaliDateId":"w3JcpgP2kz"},"memo":{"id":"onPWlSrswfFktYhZDuvo","name":"general.date-converter","path":"sms\/students\/create","method":"GET","children":[],"scripts":["2629068949-0"],"assets":[],"errors":[],"locale":"en"},"checksum":"07e0b531f06eeecd850d6369c8e5c796a719d240ec4c500b57c7a4dff6fc93ec"}'
-            wire:effects="{&quot;scripts&quot;:{&quot;2629068949-0&quot;:&quot;<script>\n    initialize();\n\n\n    function initialize() {\n        setDate_dob('K3n0l6EGug', 'w3JcpgP2kz');\n\n        $('#w3JcpgP2kz').nepaliDatePicker({\n            language: \&quot;english\&quot;,\n            readOnlyInput: true,\n            ndpYear: true,\n            ndpMonth: true,\n            onChange: changed_dob,\n            ndpEnglishInput: \&quot;K3n0l6EGug\&quot;\n        });\n\n        $('#K3n0l6EGug').change(function () {\n            setDate_dob('K3n0l6EGug', 'w3JcpgP2kz');\n        });\n    }\n\n    function changed_dob() {\n        let dateNP = $(\&quot;#w3JcpgP2kz\&quot;).val();\n        let dateEN = $(\&quot;#K3n0l6EGug\&quot;).val();\n        let inputName = 'dob';\n        Livewire.dispatch('changedDate', {dateEN: dateEN, dateNP: dateNP, inputName: inputName});\n    }\n    function setDate_dob(englishDateId, nepaliDateId) {\n        var englishDate = $(\&quot;#\&quot; + englishDateId).val();\n        var nepaliDate = $(\&quot;#\&quot; + nepaliDateId).val();\n        if (englishDate !== '') {\n            var dateArray = englishDate.split(\&quot;-\&quot;);\n            var bsDate = NepaliFunctions.AD2BS({\n                year: parseInt(dateArray[0]),\n                month: parseInt(dateArray[1]),\n                day: parseInt(dateArray[2])\n            });\n            $(\&quot;#\&quot; + nepaliDateId).val(bsDate.year + '-' + bsDate.month + '-' + bsDate.day);\n        } else if (nepaliDate !== '') {\n            var dateArray = nepaliDate.split(\&quot;-\&quot;);\n            $(\&quot;#\&quot; + nepaliDateId).val(nepaliDate);\n            var adDate = NepaliFunctions.BS2AD({\n                year: parseInt(dateArray[0]),\n                month: parseInt(dateArray[1]),\n                day: parseInt(dateArray[2])\n            });\n            var adVal = adDate.year + '-' + String(adDate.month).padStart(2, '0') + '-' + adDate.day;\n            console.log(adVal);\n            $(\&quot;#\&quot; + englishDateId).val(adVal);\n        } else {\n            $(\&quot;#\&quot; + nepaliDateId).val('');\n        }\n\n        let dateNP = $(\&quot;#\&quot; + nepaliDateId).val();\n        let dateEN = $(\&quot;#\&quot; + englishDateId).val();\n        let inputName = 'dob';\n        Livewire.dispatch('changedDate', {dateEN: dateEN, dateNP: dateNP, inputName: inputName});\n    }\n\n<\/script>\n    &quot;}}"
-            wire:id="onPWlSrswfFktYhZDuvo"
-            className="row date-picker-container"
-            wire:ignore=""
-          >
-            <div className="col-6">
-              <div className="fv-row mb-7">
-                <label className="required fw-bold fs-6 mb-2"
-                  >Date of Birth (BS)</label
-                >
-                <input
-                  id="w3JcpgP2kz"
-                  type="text"
-                  name="nep_dob"
-                  value=""
-                  className="form-control form-control-solid mb-3 mb-lg-0 nepali-date ndp-nepali-calendar"
-                  placeholder="Ex: 1 or Grade 1"
-                  autocomplete="off"
-                  readonly="readonly"
-                />
-              </div>
-            </div>
-            <div className="col-6">
-              <div className="fv-row mb-7">
-                <label className="required fw-bold fs-6 mb-2"
-                  >Date of Birth (AD)
-                </label>
-                <input
-                  type="date"
-                  id="K3n0l6EGug"
-                  name="dob"
-                  wire:model="ADDate"
-                  value=""
-                  className="form-control form-control-solid mb-3 mb-lg-0"
-                  placeholder=""
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="col-6">
-          <div className="fv-row mb-7">
-            <label className="required fw-bold fs-6 mb-2">Address</label>
-            <input
-              type="text"
-              name="address"
-              value=""
-              className="form-control form-control-solid mb-3 mb-lg-0"
-              placeholder=""
-            />
-          </div>
-        </div>
-        <div className="col-6">
-          <div className="fv-row mb-7">
-            <label className="required fw-bold fs-6 mb-2">Email</label>
-            <input
-              type="email"
-              name="email"
-              value=""
-              className="form-control form-control-solid mb-3 mb-lg-0"
-              placeholder=""
-            />
-          </div>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-3">
-          <div className="fv-row mb-7">
-            <!--begin::Label-->
-            <label className="required fw-bold fs-6 mb-2">Gender</label>
+<div class="card-body pt-0">
+  <table class="table align-middle table-row-dashed fs-6 gy-5" id="myTable">
+      <thead>
+          <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+              <th class="w-50px">S.N.</th>
+              <th class="w-300px">Name</th>
+              <th class="">Level</th>
+              <th class="w-200px">Academic Session</th>
+              <th class="min-w-125px">Start Date</th>
+              <th class="min-w-125px">End Date</th>
+              <th class="min-w-125px">Status</th>
+              <th class="text-end min-w-125px">Actions</th>
+          </tr>
+      </thead>
+      <tbody class="text-gray-600 fw-bold ">
+          <tr>
+              <td class="d-flex align-items-center">
+                  1
+              </td>
+              <td>2081 First Terminal Examination
+                <br>
+                                                                  <br>
+              </td>
+              <td>
+                Nursery to 10
+              </td>
+              <td>
+                 Academic Year 2081
+              </td>
+              <td>04 Jul 2024</td>
+              <td>12 Jul 2024</td>
+              <td class="d-flex" style="gap: 10px">
+              <div class="badge badge-info fw-bolder">Completed</div>
+              <a href="https://sms.aanshtech.com/sms/examination/exams/1/mark-completed" class="badge badge-danger">Unmark as
+                      Completed</a>
+              </td>
 
-            <select
-              name="gender"
-              id=""
-              className="form-control form-control-solid"
-            >
-              <option value="" selected="" hidden="">Select</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Others">Others</option>
-            </select>
-          </div>
-        </div>
-        <div className="col-3">
-          <div className="fv-row mb-7">
-            <label className="required fw-bold fs-6 mb-2">Blood Group</label>
+              <td class="text-end">
+    <a href="https://sms.aanshtech.com/sms/examination/exams/1" class="btn btn-light-info btn-icon" type="link" icon="icons.search" scheme="light-info btn-icon" route="https://sms.aanshtech.com/sms/examination/exams/1">
+            <span class="svg-icon   m-0 ">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M21.7 18.9L18.6 15.8C17.9 16.9 16.9 17.9 15.8 18.6L18.9 21.7C19.3 22.1 19.9 22.1 20.3 21.7L21.7 20.3C22.1 19.9 22.1 19.3 21.7 18.9Z" fill="currentColor"></path>
+<path opacity="0.3" d="M11 20C6 20 2 16 2 11C2 6 6 2 11 2C16 2 20 6 20 11C20 16 16 20 11 20ZM11 4C7.1 4 4 7.1 4 11C4 14.9 7.1 18 11 18C14.9 18 18 14.9 18 11C18 7.1 14.9 4 11 4ZM8 11C8 9.3 9.3 8 11 8C11.6 8 12 7.6 12 7C12 6.4 11.6 6 11 6C8.2 6 6 8.2 6 11C6 11.6 6.4 12 7 12C7.6 12 8 11.6 8 11Z" fill="currentColor"></path>
+</svg>
+          
+</span>
+</a>
+    <a href="https://sms.aanshtech.com/sms/examination/exams/1/edit" class="btn btn-light-success btn-icon" type="link" icon="icons.edit" scheme="light-success btn-icon" route="https://sms.aanshtech.com/sms/examination/exams/1/edit">
+            <span class="svg-icon   m-0 ">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path opacity="0.3" fill-rule="evenodd" clip-rule="evenodd" d="M2 4.63158C2 3.1782 3.1782 2 4.63158 2H13.47C14.0155 2 14.278 2.66919 13.8778 3.04006L12.4556 4.35821C11.9009 4.87228 11.1726 5.15789 10.4163 5.15789H7.1579C6.05333 5.15789 5.15789 6.05333 5.15789 7.1579V16.8421C5.15789 17.9467 6.05333 18.8421 7.1579 18.8421H16.8421C17.9467 18.8421 18.8421 17.9467 18.8421 16.8421V13.7518C18.8421 12.927 19.1817 12.1387 19.7809 11.572L20.9878 10.4308C21.3703 10.0691 22 10.3403 22 10.8668V19.3684C22 20.8218 20.8218 22 19.3684 22H4.63158C3.1782 22 2 20.8218 2 19.3684V4.63158Z" fill="currentColor"></path>
+<path d="M10.9256 11.1882C10.5351 10.7977 10.5351 10.1645 10.9256 9.77397L18.0669 2.6327C18.8479 1.85165 20.1143 1.85165 20.8953 2.6327L21.3665 3.10391C22.1476 3.88496 22.1476 5.15129 21.3665 5.93234L14.2252 13.0736C13.8347 13.4641 13.2016 13.4641 12.811 13.0736L10.9256 11.1882Z" fill="currentColor"></path>
+<path d="M8.82343 12.0064L8.08852 14.3348C7.8655 15.0414 8.46151 15.7366 9.19388 15.6242L11.8974 15.2092C12.4642 15.1222 12.6916 14.4278 12.2861 14.0223L9.98595 11.7221C9.61452 11.3507 8.98154 11.5055 8.82343 12.0064Z" fill="currentColor"></path>
+</svg>
+          
+</span>
+</a>
 
-            <select
-              name="blood_group"
-              id="blood_group"
-              className="form-control form-control-solid"
-            >
-              <option value="" selected="" hidden="">Select</option>
-              <option value="A+">A+</option>
-              <option value="A-">A-</option>
-              <option value="B+">B+</option>
-              <option value="B-">B-</option>
-              <option value="AB+">AB+</option>
-              <option value="AB-">AB-</option>
-              <option value="O+">O+</option>
-              <option value="O-">O-</option>
-            </select>
-          </div>
-        </div>
-        <div className="col-3">
-          <div className="fv-row mb-7">
-            <label className="required fw-bold fs-6 mb-2">Nationality</label>
-            <input
-              type="text"
-              name="nationality"
-              value=""
-              className="form-control form-control-solid mb-3 mb-lg-0"
-              placeholder=""
-            />
-          </div>
-        </div>
-        <div className="col-3">
-          <div className="fv-row mb-7">
-            <!--begin::Label-->
-            <label className="required fw-bold fs-6 mb-2">Ethnicity</label>
-            <select
-              name="ethnicity"
-              id="ethnicity"
-              required=""
-              className="form-control form-control-solid"
-            >
-              <option value="" selected="" hidden="">Select</option>
-              <option value="Dalit">Dalit</option>
-              <option value="Janajati">Janajati</option>
-              <option value="Others" selected="">Others</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col">
-          <div className="fv-row mb-7">
-            <label className="required fw-bold fs-6 mb-2">Mother Tongue</label>
-            <input
-              type="text"
-              name="mother_tongue"
-              value=""
-              className="form-control form-control-solid mb-3 mb-lg-0"
-              placeholder=""
-            />
-          </div>
-        </div>
-        <div className="col">
-          <div className="fv-row mb-7">
-            <label className="required fw-bold fs-6 mb-2">Contact</label>
-            <input
-              type="text"
-              name="contact"
-              value=""
-              className="form-control form-control-solid mb-3 mb-lg-0"
-              placeholder=""
-            />
-          </div>
-        </div>
-        <div className="col">
-          <div className="fv-row mb-7">
-            <label className="required fw-bold fs-6 mb-2">Religion</label>
-            <input
-              type="text"
-              name="religion"
-              value=""
-              className="form-control form-control-solid mb-3 mb-lg-0"
-              placeholder=""
-            />
-          </div>
-        </div>
+                  
+              </td>
+              
+              
+          </tr>
+          <tr>
 
-        <div>
-          <button type="submit" className="btn btn-primary">SUBMIT</button>
-        </div>
-      </div>
-    </div>
-    <div className="col-2">
-      <div className="fv-row mb-7">
-        <label className="required fw-bold fs-6 mb-2">Photo</label>
-      </div>
-      <div
-        className="image-input image-input-outline"
-        data-kt-image-input="true"
-        style=""
-      >
-        <div className="image-input-wrapper w-175px h-175px" style=""></div>
-        <label
-          className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-          data-kt-image-input-action="change"
-          data-bs-toggle="tooltip"
-          aria-label="Change avatar"
-          data-kt-initialized="1"
-        >
-          <i className="bi bi-pencil-fill fs-7"></i>
-          <!--begin::Inputs-->
-          <input type="file" name="photo" accept=".png, .jpg, .jpeg" />
-          <input type="hidden" name="avatar_remove" />
-          <!--end::Inputs-->
-        </label>
-        <span
-          className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-          data-kt-image-input-action="cancel"
-          data-bs-toggle="tooltip"
-          aria-label="Cancel avatar"
-          data-kt-initialized="1"
-        >
-          <i className="bi bi-x fs-2"></i>
-        </span>
-        <span
-          className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-          data-kt-image-input-action="remove"
-          data-bs-toggle="tooltip"
-          aria-label="Remove avatar"
-          data-kt-initialized="1"
-        >
-          <i className="bi bi-x fs-2"></i>
-        </span>
-      </div>
-      <div className="form-text">Allowed file types: png, jpg, jpeg.</div>
-    </div>
-  </div>
+              <td class="d-flex align-items-center">
+                  2
+              </td>
+              <td>FIrst Terminal Examination 2081
+                  <br>
+                                                                  <br>
+                                      </td>
+              <td>
+                                          Plus 2
+                                      </td>
+              <td>
+                                          Academic Session 2081-82 [+2]
+                                      </td>
+
+                                  <td>25 Sep 2024</td>
+                                  <td>04 Oct 2024</td>
+              <td class="d-flex" style="gap: 10px">
+                                          <div class="badge badge-info fw-bolder">Completed</div>
+                  <a href="https://sms.aanshtech.com/sms/examination/exams/2/mark-completed" class="badge badge-danger">Unmark as
+                      Completed</a>
+                                      </td>
+
+              <td class="text-end">
+    <a href="https://sms.aanshtech.com/sms/examination/exams/2" class="btn btn-light-info btn-icon" type="link" icon="icons.search" scheme="light-info btn-icon" route="https://sms.aanshtech.com/sms/examination/exams/2">
+            <span class="svg-icon   m-0 ">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M21.7 18.9L18.6 15.8C17.9 16.9 16.9 17.9 15.8 18.6L18.9 21.7C19.3 22.1 19.9 22.1 20.3 21.7L21.7 20.3C22.1 19.9 22.1 19.3 21.7 18.9Z" fill="currentColor"></path>
+<path opacity="0.3" d="M11 20C6 20 2 16 2 11C2 6 6 2 11 2C16 2 20 6 20 11C20 16 16 20 11 20ZM11 4C7.1 4 4 7.1 4 11C4 14.9 7.1 18 11 18C14.9 18 18 14.9 18 11C18 7.1 14.9 4 11 4ZM8 11C8 9.3 9.3 8 11 8C11.6 8 12 7.6 12 7C12 6.4 11.6 6 11 6C8.2 6 6 8.2 6 11C6 11.6 6.4 12 7 12C7.6 12 8 11.6 8 11Z" fill="currentColor"></path>
+</svg>
+          
+</span>
+</a>
+    <a href="https://sms.aanshtech.com/sms/examination/exams/2/edit" class="btn btn-light-success btn-icon" type="link" icon="icons.edit" scheme="light-success btn-icon" route="https://sms.aanshtech.com/sms/examination/exams/2/edit">
+            <span class="svg-icon   m-0 ">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path opacity="0.3" fill-rule="evenodd" clip-rule="evenodd" d="M2 4.63158C2 3.1782 3.1782 2 4.63158 2H13.47C14.0155 2 14.278 2.66919 13.8778 3.04006L12.4556 4.35821C11.9009 4.87228 11.1726 5.15789 10.4163 5.15789H7.1579C6.05333 5.15789 5.15789 6.05333 5.15789 7.1579V16.8421C5.15789 17.9467 6.05333 18.8421 7.1579 18.8421H16.8421C17.9467 18.8421 18.8421 17.9467 18.8421 16.8421V13.7518C18.8421 12.927 19.1817 12.1387 19.7809 11.572L20.9878 10.4308C21.3703 10.0691 22 10.3403 22 10.8668V19.3684C22 20.8218 20.8218 22 19.3684 22H4.63158C3.1782 22 2 20.8218 2 19.3684V4.63158Z" fill="currentColor"></path>
+<path d="M10.9256 11.1882C10.5351 10.7977 10.5351 10.1645 10.9256 9.77397L18.0669 2.6327C18.8479 1.85165 20.1143 1.85165 20.8953 2.6327L21.3665 3.10391C22.1476 3.88496 22.1476 5.15129 21.3665 5.93234L14.2252 13.0736C13.8347 13.4641 13.2016 13.4641 12.811 13.0736L10.9256 11.1882Z" fill="currentColor"></path>
+<path d="M8.82343 12.0064L8.08852 14.3348C7.8655 15.0414 8.46151 15.7366 9.19388 15.6242L11.8974 15.2092C12.4642 15.1222 12.6916 14.4278 12.2861 14.0223L9.98595 11.7221C9.61452 11.3507 8.98154 11.5055 8.82343 12.0064Z" fill="currentColor"></path>
+</svg>
+          
+</span>
+</a>
+
+                  
+              </td>
+              
+              
+          </tr>
+                      </tbody>
+  </table>
 </div>

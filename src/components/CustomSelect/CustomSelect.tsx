@@ -14,6 +14,7 @@ interface CustomSelectProps {
   isClearable?: boolean;
   className?: string;
   defaultValue?: Option | null;
+  renderKey?: string;
 }
 
 const CustomSelect = ({
@@ -24,10 +25,12 @@ const CustomSelect = ({
   isClearable = true,
   className,
   defaultValue,
+  renderKey,
 }: CustomSelectProps) => {
   return (
     <div className={`custom-select ${className}`}>
       <Select
+        key={renderKey}
         options={options}
         onChange={onChange}
         placeholder={placeholder}
