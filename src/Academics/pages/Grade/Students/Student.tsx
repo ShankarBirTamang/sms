@@ -9,7 +9,6 @@ import useGrade from "../../../hooks/useGrade";
 import {
   GradeInterface,
   SectionInterface,
-  UpdateGradeInterface,
 } from "../../../services/gradeService";
 import DrawerModal from "../../../../components/DrawerModal/DrawerModal";
 import StudentRollNo from "../Drawers/StudentRollNo";
@@ -78,23 +77,34 @@ const Student = () => {
   const handleStudentOverviewNavigate = (studentId: number) => {
     navigate(`/students/details/${studentId}/overview`);
   };
+  const sortedStudents = students.sort(
+    (a, b) => (Number(a.roll_no) || 0) - (Number(b.roll_no) || 0)
+  );
+  const maleStudents = sortedStudents.filter((student) => {
+    return student.gender?.toLowerCase() === "male";
+  });
+  const femaleStudents = sortedStudents.filter((student) => {
+    return student.gender?.toLowerCase() === "female";
+  });
 
-  const filteredStudents = students.filter((student) =>
+  const filteredStudents = sortedStudents.filter((student) =>
     student.full_name?.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
   );
 
   const toggleStudentRollDrawer = () => {
     setstudentRollDrawer(!studentRollDrawer);
-    // if (studentRollDrawer) {
-    //   fetchGrades();
-    // }
+    if (studentRollDrawer) {
+      setIsLoading(true);
+      fetchStudents();
+      setIsLoading(false);
+    }
   };
   return (
     <>
       <div className="row g-5 g-xl-8">
         <div className="col-12">
           <div className="card card-flush">
-            <div className="card-header border-0 pt-6">
+            <div className="card-header pt-6">
               <div className="card-title">
                 <h2>All Students of {currentGrade?.name}</h2>
               </div>
@@ -182,86 +192,142 @@ const Student = () => {
               )}
 
               {!isLoading && filteredStudents.length > 0 && (
-                <table className="table align-middle table-row-dashed fs-6 gy-2">
-                  <thead>
-                    <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
-                      <th className="">S.N.</th>
-
-                      <th className="w-300px">Name</th>
-                      <th className="w-125px">Gender</th>
-                      <th className="w-125px">Contact</th>
-                      <th className="w-250px">Address</th>
-                      <th className="text-end min-w-175px">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-gray-600 fw-bold">
-                    {filteredStudents.map((student, index) => (
-                      <tr key={student.id}>
-                        <td>{index + 1}</td>
-                        <td>
+                <div>
+                  <div className="d-flex flex-wrap flex-stack">
+                    <div className="d-flex flex-column flex-grow-1 pe-8">
+                      <div className="d-flex flex-wrap">
+                        <div className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
                           <div className="d-flex align-items-center">
-                            {student.photo ? (
-                              <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
-                                <div className="symbol-label"></div>
-                              </div>
-                            ) : null}
-                            <div className="d-flex flex-column">
-                              <a
-                                href="#"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  handleStudentOverviewNavigate(student.id);
-                                }}
-                                className="text-gray-800 text-hover-primary mb-1"
-                              >
-                                {student.full_name}
-                              </a>
-                              <span>
-                                {" "}
-                                {student.grade?.name} (
-                                {student.section?.faculty.name !== "General"
-                                  ? `: ${student.section?.faculty.name}`
-                                  : ""}
-                                {student.section?.name}) | Roll : 1
-                              </span>
+                            <div className="fs-2 fw-bolder counted">
+                              {students.length}
                             </div>
                           </div>
-                        </td>
-                        <td>{student.gender}</td>
-                        <td>{student.contact}</td>
-                        <td>{student.address}</td>
-
-                        <td className="text-end">
-                          <div
-                            style={{
-                              display: "flex",
-                              gap: 10,
-                              justifyContent: "flex-end",
-                            }}
-                          >
-                            <button
-                              onClick={() =>
-                                handleStudentOverviewNavigate(student.id)
-                              }
-                              type="button"
-                              title="search"
-                              className="btn btn-light-info btn-sm btn-icon"
-                            >
-                              <Icon name={"search"} className={"svg-icon-2"} />
-                            </button>
-                            <a
-                              title="edit"
-                              href="#"
-                              className="btn btn-light-success btn-sm btn-icon"
-                            >
-                              <Icon name={"edit"} className={"svg-icon-2"} />
-                            </a>
+                          <div className="fw-bold fs-6 text-gray-400">
+                            Total Students
                           </div>
-                        </td>
+                        </div>
+                        <div className="border border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
+                          <div className="d-flex align-items-center">
+                            <div className="fs-2 fw-bolder counted">
+                              {maleStudents.length}
+                            </div>
+                          </div>
+                          <div className="fw-bold fs-6 text-gray-400">Male</div>
+                        </div>
+                        <div className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
+                          <div className="d-flex align-items-center">
+                            <div className="fs-2 fw-bolder counted">
+                              {femaleStudents.length}
+                            </div>
+                          </div>
+                          <div className="fw-bold fs-6 text-gray-400">
+                            Female
+                          </div>
+                        </div>
+                        <div className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
+                          <div className="d-flex align-items-center">
+                            <div className="fs-2 fw-bolder counted">0</div>
+                          </div>
+                          <div className="fw-bold fs-6 text-gray-400">
+                            Day Boarders
+                          </div>
+                        </div>
+                        <div className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
+                          <div className="d-flex align-items-center">
+                            <div className="fs-2 fw-bolder counted">0</div>
+                          </div>
+                          <div className="fw-bold fs-6 text-gray-400">Bus</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <hr className="border border-gray-300 border-dashed" />
+                  <table className="table align-middle table-row-dashed fs-6 gy-2">
+                    <thead>
+                      <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+                        <th className="">S.N.</th>
+
+                        <th className="w-300px">Name</th>
+                        <th className="w-125px">Gender</th>
+                        <th className="w-125px">Contact</th>
+                        <th className="w-250px">Address</th>
+                        <th className="text-end min-w-175px">Actions</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="text-gray-600 fw-bold">
+                      {filteredStudents.map((student, index) => (
+                        <tr key={student.id}>
+                          <td>{index + 1}</td>
+                          <td>
+                            <div className="d-flex align-items-center">
+                              {student.photo ? (
+                                <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
+                                  <div className="symbol-label"></div>
+                                </div>
+                              ) : null}
+                              <div className="d-flex flex-column">
+                                <a
+                                  href="#"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    handleStudentOverviewNavigate(student.id);
+                                  }}
+                                  className="text-gray-800 text-hover-primary mb-1"
+                                >
+                                  {student.full_name}
+                                </a>
+                                <span>
+                                  {" "}
+                                  {student.grade?.name} (
+                                  {student.section?.faculty.name !== "General"
+                                    ? `: ${student.section?.faculty.name}`
+                                    : ""}
+                                  {student.section?.name})
+                                  {student.roll_no &&
+                                    ` | Roll No : ${student.roll_no}`}
+                                </span>
+                              </div>
+                            </div>
+                          </td>
+                          <td>{student.gender}</td>
+                          <td>{student.contact}</td>
+                          <td>{student.address}</td>
+
+                          <td className="text-end">
+                            <div
+                              style={{
+                                display: "flex",
+                                gap: 10,
+                                justifyContent: "flex-end",
+                              }}
+                            >
+                              <button
+                                onClick={() =>
+                                  handleStudentOverviewNavigate(student.id)
+                                }
+                                type="button"
+                                title="search"
+                                className="btn btn-light-info btn-sm btn-icon"
+                              >
+                                <Icon
+                                  name={"search"}
+                                  className={"svg-icon-2"}
+                                />
+                              </button>
+                              <a
+                                title="edit"
+                                href="#"
+                                className="btn btn-light-success btn-sm btn-icon"
+                              >
+                                <Icon name={"edit"} className={"svg-icon-2"} />
+                              </a>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
           </div>
@@ -278,7 +344,7 @@ const Student = () => {
         <StudentRollNo
           onSave={toggleStudentRollDrawer}
           grade={currentGrade || ({} as GradeInterface)}
-          students={students}
+          students={sortedStudents}
           section={currentSection || ({} as SectionInterface)}
         />
       </DrawerModal>

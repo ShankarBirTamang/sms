@@ -11,6 +11,7 @@ import {
 } from "../../Interface/Interface";
 import { PaginationProps } from "../../components/Pagination/Pagination";
 import gradeService, { UpdateGradeInterface } from "../services/gradeService";
+import toast from "react-hot-toast";
 
 const useGrade = ({
   search = "",
@@ -120,8 +121,10 @@ const useGrade = ({
       );
     } catch (err) {
       if (err instanceof Error) {
+        toast.error(err.message);
         setError(err.message);
       } else {
+        toast.error("An unknown error occurred.");
         setError("An unknown error occurred.");
       }
     }
@@ -140,8 +143,10 @@ const useGrade = ({
         return grade || null;
       } catch (err) {
         if (err instanceof Error) {
+          toast.error(err.message);
           setError(err.message);
         } else {
+          toast.error("An unknown error occurred.");
           setError("An unknown error occurred.");
         }
         return null;
@@ -170,12 +175,37 @@ const useGrade = ({
       return result.data;
     } catch (err) {
       if (err instanceof Error) {
+        toast.error(err.message);
         setError(err.message);
       } else {
+        toast.error("An unknown error occurred.");
         setError("An unknown error occurred.");
       }
     }
   }, []);
+
+  interface SetStudentRollNo {
+    gradeId: number;
+    data: { id: number; roll: string }[];
+  }
+
+  const setStudentRollNo = async ({ gradeId, data }: SetStudentRollNo) => {
+    try {
+      const result = await axiosInstance.post(
+        `academics/grades/${gradeId}/set-student-roll-no`,
+        data
+      );
+      toast.success(result.data.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        toast.error(err.message);
+        setError(err.message);
+      } else {
+        toast.error("An unknown error occurred.");
+        setError("An unknown error occurred.");
+      }
+    }
+  };
 
   return {
     grades,
@@ -191,6 +221,7 @@ const useGrade = ({
     setClassTeacher,
     getSectionStudents,
     getGrade,
+    setStudentRollNo,
   };
 };
 

@@ -8,6 +8,7 @@ import {
 } from "../../../services/gradeService";
 import { StudentInterface } from "../../../../Modules/Student/services/studentService";
 import Loading from "../../../../components/Loading/Loading";
+import useGrade from "../../../hooks/useGrade";
 
 interface StudentRollNoProps {
   onSave: () => void;
@@ -16,7 +17,6 @@ interface StudentRollNoProps {
   students: StudentInterface[];
 }
 
-// Define the Zod schema
 const rollNoSchema = z.object({
   students: z.record(
     z.object({
@@ -31,10 +31,16 @@ const rollNoSchema = z.object({
 
 type FormData = z.infer<typeof rollNoSchema>;
 
-const StudentRollNo = ({ grade, section, students }: StudentRollNoProps) => {
+const StudentRollNo = ({
+  grade,
+  section,
+  students,
+  onSave,
+}: StudentRollNoProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { setStudentRollNo } = useGrade({});
 
-  // Initialize react-hook-form with Zod resolver
   const {
     control,
     handleSubmit,
@@ -44,22 +50,27 @@ const StudentRollNo = ({ grade, section, students }: StudentRollNoProps) => {
     resolver: zodResolver(rollNoSchema),
     defaultValues: {
       students: students.reduce((acc, student) => {
-        acc[student.id] = { rollNo: "" }; // Initialize rollNo for each student
+        acc[student.id] = { rollNo: student.roll_no?.toString() ?? "" };
         return acc;
       }, {} as Record<string, { rollNo: string }>),
     },
   });
 
-  // Handle form submission
-  const onSubmit = (data: FormData) => {
-    console.log("Form Data:", data);
-    // Add logic to save roll numbers
+  const onSubmit = async (data: FormData) => {
+    setIsSubmitting(true);
+    const formattedData = Object.entries(data.students).map(
+      ([id, { rollNo }]) => ({
+        id: Number(id),
+        roll: rollNo,
+      })
+    );
+    await setStudentRollNo({ gradeId: grade.id ?? 0, data: formattedData });
+    onSave();
+    setIsSubmitting(false);
   };
 
-  // Handle auto-assign button click
   const handleAutoAssign = () => {
     students.forEach((student, index) => {
-      // Auto-assign roll numbers starting from 1
       setValue(`students.${student.id}.rollNo`, (index + 1).toString());
     });
     console.log("Roll Numbers Auto-Assigned");
@@ -133,11 +144,16 @@ const StudentRollNo = ({ grade, section, students }: StudentRollNoProps) => {
               type="button"
               className="btn btn-danger me-3"
               onClick={handleAutoAssign}
+              disabled={isSubmitting}
             >
               Auto Assign
             </button>
-            <button type="submit" className="btn btn-primary">
-              Submit
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Submitting..." : "Submit"}
             </button>
           </div>
         </form>
