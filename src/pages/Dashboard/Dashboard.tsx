@@ -10,17 +10,17 @@ const Dashboard = () => {
     {
       title: "Grade",
       icon: "grades",
-      route: "",
+      route: "/academics/grades",
     },
     {
       title: "Students",
       icon: "student",
-      route: "",
+      route: "/students",
     },
     {
       title: "Employee",
       icon: "users",
-      route: "",
+      route: "/employees",
     },
     {
       title: "Examination",
@@ -59,7 +59,7 @@ const Dashboard = () => {
                         <span className="symbol-label">
                           <Icon
                             name={"student"}
-                            className={"svg-icon-1 svg-icon-primary"}
+                            className={"svg-icon-3x svg-icon-primary"}
                           />
                         </span>
                       </div>
@@ -82,7 +82,7 @@ const Dashboard = () => {
                         <span className="symbol-label">
                           <Icon
                             name={"users"}
-                            className={"svg-icon-1 svg-icon-primary"}
+                            className={"svg-icon-3x svg-icon-primary"}
                           />
                         </span>
                       </div>
@@ -122,13 +122,13 @@ const Dashboard = () => {
         <div className="col-xl-5 mb-5 mb-xl-10">
           <div className="row mb-5 mb-xl-8 g-5 g-xl-8">
             {menuItems.map((item: MenuItem, index: number) => (
-              <div key={index} className="col-4">
+              <div key={index} className=" col-xl-4 col-4">
                 <div className="card card-stretch h-100">
                   <a
                     href={item.route}
                     className="btn btn-flex btn-text-gray-800 btn-icon-gray-400 btn-active-color-primary bg-body flex-column justfiy-content-between align-items-center text-start w-100 p-10"
                   >
-                    <Icon name={item.icon} className={"svg-icon-4x mb-5"} />
+                    <Icon name={item.icon} className={"svg-icon-5x mb-5"} />
 
                     <span className="fs-4 fw-bolder text-center">
                       {item.title}

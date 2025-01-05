@@ -2,7 +2,7 @@ import Icon from "../../components/Icon/Icon.tsx";
 import { Link, NavLink } from "react-router-dom";
 import Settings from "./Settings/Settings.tsx";
 import { useRef, useState } from "react";
-// import {useState} from "react";
+import images from "../../constants/images.ts";
 
 interface MenuItems {
   title: string;
@@ -45,11 +45,7 @@ const Sidebar = () => {
           id="kt_aside_logo"
         >
           <Link to={"/"}>
-            <img
-              alt="Logo"
-              src="assets/media/logos/demo9.svg"
-              className="h-40px"
-            />
+            <img alt="Logo" src={images.mainLogo} className="h-100px" />
           </Link>
         </div>
 

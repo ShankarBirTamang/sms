@@ -1,254 +1,46 @@
-<div className="card-body pt-4">
-  <div className="row">
-    <div className="col-10">
-      <div className="row">
-        <div className="col-3">
-          <div className="fv-row mb-7">
-            <label className="required fw-bold fs-6 mb-2">IEMIS-No.</label>
-            <input
-              type="text"
-              name="iemis"
-              value=""
-              className="form-control form-control-solid mb-3 mb-lg-0"
-              placeholder=""
-            />
-          </div>
+<div className="d-flex flex-wrap flex-stack">
+  <div className="d-flex flex-column flex-grow-1 pe-8">
+    <div className="d-flex flex-wrap">
+      <div
+        className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3"
+      >
+        <div className="d-flex align-items-center">
+          <div className="fs-2 fw-bolder counted">22</div>
         </div>
-        <div className="col-3">
-          <div className="fv-row mb-7">
-            <label className="required fw-bold fs-6 mb-2">Nickname</label>
-            <input
-              type="text"
-              name="nickname"
-              value=""
-              className="form-control form-control-solid mb-3 mb-lg-0"
-              placeholder=""
-            />
-          </div>
-        </div>
-        <div className="col-md-6">
-          <div
-            wire:snapshot='{"data":{"value":null,"ADDate":"2024-12-10","valueNp":null,"BSDate":null,"title":"Date of Birth","inputName":"dob","englishDateId":"K3n0l6EGug","nepaliDateId":"w3JcpgP2kz"},"memo":{"id":"onPWlSrswfFktYhZDuvo","name":"general.date-converter","path":"sms\/students\/create","method":"GET","children":[],"scripts":["2629068949-0"],"assets":[],"errors":[],"locale":"en"},"checksum":"07e0b531f06eeecd850d6369c8e5c796a719d240ec4c500b57c7a4dff6fc93ec"}'
-            wire:effects="{&quot;scripts&quot;:{&quot;2629068949-0&quot;:&quot;<script>\n    initialize();\n\n\n    function initialize() {\n        setDate_dob('K3n0l6EGug', 'w3JcpgP2kz');\n\n        $('#w3JcpgP2kz').nepaliDatePicker({\n            language: \&quot;english\&quot;,\n            readOnlyInput: true,\n            ndpYear: true,\n            ndpMonth: true,\n            onChange: changed_dob,\n            ndpEnglishInput: \&quot;K3n0l6EGug\&quot;\n        });\n\n        $('#K3n0l6EGug').change(function () {\n            setDate_dob('K3n0l6EGug', 'w3JcpgP2kz');\n        });\n    }\n\n    function changed_dob() {\n        let dateNP = $(\&quot;#w3JcpgP2kz\&quot;).val();\n        let dateEN = $(\&quot;#K3n0l6EGug\&quot;).val();\n        let inputName = 'dob';\n        Livewire.dispatch('changedDate', {dateEN: dateEN, dateNP: dateNP, inputName: inputName});\n    }\n    function setDate_dob(englishDateId, nepaliDateId) {\n        var englishDate = $(\&quot;#\&quot; + englishDateId).val();\n        var nepaliDate = $(\&quot;#\&quot; + nepaliDateId).val();\n        if (englishDate !== '') {\n            var dateArray = englishDate.split(\&quot;-\&quot;);\n            var bsDate = NepaliFunctions.AD2BS({\n                year: parseInt(dateArray[0]),\n                month: parseInt(dateArray[1]),\n                day: parseInt(dateArray[2])\n            });\n            $(\&quot;#\&quot; + nepaliDateId).val(bsDate.year + '-' + bsDate.month + '-' + bsDate.day);\n        } else if (nepaliDate !== '') {\n            var dateArray = nepaliDate.split(\&quot;-\&quot;);\n            $(\&quot;#\&quot; + nepaliDateId).val(nepaliDate);\n            var adDate = NepaliFunctions.BS2AD({\n                year: parseInt(dateArray[0]),\n                month: parseInt(dateArray[1]),\n                day: parseInt(dateArray[2])\n            });\n            var adVal = adDate.year + '-' + String(adDate.month).padStart(2, '0') + '-' + adDate.day;\n            console.log(adVal);\n            $(\&quot;#\&quot; + englishDateId).val(adVal);\n        } else {\n            $(\&quot;#\&quot; + nepaliDateId).val('');\n        }\n\n        let dateNP = $(\&quot;#\&quot; + nepaliDateId).val();\n        let dateEN = $(\&quot;#\&quot; + englishDateId).val();\n        let inputName = 'dob';\n        Livewire.dispatch('changedDate', {dateEN: dateEN, dateNP: dateNP, inputName: inputName});\n    }\n\n<\/script>\n    &quot;}}"
-            wire:id="onPWlSrswfFktYhZDuvo"
-            className="row date-picker-container"
-            wire:ignore=""
-          >
-            <div className="col-6">
-              <div className="fv-row mb-7">
-                <label className="required fw-bold fs-6 mb-2"
-                  >Date of Birth (BS)</label
-                >
-                <input
-                  id="w3JcpgP2kz"
-                  type="text"
-                  name="nep_dob"
-                  value=""
-                  className="form-control form-control-solid mb-3 mb-lg-0 nepali-date ndp-nepali-calendar"
-                  placeholder="Ex: 1 or Grade 1"
-                  autocomplete="off"
-                  readonly="readonly"
-                />
-              </div>
-            </div>
-            <div className="col-6">
-              <div className="fv-row mb-7">
-                <label className="required fw-bold fs-6 mb-2"
-                  >Date of Birth (AD)
-                </label>
-                <input
-                  type="date"
-                  id="K3n0l6EGug"
-                  name="dob"
-                  wire:model="ADDate"
-                  value=""
-                  className="form-control form-control-solid mb-3 mb-lg-0"
-                  placeholder=""
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="col-6">
-          <div className="fv-row mb-7">
-            <label className="required fw-bold fs-6 mb-2">Address</label>
-            <input
-              type="text"
-              name="address"
-              value=""
-              className="form-control form-control-solid mb-3 mb-lg-0"
-              placeholder=""
-            />
-          </div>
-        </div>
-        <div className="col-6">
-          <div className="fv-row mb-7">
-            <label className="required fw-bold fs-6 mb-2">Email</label>
-            <input
-              type="email"
-              name="email"
-              value=""
-              className="form-control form-control-solid mb-3 mb-lg-0"
-              placeholder=""
-            />
-          </div>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-3">
-          <div className="fv-row mb-7">
-            <!--begin::Label-->
-            <label className="required fw-bold fs-6 mb-2">Gender</label>
-
-            <select
-              name="gender"
-              id=""
-              className="form-control form-control-solid"
-            >
-              <option value="" selected="" hidden="">Select</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Others">Others</option>
-            </select>
-          </div>
-        </div>
-        <div className="col-3">
-          <div className="fv-row mb-7">
-            <label className="required fw-bold fs-6 mb-2">Blood Group</label>
-
-            <select
-              name="blood_group"
-              id="blood_group"
-              className="form-control form-control-solid"
-            >
-              <option value="" selected="" hidden="">Select</option>
-              <option value="A+">A+</option>
-              <option value="A-">A-</option>
-              <option value="B+">B+</option>
-              <option value="B-">B-</option>
-              <option value="AB+">AB+</option>
-              <option value="AB-">AB-</option>
-              <option value="O+">O+</option>
-              <option value="O-">O-</option>
-            </select>
-          </div>
-        </div>
-        <div className="col-3">
-          <div className="fv-row mb-7">
-            <label className="required fw-bold fs-6 mb-2">Nationality</label>
-            <input
-              type="text"
-              name="nationality"
-              value=""
-              className="form-control form-control-solid mb-3 mb-lg-0"
-              placeholder=""
-            />
-          </div>
-        </div>
-        <div className="col-3">
-          <div className="fv-row mb-7">
-            <!--begin::Label-->
-            <label className="required fw-bold fs-6 mb-2">Ethnicity</label>
-            <select
-              name="ethnicity"
-              id="ethnicity"
-              required=""
-              className="form-control form-control-solid"
-            >
-              <option value="" selected="" hidden="">Select</option>
-              <option value="Dalit">Dalit</option>
-              <option value="Janajati">Janajati</option>
-              <option value="Others" selected="">Others</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col">
-          <div className="fv-row mb-7">
-            <label className="required fw-bold fs-6 mb-2">Mother Tongue</label>
-            <input
-              type="text"
-              name="mother_tongue"
-              value=""
-              className="form-control form-control-solid mb-3 mb-lg-0"
-              placeholder=""
-            />
-          </div>
-        </div>
-        <div className="col">
-          <div className="fv-row mb-7">
-            <label className="required fw-bold fs-6 mb-2">Contact</label>
-            <input
-              type="text"
-              name="contact"
-              value=""
-              className="form-control form-control-solid mb-3 mb-lg-0"
-              placeholder=""
-            />
-          </div>
-        </div>
-        <div className="col">
-          <div className="fv-row mb-7">
-            <label className="required fw-bold fs-6 mb-2">Religion</label>
-            <input
-              type="text"
-              name="religion"
-              value=""
-              className="form-control form-control-solid mb-3 mb-lg-0"
-              placeholder=""
-            />
-          </div>
-        </div>
-
-        <div>
-          <button type="submit" className="btn btn-primary">SUBMIT</button>
-        </div>
-      </div>
-    </div>
-    <div className="col-2">
-      <div className="fv-row mb-7">
-        <label className="required fw-bold fs-6 mb-2">Photo</label>
+        <div className="fw-bold fs-6 text-gray-400">Total Students</div>
       </div>
       <div
-        className="image-input image-input-outline"
-        data-kt-image-input="true"
-        style=""
+        className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3"
       >
-        <div className="image-input-wrapper w-175px h-175px" style=""></div>
-        <label
-          className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-          data-kt-image-input-action="change"
-          data-bs-toggle="tooltip"
-          aria-label="Change avatar"
-          data-kt-initialized="1"
-        >
-          <i className="bi bi-pencil-fill fs-7"></i>
-          <!--begin::Inputs-->
-          <input type="file" name="photo" accept=".png, .jpg, .jpeg" />
-          <input type="hidden" name="avatar_remove" />
-          <!--end::Inputs-->
-        </label>
-        <span
-          className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-          data-kt-image-input-action="cancel"
-          data-bs-toggle="tooltip"
-          aria-label="Cancel avatar"
-          data-kt-initialized="1"
-        >
-          <i className="bi bi-x fs-2"></i>
-        </span>
-        <span
-          className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-          data-kt-image-input-action="remove"
-          data-bs-toggle="tooltip"
-          aria-label="Remove avatar"
-          data-kt-initialized="1"
-        >
-          <i className="bi bi-x fs-2"></i>
-        </span>
+        <div className="d-flex align-items-center">
+          <div className="fs-2 fw-bolder counted">12</div>
+        </div>
+        <div className="fw-bold fs-6 text-gray-400">Male</div>
       </div>
-      <div className="form-text">Allowed file types: png, jpg, jpeg.</div>
+      <div
+        className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3"
+      >
+        <div className="d-flex align-items-center">
+          <div className="fs-2 fw-bolder counted">10</div>
+        </div>
+        <div className="fw-bold fs-6 text-gray-400">Female</div>
+      </div>
+      <div
+        className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3"
+      >
+        <div className="d-flex align-items-center">
+          <div className="fs-2 fw-bolder counted">0</div>
+        </div>
+        <div className="fw-bold fs-6 text-gray-400">Day Boarders</div>
+      </div>
+      <div
+        className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3"
+      >
+        <div className="d-flex align-items-center">
+          <div className="fs-2 fw-bolder counted">4</div>
+        </div>
+        <div className="fw-bold fs-6 text-gray-400">Subjects</div>
+      </div>
     </div>
   </div>
 </div>

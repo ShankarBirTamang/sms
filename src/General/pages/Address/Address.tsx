@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import addressDataJSON from "./addressData.json";
+import { useState } from "react";
 import Country from "./Country";
 import Province from "./Province";
 import {
@@ -7,9 +6,6 @@ import {
   DistrictType,
   ProvinceType,
   CountryType,
-  AddressData,
-  CreateAddressInterface,
-  UpdateAddressInterface,
 } from "../../Services/addressServices";
 import useDebounce from "../../../hooks/useDebounce";
 import useAddress from "../../hooks/useAddress";
@@ -32,10 +28,7 @@ const Address = () => {
     selectedProvince,
     selectedDistrict,
     selectedCity,
-    setCountries,
-    setProvinces,
-    setDistricts,
-    setCities,
+
     addCountry,
     addProvince,
     addDistrict,
@@ -48,7 +41,6 @@ const Address = () => {
     handleSelectProvince,
     handleSelectDistrict,
     handleSelectCity,
-    updateCountry,
   } = useAddress({
     search: debouncedSearchTerm,
     currentPage,
@@ -70,31 +62,6 @@ const Address = () => {
   //   setCurrentPage(1); // Reset to the first page on new search
   // };
 
-  const addressData: AddressData = JSON.parse(JSON.stringify(addressDataJSON));
-  const [data, setData] = useState<AddressData>(addressData);
-
-  {
-    //   useEffect(() => {
-    //     const fetchData = async () => {
-    //         try {
-    //             const response = await axiosInstance.get('/general/addresses/countries?per_page=&search='); // Replace '/endpoint' with your API route
-    //             setData(response.data);
-    //         } catch (err) {
-    //             setError(err.message);
-    //         } finally {
-    //             setLoading(false);
-    //         }
-    //     };
-    //     fetchData();
-    // }, []);
-    // const addressData:AddressData = JSON.stringify(data,null,2);
-  }
-
-  //required state
-  // const [countries, setCountries] = useState<CountryType[]>(
-  //   addressDataJSON.data
-  // );
-
   //Form Input state
   const [countryFormInput, setCountryFormInput] = useState<{ country: string }>(
     { country: "" }
@@ -108,18 +75,6 @@ const Address = () => {
   const [cityFormInput, setCityFormInput] = useState<{
     city: string;
   }>({ city: "" });
-
-  const [formInput, setFormInput] = useState<{
-    country: string;
-    province: string;
-    district: string;
-    city: string;
-  }>({
-    country: "",
-    province: "",
-    district: "",
-    city: "",
-  });
 
   //handleAdd Functions
   const handleAddCountry = (countryName: CountryType) => {

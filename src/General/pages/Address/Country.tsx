@@ -23,7 +23,6 @@ const Country = ({
   countryFormInput,
   setCountryFormInput,
 }: CountryProps) => {
-  onSelectCountry;
   const [editingCountryId, setEditingCountryId] = useState<number | null>(null); // Tracks which country is being edited
   const [editInput, setEditInput] = useState<string>(""); // Tracks the value being edited
 

@@ -1,11 +1,12 @@
 import subjectService, {
   changeSubjectStatusInterface,
-  SubjectInterface,
+  EditSubjectInterface,
+  SubjectInterface as OriginalSubjectInterface,
   UpdateRankData,
   UpdateSubjectInterface,
 } from "./../services/subjectService";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axiosInstance, { CanceledError } from "../../services/apiClient";
 import {
   ApiResponseInterface,
@@ -17,6 +18,10 @@ import toast from "react-hot-toast";
 interface GradeSubjectProps extends PaginationAndSearch {
   grade_id: number;
   withInactive?: number;
+}
+
+interface SubjectInterface extends OriginalSubjectInterface {
+  id: number;
 }
 
 const useSubject = ({
@@ -33,14 +38,14 @@ const useSubject = ({
     useState<PaginationProps["pagination"]>(null);
   const [edgeLinks, setEdgeLinks] = useState<PaginationProps["edgeLinks"]>();
 
-  const [subjects, setSubjects] = useState<SubjectInterface[]>([]);
+  const [subjects, setSubjects] = useState<UpdateSubjectInterface[]>([]);
   const [statusChanged, setStatusChanged] = useState(false);
 
-  useEffect(() => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     const params: Record<string, string | number | null> = {
       per_page: itemsPerPage,
-      search: search,
+      search,
       grade_id,
       withInactive,
     };
@@ -48,30 +53,23 @@ const useSubject = ({
       params.page = currentPage;
     }
 
-    const { request, cancel } =
-      subjectService.getAll<ApiResponseInterface<SubjectInterface>>(params);
-    request
-      .then((result) => {
-        setSubjects(result.data.data);
-        setPagination(result.data.meta);
-        setEdgeLinks(result.data.links);
-        setLoading(false);
-      })
-      .catch((err) => {
-        if (err instanceof CanceledError) return;
-        setError(err.message);
-        setLoading(false);
-      });
+    try {
+      const { request } =
+        subjectService.getAll<ApiResponseInterface<SubjectInterface>>(params);
+      const result = await request;
+      setSubjects(result.data.data);
+      setPagination(result.data.meta);
+      setEdgeLinks(result.data.links);
+    } catch (err) {
+      if (err instanceof CanceledError) setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [search, currentPage, itemsPerPage, grade_id, withInactive]);
 
-    return () => cancel();
-  }, [
-    search,
-    currentPage,
-    itemsPerPage,
-    grade_id,
-    withInactive,
-    statusChanged,
-  ]);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData, statusChanged]);
 
   const saveSubject = async ({
     name,
@@ -115,7 +113,7 @@ const useSubject = ({
     is_chooseable,
     is_section_specific,
     sections,
-  }: UpdateSubjectInterface) => {
+  }: EditSubjectInterface) => {
     const params = {
       id,
       grade_id,
@@ -128,9 +126,8 @@ const useSubject = ({
       sections,
     };
     try {
-      const result = await subjectService.update<UpdateSubjectInterface>(
-        params
-      );
+      const result = await subjectService.update<EditSubjectInterface>(params);
+      console.log("result at line 125 in hooks/useSubject.ts:", result);
       setSubjects(
         subjects.map((subject) =>
           subject.id === result.data.data.id ? result.data.data : subject
@@ -165,15 +162,40 @@ const useSubject = ({
 
   const updateSubjectRank = async (data: UpdateRankData) => {
     try {
-      const result = await axiosInstance.post(
-        "academics/subjects/update-rank",
-        data
-      );
-      console.log("Update Rank Success:", result.data);
+      await axiosInstance.post("academics/subjects/update-rank", data);
+      toast.success("Subject Rank Updated Successfully.");
     } catch (error) {
       console.error("Error Updating Subject Rank:", error);
-    } finally {
-      await setStatusChanged((prev) => !prev);
+    }
+  };
+
+  interface SetSubjectTeacher {
+    subjectId: number;
+    data: {
+      teacherId: number;
+      sections: string[];
+    }[];
+  }
+
+  const assignSubjectTeacher = async ({
+    subjectId,
+    data,
+  }: SetSubjectTeacher) => {
+    console.log(
+      "data at line 169 in hooks/useSubject.ts:",
+      JSON.stringify(data),
+      subjectId
+    );
+
+    try {
+      // academics/subjects/{id}/assign-subject-teacher
+      await axiosInstance.post(
+        `academics/subjects/${subjectId}/assign-subject-teacher`,
+        data
+      );
+      toast.success("Subject Teacher Assigned Successfully.");
+    } catch (error) {
+      toast.error(`Error Updating Subject Rank: ${error}`);
     }
   };
 
@@ -190,6 +212,8 @@ const useSubject = ({
     saveSubject,
     updateSubjectRank,
     updateSubject,
+    fetchData,
+    assignSubjectTeacher,
   };
 };
 

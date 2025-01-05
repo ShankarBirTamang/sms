@@ -16,7 +16,11 @@ interface RouteConfig {
 import AcademicSessionDetail from "./pages/AcademicSession/AcademicSessionDetail";
 import Subject from "./pages/Grade/Subject/Subject";
 import ViewTimeTable from "./pages/Routine/TimeTable/ViewTimeTable";
+<<<<<<< HEAD
 import EditTimeTable from "./pages/Routine/TimeTable/EditTimeTable";
+=======
+import Student from "./pages/Grade/Students/Student";
+>>>>>>> origin/main
 
 const routes: RouteConfig[] = [
   {
@@ -66,8 +70,13 @@ const routes: RouteConfig[] = [
   },
   {
     path: "grades/:gradeId/subjects",
-    title: "Grades",
+    title: "Grade Subjects",
     element: <Subject />,
+  },
+  {
+    path: "grades/:gradeId/students",
+    title: "Grade Students",
+    element: <Student />,
   },
   // {
   //   path: "subject-types",

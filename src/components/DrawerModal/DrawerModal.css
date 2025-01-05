@@ -1,0 +1,12 @@
+.drawer-modal {
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+
+.drawer-modal.open {
+  opacity: 1;
+}
+
+.drawer-modal.closed {
+  opacity: 0;
+}

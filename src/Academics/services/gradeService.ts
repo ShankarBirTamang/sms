@@ -4,8 +4,8 @@ import { UpdateAcademicSessionInterface } from "./academicSessionService";
 export interface SectionData {
   hasFaculties: boolean;
   sectionType: "standard" | "custom";
-  facultySections: { facultyId: number; sections: string[] }[];
-  sections: string[];
+  facultySections: { facultyId: number; sections: string[] }[] | null;
+  sections: string[] | null;
 }
 export interface AddSectionInterface {
   onSectionDataChange: (data: SectionData, isValid: boolean) => void;
@@ -21,15 +21,22 @@ export interface EditSectionInterface {
 export interface EditSectionData {
   id: number | 0;
   name: string;
+  isNew?: boolean;
 }
 
 export interface EditSectionDataInterface {
   hasFaculties: boolean;
   sectionType: "standard" | "custom";
-  facultySections:
-    | { facultyId: number; sections: EditSectionInterface[] }[]
-    | null;
-  sections: EditSectionInterface[] | null;
+  facultySections: { facultyId: number; sections: EditSectionData[] }[] | null;
+  sections: EditSectionData[] | null;
+}
+
+export interface UpdatedGradeInterface extends EditSectionDataInterface {
+  id: number;
+  academic_session_id: number;
+  grade_group_id: number;
+  name: string;
+  short_name: string;
 }
 
 export interface AddGradeInterface extends SectionData {
@@ -52,6 +59,11 @@ export interface SectionInterface {
   type: string | null;
   is_active: number;
   faculty: FacultyInterface;
+  student_count?: number;
+  teacher?: {
+    id: number;
+    full_name: string;
+  };
 }
 
 interface SectionsInterface {
@@ -70,6 +82,11 @@ export interface GradeInterface {
   sections: SectionsInterface;
 }
 
+enum SectionType {
+  STANDARD = "standard",
+  CUSTOM = "custom",
+}
+
 export interface UpdateGradeInterface {
   length: number;
   id: number;
@@ -79,13 +96,33 @@ export interface UpdateGradeInterface {
   is_active: number;
   has_faculties: number;
   total_students?: number;
-  section_type: "standard" | "custom";
+  section_type: SectionType;
   session: UpdateAcademicSessionInterface;
   sections: SectionsInterface;
 }
 
 export interface SingleGradeInterface {
   id: number;
+}
+
+export interface OldGradeInterface {
+  name: string;
+  short_name: string;
+}
+
+export interface AddClassTeacher {
+  grade: UpdateGradeInterface;
+  onSave: () => void;
+}
+
+export interface TeacherInterface {
+  value: number;
+  label: string;
+}
+
+export interface Section {
+  sectionId: number;
+  classTeacherId: number;
 }
 
 export default apiRoute("/academics/grades");

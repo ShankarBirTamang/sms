@@ -1,14 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DrawerModal from "../../../components/DrawerModal/DrawerModal";
-import AddEditGrade from "./AddEditGrade";
 import useDocumentTitle from "../../../hooks/useDocumentTitle";
 import useGrade from "../../hooks/useGrade";
 import useDebounce from "../../../hooks/useDebounce";
 import Loading from "../../../components/Loading/Loading";
 import Pagination from "../../../components/Pagination/Pagination";
 import Icon from "../../../components/Icon/Icon";
-import { UpdateGradeInterface } from "../../services/gradeService";
+import {
+  OldGradeInterface,
+  UpdateGradeInterface,
+} from "../../services/gradeService";
 import { useNavigate } from "react-router-dom";
+import AddGrade from "./AddGrade";
+import EditGrade from "./EditGrade";
+import SetClassTeacher from "./Drawers/SetClassTeacher";
 
 const Grade = () => {
   useDocumentTitle("All Grades");
@@ -18,21 +23,47 @@ const Grade = () => {
   const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
   const [addGradeDrawer, setAddGradeDrawer] = useState(false);
   const [editGradeDrawer, setEditGradeDrawer] = useState(false);
-  const { grades, isLoading, pagination, edgeLinks } = useGrade({
+  const [classTeacherDrawer, setClassTeacherDrawer] = useState(false);
+  const [oldGrades, setOldGrades] = useState<OldGradeInterface[]>([]);
+  const [editGrade, setEditGrade] = useState<UpdateGradeInterface>();
+
+  const { grades, isLoading, pagination, edgeLinks, fetchGrades } = useGrade({
     search: debouncedSearchTerm,
     currentPage,
     itemsPerPage,
   });
-  const navigate = useNavigate();
 
-  const [editGrade, setEditGrade] = useState<UpdateGradeInterface>();
+  useEffect(() => {
+    if (grades) {
+      const updatedGrades = grades.map((grade) => ({
+        name: grade.name,
+        short_name: grade.short_name,
+      }));
+      setOldGrades(updatedGrades);
+    }
+  }, [grades]);
+
+  const navigate = useNavigate();
 
   const toggleAddGradeDrawer = () => {
     setAddGradeDrawer(!addGradeDrawer);
+    if (addGradeDrawer) {
+      fetchGrades();
+    }
   };
 
   const toggleEditGradeDrawer = () => {
     setEditGradeDrawer(!editGradeDrawer);
+    if (editGradeDrawer) {
+      fetchGrades();
+    }
+  };
+
+  const toggleSetClassTeacherDrawer = () => {
+    setClassTeacherDrawer(!classTeacherDrawer);
+    if (classTeacherDrawer) {
+      fetchGrades();
+    }
   };
 
   // header functions
@@ -49,6 +80,11 @@ const Grade = () => {
     setSearchTerm(event.target.value);
     setCurrentPage(1); // Reset to the first page on new search
   };
+
+  const handleSetClassTeacherClick = (grade: UpdateGradeInterface) => {
+    toggleSetClassTeacherDrawer();
+    setEditGrade(grade);
+  };
   const handleEditClick = (grade: UpdateGradeInterface) => {
     toggleEditGradeDrawer();
     setEditGrade(grade);
@@ -56,6 +92,9 @@ const Grade = () => {
 
   const handleSubjectNavigate = (gradeId: number) => {
     navigate(`${gradeId}/subjects`);
+  };
+  const handleStudentsNavigate = (gradeId: number) => {
+    navigate(`${gradeId}/students`);
   };
   return (
     <>
@@ -128,7 +167,7 @@ const Grade = () => {
                   <th className="">SN</th>
                   <th className="min-w-125px">Grade Name</th>
                   <th className="max-w-200px">Sections</th>
-                  <th className="min-w-125px text-center">Grade Educator</th>
+                  <th className="min-w-125px text-center">Class Teacher</th>
                   <th className="text-center">Students</th>
 
                   <th className="text-end min-w-100px">Actions</th>
@@ -165,12 +204,29 @@ const Grade = () => {
                       </div>
                     </td>
                     <td className="text-center w-300px">
+                      {Object.entries(grade.sections).map(
+                        ([sectionGroup, sections], sci) => (
+                          <div key={`SEC-${sci}`} className="mb-1">
+                            {sections.map((section) =>
+                              section.teacher ? (
+                                <>
+                                  <span className="badge badge-info text-center mb-1 w-auto">
+                                    {section.name}: {section.teacher?.full_name}
+                                  </span>
+                                  <br />
+                                </>
+                              ) : null
+                            )}
+                          </div>
+                        )
+                      )}
                       <button
                         type="button"
                         className="btn btn-light-info btn-sm d-inline"
-                        title="Add Educator"
+                        title="Set Class Teacher"
+                        onClick={() => handleSetClassTeacherClick(grade)}
                       >
-                        Add Educator
+                        Set Class Teacher
                       </button>
                     </td>
                     <td className="text-center">{grade.total_students ?? 0}</td>
@@ -183,14 +239,14 @@ const Grade = () => {
                       >
                         Subjects
                       </button>
-                      <a
-                        href="#"
+                      <button
                         className="btn btn-light-info btn-sm"
-                        type="link"
+                        type="button"
                         title="Students"
+                        onClick={() => handleStudentsNavigate(grade.id)}
                       >
                         Students
-                      </a>
+                      </button>
                       <button
                         type="button"
                         className="btn btn-light-success btn-sm"
@@ -222,20 +278,32 @@ const Grade = () => {
         width="900px"
         title="Add Grade"
       >
-        <AddEditGrade formType={"create"} onSave={toggleAddGradeDrawer} />
+        <AddGrade onSave={toggleAddGradeDrawer} oldGrades={oldGrades} />
       </DrawerModal>
+      {editGrade && (
+        <DrawerModal
+          isOpen={editGradeDrawer}
+          onClose={toggleEditGradeDrawer}
+          position="right"
+          width="900px"
+          title="Edit Grade Details"
+        >
+          <EditGrade onSave={toggleEditGradeDrawer} editData={editGrade} />
+        </DrawerModal>
+      )}
       <DrawerModal
-        isOpen={editGradeDrawer}
-        onClose={toggleEditGradeDrawer}
+        isOpen={classTeacherDrawer}
+        onClose={toggleSetClassTeacherDrawer}
         position="right"
-        width="900px"
-        title="Edit Grade Details"
+        width="600px"
+        title="Set Class Teacher"
       >
-        <AddEditGrade
-          formType={"edit"}
-          onSave={toggleAddGradeDrawer}
-          editData={editGrade}
-        />
+        {editGrade && (
+          <SetClassTeacher
+            onSave={toggleSetClassTeacherDrawer}
+            grade={editGrade}
+          />
+        )}
       </DrawerModal>
     </>
   );
