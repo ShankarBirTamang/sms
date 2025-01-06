@@ -39,6 +39,7 @@ const TimeTableForm = ({
     resolver: zodResolver(timeTableSchema),
   });
 
+  //Set Default Values in First Render of Page
   useEffect(() => {
     if (defaultValues) {
       setNumberOfPeriods(defaultValues.no_of_periods || 1);
@@ -59,6 +60,7 @@ const TimeTableForm = ({
     }
   }, [defaultValues]);
 
+  //
   useEffect(() => {
     localStartTimeValues.forEach((periodStartTimes, periodIndex) => {
       daysOfWeek.forEach((day, dayIndex) => {
@@ -315,7 +317,7 @@ const TimeTableForm = ({
               <span className="text-danger">{errors.name.message}</span>
             )}
           </div>
-          <div className="mb-7 col-md-3">
+          <div className="mb-4 col-md-3">
             <label htmlFor="no_of_periods" className="required form-label">
               Number of Periods
             </label>

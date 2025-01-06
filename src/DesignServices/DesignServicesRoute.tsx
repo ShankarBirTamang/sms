@@ -5,6 +5,9 @@ import IdCard from "./pages/IdCards/IdCard";
 import AdmitCard from "./pages/AdmitCards/AdmitCard";
 import Certificate from "./pages/Certificates/Certificate";
 import Marksheet from "./pages/Marksheets/Marksheet";
+import AddAdmitCard from "./pages/AdmitCards/AddAdmitCard";
+import AddCertificate from "./pages/Certificates/AddCertificate";
+import AddIdCard from "./pages/IdCards/AddIdCard";
 
 type RouteConfig = {
   path: string;
@@ -19,15 +22,31 @@ const routes: RouteConfig[] = [
     element: <IdCard />,
   },
   {
+    path: "id-cards/create",
+    title: "ID Cards",
+    element: <AddIdCard />,
+  },
+  {
     path: "admit-cards",
     title: "Admit Cards",
     element: <AdmitCard />,
+  },
+  {
+    path: "admit-cards/create",
+    title: "Admit Cards",
+    element: <AddAdmitCard />,
   },
   {
     path: "certificates",
     title: "Certificates",
     element: <Certificate />,
   },
+  {
+    path: "certificates/create",
+    title: "Certificates",
+    element: <AddCertificate />,
+  },
+
   {
     path: "marksheets",
     title: "Marksheet",

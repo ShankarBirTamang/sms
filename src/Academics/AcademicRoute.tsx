@@ -16,11 +16,8 @@ interface RouteConfig {
 import AcademicSessionDetail from "./pages/AcademicSession/AcademicSessionDetail";
 import Subject from "./pages/Grade/Subject/Subject";
 import ViewTimeTable from "./pages/Routine/TimeTable/ViewTimeTable";
-<<<<<<< HEAD
 import EditTimeTable from "./pages/Routine/TimeTable/EditTimeTable";
-=======
 import Student from "./pages/Grade/Students/Student";
->>>>>>> origin/main
 
 const routes: RouteConfig[] = [
   {

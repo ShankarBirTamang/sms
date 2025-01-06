@@ -9,16 +9,12 @@ import AcademicRoute from "./Academics/AcademicRoute";
 import { PermissionProvider } from "./context/permissionContext";
 import NotFound from "./pages/error/NotFound";
 import StudentRoute from "./Modules/Student/StudentRoute";
-<<<<<<< HEAD
 import InstituteRoute from "./general/Institute/InstituteRoute";
 import DesignServicesRoute from "./DesignServices/DesignServicesRoute";
-=======
-import InstituteRoute from "./General/Institute/InstituteRoute";
-import Address from "./General/pages/Address/Address";
 import Vehicles from "./Transportation/pages/Vehicles";
 import TransportRoutes from "./Transportation/pages/TransportRoutes";
 import EmployeeRoute from "./Modules/Employee/EmployeeRoute";
->>>>>>> origin/main
+import Address from "./general/pages/Address/Address";
 
 const App = () => {
   return (
