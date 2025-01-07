@@ -6,6 +6,8 @@ import Loading from "../../../components/Loading/Loading";
 import { ExamInterface } from "../services/examSessionService";
 import { useNavigate } from "react-router-dom";
 import Pagination from "../../../components/Pagination/Pagination";
+import DrawerModal from "../../../components/DrawerModal/DrawerModal";
+import AddExam from "./AddExam";
 
 const ExamSession = () => {
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
@@ -46,6 +48,11 @@ const ExamSession = () => {
       )
     );
   };
+
+  const toggleAddExamDrawer = () => {
+    setAddExamDrawer(!addExamDrawer);
+  };
+
   //header functions
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -59,10 +66,6 @@ const ExamSession = () => {
   const handleItemsPerPageChange = (value: number | null) => {
     setItemsPerPage(value);
     setCurrentPage(1);
-  };
-
-  const toggleAddExamDrawer = () => {
-    setAddExamDrawer(!addExamDrawer);
   };
 
   //header function ends here
@@ -234,6 +237,15 @@ const ExamSession = () => {
             />
           )}
         </div>
+        <DrawerModal
+          isOpen={addExamDrawer}
+          onClose={toggleAddExamDrawer}
+          position="right"
+          width="900px"
+          title="EXAMINATION DETAILS"
+        >
+          <AddExam onSave={toggleAddExamDrawer} />
+        </DrawerModal>
       </div>
     </>
   );
