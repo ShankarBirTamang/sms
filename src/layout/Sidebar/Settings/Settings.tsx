@@ -78,6 +78,35 @@ const menuItems: MenuItem[] = [
     route: "iemis",
     submenu: [{ title: "Export Photograph", route: "export-photograph" }],
   },
+  {
+    title: "Accounts",
+    prefix: "accounts",
+    submenu: [
+      {
+        title: "Masters",
+        route: "masters",
+        submenu: [
+          { title: "Fiscal year", route: "masters/fiscal-years" },
+          {
+            title: "Account Groups",
+            route: "masters/account-groups",
+          },
+          {
+            title: "Tax Categories",
+            route: "masters/tax-categories",
+          },
+          {
+            title: "Item Groups",
+            route: "masters/item-groups",
+          },
+          {
+            title: "Items",
+            route: "masters/items",
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 const Settings = () => {

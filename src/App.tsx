@@ -14,6 +14,7 @@ import Address from "./General/pages/Address/Address";
 import Vehicles from "./Transportation/pages/Vehicles";
 import TransportRoutes from "./Transportation/pages/TransportRoutes";
 import EmployeeRoute from "./Modules/Employee/EmployeeRoute";
+import AccountRoute from "./Modules/Accounts/AccountRoutes";
 
 const App = () => {
   return (
@@ -42,6 +43,7 @@ const App = () => {
               <Route path="institute/*" element={<InstituteRoute />} />
               <Route path="students/*" element={<StudentRoute />} />
               <Route path="employees/*" element={<EmployeeRoute />} />
+              <Route path="accounts/*" element={<AccountRoute />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
