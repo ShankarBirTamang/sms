@@ -1,27 +1,20 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import CustomSelect from "../../../components/CustomSelect/CustomSelect";
 import Loading from "../../../components/Loading/Loading";
 import DatePicker from "../../../components/DatePicker/DatePicker";
 import useAcademicSession from "../../../Academics/hooks/useAcademicSession";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 interface AddExamProps {
   onSave: () => void;
 }
-interface ExamFormFields {
-  name: string;
-  useSymbol: boolean;
-  useRegistration: boolean;
-  start_date: string;
-  start_date_np: string;
-  end_date: string;
-  end_date_np: string;
-  result_date: string;
-  result_date_np: string;
-  academic_session_id: number;
-}
 
-const AddGrade = ({ onSave }: AddExamProps) => {
+const AddExam = ({ onSave }: AddExamProps) => {
+  const [hasSymbol, setHasSymbol] = useState<boolean>(true);
+  const [hasRegistration, setHasRegistration] = useState<boolean>(true);
+
   const [isLoading, setIsLoading] = useState(false);
   const [renderKey, setRenderKey] = useState("");
   const [startValueAD, setStartValueAD] = useState("");
@@ -41,16 +34,33 @@ const AddGrade = ({ onSave }: AddExamProps) => {
       label: session.name,
     }));
 
+  const schema = z.object({
+    name: z.string().min(1, { message: "Exam name is required" }),
+    useSymbol: z.boolean().default(true),
+    useRegistration: z.boolean().default(true),
+    start_date: z.string({ message: "Start Date Field is required." }),
+    start_date_np: z.string(),
+    end_date: z.string({ message: "End Date Field is required." }),
+    end_date_np: z.string(),
+    result_date: z.string({ message: "Result Date Field is required." }),
+    result_date_np: z.string(),
+    academic_session_id: z.number().refine(
+      (id) => {
+        return academicSessions.some((session) => session.id === id);
+      },
+      { message: "Invalid academic session Id" }
+    ),
+  });
+
+  type ExamFormData = z.infer<typeof schema>;
+
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
     setValue,
-  } = useForm<ExamFormFields>();
-  const onSubmit: SubmitHandler<ExamFormFields> = (data) => {
-    console.log(data);
-  };
+  } = useForm<ExamFormData>({ resolver: zodResolver(schema) });
 
   const handleDateChange = (
     dates: { bsDate: string; adDate: string },
@@ -74,9 +84,22 @@ const AddGrade = ({ onSave }: AddExamProps) => {
     }
   };
 
+  //checkbox change event
+  const handleHasSymbolData = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value === "true";
+    setHasSymbol(value);
+    setValue("useSymbol", value);
+  };
+  const handleHasRegistrationData = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value === "true";
+    setHasRegistration(value);
+    setValue("useRegistration", value);
+  };
+
   useEffect(() => {
     setRenderKey(Math.floor((Math.random() + 1) * 10).toString());
-  }, [academicSessions]);
+    console.log("Form errors: ", errors);
+  }, [academicSessions, errors]);
 
   const handleAcademicSessionChange = (
     selectedOption: { value: number; label: string } | null
@@ -86,8 +109,29 @@ const AddGrade = ({ onSave }: AddExamProps) => {
     }
   };
 
+  const resetForm = () => {
+    reset({
+      name: "",
+      useSymbol: false,
+      useRegistration: false,
+      academic_session_id: undefined,
+      start_date: "",
+      start_date_np: "",
+      end_date: "",
+      end_date_np: "",
+      result_date: "",
+      result_date_np: "",
+    });
+    setRenderKey(Math.floor((Math.random() + 1) * 10).toString());
+  };
+
+  const onSubmit: SubmitHandler<ExamFormData> = (data) => {
+    console.log("Submitted data: ", data);
+    resetForm();
+  };
+
   return (
-    <div className="add-grade">
+    <div className="add-exam">
       {isLoading && <Loading />}
       {!isLoading && (
         <form className="" onSubmit={handleSubmit(onSubmit)}>
@@ -99,10 +143,13 @@ const AddGrade = ({ onSave }: AddExamProps) => {
 
               <div className="col-10 ">
                 <input
-                  {...register("name", { required: true })}
+                  {...register("name")}
                   className="form-control form-control-solid required "
                   type="text"
                 />
+                {errors.name && (
+                  <div className="text-danger">{errors.name.message}</div>
+                )}
               </div>
             </div>
 
@@ -114,33 +161,39 @@ const AddGrade = ({ onSave }: AddExamProps) => {
                 <div className="d-flex mt-3 gap-10">
                   <div className="form-check">
                     <input
-                      className="form-check-input gradeCheckbox"
+                      title="Yes"
+                      className="form-check-input"
                       type="radio"
-                      value="yes"
-                      id="has_symbol_yes"
-                      {...register("useSymbol")}
+                      value="true"
+                      id="yes"
+                      name="useSymbol"
+                      checked={hasSymbol === true}
+                      onChange={handleHasSymbolData}
                     />
-                    <label
-                      className="form-check-label"
-                      htmlFor="has_symbol_yes"
-                    >
+                    <label className="form-check-label" htmlFor="useSymbol">
                       Yes
                     </label>
                   </div>
                   <div className="form-check">
                     <input
-                      className="form-check-input gradeCheckbox"
+                      title="No"
+                      className="form-check-input"
                       type="radio"
-                      value="no"
-                      id="has_symbol_no"
-                      {...register("useSymbol")}
+                      value="false"
+                      name="useSymbol"
+                      id="no"
+                      checked={hasSymbol === false}
+                      onChange={handleHasSymbolData}
                     />
-                    <label className="form-check-label" htmlFor="has_symbol_no">
+                    <label className="form-check-label" htmlFor="useSymbol">
                       No
                     </label>
                   </div>
                 </div>
               </div>
+              {errors.useSymbol && (
+                <div className="text-danger">{errors.useSymbol.message}</div>
+              )}
             </div>
             <div className="col-md-3">
               <label className="required fw-bold fs-6 mb-2">
@@ -150,33 +203,47 @@ const AddGrade = ({ onSave }: AddExamProps) => {
                 <div className="d-flex mt-3 gap-10">
                   <div className="form-check">
                     <input
-                      className="form-check-input gradeCheckbox"
+                      title="Yes"
+                      className="form-check-input"
                       type="radio"
-                      value="yes"
-                      id="has_symbol_yes"
-                      {...register("useRegistration")}
+                      value="true"
+                      id="yes"
+                      name="useRegistration"
+                      checked={hasRegistration === true}
+                      onChange={handleHasRegistrationData}
                     />
                     <label
                       className="form-check-label"
-                      htmlFor="has_symbol_yes"
+                      htmlFor="useRegistration"
                     >
                       Yes
                     </label>
                   </div>
                   <div className="form-check">
                     <input
-                      className="form-check-input gradeCheckbox"
+                      title="No"
+                      className="form-check-input"
                       type="radio"
-                      value="no"
-                      id="has_registration_no"
-                      {...register("useRegistration")}
+                      value="false"
+                      name="useRegistration"
+                      id="no"
+                      checked={hasRegistration === false}
+                      onChange={handleHasRegistrationData}
                     />
-                    <label className="form-check-label" htmlFor="has_symbol_no">
+                    <label
+                      className="form-check-label"
+                      htmlFor="useRegistration"
+                    >
                       No
                     </label>
                   </div>
                 </div>
               </div>
+              {errors.useRegistration && (
+                <div className="text-danger">
+                  {errors.useRegistration.message}
+                </div>
+              )}
             </div>
 
             <div className="col-12">
@@ -195,6 +262,7 @@ const AddGrade = ({ onSave }: AddExamProps) => {
                 valueAD={startValueAD}
                 valueBS={startValueBS}
               />
+              {errors.start_date && <p>{errors.start_date.message}</p>}
             </div>
 
             <div className="col-12 mb-7">
@@ -298,4 +366,4 @@ const AddGrade = ({ onSave }: AddExamProps) => {
     </div>
   );
 };
-export default AddGrade;
+export default AddExam;
