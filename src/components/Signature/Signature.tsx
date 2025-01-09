@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 
 interface SignatureInterface {
   signee?: string;
@@ -7,16 +6,13 @@ interface SignatureInterface {
 }
 
 const Signature = () => {
-  const [signatures, setSignatures] = useState<SignatureInterface[]>([]);
+  const { control } = useFormContext<{ signatures: SignatureInterface[] }>();
 
-  const { control } = useFormContext<SignatureInterface[]>();
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "signatures",
+  });
 
-  const handleAddButton = () => {
-    setSignatures((prev) => [...prev, { signee: "", title: "" }]);
-  };
-  console.log("signatures", signatures);
-
-  const handleRemove = (index: number) => {};
   return (
     <div className="col-md-12">
       <table className="table table-responsive">
@@ -26,24 +22,15 @@ const Signature = () => {
             <th>Signee</th>
             <th>Signee Title</th>
             <th className="text-center">Action</th>
-            <th className="text-center">
-              <button
-                type="button"
-                className="btn btn-success"
-                onClick={handleAddButton}
-              >
-                Add +
-              </button>
-            </th>
           </tr>
         </thead>
         <tbody>
-          {signatures.map((_, index) => (
-            <tr key={index}>
+          {fields.map((field, index) => (
+            <tr key={field.id}>
               <td>{index + 1}</td>
               <td>
                 <Controller
-                  name={`${index}.signee`}
+                  name={`signatures.${index}.signee`}
                   control={control}
                   render={({ field }) => (
                     <input
@@ -56,7 +43,7 @@ const Signature = () => {
               </td>
               <td>
                 <Controller
-                  name={`${index}.title`}
+                  name={`signatures.${index}.title`}
                   control={control}
                   render={({ field }) => (
                     <select
@@ -71,11 +58,11 @@ const Signature = () => {
                   )}
                 />
               </td>
-              <td className=" text-center">
+              <td className="text-end">
                 <button
                   type="button"
                   className="btn btn-danger"
-                  onClick={() => handleRemove(index)}
+                  onClick={() => remove(index)}
                 >
                   Remove
                 </button>
@@ -84,6 +71,17 @@ const Signature = () => {
           ))}
         </tbody>
       </table>
+      <div className="text-end">
+        <button
+          type="button"
+          className="btn btn-success"
+          onClick={() => {
+            append({ signee: "", title: "" });
+          }}
+        >
+          Add +
+        </button>
+      </div>
     </div>
   );
 };

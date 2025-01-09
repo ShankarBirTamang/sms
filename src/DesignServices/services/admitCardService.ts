@@ -1,12 +1,15 @@
 import { z } from "zod";
 import apiRoute from "../../services/httpService";
 
+export interface SignatureInterface {
+  signee?: string;
+  title?: string;
+}
+
 export interface AdmitCardInterface {
   name: string;
-  signers?: {
-    signee: string;
-    signature: string;
-  }[];
+  code: string;
+  signatures: SignatureInterface[];
 }
 
 export const admitCardSchema = z.object({

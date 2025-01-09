@@ -1,22 +1,25 @@
-import Signature from "../../../components/Signature/signature";
-import { useForm, FormProvider } from "react-hook-form";
-
-interface SignatureInterface {
-  signee?: string;
-  title?: string;
-}
+import { useForm, FormProvider, Controller } from "react-hook-form";
+import Signature from "../../../components/Signature/Signature";
+import { AdmitCardInterface } from "../../services/admitCardService";
+import CodeEditor from "../../../components/CodeEditor/CodeEditor";
 
 const AddAdmitCard = () => {
-  const methods = useForm<SignatureInterface[]>({
-    defaultValues: [{ signee: "", title: "" }],
+  const methods = useForm<AdmitCardInterface>({
+    defaultValues: {
+      name: "",
+      code: "",
+      signatures: [{ signee: "", title: "" }],
+    },
   });
 
-  const onSubmit = (data: SignatureInterface[]) => {
+  const { handleSubmit, control } = methods;
+
+  const onSubmit = (data: AdmitCardInterface) => {
     console.log("Submitted Form Data:", data);
   };
   return (
     <FormProvider {...methods}>
-      <form className="col-md-12" onSubmit={methods.handleSubmit(onSubmit)}>
+      <form className="col-md-12" onSubmit={handleSubmit(onSubmit)}>
         <div className="card">
           <div className="card-header mb-6">
             <div className="card-title w-100">
@@ -28,12 +31,20 @@ const AddAdmitCard = () => {
               <label htmlFor="name" className="required form-label">
                 Admit Card Name
               </label>
-              <input
-                type="string"
-                id="name"
-                placeholder="Eg: Employee, Primary Students, Bus Students, etc."
-                className="form-control form-control-solid"
-              ></input>
+              <Controller
+                name="name"
+                control={control}
+                render={({ field }) => (
+                  <input
+                    required
+                    {...field}
+                    type="string"
+                    id="name"
+                    placeholder="Eg: Employee, Primary Students, Bus Students, etc."
+                    className="form-control form-control-solid"
+                  ></input>
+                )}
+              ></Controller>
             </div>
           </div>
 
@@ -47,12 +58,17 @@ const AddAdmitCard = () => {
                 <div className="text-gray-600 fw-bold "></div>
               </div>
             </div>
+            <div className="">
+              <CodeEditor />
+            </div>
             <div>
               <Signature />
             </div>
-            <button type="submit" className="btn btn-info">
-              Submit
-            </button>
+            <div className="text-center my-7">
+              <button type="submit" className="btn btn-info">
+                Submit
+              </button>
+            </div>
           </div>
         </div>
       </form>

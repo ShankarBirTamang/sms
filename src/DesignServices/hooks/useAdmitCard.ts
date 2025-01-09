@@ -8,7 +8,6 @@ import admitCardService, {
   AdmitCardInterface,
 } from "../services/admitCardService";
 import toast from "react-hot-toast";
-import axiosInstance from "../../../axiosConfig";
 
 const useAdmitCard = ({
   search = "",
