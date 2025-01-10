@@ -200,7 +200,7 @@ const ItemGroup = () => {
               <div className="card-title">
                 <h1 className="d-flex align-items-center position-relative">
                   {formMode === "create" ? "Add New " : "Edit "}
-                  Item Groups
+                  Fee/Payables Groups
                 </h1>
               </div>
             </div>
@@ -261,7 +261,7 @@ const ItemGroup = () => {
                         className="form-check-label"
                         htmlFor="is_active_true"
                       >
-                        Primary Item Group
+                        Primary Fee/Payables Group
                       </label>
                     </div>
                   </div>
@@ -269,7 +269,7 @@ const ItemGroup = () => {
                     <div className="col-12">
                       <div className="fv-row mb-7">
                         <label className="required fw-bold fs-6 mb-2">
-                          Parent Item Group
+                          Parent Fee/payable Group
                         </label>
                         <CustomSelect
                           key={renderKey}
@@ -277,7 +277,7 @@ const ItemGroup = () => {
                           onChange={handleItemGroupChange}
                           error={errors.item_group_id?.message}
                           defaultValue={selectedItemGroup}
-                          placeholder="Select Parent Item Group"
+                          placeholder="Select Parent Fee/Payable Group"
                         />
                       </div>
                     </div>
@@ -313,7 +313,7 @@ const ItemGroup = () => {
             <div className="card-header mb-6">
               <div className="card-title w-100">
                 <h1 className="d-flex justify-content-between align-items-center position-relative my-1 w-100">
-                  <span> Item Groups</span>
+                  <span>Fee/Payables Groups</span>
                   <div className="d-flex gap-2">
                     <div className="d-flex align-items-center position-relative h-100">
                       <Icon

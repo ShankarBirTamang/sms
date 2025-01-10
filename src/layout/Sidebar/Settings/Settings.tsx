@@ -96,12 +96,20 @@ const menuItems: MenuItem[] = [
             route: "masters/tax-categories",
           },
           {
-            title: "Item Groups",
+            title: "Fee Groups",
             route: "masters/item-groups",
           },
           {
-            title: "Items",
+            title: "Fees/Payables",
             route: "masters/items",
+          },
+          {
+            title: "Fees Structure",
+            route: "masters/fee-structures",
+          },
+          {
+            title: "Setup Student Account",
+            route: "masters/student-accounts",
           },
         ],
       },

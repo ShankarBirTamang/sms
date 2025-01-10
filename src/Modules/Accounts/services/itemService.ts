@@ -5,7 +5,7 @@ export interface ItemInterface {
   id?: number;
   name: string;
   description?: string;
-  billing_cycle: ["Monthly", "Quarterly", "Yearly", "One-time"];
+  billing_cycle: "Monthly" | "Quarterly" | "Yearly" | "One-time";
   is_mandatory: boolean;
   item_group?: ItemGroupInterface;
   account_group?: AccountGroupInterface;

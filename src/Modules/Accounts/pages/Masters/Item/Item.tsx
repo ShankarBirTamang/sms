@@ -32,8 +32,10 @@ const Item = () => {
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  const [isMandatory, setIsMandatory] = useState(false);
+  const [isMandatory, setIsMandatory] = useState(true);
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("Monthly");
+  const [selectedItemGroup, setSelectedItemGroup] = useState<Option>();
+  const [selectedAccountGroup, setSelectedAccountGroup] = useState<Option>();
   const billingCycleOptions: BillingCycle[] = [
     "Monthly",
     "Quarterly",
@@ -45,13 +47,13 @@ const Item = () => {
 
   const [renderKey, setRenderKey] = useState("");
 
-  const [selectedItem, setSelectedItem] = useState<Option | null>(null);
-
   const schema = z.object({
     name: z.string().min(1, { message: "Name is required" }),
     description: z.string().optional().nullable(),
-    billing_cycle: z.enum(["Monthly", "Quarterly", "Yearly", "One-time"]),
-    is_mandatory: z.boolean().default(false),
+    billing_cycle: z
+      .enum(["Monthly", "Quarterly", "Yearly", "One-time"])
+      .default("Monthly"),
+    is_mandatory: z.boolean().default(true),
     item_group_id: z.number().refine(
       (id) => {
         return itemGroupOptions.some((group) => group.value === id);
@@ -179,21 +181,34 @@ const Item = () => {
 
   const handleEditClick = (item: ItemInterface) => {
     console.log("item at line 147 in Item/Item.tsx:", item);
-    // reset({
-    //   name: item.name,
-    //   item_group_id: item.item_group?.id,
-    //   description: item.description,
-    //   billing_cycle: item.billing_cycle,
-    // });
-    // setValue("item_group_id", item.parent?.id);
-    // const isPrimaryGroup = item.parent?.id == null;
-    // setValue("isPrimary", isPrimaryGroup);
-    // setIsPrimary(isPrimaryGroup);
+    reset({
+      name: item.name,
+      description: item.description,
+      item_group_id: item.item_group?.id,
+      account_group_id: item.account_group?.id,
+      is_mandatory: item.is_mandatory,
+      billing_cycle: item.billing_cycle,
+    });
+    setValue("item_group_id", item.item_group?.id ?? 0);
+    setValue("account_group_id", item.account_group?.id ?? 0);
+    setRenderKey(Math.floor((Math.random() + 1) * 10).toString());
+    setValue("is_mandatory", item.is_mandatory);
+    setValue("billing_cycle", item.billing_cycle);
+    setBillingCycle(item.billing_cycle);
 
-    // setFormMode("edit");
-    // const itemG = itemOptions.find((level) => level.value === item.parent?.id);
-    // setSelectedItem(itemG || null);
-    // setCurrentItemId(item.id ?? 0);
+    setIsMandatory(item.is_mandatory);
+
+    setFormMode("edit");
+    const selectedItemGroup = item.item_group
+      ? { value: item.item_group.id ?? 0, label: item.item_group.name }
+      : { value: 0, label: "" };
+
+    setSelectedItemGroup(selectedItemGroup);
+    const selectedAccountGroup = item.account_group
+      ? { value: item.account_group.id ?? 0, label: item.account_group.name }
+      : { value: 0, label: "" };
+    setSelectedAccountGroup(selectedAccountGroup);
+    setCurrentItemId(item.id ?? 0);
     setRenderKey(Math.floor((Math.random() + 1) * 10).toString());
   };
 
@@ -206,7 +221,8 @@ const Item = () => {
       description: "",
       is_mandatory: false,
     });
-    setSelectedItem(null);
+    setSelectedItemGroup(undefined);
+    setSelectedAccountGroup(undefined);
     setCurrentItemId(null);
     setFormMode("create");
     setRenderKey(Math.floor((Math.random() + 1) * 10).toString());
@@ -339,7 +355,7 @@ const Item = () => {
                         options={itemGroupOptions}
                         onChange={handleItemGroupChange}
                         error={errors.item_group_id?.message}
-                        defaultValue={selectedItem}
+                        defaultValue={selectedItemGroup}
                         placeholder="Select Item"
                       />
                     </div>
@@ -355,7 +371,7 @@ const Item = () => {
                         options={accountGroupOptions}
                         onChange={handleAccountGroupChange}
                         error={errors.account_group_id?.message}
-                        defaultValue={selectedItem}
+                        defaultValue={selectedAccountGroup}
                         placeholder="Select Account Group"
                       />
                     </div>
@@ -383,6 +399,7 @@ const Item = () => {
                       title="reset"
                       type="reset"
                       className="btn btn-light me-3"
+                      onClick={resetForm}
                     >
                       Reset
                     </button>
@@ -464,47 +481,46 @@ const Item = () => {
                       aria-describedby="table_items_info"
                     >
                       <thead>
-                        <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+                        <tr className="text-center text-muted fw-bolder fs-7 text-uppercase gs-0">
                           <th className="min-w-225px">Name</th>
-                          <th className="text-center">Is Primary</th>
-                          <th className="">Under Group</th>
+                          <th className="">Item Group</th>
+                          <th className="">Account Group</th>
+                          <th className="text-center">Billing Cycle</th>
+                          <th className="text-center">Is Mandatory</th>
                           <th className="text-end">Actions</th>
                         </tr>
                       </thead>
-                      <tbody className="text-gray-600 fw-bold">
+                      <tbody className="text-gray-600 fw-bold text-center">
                         {items.map((item, index) => (
                           <tr key={index} className="odd">
-                            <td className="">{item.name} </td>
-                            <td className="text-center">
-                              {item.parent ? "N" : "Y"}
+                            <td className="text-start">{item.name} </td>
+                            <td className="text-start">
+                              {item.item_group?.name}
                             </td>
-                            <td>{item.parent?.name}</td>
+                            <td className="text-start">
+                              {item.account_group?.name}
+                            </td>
+                            <td className="">{item.billing_cycle}</td>
+                            <td className="text-center">
+                              <span
+                                className={`badge badge-${
+                                  item.is_mandatory ? "success" : "danger"
+                                }`}
+                              >
+                                {item.is_mandatory ? "Yes" : "No"}
+                              </span>
+                            </td>
 
                             <td className="text-end">
                               <div className="d-flex flex-end gap-2">
-                                {!item.is_default && (
-                                  <button
-                                    title="edit academic level"
-                                    type="button"
-                                    onClick={() => handleEditClick(item)}
-                                    className="btn btn-light-info btn-icon btn-sm"
-                                  >
-                                    <Icon
-                                      name={"edit"}
-                                      className={"svg-icon"}
-                                    />
-                                  </button>
-                                )}
-                                {item.is_default && (
-                                  <button
-                                    type="button"
-                                    onClick={resetForm}
-                                    className="btn btn-light-danger btn-sm"
-                                    disabled
-                                  >
-                                    Default
-                                  </button>
-                                )}
+                                <button
+                                  title="edit academic level"
+                                  type="button"
+                                  onClick={() => handleEditClick(item)}
+                                  className="btn btn-light-info btn-icon btn-sm"
+                                >
+                                  <Icon name={"edit"} className={"svg-icon"} />
+                                </button>
                               </div>
                             </td>
                           </tr>

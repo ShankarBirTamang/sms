@@ -79,6 +79,7 @@ const useItem = ({
 
   const saveItem = async ({
     name,
+    description,
     billing_cycle,
     is_mandatory,
     item_group_id,
@@ -86,6 +87,7 @@ const useItem = ({
   }: CreateItemInterface) => {
     const params = {
       name,
+      description,
       billing_cycle,
       is_mandatory,
       item_group_id,
@@ -109,6 +111,7 @@ const useItem = ({
 
   const updateItem = async ({
     id,
+    description,
     name,
     billing_cycle,
     is_mandatory,
@@ -117,6 +120,7 @@ const useItem = ({
   }: UpdateItemInterface) => {
     const params = {
       id,
+      description,
       name,
       billing_cycle,
       is_mandatory,

@@ -6,6 +6,8 @@ import { FiscalYear } from "./pages/Masters/FiscalYear/FiscalYear";
 import { TaxCategory } from "./pages/Masters/TaxCategory/TaxCategory";
 import ItemGroup from "./pages/Masters/ItemGroup/ItemGroup";
 import Item from "./pages/Masters/Item/Item";
+import FeeStructure from "./pages/Masters/FeeStructure/FeeStructure";
+import StudentAccount from "./pages/Masters/StudentAccount/StudentAccount";
 
 interface RouteConfig {
   path: string;
@@ -31,13 +33,23 @@ const routes: RouteConfig[] = [
   },
   {
     path: "masters/item-groups",
-    title: "Account Groups",
+    title: "Item Groups",
     element: <ItemGroup />,
   },
   {
     path: "masters/items",
-    title: "Account Groups",
+    title: "Fees/Payables",
     element: <Item />,
+  },
+  {
+    path: "masters/fee-structures",
+    title: "Fee Structure",
+    element: <FeeStructure />,
+  },
+  {
+    path: "masters/student-accounts",
+    title: "Setup Student Accounts",
+    element: <StudentAccount />,
   },
 ];
 

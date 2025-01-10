@@ -19,22 +19,12 @@ const SessionGradePicker = ({
 }: SessionGradePickerProps) => {
   const { academicLevels } = useAcademicLevels({});
 
-  //   const [sessions, setSessions] = useState<UpdateAcademicSessionInterface[]>(
-  //     []
-  //   );
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
   const [selectedSession, setSelectedSession] = useState<number | null>(null);
   const [selectedGrade, setSelectedGrade] = useState<number | null>(null);
   const [selectedSection, setSelectedSection] = useState<number | null>(null);
 
-  //   useEffect(() => {
-  //     setSessions(academicSessions);
-  //   }, [academicSessions]);
-
   useEffect(() => {
-    // Call the onChange prop whenever the selected values change
-    console.log(academicLevels);
-
     onChange({
       level: selectedLevel,
       session: selectedSession,
@@ -81,8 +71,6 @@ const SessionGradePicker = ({
         ?.academic_sessions || []
     : [];
 
-  console.log("filtered:", filteredAcademicSessions);
-
   const filteredGrades = selectedSession
     ? filteredAcademicSessions.find((session) => session.id === selectedSession)
         ?.grades || []
@@ -92,7 +80,6 @@ const SessionGradePicker = ({
     ? filteredGrades.find((grade) => grade.id === selectedGrade)?.sections || {}
     : {};
 
-  // Combine all sections into a single array with formatted names
   const combinedSections =
     Object.entries(filteredSections).flatMap(([facultyKey, sections]) =>
       sections.map((section) => ({
