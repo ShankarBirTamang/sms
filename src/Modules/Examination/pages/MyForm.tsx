@@ -2,23 +2,36 @@ import React, { ChangeEvent, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import useAcademicSession from "../../../Academics/hooks/useAcademicSession";
 
 interface AddExamProps {
   onSave: () => void;
 }
 
-// Define the schema using zod
-const schema = z.object({
-  useSymbol: z
-    .boolean({ message: "Has Symbol No. Field is required." })
-    .default(true),
-});
-
-// Define the TypeScript type from the schema
-type FormData = z.infer<typeof schema>;
-
 const MyForm = ({ onSave }: AddExamProps) => {
+  const { academicSessions } = useAcademicSession({});
+  const academicSessionOptions = academicSessions
+    .filter((session) => session.is_active)
+    .map((session) => ({
+      value: session.id,
+      label: session.name,
+    }));
+
   const [hasSymbol, setHasSymbol] = useState<boolean>(true);
+
+  // Define the schema using zod
+  const schema = z.object({
+    academic_session_id: z.number().refine(
+      (id) => {
+        return academicSessions.some((session) => session.id === id);
+      },
+      { message: "Invalid academic session Id" }
+    ),
+  });
+
+  // Define the TypeScript type from the schema
+  type FormData = z.infer<typeof schema>;
+
   const {
     register,
     handleSubmit,
@@ -33,58 +46,67 @@ const MyForm = ({ onSave }: AddExamProps) => {
     console.log("Submitted Data:", data);
   };
 
-  const handleCheckBoxData = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value === "true";
-    setHasSymbol(value);
-    setValue("useSymbol", value);
-  };
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="col-12">
-        <div className="fv-row mb-7">
-          <label className="required fw-bold fs-6 mb-2" htmlFor="grade">
-            Marks added in Result?
-          </label>
-          <div className="d-flex gap-5 mt-3">
-            <div className="form-check">
-              <input
-                title="Yes"
-                className="form-check-input"
-                type="radio"
-                value="true"
-                id="yes"
-                name="marks_added"
-                checked={hasSymbol === true}
-                onChange={handleCheckBoxData}
-              />
-              <label className="form-check-label" htmlFor="yes">
+        <div>
+          <div>
+            <label>Academic Session *</label>
+            <select
+              value={academicSession}
+              onChange={handleAcademicSessionChange}
+            >
+              <option value="Academic Year 2081">Academic Year 2081</option>
+              <option value="Academic Session 2081-82 [+2]">
+                Academic Session 2081-82 [+2]
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label>Select Participating Grades *</label>
+            <div>
+              <label>
+                <input type="checkbox" /> Select All
+              </label>
+              {grades.map((grade, index) => (
+                <label key={index}>
+                  <input type="checkbox" /> {grade}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label>Is the result merged with another Exam?</label>
+            <div>
+              <label>
+                <input
+                  type="radio"
+                  name="merge"
+                  value="yes"
+                  checked={isMerged === true}
+                  onChange={() => setIsMerged(true)}
+                />{" "}
                 Yes
               </label>
-            </div>
-            <div className="form-check">
-              <input
-                title="No"
-                className="form-check-input"
-                type="radio"
-                value="false"
-                name="marks_added"
-                id="no"
-                checked={hasSymbol === false}
-                onChange={handleCheckBoxData}
-              />
-              <label className="form-check-label" htmlFor="no">
+              <label>
+                <input
+                  type="radio"
+                  name="merge"
+                  value="no"
+                  checked={isMerged === false}
+                  onChange={() => setIsMerged(false)}
+                />{" "}
                 No
               </label>
             </div>
           </div>
-          {errors.useSymbol && (
-            <span className="text-danger">{errors.useSymbol.message}</span>
-          )}
         </div>
       </div>
-
-      <button type="submit">Submit</button>
+      <button type="submit" onClick={() => alert("Form submitted!")}>
+        Submit
+      </button>
     </form>
   );
 };

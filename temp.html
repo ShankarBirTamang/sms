@@ -1,46 +1,23 @@
-<div className="d-flex flex-wrap flex-stack">
-  <div className="d-flex flex-column flex-grow-1 pe-8">
-    <div className="d-flex flex-wrap">
-      <div
-        className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3"
-      >
-        <div className="d-flex align-items-center">
-          <div className="fs-2 fw-bolder counted">22</div>
-        </div>
-        <div className="fw-bold fs-6 text-gray-400">Total Students</div>
-      </div>
-      <div
-        className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3"
-      >
-        <div className="d-flex align-items-center">
-          <div className="fs-2 fw-bolder counted">12</div>
-        </div>
-        <div className="fw-bold fs-6 text-gray-400">Male</div>
-      </div>
-      <div
-        className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3"
-      >
-        <div className="d-flex align-items-center">
-          <div className="fs-2 fw-bolder counted">10</div>
-        </div>
-        <div className="fw-bold fs-6 text-gray-400">Female</div>
-      </div>
-      <div
-        className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3"
-      >
-        <div className="d-flex align-items-center">
-          <div className="fs-2 fw-bolder counted">0</div>
-        </div>
-        <div className="fw-bold fs-6 text-gray-400">Day Boarders</div>
-      </div>
-      <div
-        className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3"
-      >
-        <div className="d-flex align-items-center">
-          <div className="fs-2 fw-bolder counted">4</div>
-        </div>
-        <div className="fw-bold fs-6 text-gray-400">Subjects</div>
+<div className="col-12">
+  <label className="required fw-bold fs-6 mb-2">Select Participating Grades</label>
+  <div className="row g-3">
+    <div className="col-12">
+      <div className="form-check">
+        <input className="form-check-input selectAll" type="checkbox"  />
+        <label className="form-check-label">
+          Select All
+        </label>
       </div>
     </div>
+<div className="col-3">
+      <div className="form-check">
+        <input className="form-check-input gradeCheckbox" type="checkbox" defaultValue={1} id={1} name="grades[]" />
+        <label className="form-check-label" htmlFor={1}>
+          Nursery
+        </label>
+      </div>
+    </div>
+  
+    
   </div>
 </div>
