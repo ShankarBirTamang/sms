@@ -45,6 +45,10 @@ const useItem = ({
     request
       .then((result) => {
         setItems(result.data.data);
+        console.log(
+          "result.data.data at line 47 in hooks/useItem.ts:",
+          result.data.data
+        );
         setPagination(result.data.meta);
         setEdgeLinks(result.data.links);
         setIsLoading(false);
@@ -80,7 +84,7 @@ const useItem = ({
   const saveItem = async ({
     name,
     description,
-    billing_cycle,
+    payment_group_id,
     is_mandatory,
     item_group_id,
     account_group_id,
@@ -88,7 +92,7 @@ const useItem = ({
     const params = {
       name,
       description,
-      billing_cycle,
+      payment_group_id,
       is_mandatory,
       item_group_id,
       account_group_id,
@@ -113,7 +117,7 @@ const useItem = ({
     id,
     description,
     name,
-    billing_cycle,
+    payment_group_id,
     is_mandatory,
     item_group_id,
     account_group_id,
@@ -122,7 +126,7 @@ const useItem = ({
       id,
       description,
       name,
-      billing_cycle,
+      payment_group_id,
       is_mandatory,
       item_group_id,
       account_group_id,

@@ -15,6 +15,7 @@ import {
   GradeInterface,
   UpdateGradeInterface,
 } from "../../../../../Academics/services/gradeService";
+import { formatMoneyToNepali } from "../../../../../helpers/formatMoney";
 
 const FeeStructure = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -164,8 +165,8 @@ const FeeStructure = () => {
                               key={ind}
                               className="badge badge-md badge-info"
                             >
-                              {item.item.name}({struct.grade.short_name}):Rs.{" "}
-                              {item.amount}: /-
+                              {item.item.name}({struct.grade.short_name}):
+                              {formatMoneyToNepali(item.amount)} /-
                             </span>
                           ))}
                       </div>

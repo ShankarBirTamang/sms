@@ -3,7 +3,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 
-import toast from "react-hot-toast";
 import useDocumentTitle from "../../../../../hooks/useDocumentTitle";
 import useDebounce from "../../../../../hooks/useDebounce";
 import useItem from "../../../hooks/useItem";
@@ -20,8 +19,7 @@ import Loading from "../../../../../components/Loading/Loading";
 import Pagination from "../../../../../components/Pagination/Pagination";
 import useItemGroup from "../../../hooks/useItemGroup";
 import useAccountGroup from "../../../hooks/useAccountGroup";
-
-type BillingCycle = "Monthly" | "Quarterly" | "Yearly" | "One-time";
+import usePaymentGroup from "../../../hooks/usePaymentGroup";
 
 const Item = () => {
   useDocumentTitle("Item");
@@ -33,15 +31,8 @@ const Item = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const [isMandatory, setIsMandatory] = useState(true);
-  const [billingCycle, setBillingCycle] = useState<BillingCycle>("Monthly");
   const [selectedItemGroup, setSelectedItemGroup] = useState<Option>();
   const [selectedAccountGroup, setSelectedAccountGroup] = useState<Option>();
-  const billingCycleOptions: BillingCycle[] = [
-    "Monthly",
-    "Quarterly",
-    "Yearly",
-    "One-time",
-  ];
 
   const [currentItemId, setCurrentItemId] = useState<number | null>(null);
 
@@ -50,9 +41,7 @@ const Item = () => {
   const schema = z.object({
     name: z.string().min(1, { message: "Name is required" }),
     description: z.string().optional().nullable(),
-    billing_cycle: z
-      .enum(["Monthly", "Quarterly", "Yearly", "One-time"])
-      .default("Monthly"),
+    payment_group_id: z.number(),
     is_mandatory: z.boolean().default(true),
     item_group_id: z.number().refine(
       (id) => {
@@ -75,22 +64,16 @@ const Item = () => {
 
   type FormData = z.infer<typeof schema>;
 
-  const {
-    items,
-    isLoading,
-    pagination,
-    edgeLinks,
-    saveItem,
-    updateItem,
-    changeItemStatus,
-  } = useItem({
-    search: debouncedSearchTerm,
-    currentPage,
-    itemsPerPage,
-  });
+  const { items, isLoading, pagination, edgeLinks, saveItem, updateItem } =
+    useItem({
+      search: debouncedSearchTerm,
+      currentPage,
+      itemsPerPage,
+    });
 
   const { allItemGroups } = useItemGroup({});
   const { allAccountGroups } = useAccountGroup({});
+  const { paymentGroups } = usePaymentGroup({});
 
   const itemGroupOptions = allItemGroups.map((group) => ({
     value: group.id ?? 0,
@@ -143,9 +126,8 @@ const Item = () => {
   const handleBillingCycleChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const value = event.target.value as BillingCycle;
-    setBillingCycle(value);
-    setValue("billing_cycle", value);
+    const value = event.target.value;
+    setValue("payment_group_id", Number(value));
   };
   const {
     register,
@@ -153,7 +135,10 @@ const Item = () => {
     reset,
     formState: { errors },
     setValue,
+    watch,
   } = useForm<FormData>({ resolver: zodResolver(schema) });
+
+  const paymentGroupId = watch("payment_group_id");
 
   const onSubmit = async (data: FormData) => {
     console.log("data at line 118 in Item/Item.tsx:", data);
@@ -187,14 +172,13 @@ const Item = () => {
       item_group_id: item.item_group?.id,
       account_group_id: item.account_group?.id,
       is_mandatory: item.is_mandatory,
-      billing_cycle: item.billing_cycle,
+      payment_group_id: item.payment_group?.id,
     });
     setValue("item_group_id", item.item_group?.id ?? 0);
     setValue("account_group_id", item.account_group?.id ?? 0);
     setRenderKey(Math.floor((Math.random() + 1) * 10).toString());
     setValue("is_mandatory", item.is_mandatory);
-    setValue("billing_cycle", item.billing_cycle);
-    setBillingCycle(item.billing_cycle);
+    setValue("payment_group_id", item.payment_group?.id ?? 0);
 
     setIsMandatory(item.is_mandatory);
 
@@ -217,7 +201,7 @@ const Item = () => {
       name: "",
       item_group_id: undefined,
       account_group_id: undefined,
-      billing_cycle: undefined,
+      payment_group_id: undefined,
       description: "",
       is_mandatory: false,
     });
@@ -226,20 +210,6 @@ const Item = () => {
     setCurrentItemId(null);
     setFormMode("create");
     setRenderKey(Math.floor((Math.random() + 1) * 10).toString());
-  };
-
-  const [processingItemId, setProcessingItemId] = useState<number | null>(null);
-  const toggleItemStatus = async (itemId: number) => {
-    try {
-      setProcessingItemId(itemId);
-      console.log(itemId);
-      await changeItemStatus({ id: itemId });
-      toast.success("Academic Item Status Changed Successfully.");
-    } catch (error) {
-      console.error("Error updating item status:", error);
-    } finally {
-      setProcessingItemId(null);
-    }
   };
 
   useEffect(() => {
@@ -283,21 +253,25 @@ const Item = () => {
                     </div>
                   </div>
                   <div className="col-12 mb-7">
-                    <label className=" fw-bold fs-6 mb-2">Billing Cycle</label>
-                    <div className="d-flex gap-3">
-                      {billingCycleOptions.map((option) => (
-                        <div className="form-check" key={option}>
+                    <label className=" fw-bold fs-6 mb-3">Billing Cycle</label>
+                    <div className="d-flex flex-wrap gap-3">
+                      {paymentGroups.length <= 0 && <Loading height={20} />}
+                      {paymentGroups.map((option) => (
+                        <div className="form-check" key={option.id}>
                           <input
                             type="radio"
                             className="form-check-input sectionCheckbox"
-                            id={option}
+                            id={`Type-${option.id}`}
                             name="billing-cycle"
-                            value={option}
-                            checked={billingCycle === option}
+                            value={option.id}
                             onChange={handleBillingCycleChange}
+                            checked={paymentGroupId === option.id}
                           />
-                          <label className="form-check-label" htmlFor={option}>
-                            {option}
+                          <label
+                            className="form-check-label"
+                            htmlFor={`Type-${option.id}`}
+                          >
+                            {option.name}
                           </label>
                         </div>
                       ))}
@@ -500,7 +474,7 @@ const Item = () => {
                             <td className="text-start">
                               {item.account_group?.name}
                             </td>
-                            <td className="">{item.billing_cycle}</td>
+                            <td className="">{item.payment_group?.name}</td>
                             <td className="text-center">
                               <span
                                 className={`badge badge-${

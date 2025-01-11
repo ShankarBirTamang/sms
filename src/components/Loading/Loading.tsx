@@ -1,17 +1,71 @@
+import { number } from "zod";
 import "./Loading.css";
-const Loading = () => {
+interface LoadingProps {
+  height?: number;
+}
+const Loading = ({ height }: LoadingProps) => {
   return (
     <div className="center">
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
+      <div
+        className="wave"
+        style={{
+          height: height ? height : 100,
+        }}
+      ></div>
+      <div
+        className="wave"
+        style={{
+          height: height ? height : 100,
+        }}
+      ></div>
+      <div
+        className="wave"
+        style={{
+          height: height ? height : 100,
+        }}
+      ></div>
+      <div
+        className="wave"
+        style={{
+          height: height ? height : 100,
+        }}
+      ></div>
+      <div
+        className="wave"
+        style={{
+          height: height ? height : 100,
+        }}
+      ></div>
+      <div
+        className="wave"
+        style={{
+          height: height ? height : 100,
+        }}
+      ></div>
+      <div
+        className="wave"
+        style={{
+          height: height ? height : 100,
+        }}
+      ></div>
+      <div
+        className="wave"
+        style={{
+          height: height ? height : 100,
+        }}
+      ></div>
+      <div
+        className="wave"
+        style={{
+          height: height ? height : 100,
+        }}
+      ></div>
+      <div
+        className="wave"
+        style={{
+          height: height ? height : 100,
+        }}
+      ></div>
     </div>
   );
 };

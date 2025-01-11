@@ -42,4 +42,8 @@ export interface StructureInterface {
   }[];
 }
 
+export interface SingleFeeStructureInterface {
+  id: number;
+}
+
 export default apiRoute("/accounts/masters/fee-structures");

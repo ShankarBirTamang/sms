@@ -10,6 +10,7 @@ import itemService, {
   FeeStructureInterface,
   UpdateFeeStructureInterface,
   CreateFeeStructureInterface,
+  SingleFeeStructureInterface,
 } from "../services/feeStructureService";
 import toast from "react-hot-toast";
 import feeStructureService from "../services/feeStructureService";
@@ -122,6 +123,28 @@ const useFeeStructure = ({
   //     }
   //   };
 
+  const singleFeeStructure = useCallback(async (id: number) => {
+    try {
+      const { request } =
+        feeStructureService.getOne<ApiResponseInterface<FeeStructureInterface>>(
+          id
+        );
+      const result = await request;
+      const feeStructure = Array.isArray(result.data.data)
+        ? result.data.data[0]
+        : result.data.data;
+
+      return feeStructure;
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+        toast.error(err.message);
+      } else {
+        setError("An unknown error occurred.");
+        toast.error("An unknown error occurred.");
+      }
+    }
+  }, []);
   return {
     currentPage,
     pagination,
@@ -133,6 +156,7 @@ const useFeeStructure = ({
     fetchFeeStructures,
     saveFeeStructure,
     // updateFeeStructure,
+    singleFeeStructure,
   };
 };
 
