@@ -88,21 +88,10 @@ const menuItems: MenuItem[] = [
         submenu: [
           { title: "Fiscal year", route: "masters/fiscal-years" },
           {
-            title: "Account Groups",
-            route: "masters/account-groups",
+            title: "Setup Fees/Groups",
+            route: "masters/group-setup",
           },
-          {
-            title: "Tax Categories",
-            route: "masters/tax-categories",
-          },
-          {
-            title: "Fee Groups",
-            route: "masters/item-groups",
-          },
-          {
-            title: "Fees/Payables",
-            route: "masters/items",
-          },
+
           {
             title: "Fees Structure",
             route: "masters/fee-structures",
@@ -110,6 +99,36 @@ const menuItems: MenuItem[] = [
           {
             title: "Setup Student Account",
             route: "masters/student-accounts",
+          },
+        ],
+      },
+      {
+        title: "Vouchers",
+        route: "/*",
+        submenu: [
+          {
+            title: "Payment",
+            route: "*",
+          },
+          {
+            title: "Receipt",
+            route: "*",
+          },
+          {
+            title: "Journal",
+            route: "*",
+          },
+          {
+            title: "Contra",
+            route: "*",
+          },
+          {
+            title: "Dr. Note",
+            route: "*",
+          },
+          {
+            title: "Cr. Note",
+            route: "*",
           },
         ],
       },

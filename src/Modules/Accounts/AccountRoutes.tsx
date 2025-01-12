@@ -3,11 +3,12 @@ import Layout from "../../layout/Layout";
 import ProtectectedRoute from "../../components/Icon/ProtectedRoute";
 import AccountGroup from "./pages/Masters/AccountGroup/AccountGroup";
 import { FiscalYear } from "./pages/Masters/FiscalYear/FiscalYear";
-import { TaxCategory } from "./pages/Masters/TaxCategory/TaxCategory";
 import ItemGroup from "./pages/Masters/ItemGroup/ItemGroup";
 import Item from "./pages/Masters/Item/Item";
 import FeeStructure from "./pages/Masters/FeeStructure/FeeStructure";
 import StudentAccount from "./pages/Masters/StudentAccount/StudentAccount";
+import GroupSettings from "./pages/GroupSettings/GroupSettings";
+import TaxCategory from "./pages/Masters/TaxCategory/TaxCategory";
 
 interface RouteConfig {
   path: string;
@@ -50,6 +51,11 @@ const routes: RouteConfig[] = [
     path: "masters/student-accounts",
     title: "Setup Student Accounts",
     element: <StudentAccount />,
+  },
+  {
+    path: "masters/group-setup",
+    title: "Setup Groups",
+    element: <GroupSettings />,
   },
 ];
 

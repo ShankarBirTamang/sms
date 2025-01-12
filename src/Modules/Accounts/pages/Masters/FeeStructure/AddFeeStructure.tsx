@@ -135,14 +135,6 @@ const AddFeeStructure = ({
           </table>
           <div className="text-center pt-15">
             <button
-              type="button"
-              className="btn btn-danger me-3"
-              //   onClick={handleAutoAssign}
-              disabled={isSubmitting}
-            >
-              Auto Assign
-            </button>
-            <button
               type="submit"
               className="btn btn-primary"
               disabled={isSubmitting}

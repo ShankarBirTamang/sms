@@ -1,21 +1,23 @@
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import SessionGradePicker from "../../../../../Academics/componenet/SessionGradePicker/SessionGradePicker";
 import useGrade from "../../../../../Academics/hooks/useGrade";
-import { StudentInterface } from "../../../../Student/services/studentService";
 import Loading from "../../../../../components/Loading/Loading";
 import useFeeStructure from "../../../hooks/useFeeStructure";
 import { FeeStructureInterface } from "../../../services/feeStructureService";
 import { formatMoneyToNepali } from "../../../../../helpers/formatMoney";
 import usePaymentGroup from "../../../hooks/usePaymentGroup";
 import useDiscountGroup from "../../../hooks/useDiscountGroup";
+import { useAccount } from "../../../hooks/useAccount";
+import { StudentAccountInterface } from "../../../services/accountService";
+import NepaliCurrencyInput from "../../../../../components/NepaliCurrencyInput/NepaliCurrencyInput";
 
 const StudentAccount = () => {
-  const { getSectionStudents } = useGrade({});
+  // const { getSectionStudents } = useGrade({});
 
-  const [students, setStudents] = useState<StudentInterface[]>([]);
+  const [students, setStudents] = useState<StudentAccountInterface[]>([]);
   const [feeStructure, setFeeStructure] = useState<FeeStructureInterface>();
   const [defaultPaymentGroup, setDefaultPaymentGroup] = useState();
   const [defaultDiscountGroup, setDefaultDiscountGroup] = useState();
@@ -24,7 +26,10 @@ const StudentAccount = () => {
   const { paymentGroups } = usePaymentGroup({});
   const { discountGroups } = useDiscountGroup({});
 
+  const { saveStudentAccount, getStudentAccount } = useAccount({});
+
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const handleSelectedValuesChange = useCallback(
     async (selectedValues: {
       level: number | null;
@@ -41,15 +46,24 @@ const StudentAccount = () => {
 
       if (selectedValues.section && selectedValues.grade) {
         setIsLoading(true);
-        const students = await getSectionStudents(selectedValues.section);
+        // const students = await getSectionStudents(selectedValues.section);
         const feeStructure = await singleFeeStructure(selectedValues.grade);
-        setStudents(students);
+        const students = await getStudentAccount(
+          selectedValues.grade,
+          selectedValues.section
+        );
+
+        console.log(
+          "students at line 50 in StudentAccount/StudentAccount.tsx:",
+          students
+        );
+        setStudents(students ?? []);
         setFeeStructure(feeStructure);
         setIsLoading(false);
         console.log(feeStructure);
       }
     },
-    [getSectionStudents, singleFeeStructure]
+    [getStudentAccount, singleFeeStructure]
   );
 
   const nonMandatoryFees = feeStructure?.fee_structure_details
@@ -60,7 +74,7 @@ const StudentAccount = () => {
     formStudents: z.record(
       z.object({
         payment_group_id: z.string(),
-        discount_group_id: z.string(),
+        discount_group_id: z.string().nullable().optional(),
         non_mandatory_fee_ids: z.array(z.number()).optional(),
         previous_year_balance: z.number().default(0),
         previous_year_balance_type: z.enum(["D", "C"]).default("C"),
@@ -84,27 +98,70 @@ const StudentAccount = () => {
     control,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(StudentAccountSchema),
-    defaultValues: {
-      formStudents: students.reduce((acc, student) => {
-        acc[student.id] = {
-          payment_group_id: "",
-          discount_group_id: "",
-          non_mandatory_fee_ids: [],
-          previous_year_balance: 0,
-          previous_year_balance_type: "C",
-          opening_balance: 0,
-          opening_balance_type: "C",
-        };
-        return acc;
-      }, {} as Record<string, FormDataRecordReturnProps>),
-    },
   });
 
+  useEffect(() => {
+    if (students.length > 0) {
+      const defaultValues = students.reduce((acc, student) => {
+        acc[student.id] = {
+          payment_group_id:
+            student.payment_groups?.[0]?.id?.toString() ?? undefined,
+          discount_group_id:
+            student.discount_groups?.[0]?.id?.toString() ?? undefined,
+          non_mandatory_fee_ids:
+            student.nonMandatoryFees
+              ?.map((fee) => fee.id)
+              .filter((id): id is number => id !== undefined) || [], // Update this if needed
+          previous_year_balance: student.account?.previous_year_balance || 0,
+          previous_year_balance_type:
+            student.account?.previous_year_balance_type || "C",
+          opening_balance: student.account?.opening_balance || 0,
+          opening_balance_type: student.account?.opening_balance_type || "C",
+        };
+        return acc;
+      }, {} as Record<string, FormDataRecordReturnProps>);
+
+      console.log("UseEffectDefault", defaultValues);
+      reset({ formStudents: defaultValues });
+    }
+    console.log("UseEffect", students);
+  }, [students, reset]);
+
   const onSubmit = async (data: FormData) => {
-    console.log(data);
+    setIsSubmitting(true);
+    const formattedData = Object.entries(data.formStudents).map(
+      ([
+        id,
+        {
+          payment_group_id,
+          discount_group_id,
+          non_mandatory_fee_ids,
+          previous_year_balance,
+          previous_year_balance_type,
+          opening_balance,
+          opening_balance_type,
+        },
+      ]) => ({
+        id: Number(id),
+        payment_group_id: Number(payment_group_id),
+        discount_group_id: Number(discount_group_id),
+        non_mandatory_fee_ids: non_mandatory_fee_ids || [],
+        previous_year_balance,
+        previous_year_balance_type,
+        opening_balance,
+        opening_balance_type,
+      })
+    );
+    await saveStudentAccount({
+      type: "Student",
+      studentAccountData: formattedData,
+    });
+    // console.log(data);
+    setIsSubmitting(false);
   };
 
   useEffect(() => {
@@ -181,7 +238,7 @@ const StudentAccount = () => {
                       .map((detail) => (
                         <span
                           className="badge badge-lg badge-info"
-                          key={detail.id}
+                          key={`MFF-${detail.id}-default`}
                         >
                           {detail.item.name}:
                           {formatMoneyToNepali(detail.amount)} /-
@@ -199,7 +256,12 @@ const StudentAccount = () => {
                           Select Payment Group
                         </option>
                         {paymentGroups.map((group) => (
-                          <option value={group.id}>{group.name}</option>
+                          <option
+                            key={`GRP-${group.id}-default`}
+                            value={group.id}
+                          >
+                            {group.name}
+                          </option>
                         ))}
                       </select>
                     </div>
@@ -208,11 +270,14 @@ const StudentAccount = () => {
                         className={`form-control form-select w-200px`}
                         onChange={handleDefaultDiscountGroupChange}
                       >
-                        <option value="" hidden>
-                          Select Discount Group
-                        </option>
+                        <option value="">None</option>
                         {discountGroups.map((group) => (
-                          <option value={group.id}>{group.name}</option>
+                          <option
+                            key={`DG-${group.id}-default`}
+                            value={group.id}
+                          >
+                            {group.name}
+                          </option>
                         ))}
                       </select>
                     </div>
@@ -231,9 +296,7 @@ const StudentAccount = () => {
                       <th className="w-250px">Name</th>
                       <th className="w-200px text-center">Payment Group</th>
                       <th className="w-200px text-center">Discount Group</th>
-                      <th className="text-center">
-                        Check Non Mandatory Fees Applicable to the Student
-                      </th>
+
                       <th className="w-200px text-center">
                         Prev. Year Balance
                       </th>
@@ -242,175 +305,267 @@ const StudentAccount = () => {
                   </thead>
                   <tbody className="">
                     {students.map((student, index) => (
-                      <tr key={student.id}>
-                        <td>{index + 1}</td>
-                        <td className="">
-                          <strong>{student.full_name}</strong>
-                          <br />
-                          <small>
-                            {student.grade?.name} (
-                            {student.section?.faculty.name}:
-                            {student.section?.name})
-                          </small>
-                        </td>
-                        <td>
-                          <div>
-                            <Controller
-                              name={`formStudents.${student.id}.payment_group_id`}
-                              control={control}
-                              render={({ field }) => (
-                                <select
-                                  {...field}
-                                  className={`form-control form-select ${
-                                    errors.formStudents?.[student.id]
-                                      ?.payment_group_id
-                                      ? "is-invalid"
-                                      : ""
-                                  }`}
-                                  value={field.value || ""}
-                                >
-                                  <option value="" hidden>
-                                    Select Payment Group
-                                  </option>
-                                  {paymentGroups.map((group) => (
-                                    <option value={group.id}>
-                                      {group.name}
+                      <React.Fragment key={student.id}>
+                        <tr className="dd">
+                          <td rowSpan={2}>{index + 1}</td>
+                          <td rowSpan={2} className="">
+                            <strong>{student.full_name}</strong>
+                            <br />
+                            <small>
+                              {student.grade?.name} (
+                              {student.section?.faculty.name}:
+                              {student.section?.name})
+                            </small>
+                          </td>
+                          <td>
+                            <div>
+                              <Controller
+                                name={`formStudents.${student.id}.payment_group_id`}
+                                control={control}
+                                render={({ field }) => (
+                                  <select
+                                    {...field}
+                                    className={`form-control form-select ${
+                                      errors.formStudents?.[student.id]
+                                        ?.payment_group_id
+                                        ? "is-invalid"
+                                        : ""
+                                    }`}
+                                    value={field.value || ""}
+                                  >
+                                    <option value="" hidden>
+                                      Select Payment Group
                                     </option>
-                                  ))}
-                                </select>
-                              )}
-                            />
-                          </div>
-                        </td>
-                        <td>
-                          <div>
-                            <Controller
-                              name={`formStudents.${student.id}.discount_group_id`}
-                              control={control}
-                              render={({ field }) => (
-                                <select
-                                  {...field}
-                                  className={`form-control form-select ${
-                                    errors.formStudents?.[student.id]
-                                      ?.discount_group_id
-                                      ? "is-invalid"
-                                      : ""
-                                  }`}
-                                  value={field.value || ""}
-                                >
-                                  <option value="" hidden>
-                                    Select Discount Group
-                                  </option>
-                                  {discountGroups.map((group) => (
-                                    <option value={group.id}>
-                                      {group.name}
+                                    {paymentGroups.map((group) => (
+                                      <option
+                                        key={`PG-${group.id}-${student.id}`}
+                                        value={group.id}
+                                      >
+                                        {group.name}
+                                      </option>
+                                    ))}
+                                  </select>
+                                )}
+                              />
+                            </div>
+                          </td>
+                          <td>
+                            <div>
+                              <Controller
+                                name={`formStudents.${student.id}.discount_group_id`}
+                                control={control}
+                                render={({ field }) => (
+                                  <select
+                                    {...field}
+                                    className={`form-control form-select ${
+                                      errors.formStudents?.[student.id]
+                                        ?.discount_group_id
+                                        ? "is-invalid"
+                                        : ""
+                                    }`}
+                                    value={field.value || ""}
+                                  >
+                                    <option value="" hidden>
+                                      None
                                     </option>
-                                  ))}
-                                </select>
-                              )}
-                            />
-                          </div>
-                        </td>
-                        <td>
-                          <div className="d-flex flex-wrap gap-3 justify-content-center">
-                            {nonMandatoryFees?.map((fee) => (
-                              <div className="form-check" key={fee.id}>
-                                <Controller
-                                  name={`formStudents.${student.id}.non_mandatory_fee_ids`}
-                                  control={control}
-                                  render={({ field }) => {
-                                    const value = Array.isArray(field.value)
-                                      ? field.value
-                                      : [];
-                                    return (
-                                      <>
-                                        <input
-                                          type="checkbox"
-                                          id={`student-${student.id}-fee-${fee.id}`}
-                                          checked={value.includes(fee.id ?? 0)}
-                                          onChange={(e) => {
-                                            const updatedFees = e.target.checked
-                                              ? [...value, fee.id]
-                                              : value.filter(
-                                                  (id) => id !== fee.id
-                                                );
-                                            field.onChange(updatedFees);
-                                          }}
-                                          className="form-check-input"
-                                        />
-                                        <label
-                                          className="form-check-label"
-                                          htmlFor={`student-${student.id}-fee-${fee.id}`}
-                                        >
-                                          {fee.item.name}
-                                        </label>
-                                      </>
-                                    );
-                                  }}
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        </td>
-                        <td>
-                          <div className="input-group mb-5">
-                            <span className="input-group-text">Rs.</span>
-                            <Controller
-                              name={`formStudents.${student.id}.previous_year_balance`}
-                              control={control}
-                              render={({ field }) => {
-                                console.log("Field Value:", field);
-                                return (
-                                  <>
-                                    <input
-                                      {...field}
-                                      type="text"
-                                      className={`form-control ${
-                                        errors.formStudents?.[student.id]
-                                          ?.previous_year_balance
-                                          ? "is-invalid"
-                                          : ""
-                                      }`}
-                                      placeholder="Pr. Yr. Bal."
-                                      style={{
-                                        width: "100px",
-                                      }}
-                                    />
-                                  </>
-                                );
-                              }}
-                            />
-                            <select
-                              className={`form-control form-select w-30px text-center no-dropdown`}
-                              value={`C`}
-                            >
-                              <option value="D">Dr</option>
-                              <option value="C">Cr</option>
-                            </select>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="input-group mb-5">
-                            <span className="input-group-text">Rs.</span>
-                            <input
-                              type="text"
-                              className="form-control"
-                              placeholder="Opening Bal."
-                              aria-label="Username"
-                              style={{
-                                width: "100px",
-                              }}
-                            />
-                            <select
-                              className={`form-control form-select w-30px text-center no-dropdown`}
-                              value={`C`}
-                            >
-                              <option value="D">Dr</option>
-                              <option value="C">Cr</option>
-                            </select>
-                          </div>
-                        </td>
-                      </tr>
+                                    {discountGroups.map((group) => (
+                                      <option
+                                        key={`DG-${group.id}-${student.id}`}
+                                        value={group.id}
+                                      >
+                                        {group.name}
+                                      </option>
+                                    ))}
+                                  </select>
+                                )}
+                              />
+                            </div>
+                          </td>
+
+                          <td>
+                            <div className="input-group">
+                              <span
+                                className="input-group-text"
+                                style={{
+                                  width: "20%",
+                                }}
+                              >
+                                Rs.
+                              </span>
+                              <Controller
+                                name={`formStudents.${student.id}.previous_year_balance`}
+                                control={control}
+                                render={({ field }) => {
+                                  return (
+                                    <>
+                                      <input
+                                        {...field}
+                                        type="number"
+                                        step={`.01`}
+                                        className={`form-control ${
+                                          errors.formStudents?.[student.id]
+                                            ?.previous_year_balance
+                                            ? "is-invalid"
+                                            : ""
+                                        }`}
+                                        placeholder="Pr. Yr. Bal."
+                                        style={{
+                                          width: "60%",
+                                        }}
+                                        value={field.value || 0}
+                                        onChange={(e) => {
+                                          const value =
+                                            parseFloat(e.target.value) || 0;
+                                          field.onChange(value);
+                                        }}
+                                      />
+                                    </>
+                                  );
+                                }}
+                              />
+                              <Controller
+                                name={`formStudents.${student.id}.previous_year_balance_type`}
+                                control={control}
+                                render={({ field }) => {
+                                  return (
+                                    <>
+                                      <select
+                                        {...field}
+                                        className={`form-control form-select text-center no-dropdown`}
+                                        value={field.value || `C`}
+                                        style={{
+                                          width: "20%",
+                                        }}
+                                      >
+                                        <option value="D">Dr</option>
+                                        <option value="C">Cr</option>
+                                      </select>
+                                    </>
+                                  );
+                                }}
+                              />
+                            </div>
+                          </td>
+                          <td>
+                            <div className="input-group">
+                              <span
+                                className="input-group-text"
+                                style={{
+                                  width: "20%",
+                                }}
+                              >
+                                Rs.
+                              </span>
+                              <Controller
+                                name={`formStudents.${student.id}.opening_balance`}
+                                control={control}
+                                render={({ field }) => {
+                                  return (
+                                    <>
+                                      <input
+                                        {...field}
+                                        type="number"
+                                        step={`.01`}
+                                        className={`form-control ${
+                                          errors.formStudents?.[student.id]
+                                            ?.opening_balance
+                                            ? "is-invalid"
+                                            : ""
+                                        }`}
+                                        placeholder="Pr. Yr. Bal."
+                                        style={{
+                                          width: "60%",
+                                        }}
+                                        value={field.value || 0}
+                                        onChange={(e) => {
+                                          const value =
+                                            parseFloat(e.target.value) || 0;
+                                          field.onChange(value);
+                                        }}
+                                      />
+                                    </>
+                                  );
+                                }}
+                              />
+                              <Controller
+                                name={`formStudents.${student.id}.opening_balance_type`}
+                                control={control}
+                                render={({ field }) => {
+                                  return (
+                                    <>
+                                      <select
+                                        {...field}
+                                        className={`form-control form-select w-30px text-center no-dropdown`}
+                                        value={field.value || `C`}
+                                        style={{
+                                          width: "20%",
+                                        }}
+                                      >
+                                        <option value="D">Dr</option>
+                                        <option value="C">Cr</option>
+                                      </select>
+                                    </>
+                                  );
+                                }}
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td colSpan={4}>
+                            <span className="">
+                              Check non mandatory Fees For Associated Student:{" "}
+                              <strong>{student.full_name}</strong>
+                            </span>
+                            <div className="d-flex flex-wrap gap-3 mb-3 mt-3">
+                              {nonMandatoryFees?.map((fee) => (
+                                <div
+                                  className="form-check"
+                                  key={`Non-m-${fee.id}-${student.id}`}
+                                >
+                                  <Controller
+                                    name={`formStudents.${student.id}.non_mandatory_fee_ids`}
+                                    control={control}
+                                    render={({ field }) => {
+                                      const value = Array.isArray(field.value)
+                                        ? field.value
+                                        : [];
+                                      return (
+                                        <>
+                                          <input
+                                            type="checkbox"
+                                            id={`student-${student.id}-fee-${fee.id}`}
+                                            checked={value.includes(
+                                              fee.id ?? 0
+                                            )}
+                                            onChange={(e) => {
+                                              const updatedFees = e.target
+                                                .checked
+                                                ? [...value, fee.id]
+                                                : value.filter(
+                                                    (id) => id !== fee.id
+                                                  );
+
+                                              field.onChange(updatedFees);
+                                            }}
+                                            className="form-check-input"
+                                          />
+                                          <label
+                                            className="form-check-label"
+                                            htmlFor={`student-${student.id}-fee-${fee.id}`}
+                                          >
+                                            {fee.item.name}
+                                          </label>
+                                        </>
+                                      );
+                                    }}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </td>
+                        </tr>
+                      </React.Fragment>
                     ))}
                   </tbody>
                 </table>
@@ -419,7 +574,14 @@ const StudentAccount = () => {
           </div>
           {feeStructure && students.length > 0 && (
             <div className="card-footer text-end">
-              <button className="btn btn-primary">Submit</button>
+              <button
+                title="submit"
+                type="submit"
+                className="btn btn-primary"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Submitting..." : "Submit"}
+              </button>
             </div>
           )}
         </div>
