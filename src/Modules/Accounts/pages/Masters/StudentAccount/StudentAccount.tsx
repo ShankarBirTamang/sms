@@ -62,11 +62,24 @@ const StudentAccount = () => {
         payment_group_id: z.string(),
         discount_group_id: z.string(),
         non_mandatory_fee_ids: z.array(z.number()).optional(),
+        previous_year_balance: z.number().default(0),
+        previous_year_balance_type: z.enum(["D", "C"]).default("C"),
+        opening_balance: z.number().default(0),
+        opening_balance_type: z.enum(["D", "C"]).default("C"),
       })
     ),
   });
   type FormData = z.infer<typeof StudentAccountSchema>;
 
+  interface FormDataRecordReturnProps {
+    payment_group_id: string | undefined;
+    discount_group_id: string | undefined;
+    non_mandatory_fee_ids: number[];
+    previous_year_balance: number;
+    previous_year_balance_type: "D" | "C";
+    opening_balance: number;
+    opening_balance_type: "D" | "C";
+  }
   const {
     control,
     handleSubmit,
@@ -80,9 +93,13 @@ const StudentAccount = () => {
           payment_group_id: "",
           discount_group_id: "",
           non_mandatory_fee_ids: [],
+          previous_year_balance: 0,
+          previous_year_balance_type: "C",
+          opening_balance: 0,
+          opening_balance_type: "C",
         };
         return acc;
-      }, {} as Record<string, { payment_group_id: string | undefined; discount_group_id: string | undefined; non_mandatory_fee_ids: number[] }>),
+      }, {} as Record<string, FormDataRecordReturnProps>),
     },
   });
 
@@ -99,7 +116,6 @@ const StudentAccount = () => {
   ) => {
     const selectedPaymentGroupId = event.target.value;
 
-    // Update the form state for all students
     students.forEach((student) => {
       setValue(
         `formStudents.${student.id}.payment_group_id`,
@@ -113,7 +129,6 @@ const StudentAccount = () => {
   ) => {
     const selectedDiscountGroupId = event.target.value;
 
-    // Update the form state for all students
     students.forEach((student) => {
       setValue(
         `formStudents.${student.id}.discount_group_id`,
@@ -139,7 +154,21 @@ const StudentAccount = () => {
               />
             </div>
             {isLoading && <Loading />}
-            {!isLoading && students.length > 0 && (
+            {!feeStructure && !isLoading && students.length > 0 && (
+              <div className=" mt-5 d-flex justify-content-center gap-3 fs-3">
+                <span className="badge badge-danger badge-lg">
+                  No Fee Structure has been Setup for this Grade
+                </span>
+                <a
+                  href="/accounts/masters/fee-structures"
+                  target="_blank"
+                  className="badge badge-primary badge-lg text-hover-gray-100"
+                >
+                  Setup Fee Structure
+                </a>
+              </div>
+            )}
+            {feeStructure && !isLoading && students.length > 0 && (
               <>
                 <hr />
                 <div className="d-flex justify-content-between">
@@ -205,6 +234,10 @@ const StudentAccount = () => {
                       <th className="text-center">
                         Check Non Mandatory Fees Applicable to the Student
                       </th>
+                      <th className="w-200px text-center">
+                        Prev. Year Balance
+                      </th>
+                      <th className="w-200px text-center">Opening Balance</th>
                     </tr>
                   </thead>
                   <tbody className="">
@@ -279,14 +312,13 @@ const StudentAccount = () => {
                           </div>
                         </td>
                         <td>
-                          <div className="d-flex gap-3 justify-content-center">
-                            {nonMandatoryFees?.map((fee, i) => (
+                          <div className="d-flex flex-wrap gap-3 justify-content-center">
+                            {nonMandatoryFees?.map((fee) => (
                               <div className="form-check" key={fee.id}>
                                 <Controller
-                                  name={`formStudents.${student.id}.non_mandatory_fee_ids`} // Nested field name
+                                  name={`formStudents.${student.id}.non_mandatory_fee_ids`}
                                   control={control}
                                   render={({ field }) => {
-                                    // Ensure field.value is always an array of numbers
                                     const value = Array.isArray(field.value)
                                       ? field.value
                                       : [];
@@ -295,14 +327,14 @@ const StudentAccount = () => {
                                         <input
                                           type="checkbox"
                                           id={`student-${student.id}-fee-${fee.id}`}
-                                          checked={value.includes(fee.id ?? 0)} // Check if fee ID is in the array
+                                          checked={value.includes(fee.id ?? 0)}
                                           onChange={(e) => {
                                             const updatedFees = e.target.checked
-                                              ? [...value, fee.id] // Add fee ID if checked
+                                              ? [...value, fee.id]
                                               : value.filter(
                                                   (id) => id !== fee.id
-                                                ); // Remove fee ID if unchecked
-                                            field.onChange(updatedFees); // Update form state
+                                                );
+                                            field.onChange(updatedFees);
                                           }}
                                           className="form-check-input"
                                         />
@@ -320,6 +352,64 @@ const StudentAccount = () => {
                             ))}
                           </div>
                         </td>
+                        <td>
+                          <div className="input-group mb-5">
+                            <span className="input-group-text">Rs.</span>
+                            <Controller
+                              name={`formStudents.${student.id}.previous_year_balance`}
+                              control={control}
+                              render={({ field }) => {
+                                console.log("Field Value:", field);
+                                return (
+                                  <>
+                                    <input
+                                      {...field}
+                                      type="text"
+                                      className={`form-control ${
+                                        errors.formStudents?.[student.id]
+                                          ?.previous_year_balance
+                                          ? "is-invalid"
+                                          : ""
+                                      }`}
+                                      placeholder="Pr. Yr. Bal."
+                                      style={{
+                                        width: "100px",
+                                      }}
+                                    />
+                                  </>
+                                );
+                              }}
+                            />
+                            <select
+                              className={`form-control form-select w-30px text-center no-dropdown`}
+                              value={`C`}
+                            >
+                              <option value="D">Dr</option>
+                              <option value="C">Cr</option>
+                            </select>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="input-group mb-5">
+                            <span className="input-group-text">Rs.</span>
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Opening Bal."
+                              aria-label="Username"
+                              style={{
+                                width: "100px",
+                              }}
+                            />
+                            <select
+                              className={`form-control form-select w-30px text-center no-dropdown`}
+                              value={`C`}
+                            >
+                              <option value="D">Dr</option>
+                              <option value="C">Cr</option>
+                            </select>
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -327,7 +417,7 @@ const StudentAccount = () => {
               </>
             )}
           </div>
-          {students.length > 0 && (
+          {feeStructure && students.length > 0 && (
             <div className="card-footer text-end">
               <button className="btn btn-primary">Submit</button>
             </div>
