@@ -1,18 +1,27 @@
 import { useForm, FormProvider, Controller } from "react-hook-form";
 import Signature from "../../../components/Signature/Signature";
-import { AdmitCardInterface } from "../../services/admitCardService";
+import {
+  AdmitCardInterface,
+  admitCardSchema,
+} from "../../services/admitCardService";
 import CodeEditor from "../../../components/CodeEditor/CodeEditor";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const AddAdmitCard = () => {
   const methods = useForm<AdmitCardInterface>({
     defaultValues: {
       name: "",
       code: "",
-      signatures: [{ signee: "", title: "" }],
+      signatures: [{ signee: "", signature: "" }],
     },
+    resolver: zodResolver(admitCardSchema),
   });
 
-  const { handleSubmit, control } = methods;
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = methods;
 
   const onSubmit = (data: AdmitCardInterface) => {
     console.log("Submitted Form Data:", data);
@@ -44,7 +53,8 @@ const AddAdmitCard = () => {
                     className="form-control form-control-solid"
                   ></input>
                 )}
-              ></Controller>
+              />
+              <span className="text-danger">{errors.name?.message}</span>
             </div>
           </div>
 

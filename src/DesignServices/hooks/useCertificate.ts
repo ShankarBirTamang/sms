@@ -4,18 +4,18 @@ import {
   PaginationAndSearch,
 } from "../../Interface/Interface";
 import { PaginationProps } from "../../components/Pagination/Pagination";
-import admitCardService, {
-  AdmitCardInterface,
-} from "../services/admitCardService";
 import toast from "react-hot-toast";
+import certificateServices, {
+  CertificateInterface,
+} from "../services/certificateServices";
 
-const useAdmitCard = ({
+const useCertificate = ({
   search = "",
   currentPage = 1,
   itemsPerPage = null,
 }: PaginationAndSearch) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [admitCards, setAdmitCards] = useState<AdmitCardInterface[]>([]);
+  const [certificates, setCertificates] = useState<CertificateInterface[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   //For Pagination
@@ -35,11 +35,13 @@ const useAdmitCard = ({
     }
 
     const { request, cancel } =
-      admitCardService.getAll<ApiResponseInterface<AdmitCardInterface>>(params);
+      certificateServices.getAll<ApiResponseInterface<CertificateInterface>>(
+        params
+      );
 
     request
       .then((result) => {
-        setAdmitCards(result.data.data);
+        setCertificates(result.data.data);
         setPagination(result.data.meta);
         setEdgeLinks(result.data.links);
         setIsLoading(false);
@@ -55,21 +57,21 @@ const useAdmitCard = ({
     // return () => cancel();
   }, [search, currentPage, itemsPerPage]);
 
-  // const saveAdmitCard = async ({ name, signers }) => {
+  // const saveCertificate = async ({ name, signers }) => {
   //   console.log("create admit card fn");
 
   //   const params = { name, signers };
-  //   const response = await admitCardService.create<AdmitCardInterface>(params);
+  //   const response = await certificateService.create<CertificateInterface>(params);
   //   console.log("admit card response", response);
-  //   setAdmitCards((prev) => [...prev, response.data.data]);
+  //   setCertificates((prev) => [...prev, response.data.data]);
   // };
 
   return {
     pagination,
     edgeLinks,
     isLoading,
-    admitCards,
+    certificates,
   };
 };
 
-export default useAdmitCard;
+export default useCertificate;

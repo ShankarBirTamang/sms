@@ -2,11 +2,14 @@ import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 
 interface SignatureInterface {
   signee?: string;
-  title?: string;
+  signature?: string;
 }
 
 const Signature = () => {
-  const { control } = useFormContext<{ signatures: SignatureInterface[] }>();
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<{ signatures: SignatureInterface[] }>();
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -15,6 +18,7 @@ const Signature = () => {
 
   return (
     <div className="col-md-12">
+      <h3>Signers For Admit Card</h3>
       <table className="table table-responsive">
         <thead>
           <tr>
@@ -40,10 +44,13 @@ const Signature = () => {
                     />
                   )}
                 />
+                <span className="text-danger">
+                  {errors.signatures?.[index]?.signee?.message}
+                </span>
               </td>
               <td>
                 <Controller
-                  name={`signatures.${index}.title`}
+                  name={`signatures.${index}.signature`}
                   control={control}
                   render={({ field }) => (
                     <select
@@ -57,6 +64,9 @@ const Signature = () => {
                     </select>
                   )}
                 />
+                <span className="text-danger">
+                  {errors.signatures?.[index]?.signature?.message}
+                </span>
               </td>
               <td className="text-end">
                 <button
@@ -76,7 +86,7 @@ const Signature = () => {
           type="button"
           className="btn btn-success"
           onClick={() => {
-            append({ signee: "", title: "" });
+            append({ signee: "", signature: "" });
           }}
         >
           Add +

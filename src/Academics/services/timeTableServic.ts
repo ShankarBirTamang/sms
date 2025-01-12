@@ -47,9 +47,10 @@ export const timeTableSchema = z.object({
   no_of_periods: z.number().min(1, "At least one period is required"),
   periods: z.array(
     z.object({
-      id: z.number(), // Root 'id' for each period
-      period_name: z.string().min(2, "Period name is required"),
+      id: z.number(), // Key: Root 'id' for each period
+      period_name: z.string().min(1, "Period name is required"),
       days: z.record(
+        z.string(), // Keys for 'days' are strings (e.g., "Monday", "Tuesday")
         z.object({
           id: z.number(), // Unique 'id' for each day
           day: z.string().refine((day) => daysOfWeek.includes(day)), // Include 'day' for each day

@@ -6,11 +6,21 @@ interface CodeEditorInterface {
   code: string;
 }
 
+interface CodeEditorProps {
+  iframeHeight: number;
+  iframeWidth: number;
+  orientation: string;
+}
+
 const MonacoEditorWrapper = React.forwardRef((props: any, ref) => {
   return <MonacoEditor {...props} />;
 });
 
-const CodeEditor = () => {
+const CodeEditor = ({
+  iframeHeight,
+  iframeWidth,
+  orientation,
+}: CodeEditorProps) => {
   //We can omit SetValues and it still works.. Why?
   const { control, setValue, getValues } =
     useFormContext<CodeEditorInterface>();
@@ -29,6 +39,13 @@ const CodeEditor = () => {
   const handleChange = (value: any) => {
     setHtml(value || "");
   };
+
+  if (orientation === "landscape") {
+    // [iframeHeight, iframeWidth] = [iframeWidth, iframeHeight];//both same
+    var temp = iframeHeight;
+    var iframeHeight = iframeWidth;
+    var iframeWidth = temp;
+  }
 
   return (
     <div
@@ -74,7 +91,9 @@ const CodeEditor = () => {
           className="card"
           srcDoc={iframeContent}
           title="Output"
-          style={{ width: "100%", height: "92%", border: "1px solid #ccc" }}
+          width={iframeWidth}
+          height={iframeHeight}
+          style={{ border: "1px solid #ccc" }}
           sandbox="allow-scripts"
         ></iframe>
       </div>
