@@ -81,10 +81,7 @@ const useFiscalYear = ({
     };
 
     try {
-      const result = await fiscalYearService.create<FiscalYearInterface>(
-        params
-      );
-      console.log("result at line 84 in hooks/useFiscalYear.ts:", result);
+      await fiscalYearService.create<FiscalYearInterface>(params);
       fetchFiscalYears();
       toast.success("Fiscal year Added Successfully.");
     } catch (err) {

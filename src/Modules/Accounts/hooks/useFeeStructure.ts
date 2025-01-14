@@ -106,7 +106,6 @@ const useFeeStructure = ({
   //       item_group_id,
   //       account_group_id,
   //     };
-  //     console.log(params);
 
   //     try {
   //       await itemService.update<UpdateFeeStructureInterface>(params);

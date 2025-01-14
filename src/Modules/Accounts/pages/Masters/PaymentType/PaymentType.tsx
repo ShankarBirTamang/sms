@@ -1,52 +1,56 @@
-import { useState } from "react";
-import Icon from "../../../../components/Icon/Icon";
-import Loading from "../../../../components/Loading/Loading";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
-import useDebounce from "../../../../hooks/useDebounce";
-import useGradeGroup from "../../../hooks/useGradeGroup";
-import Pagination from "../../../../components/Pagination/Pagination";
+import { Controller, useForm } from "react-hook-form";
+
+import useDocumentTitle from "../../../../../hooks/useDocumentTitle";
+import useDebounce from "../../../../../hooks/useDebounce";
+import usePaymentType from "../../../hooks/usePaymentType";
 import {
-  GradeGroupInterface,
-  UpdateGradeGroupInterface,
-} from "../../../services/gradeGroupService";
-import useDocumentTitle from "../../../../hooks/useDocumentTitle";
+  PaymentTypeInterface,
+  UpdatePaymentTypeInterface,
+} from "../../../services/paymentTypeService";
+import CustomSelect, {
+  Option,
+} from "../../../../../components/CustomSelect/CustomSelect";
+import Icon from "../../../../../components/Icon/Icon";
+import Loading from "../../../../../components/Loading/Loading";
+import Pagination from "../../../../../components/Pagination/Pagination";
 
-const schema = z.object({
-  name: z.string().min(1, { message: "Name is required" }),
-  description: z.string(),
-});
-
-type FormData = z.infer<typeof schema>;
-
-const GradeGroup = () => {
-  useDocumentTitle("Grade Groups");
+const PaymentType = () => {
+  useDocumentTitle("Payment Type");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
-  const [searchTerm, setSearchTerm] = useState(""); // New state for search term
-  const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [currentGradeGroupId, setCurrentGradeGroupId] = useState<number | null>(
-    null
-  );
+
+  const [isPrimary, setIsPrimary] = useState(false);
+
+  const [currentPaymentTypeId, setCurrentPaymentTypeId] = useState<
+    number | null
+  >(null);
+
+  const schema = z.object({
+    name: z.string().min(1, { message: "Name is required" }),
+  });
+
+  type FormData = z.infer<typeof schema>;
 
   const {
-    gradeGroups,
+    paymentTypes,
     isLoading,
     pagination,
     edgeLinks,
-    saveGradeGroup,
-    updateGradeGroup,
-    setError,
-  } = useGradeGroup({
+    savePaymentType,
+    updatePaymentType,
+  } = usePaymentType({
     search: debouncedSearchTerm,
     currentPage,
     itemsPerPage,
   });
 
-  // header functions
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -58,55 +62,55 @@ const GradeGroup = () => {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1); // Reset to the first page on new search
+    setCurrentPage(1);
   };
 
-  const handleEditClick = (group: UpdateGradeGroupInterface) => {
-    reset({
-      name: group.name,
-      description: group.description ?? "",
-    });
-    setFormMode("edit");
-    setCurrentGradeGroupId(group.id);
-  };
-
-  const onSubmit = (data: GradeGroupInterface | UpdateGradeGroupInterface) => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    control,
+    watch,
+    formState: { errors },
+    setValue,
+  } = useForm<FormData>({ resolver: zodResolver(schema) });
+  const onSubmit = async (data: FormData) => {
     try {
       setIsSubmitting(true);
       if (formMode === "create") {
-        saveGradeGroup(data);
+        await savePaymentType(data);
       } else if (formMode === "edit") {
-        if (currentGradeGroupId) {
-          updateGradeGroup({ ...data, id: currentGradeGroupId });
-        } else {
-          setError("Error Updating Data");
+        if (currentPaymentTypeId) {
+          await updatePaymentType({
+            ...data,
+            id: currentPaymentTypeId,
+          } as UpdatePaymentTypeInterface);
         }
       }
     } catch (error) {
-      // setError(error.toString();
-      console.error("Error saving academic level:", error);
+      console.error("Error saving paymentType:", error);
+      setIsSubmitting(false);
     } finally {
       resetForm();
       setIsSubmitting(false);
     }
   };
+
+  const handleEditClick = (paymentType: PaymentTypeInterface) => {
+    reset({
+      name: paymentType.name,
+    });
+    setFormMode("edit");
+    setCurrentPaymentTypeId(paymentType.id ?? 0);
+  };
+
   const resetForm = () => {
     reset({
       name: "",
-      description: "",
     });
+    setCurrentPaymentTypeId(null);
     setFormMode("create");
-    setCurrentGradeGroupId(null);
-    setError("");
   };
-
-  // Add Academic Level Form
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   return (
     <>
@@ -115,28 +119,28 @@ const GradeGroup = () => {
           <div className="card mb-3">
             <div className="card-header mb-6">
               <div className="card-title">
-                <h1 className="d-flex align-items-center position-relative my-1">
-                  {formMode === "create" ? "Add New " : "Edit"} Grade Group
+                <h1 className="d-flex align-items-center position-relative">
+                  {formMode === "create" ? "Add New " : "Edit "}
+                  Payment Type
                 </h1>
               </div>
             </div>
-
             <div className="card-body pt-0">
-              {isSubmitting}
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="row">
                   <div className="col-12">
                     <div className="fv-row mb-7">
                       <label className="required fw-bold fs-6 mb-2">
-                        Level Name
+                        Payment Type Name
                       </label>
+
                       <input
                         type="text"
                         {...register("name")}
-                        className={`form-control ${
+                        className={`form-control mb-3 mb-lg-0 ${
                           errors.name && "is-invalid"
-                        } form-control mb-3 mb-lg-0`}
-                        placeholder="Ex: Educator"
+                        }`}
+                        placeholder="Ex: VAT 13%"
                       />
                       {errors.name && (
                         <span className="text-danger">
@@ -144,21 +148,8 @@ const GradeGroup = () => {
                         </span>
                       )}
                     </div>
-                    <div className="fv-row mb-7">
-                      <label className="fw-bold fs-6 mb-2">Description</label>
-                      <textarea
-                        {...register("description")}
-                        className="form-control form-control mb-3 mb-lg-0"
-                        placeholder="Ex: Detailed description"
-                        rows={4} // Adjust the rows to fit your design
-                      ></textarea>
-                      {errors.description && (
-                        <span className="text-danger">
-                          {errors.description.message}
-                        </span>
-                      )}
-                    </div>
                   </div>
+
                   <div className="col-12 pt-15 text-center">
                     <button
                       title="reset"
@@ -171,7 +162,7 @@ const GradeGroup = () => {
                       title="submit"
                       type="submit"
                       className="btn btn-primary"
-                      disabled={isSubmitting} // Disable button while submitting
+                      disabled={isSubmitting}
                     >
                       {isSubmitting
                         ? "Saving..."
@@ -186,11 +177,11 @@ const GradeGroup = () => {
           </div>
         </div>
         <div className="col-md-8">
-          <div className="card mb-3">
+          <div className="card">
             <div className="card-header mb-6">
               <div className="card-title w-100">
                 <h1 className="d-flex justify-content-between align-items-center position-relative my-1 w-100">
-                  <span>Grade Groups</span>
+                  <span>Payment Types</span>
                   <div className="d-flex gap-2">
                     <div className="d-flex align-items-center position-relative h-100">
                       <Icon
@@ -203,8 +194,8 @@ const GradeGroup = () => {
                         id="data_search"
                         value={searchTerm}
                         onChange={handleSearchChange}
-                        className="form-control w-250px  ps-14"
-                        placeholder="Search Grade Group"
+                        className="form-control w-250px ps-14"
+                        placeholder="Search PaymentType"
                       />
                     </div>
 
@@ -232,47 +223,42 @@ const GradeGroup = () => {
             </div>
 
             <div className="card-body pt-0">
-              <div className="table">
-                <div className="table-responsive">
+              <div className="">
+                <div className="">
                   {isLoading && <Loading />}
-                  {!isLoading && gradeGroups.length === 0 && (
+                  {!isLoading && paymentTypes.length === 0 && (
                     <div className="alert alert-info">
-                      No Academic Levels Found
+                      No Payment Types Found
                     </div>
                   )}
                   {!isLoading && (
-                    <table className="table table-striped table-sm">
-                      <thead
-                        style={{
-                          fontWeight: "bold",
-                        }}
-                      >
-                        <tr>
-                          <th className="text-center">SN</th>
-                          <th>Name</th>
-                          <th>Description</th>
+                    <table
+                      className="table align-middle table-row-dashed fs-6 gy-1 dataTable no-footer"
+                      id="table_paymentTypes"
+                      aria-describedby="table_paymentTypes_info"
+                    >
+                      <thead>
+                        <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+                          <th className="min-w-225px">Name</th>
                           <th className="text-end">Actions</th>
                         </tr>
                       </thead>
-                      <tbody>
-                        {gradeGroups.map((group, index) => (
-                          <tr key={index}>
-                            <td className="text-center">
-                              {(currentPage - 1) * (itemsPerPage ?? 1) +
-                                index +
-                                1}
-                            </td>
-                            <td>{group.name}</td>
-                            <td>{group.description}</td>
+                      <tbody className="text-gray-600 fw-bold">
+                        {paymentTypes.map((paymentType, index) => (
+                          <tr key={index} className="odd">
+                            <td className="">{paymentType.name} </td>
+
                             <td className="text-end">
-                              <button
-                                title="edit grade group"
-                                type="button"
-                                onClick={() => handleEditClick(group)}
-                                className="btn btn-light-info btn-icon btn-sm"
-                              >
-                                <Icon name={"edit"} className={"svg-icon"} />
-                              </button>
+                              <div className="d-flex flex-end gap-2">
+                                <button
+                                  title="edit academic level"
+                                  type="button"
+                                  onClick={() => handleEditClick(paymentType)}
+                                  className="btn btn-light-info btn-icon btn-sm"
+                                >
+                                  <Icon name={"edit"} className={"svg-icon"} />
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -282,14 +268,14 @@ const GradeGroup = () => {
                 </div>
               </div>
             </div>
-
-            {/* Pagination */}
             <div className="card-footer">
-              <Pagination
-                pagination={pagination}
-                edgeLinks={edgeLinks}
-                onPageChange={handlePageChange}
-              />
+              {pagination && (
+                <Pagination
+                  pagination={pagination}
+                  edgeLinks={edgeLinks}
+                  onPageChange={handlePageChange}
+                />
+              )}
             </div>
           </div>
         </div>
@@ -298,4 +284,4 @@ const GradeGroup = () => {
   );
 };
 
-export default GradeGroup;
+export default PaymentType;

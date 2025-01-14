@@ -9,6 +9,7 @@ import { PaginationProps } from "../../../components/Pagination/Pagination";
 import toast from "react-hot-toast";
 import paymentTypeService, {
   PaymentTypeInterface,
+  UpdatePaymentTypeInterface,
 } from "../services/paymentTypesService";
 
 const usePaymentType = ({
@@ -19,7 +20,6 @@ const usePaymentType = ({
   const [paymentTypes, setPaymentTypes] = useState<PaymentTypeInterface[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [statusChanged, setStatusChanged] = useState(false);
 
   const [pagination, setPagination] =
     useState<PaginationProps["pagination"]>(null);
@@ -57,6 +57,49 @@ const usePaymentType = ({
     fetchPaymentTypes();
   }, [fetchPaymentTypes]);
 
+  const savePaymentType = async ({ name }: PaymentTypeInterface) => {
+    const params = {
+      name,
+    };
+
+    try {
+      await paymentTypeService.create<PaymentTypeInterface>(params);
+      fetchPaymentTypes();
+      toast.success("Payment Type Added Successfully.");
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+        toast.error(err.message);
+      } else {
+        setError("An unknown error occurred.");
+        toast.error("An unknown error occurred.");
+      }
+    }
+  };
+
+  const updatePaymentType = async ({
+    id,
+    name,
+  }: UpdatePaymentTypeInterface) => {
+    const params = {
+      id,
+      name,
+    };
+    try {
+      await paymentTypeService.update<UpdatePaymentTypeInterface>(params);
+      fetchPaymentTypes();
+      toast.success("Fiscal year Updated Successfully.");
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+        toast.error(err.message);
+      } else {
+        setError("An unknown error occurred.");
+        toast.error("An unknown error occurred.");
+      }
+    }
+  };
+
   return {
     paymentTypes,
     fetchPaymentTypes,
@@ -64,6 +107,8 @@ const usePaymentType = ({
     pagination,
     edgeLinks,
     isLoading,
+    savePaymentType,
+    updatePaymentType,
   };
 };
 

@@ -1,52 +1,57 @@
-import { useState } from "react";
-import Icon from "../../../../components/Icon/Icon";
-import Loading from "../../../../components/Loading/Loading";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
-import useDebounce from "../../../../hooks/useDebounce";
-import useGradeGroup from "../../../hooks/useGradeGroup";
-import Pagination from "../../../../components/Pagination/Pagination";
+import { Controller, useForm } from "react-hook-form";
+
+import useDocumentTitle from "../../../../../hooks/useDocumentTitle";
+import useDebounce from "../../../../../hooks/useDebounce";
+import useVoucherType from "../../../hooks/useVoucherType";
 import {
-  GradeGroupInterface,
-  UpdateGradeGroupInterface,
-} from "../../../services/gradeGroupService";
-import useDocumentTitle from "../../../../hooks/useDocumentTitle";
+  VoucherTypeInterface,
+  UpdateVoucherTypeInterface,
+} from "../../../services/voucherTypeService";
+import CustomSelect, {
+  Option,
+} from "../../../../../components/CustomSelect/CustomSelect";
+import Icon from "../../../../../components/Icon/Icon";
+import Loading from "../../../../../components/Loading/Loading";
+import Pagination from "../../../../../components/Pagination/Pagination";
 
-const schema = z.object({
-  name: z.string().min(1, { message: "Name is required" }),
-  description: z.string(),
-});
-
-type FormData = z.infer<typeof schema>;
-
-const GradeGroup = () => {
-  useDocumentTitle("Grade Groups");
+const VoucherType = () => {
+  useDocumentTitle("Voucher Type");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
-  const [searchTerm, setSearchTerm] = useState(""); // New state for search term
-  const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [currentGradeGroupId, setCurrentGradeGroupId] = useState<number | null>(
-    null
-  );
+
+  const [isPrimary, setIsPrimary] = useState(false);
+
+  const [currentVoucherTypeId, setCurrentVoucherTypeId] = useState<
+    number | null
+  >(null);
+
+  const schema = z.object({
+    name: z.string().min(1, { message: "Name is required" }),
+    description: z.string().nullable().optional(),
+  });
+
+  type FormData = z.infer<typeof schema>;
 
   const {
-    gradeGroups,
+    voucherTypes,
     isLoading,
     pagination,
     edgeLinks,
-    saveGradeGroup,
-    updateGradeGroup,
-    setError,
-  } = useGradeGroup({
+    saveVoucherType,
+    updateVoucherType,
+  } = useVoucherType({
     search: debouncedSearchTerm,
     currentPage,
     itemsPerPage,
   });
 
-  // header functions
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -58,55 +63,53 @@ const GradeGroup = () => {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1); // Reset to the first page on new search
+    setCurrentPage(1);
   };
 
-  const handleEditClick = (group: UpdateGradeGroupInterface) => {
-    reset({
-      name: group.name,
-      description: group.description ?? "",
-    });
-    setFormMode("edit");
-    setCurrentGradeGroupId(group.id);
-  };
-
-  const onSubmit = (data: GradeGroupInterface | UpdateGradeGroupInterface) => {
-    try {
-      setIsSubmitting(true);
-      if (formMode === "create") {
-        saveGradeGroup(data);
-      } else if (formMode === "edit") {
-        if (currentGradeGroupId) {
-          updateGradeGroup({ ...data, id: currentGradeGroupId });
-        } else {
-          setError("Error Updating Data");
-        }
-      }
-    } catch (error) {
-      // setError(error.toString();
-      console.error("Error saving academic level:", error);
-    } finally {
-      resetForm();
-      setIsSubmitting(false);
-    }
-  };
-  const resetForm = () => {
-    reset({
-      name: "",
-      description: "",
-    });
-    setFormMode("create");
-    setCurrentGradeGroupId(null);
-    setError("");
-  };
-
-  // Add Academic Level Form
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
+  const onSubmit = async (data: FormData) => {
+    try {
+      setIsSubmitting(true);
+      if (formMode === "create") {
+        await saveVoucherType(data);
+      } else if (formMode === "edit") {
+        if (currentVoucherTypeId) {
+          await updateVoucherType({
+            ...data,
+            id: currentVoucherTypeId,
+          } as UpdateVoucherTypeInterface);
+        }
+      }
+    } catch (error) {
+      console.error("Error saving voucherType:", error);
+      setIsSubmitting(false);
+    } finally {
+      resetForm();
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleEditClick = (voucherType: VoucherTypeInterface) => {
+    reset({
+      name: voucherType.name,
+    });
+    setFormMode("edit");
+    setCurrentVoucherTypeId(voucherType.id ?? 0);
+  };
+
+  const resetForm = () => {
+    reset({
+      name: "",
+      description: "",
+    });
+    setCurrentVoucherTypeId(null);
+    setFormMode("create");
+  };
 
   return (
     <>
@@ -115,28 +118,28 @@ const GradeGroup = () => {
           <div className="card mb-3">
             <div className="card-header mb-6">
               <div className="card-title">
-                <h1 className="d-flex align-items-center position-relative my-1">
-                  {formMode === "create" ? "Add New " : "Edit"} Grade Group
+                <h1 className="d-flex align-items-center position-relative">
+                  {formMode === "create" ? "Add New " : "Edit "}
+                  Voucher Type
                 </h1>
               </div>
             </div>
-
             <div className="card-body pt-0">
-              {isSubmitting}
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="row">
                   <div className="col-12">
                     <div className="fv-row mb-7">
                       <label className="required fw-bold fs-6 mb-2">
-                        Level Name
+                        Voucher Type Name
                       </label>
+
                       <input
                         type="text"
                         {...register("name")}
-                        className={`form-control ${
+                        className={`form-control mb-3 mb-lg-0 ${
                           errors.name && "is-invalid"
-                        } form-control mb-3 mb-lg-0`}
-                        placeholder="Ex: Educator"
+                        }`}
+                        placeholder="Ex: Journal Voucher"
                       />
                       {errors.name && (
                         <span className="text-danger">
@@ -144,14 +147,20 @@ const GradeGroup = () => {
                         </span>
                       )}
                     </div>
+                  </div>
+                  <div className="col-12">
                     <div className="fv-row mb-7">
-                      <label className="fw-bold fs-6 mb-2">Description</label>
+                      <label className="required fw-bold fs-6 mb-2">
+                        Description
+                      </label>
                       <textarea
+                        className={`form-control mb-3 mb-lg-0 ${
+                          errors.description && "is-invalid"
+                        }`}
                         {...register("description")}
-                        className="form-control form-control mb-3 mb-lg-0"
-                        placeholder="Ex: Detailed description"
-                        rows={4} // Adjust the rows to fit your design
+                        id=""
                       ></textarea>
+
                       {errors.description && (
                         <span className="text-danger">
                           {errors.description.message}
@@ -163,6 +172,7 @@ const GradeGroup = () => {
                     <button
                       title="reset"
                       type="reset"
+                      onClick={resetForm}
                       className="btn btn-light me-3"
                     >
                       Reset
@@ -171,7 +181,7 @@ const GradeGroup = () => {
                       title="submit"
                       type="submit"
                       className="btn btn-primary"
-                      disabled={isSubmitting} // Disable button while submitting
+                      disabled={isSubmitting}
                     >
                       {isSubmitting
                         ? "Saving..."
@@ -186,11 +196,11 @@ const GradeGroup = () => {
           </div>
         </div>
         <div className="col-md-8">
-          <div className="card mb-3">
+          <div className="card">
             <div className="card-header mb-6">
               <div className="card-title w-100">
                 <h1 className="d-flex justify-content-between align-items-center position-relative my-1 w-100">
-                  <span>Grade Groups</span>
+                  <span>Voucher Types</span>
                   <div className="d-flex gap-2">
                     <div className="d-flex align-items-center position-relative h-100">
                       <Icon
@@ -203,8 +213,8 @@ const GradeGroup = () => {
                         id="data_search"
                         value={searchTerm}
                         onChange={handleSearchChange}
-                        className="form-control w-250px  ps-14"
-                        placeholder="Search Grade Group"
+                        className="form-control w-250px ps-14"
+                        placeholder="Search VoucherType"
                       />
                     </div>
 
@@ -232,47 +242,42 @@ const GradeGroup = () => {
             </div>
 
             <div className="card-body pt-0">
-              <div className="table">
-                <div className="table-responsive">
+              <div className="">
+                <div className="">
                   {isLoading && <Loading />}
-                  {!isLoading && gradeGroups.length === 0 && (
+                  {!isLoading && voucherTypes.length === 0 && (
                     <div className="alert alert-info">
-                      No Academic Levels Found
+                      No Voucher Types Found
                     </div>
                   )}
                   {!isLoading && (
-                    <table className="table table-striped table-sm">
-                      <thead
-                        style={{
-                          fontWeight: "bold",
-                        }}
-                      >
-                        <tr>
-                          <th className="text-center">SN</th>
-                          <th>Name</th>
-                          <th>Description</th>
+                    <table
+                      className="table align-middle table-row-dashed fs-6 gy-1 dataTable no-footer"
+                      id="table_voucherTypes"
+                      aria-describedby="table_voucherTypes_info"
+                    >
+                      <thead>
+                        <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+                          <th className="min-w-225px">Name</th>
                           <th className="text-end">Actions</th>
                         </tr>
                       </thead>
-                      <tbody>
-                        {gradeGroups.map((group, index) => (
-                          <tr key={index}>
-                            <td className="text-center">
-                              {(currentPage - 1) * (itemsPerPage ?? 1) +
-                                index +
-                                1}
-                            </td>
-                            <td>{group.name}</td>
-                            <td>{group.description}</td>
+                      <tbody className="text-gray-600 fw-bold">
+                        {voucherTypes.map((voucherType, index) => (
+                          <tr key={index} className="odd">
+                            <td className="">{voucherType.name} </td>
+
                             <td className="text-end">
-                              <button
-                                title="edit grade group"
-                                type="button"
-                                onClick={() => handleEditClick(group)}
-                                className="btn btn-light-info btn-icon btn-sm"
-                              >
-                                <Icon name={"edit"} className={"svg-icon"} />
-                              </button>
+                              <div className="d-flex flex-end gap-2">
+                                <button
+                                  title="edit academic level"
+                                  type="button"
+                                  onClick={() => handleEditClick(voucherType)}
+                                  className="btn btn-light-info btn-icon btn-sm"
+                                >
+                                  <Icon name={"edit"} className={"svg-icon"} />
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -282,14 +287,14 @@ const GradeGroup = () => {
                 </div>
               </div>
             </div>
-
-            {/* Pagination */}
             <div className="card-footer">
-              <Pagination
-                pagination={pagination}
-                edgeLinks={edgeLinks}
-                onPageChange={handlePageChange}
-              />
+              {pagination && (
+                <Pagination
+                  pagination={pagination}
+                  edgeLinks={edgeLinks}
+                  onPageChange={handlePageChange}
+                />
+              )}
             </div>
           </div>
         </div>
@@ -298,4 +303,4 @@ const GradeGroup = () => {
   );
 };
 
-export default GradeGroup;
+export default VoucherType;

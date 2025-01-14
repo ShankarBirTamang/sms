@@ -121,7 +121,6 @@ const useAccountGroup = ({
       alias,
       parent_id,
     };
-    console.log(params);
 
     try {
       await accountGroupService.update<UpdateAccountGroupInterface>(params);

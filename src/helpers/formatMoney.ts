@@ -8,7 +8,7 @@ export const formatMoneyToNepali = (amount: number): string => {
     minimumFractionDigits: 2,
   })
     .format(amount)
-    .replace("NPR", "");
+    .replace("NPR", "Rs.");
 };
 
 const numberToWords = (num: number): string => {

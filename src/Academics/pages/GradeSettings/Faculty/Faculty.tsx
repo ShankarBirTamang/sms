@@ -296,8 +296,9 @@ const Faculty = () => {
                         {faculties.map((faculty, index) => (
                           <tr key={index}>
                             <td className="text-center">
-                              {" "}
-                              {/* {(currentPage - 1) * itemsPerPage ?? 0 + index + 1} */}
+                              {(currentPage - 1) * (itemsPerPage ?? 1) +
+                                index +
+                                1}
                             </td>
                             <td>
                               {faculty.name} ({faculty.code})

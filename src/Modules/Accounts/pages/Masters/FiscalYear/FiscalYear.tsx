@@ -499,7 +499,7 @@ export const FiscalYear = () => {
                     >
                       <thead>
                         <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
-                          <th className="w-25px">Index</th>
+                          <th className="w-25px">S.N.</th>
                           <th className="min-w-155px">Fiscal Year Name</th>
                           <th className="text-center">Start Date</th>
                           <th className="text-center">End Date</th>
@@ -511,7 +511,11 @@ export const FiscalYear = () => {
                       <tbody className="text-gray-600 fw-bold">
                         {fiscalYears.map((fiscalYear, index) => (
                           <tr key={index}>
-                            <td className="text-center">{fiscalYear.rank}</td>
+                            <td className="text-center">
+                              {(currentPage - 1) * (itemsPerPage ?? 1) +
+                                index +
+                                1}
+                            </td>
                             <td>{fiscalYear.name}</td>
                             <td className="text-center">
                               B.S.:{fiscalYear.start_date_np} <br />

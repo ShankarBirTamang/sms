@@ -3,6 +3,9 @@ import AccountGroup from "../Masters/AccountGroup/AccountGroup";
 import ItemGroup from "../Masters/ItemGroup/ItemGroup";
 import Item from "../Masters/Item/Item";
 import TaxCategory from "../Masters/TaxCategory/TaxCategory";
+import PaymentGroup from "../Masters/PaymentGroup/PaymentGroup";
+import PaymentType from "../Masters/PaymentType/PaymentType";
+import VoucherType from "../Masters/VoucherType/VoucherType";
 
 interface GroupProps {
   name: string;
@@ -27,15 +30,20 @@ const GroupSettings = () => {
     {
       name: "Payment Group",
       slug: "payment-gr",
-      component: <ItemGroup />,
+      component: <PaymentGroup />,
     },
     {
       name: "Payment Types",
       slug: "pay-type",
-      component: <ItemGroup />,
+      component: <PaymentType />,
     },
     {
-      name: "Fee Group",
+      name: "Voucher Types",
+      slug: "voucher-type",
+      component: <VoucherType />,
+    },
+    {
+      name: "Fee/Payables Group",
       slug: "fee-group",
       component: <ItemGroup />,
     },

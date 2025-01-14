@@ -3,7 +3,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import SessionGradePicker from "../../../../../Academics/componenet/SessionGradePicker/SessionGradePicker";
-import useGrade from "../../../../../Academics/hooks/useGrade";
 import Loading from "../../../../../components/Loading/Loading";
 import useFeeStructure from "../../../hooks/useFeeStructure";
 import { FeeStructureInterface } from "../../../services/feeStructureService";
@@ -12,15 +11,10 @@ import usePaymentGroup from "../../../hooks/usePaymentGroup";
 import useDiscountGroup from "../../../hooks/useDiscountGroup";
 import { useAccount } from "../../../hooks/useAccount";
 import { StudentAccountInterface } from "../../../services/accountService";
-import NepaliCurrencyInput from "../../../../../components/NepaliCurrencyInput/NepaliCurrencyInput";
 
 const StudentAccount = () => {
-  // const { getSectionStudents } = useGrade({});
-
   const [students, setStudents] = useState<StudentAccountInterface[]>([]);
   const [feeStructure, setFeeStructure] = useState<FeeStructureInterface>();
-  const [defaultPaymentGroup, setDefaultPaymentGroup] = useState();
-  const [defaultDiscountGroup, setDefaultDiscountGroup] = useState();
 
   const { singleFeeStructure } = useFeeStructure({});
   const { paymentGroups } = usePaymentGroup({});
@@ -37,8 +31,6 @@ const StudentAccount = () => {
       grade: number | null;
       section: number | null;
     }) => {
-      console.log(selectedValues);
-
       if (selectedValues.grade && !selectedValues.section) {
         setStudents([]);
         setFeeStructure(undefined);
@@ -46,21 +38,18 @@ const StudentAccount = () => {
 
       if (selectedValues.section && selectedValues.grade) {
         setIsLoading(true);
-        // const students = await getSectionStudents(selectedValues.section);
         const feeStructure = await singleFeeStructure(selectedValues.grade);
+        console.log(
+          "feeStructure at line 45 in StudentAccount/StudentAccount.tsx:",
+          feeStructure
+        );
         const students = await getStudentAccount(
           selectedValues.grade,
           selectedValues.section
         );
-
-        console.log(
-          "students at line 50 in StudentAccount/StudentAccount.tsx:",
-          students
-        );
         setStudents(students ?? []);
         setFeeStructure(feeStructure);
         setIsLoading(false);
-        console.log(feeStructure);
       }
     },
     [getStudentAccount, singleFeeStructure]
@@ -77,9 +66,9 @@ const StudentAccount = () => {
         discount_group_id: z.string().nullable().optional(),
         non_mandatory_fee_ids: z.array(z.number()).optional(),
         previous_year_balance: z.number().default(0),
-        previous_year_balance_type: z.enum(["D", "C"]).default("C"),
+        previous_year_balance_type: z.enum(["D", "C"]).default("D"),
         opening_balance: z.number().default(0),
-        opening_balance_type: z.enum(["D", "C"]).default("C"),
+        opening_balance_type: z.enum(["D", "C"]).default("D"),
       })
     ),
   });
@@ -115,7 +104,7 @@ const StudentAccount = () => {
           non_mandatory_fee_ids:
             student.nonMandatoryFees
               ?.map((fee) => fee.id)
-              .filter((id): id is number => id !== undefined) || [], // Update this if needed
+              .filter((id): id is number => id !== undefined) || [],
           previous_year_balance: student.account?.previous_year_balance || 0,
           previous_year_balance_type:
             student.account?.previous_year_balance_type || "C",
@@ -125,10 +114,8 @@ const StudentAccount = () => {
         return acc;
       }, {} as Record<string, FormDataRecordReturnProps>);
 
-      console.log("UseEffectDefault", defaultValues);
       reset({ formStudents: defaultValues });
     }
-    console.log("UseEffect", students);
   }, [students, reset]);
 
   const onSubmit = async (data: FormData) => {
@@ -156,17 +143,18 @@ const StudentAccount = () => {
         opening_balance_type,
       })
     );
+    console.log("ddd", JSON.stringify(formattedData));
+
     await saveStudentAccount({
       type: "Student",
       studentAccountData: formattedData,
     });
-    // console.log(data);
     setIsSubmitting(false);
   };
 
-  useEffect(() => {
-    console.log(errors);
-  }, [errors]);
+  // useEffect(() => {
+  //   console.log(errors);
+  // }, [errors]);
 
   const handleDefaultPaymentGroupChange = (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -536,15 +524,16 @@ const StudentAccount = () => {
                                             type="checkbox"
                                             id={`student-${student.id}-fee-${fee.id}`}
                                             checked={value.includes(
-                                              fee.id ?? 0
+                                              fee.item.id ?? 0
                                             )}
                                             onChange={(e) => {
                                               const updatedFees = e.target
                                                 .checked
-                                                ? [...value, fee.id]
+                                                ? [...value, fee.item.id]
                                                 : value.filter(
-                                                    (id) => id !== fee.id
+                                                    (id) => id !== fee.item.id
                                                   );
+                                              console.log(fee.item.id);
 
                                               field.onChange(updatedFees);
                                             }}

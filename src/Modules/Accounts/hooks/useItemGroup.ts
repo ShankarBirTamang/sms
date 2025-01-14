@@ -116,7 +116,6 @@ const useItemGroup = ({
       alias,
       parent_id,
     };
-    console.log(params);
 
     try {
       await itemGroupService.update<UpdateItemGroupInterface>(params);

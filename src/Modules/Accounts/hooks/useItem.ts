@@ -45,10 +45,6 @@ const useItem = ({
     request
       .then((result) => {
         setItems(result.data.data);
-        console.log(
-          "result.data.data at line 47 in hooks/useItem.ts:",
-          result.data.data
-        );
         setPagination(result.data.meta);
         setEdgeLinks(result.data.links);
         setIsLoading(false);
@@ -131,7 +127,6 @@ const useItem = ({
       item_group_id,
       account_group_id,
     };
-    console.log(params);
 
     try {
       await itemService.update<UpdateItemInterface>(params);

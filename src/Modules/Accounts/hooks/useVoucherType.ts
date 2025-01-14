@@ -7,28 +7,25 @@ import {
 } from "../../../Interface/Interface";
 import { PaginationProps } from "../../../components/Pagination/Pagination";
 import toast from "react-hot-toast";
-import paymentGroupService, {
-  PaymentGroupInterface,
-  UpdatePaymentGroupInterface,
-} from "../services/paymentGroupService";
+import voucherTypeService, {
+  VoucherTypeInterface,
+  UpdateVoucherTypeInterface,
+} from "../services/voucherTypeService";
 
-const usePaymentGroup = ({
+const useVoucherType = ({
   search = "",
   currentPage = 1,
   itemsPerPage = null,
 }: PaginationAndSearch) => {
-  const [paymentGroups, setPaymentGroups] = useState<PaymentGroupInterface[]>(
-    []
-  );
+  const [voucherTypes, setVoucherTypes] = useState<VoucherTypeInterface[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [statusChanged, setStatusChanged] = useState(false);
 
   const [pagination, setPagination] =
     useState<PaginationProps["pagination"]>(null);
   const [edgeLinks, setEdgeLinks] = useState<PaginationProps["edgeLinks"]>();
 
-  const fetchPaymentGroups = useCallback(async () => {
+  const fetchVoucherTypes = useCallback(async () => {
     setIsLoading(true);
     const params: Record<string, string | number | null> = {
       per_page: itemsPerPage,
@@ -39,12 +36,12 @@ const usePaymentGroup = ({
     }
 
     const { request } =
-      paymentGroupService.getAll<ApiResponseInterface<PaymentGroupInterface>>(
+      voucherTypeService.getAll<ApiResponseInterface<VoucherTypeInterface>>(
         params
       );
     request
       .then((result) => {
-        setPaymentGroups(result.data.data);
+        setVoucherTypes(result.data.data);
         setPagination(result.data.meta);
         setEdgeLinks(result.data.links);
         setIsLoading(false);
@@ -57,18 +54,22 @@ const usePaymentGroup = ({
   }, [search, currentPage, itemsPerPage]);
 
   useEffect(() => {
-    fetchPaymentGroups();
-  }, [fetchPaymentGroups]);
+    fetchVoucherTypes();
+  }, [fetchVoucherTypes]);
 
-  const savePaymentGroup = async ({ name }: PaymentGroupInterface) => {
+  const saveVoucherType = async ({
+    name,
+    description,
+  }: VoucherTypeInterface) => {
     const params = {
       name,
+      description,
     };
 
     try {
-      await paymentGroupService.create<PaymentGroupInterface>(params);
-      fetchPaymentGroups();
-      toast.success("Payment Group Added Successfully.");
+      await voucherTypeService.create<VoucherTypeInterface>(params);
+      fetchVoucherTypes();
+      toast.success("Voucher Type Added Successfully.");
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -80,17 +81,19 @@ const usePaymentGroup = ({
     }
   };
 
-  const updatePaymentGroup = async ({
+  const updateVoucherType = async ({
     id,
     name,
-  }: UpdatePaymentGroupInterface) => {
+    description,
+  }: UpdateVoucherTypeInterface) => {
     const params = {
       id,
       name,
+      description,
     };
     try {
-      await paymentGroupService.update<UpdatePaymentGroupInterface>(params);
-      fetchPaymentGroups();
+      await voucherTypeService.update<UpdateVoucherTypeInterface>(params);
+      fetchVoucherTypes();
       toast.success("Fiscal year Updated Successfully.");
     } catch (err) {
       if (err instanceof Error) {
@@ -104,15 +107,15 @@ const usePaymentGroup = ({
   };
 
   return {
-    paymentGroups,
-    fetchPaymentGroups,
+    voucherTypes,
+    fetchVoucherTypes,
     error,
     pagination,
     edgeLinks,
     isLoading,
-    savePaymentGroup,
-    updatePaymentGroup,
+    saveVoucherType,
+    updateVoucherType,
   };
 };
 
-export default usePaymentGroup;
+export default useVoucherType;

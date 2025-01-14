@@ -146,9 +146,12 @@ const Students = () => {
                     </tr>
                   </thead>
                   <tbody className="text-gray-600 fw-bold">
-                    {students.map((student) => (
+                    {students.map((student, index) => (
                       <tr key={student.id}>
-                        <td>1</td>
+                        <td>
+                          {" "}
+                          {(currentPage - 1) * (itemsPerPage ?? 1) + index + 1}
+                        </td>
                         <td>
                           <div className="d-flex align-items-center">
                             {student.photo ? (

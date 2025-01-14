@@ -32,6 +32,7 @@ export interface AccountInterface {
   accountable?: {
     id: number;
     type: string;
+    base: string;
   } | null;
 }
 

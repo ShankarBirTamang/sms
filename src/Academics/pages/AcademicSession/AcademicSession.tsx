@@ -395,12 +395,13 @@ const AcademicSession = () => {
                   )}
                   {!isLoading && (
                     <table
-                      className="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer"
+                      className="table align-middle table-row-dashed fs-6 gy-1 dataTable no-footer"
                       id="table_sessions"
                       aria-describedby="table_sessions_info"
                     >
                       <thead>
                         <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+                          <th className="w-30">SN.</th>
                           <th className="min-w-225px">Session Name</th>
                           <th className="">Level</th>
                           <th className="min-w-125px">Start Date</th>
@@ -412,6 +413,11 @@ const AcademicSession = () => {
                       <tbody className="text-gray-600 fw-bold">
                         {academicSessions.map((session, index) => (
                           <tr key={index} className="odd">
+                            <td>
+                              {(currentPage - 1) * (itemsPerPage ?? 1) +
+                                index +
+                                1}
+                            </td>
                             <td className="sorting_1">{session.name}</td>
                             <td>{session.academic_level}</td>
                             <td>

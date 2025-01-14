@@ -97,6 +97,10 @@ const menuItems: MenuItem[] = [
             route: "masters/fee-structures",
           },
           {
+            title: "Accounts",
+            route: "masters/accounts",
+          },
+          {
             title: "Setup Student Account",
             route: "masters/student-accounts",
           },
