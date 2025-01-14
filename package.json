@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
+    "@monaco-editor/react": "^4.6.0",
     "@react-buddy/ide-toolbox": "^2.4.0",
     "@sbmdkl/nepali-date-converter": "^2.0.3",
     "@sbmdkl/nepali-datepicker-reactjs": "^1.2.2",

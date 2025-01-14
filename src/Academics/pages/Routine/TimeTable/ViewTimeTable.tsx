@@ -2,14 +2,15 @@ import { useEffect, useState } from "react";
 import Loading from "../../../../components/Loading/Loading";
 import { Link, useParams } from "react-router-dom";
 import Icon from "../../../../components/Icon/Icon";
-import { daysOfWeek } from "../../../services/timeTableServic";
 import useTimeTable from "../../../hooks/useTimeTable";
+import { daysOfWeek } from "../../../services/timeTableServic";
 
 const ViewTimeTable = () => {
   const [isLoading, setIsLoading] = useState(false);
   const params = useParams();
   const timeTableId = params.timeTableId;
   const { getOneTimeTable, timeTable } = useTimeTable({});
+  // console.log("view timetable JSON", JSON.stringify(timeTable));
   console.log("view timetable", timeTable);
 
   useEffect(() => {
@@ -17,6 +18,13 @@ const ViewTimeTable = () => {
       getOneTimeTable(Number(timeTableId));
     }
   }, [timeTableId]);
+
+  const convertTo12HourFormat = (time: string) => {
+    const [hour, minute] = time.split(":").map(Number);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    const adjustedHour = hour % 12 || 12;
+    return `${adjustedHour}:${minute < 10 ? "0" : ""}${minute} ${ampm}`;
+  };
 
   return (
     <div className="col-md-12">
@@ -49,17 +57,36 @@ const ViewTimeTable = () => {
                 aria-describedby="table_sessions_info"
               >
                 <thead>
-                  <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
-                    <th>Period\Day</th>
-                    {daysOfWeek.map((day, dayIndex) => (
-                      <th key={dayIndex}>{day}</th>
+                  <tr
+                    className="text-start border border-2 fw-bolder fs-7 text-uppercase gs-0"
+                    style={{ backgroundColor: "rgba(0, 0, 255, 0.2)" }}
+                  >
+                    <th>Day\Period</th>
+
+                    {timeTable?.periods.map((period, periodIndex) => (
+                      <th key={periodIndex}>{period.period_name}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody className="text-gray-600 fw-bold table">
-                  {timeTable?.periods.map((period, periodIndex) => (
-                    <tr key={periodIndex} className="odd">
-                      <td className="sorting_1">{period.period_name}</td>
+                  {daysOfWeek.map((day) => (
+                    <tr key={day}>
+                      <td>{day}</td>
+                      {timeTable?.periods.map((period) => (
+                        <td key={period.id}>
+                          {period.days[day] ? (
+                            <>
+                              {convertTo12HourFormat(
+                                period.days[day].start_time
+                              )}
+                              -
+                              {convertTo12HourFormat(period.days[day].end_time)}
+                            </>
+                          ) : (
+                            "N/A"
+                          )}
+                        </td>
+                      ))}
                     </tr>
                   ))}
                 </tbody>

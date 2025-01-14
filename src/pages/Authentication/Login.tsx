@@ -5,7 +5,7 @@ import axiosInstance from "../../../axiosConfig";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import Icon from "../../components/Icon/Icon";
 
 const schema = z.object({
@@ -29,6 +29,7 @@ const Login = () => {
     handleSubmit,
     setError,
     reset,
+    control,
     formState: { errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
@@ -57,6 +58,7 @@ const Login = () => {
     };
     validateToken();
   }, [navigate]);
+
   if (isAuthenticated === null) {
     return <div>Loading...</div>; // Show loading indicator while validating
   }
@@ -158,14 +160,21 @@ const Login = () => {
                     </span>
                   </div>
                   <div className="fv-row mb-8">
-                    <input
-                      type="email"
-                      placeholder="Email"
-                      {...register("email")}
-                      className={`form-control bg-transparent ${
-                        errors.email && "is-invalid"
-                      }`}
+                    <Controller
+                      name="email"
+                      control={control}
+                      render={({ field }) => (
+                        <input
+                          type="email"
+                          placeholder="Email"
+                          {...field}
+                          className={`form-control bg-transparent ${
+                            errors.email && "is-invalid"
+                          }`}
+                        />
+                      )}
                     />
+
                     {errors.email && (
                       <span className="text-danger">
                         {errors.email.message}
@@ -175,15 +184,22 @@ const Login = () => {
 
                   <div className="fv-row mb-3">
                     <div className="position-relative">
-                      <input
-                        type={isVisible ? "text" : "password"}
-                        placeholder="Password"
-                        {...register("password")}
-                        className={`form-control bg-transparent ${
-                          errors.password && "is-invalid"
-                        }`}
-                        onInput={handlePasswordChange}
+                      <Controller
+                        name="password"
+                        control={control}
+                        render={({ field }) => (
+                          <input
+                            {...field}
+                            type={isVisible ? "text" : "password"}
+                            placeholder="Password"
+                            className={`form-control bg-transparent ${
+                              errors.password && "is-invalid"
+                            }`}
+                            onInput={handlePasswordChange}
+                          />
+                        )}
                       />
+
                       {password.length > 0 && (
                         <span
                           style={{

@@ -16,6 +16,7 @@ interface RouteConfig {
 import AcademicSessionDetail from "./pages/AcademicSession/AcademicSessionDetail";
 import Subject from "./pages/Grade/Subject/Subject";
 import ViewTimeTable from "./pages/Routine/TimeTable/ViewTimeTable";
+import EditTimeTable from "./pages/Routine/TimeTable/EditTimeTable";
 import Student from "./pages/Grade/Students/Student";
 
 const routes: RouteConfig[] = [
@@ -58,6 +59,11 @@ const routes: RouteConfig[] = [
     path: "routine/time-table/:timeTableId/view",
     title: "Time Table View",
     element: <ViewTimeTable />,
+  },
+  {
+    path: "routine/time-table/:timeTableId/edit",
+    title: "Time Table View",
+    element: <EditTimeTable />,
   },
   {
     path: "grades/:gradeId/subjects",

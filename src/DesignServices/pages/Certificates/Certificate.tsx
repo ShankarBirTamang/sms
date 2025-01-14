@@ -1,75 +1,38 @@
 import { useState } from "react";
-import Icon from "../../../../components/Icon/Icon";
-import Loading from "../../../../components/Loading/Loading";
-import Pagination from "../../../../components/Pagination/Pagination";
-import useDebounce from "../../../../hooks/useDebounce";
-import useAcademicLevels from "../../../hooks/useAcademicLevels";
-import { Link, useNavigate } from "react-router-dom";
-import useTimeTable from "../../../hooks/useTimeTable";
-import { UpdateTimeTableInterface } from "../../../services/timeTableServic";
-import ProcessingButton from "../../../../components/ProcessingButton/ProcessingButton";
+import useDebounce from "../../../hooks/useDebounce";
+import Icon from "../../../components/Icon/Icon";
+import { Link } from "react-router-dom";
+import Loading from "../../../components/Loading/Loading";
+import Pagination from "../../../components/Pagination/Pagination";
+import useCertificate from "../../hooks/useCertificate";
+import { CertificateInterface } from "../../services/certificateServices";
 
-const TimeTable = () => {
+const Certificate = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
   const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
-  const { academicLevels } = useAcademicLevels({});
-  const [processingTimeTableId, setProcessingTimeTableId] = useState<
-    number | null
-  >(null);
-  const navigate = useNavigate();
-  const [formMode, setFormMode] = useState<"create" | "edit" | "view">(
-    "create"
-  );
-
-  const {
-    timeTables,
-    isLoading,
-    pagination,
-    edgeLinks,
-    changeTimeTableStatus,
-  } = useTimeTable({
+  const { isLoading, certificates, pagination, edgeLinks } = useCertificate({
     search: debouncedSearchTerm,
     currentPage,
     itemsPerPage,
   });
 
-  // Header functions
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleViewClick = (certificate: CertificateInterface) => {};
+
+  const handleEditClick = (certificate: CertificateInterface) => {};
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-
+  const handleDeleteClick = () => {};
   const handleItemsPerPageChange = (value: number | null) => {
     setItemsPerPage(value);
     setCurrentPage(1);
-  };
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-    setCurrentPage(1);
-  };
-
-  const handleEditClick = (updatedTimeTable: UpdateTimeTableInterface) => {
-    setFormMode("edit");
-    navigate(`/academics/routine/time-table/${updatedTimeTable.id}/edit`);
-  };
-
-  const handleViewClick = (updatedTimeTable: UpdateTimeTableInterface) => {
-    setFormMode("view");
-    navigate(`/academics/routine/time-table/${updatedTimeTable.id}/view`);
-  };
-
-  const toggleTimeTableStatus = async (timeTableId: number) => {
-    try {
-      setProcessingTimeTableId(timeTableId);
-      console.log("timeTableId", timeTableId);
-      await changeTimeTableStatus(timeTableId);
-    } catch (error) {
-      console.log("Error", error);
-    } finally {
-      setProcessingTimeTableId(null);
-    }
   };
 
   return (
@@ -79,7 +42,7 @@ const TimeTable = () => {
           <div className="card-header mb-6">
             <div className="card-title w-100">
               <h1 className="d-flex justify-content-between align-items-center position-relative my-1 w-100">
-                <span>Time Table</span>
+                <span>Certificate</span>
                 <div className="d-flex gap-2">
                   <div className="d-flex align-items-center position-relative h-100">
                     <Icon
@@ -117,12 +80,12 @@ const TimeTable = () => {
                   </select>
 
                   <Link
-                    to={"/academics/routine/time-table/create"}
+                    to={"/design-services/certificates/create"}
                     className="btn btn-primary btn-sm ms-2 align-content-center"
                     title="Add TimeTable"
                   >
                     <Icon name={"add"} className={"svg-icon"} />
-                    Add TimeTable
+                    Add Certificate
                   </Link>
                 </div>
               </h1>
@@ -132,10 +95,8 @@ const TimeTable = () => {
           <div className="card-body pt-0">
             <div>
               {isLoading && <Loading />}
-              {!isLoading && academicLevels.length === 0 && (
-                <div className="alert alert-info">
-                  No Academic Sessions Found
-                </div>
+              {!isLoading && certificates.length === 0 && (
+                <div className="alert alert-info">No Certificates Found</div>
               )}
               {!isLoading && (
                 <table
@@ -146,13 +107,13 @@ const TimeTable = () => {
                   <thead>
                     <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                       <th> #</th>
-                      <th className="min-w-225px">Session Name</th>
-                      <th>Status</th>
+                      <th className="min-w-225px">Certificate Name</th>
+                      <th>Background</th>
                       <th className="text-end">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="text-gray-600 fw-bold table">
-                    {timeTables.map((timeTable, index) => (
+                    {certificates.map((certificate, index) => (
                       <tr key={index} className="odd">
                         <td>
                           {currentPage * (itemsPerPage ?? 0) +
@@ -160,35 +121,22 @@ const TimeTable = () => {
                             1 -
                             (itemsPerPage ?? 0)}
                         </td>
-                        <td className="sorting_1">{timeTable.name}</td>
-                        <td>
-                          <ProcessingButton
-                            isProcessing={
-                              processingTimeTableId === timeTable.id
-                            }
-                            isActive={timeTable.is_active ?? false}
-                            onClick={() => toggleTimeTableStatus(timeTable.id)}
-                            hoverText={
-                              timeTable.is_active ? "Deactivate" : "Activate"
-                            }
-                            activeText="Active"
-                            inactiveText="Inactive"
-                          />
-                        </td>
+                        <td className="sorting_1">{certificate.name}</td>
+                        <td></td>
                         <td className="text-end">
                           <button
-                            title="edit academic level"
+                            title="edit admit card"
                             type="button"
-                            onClick={() => handleEditClick(timeTable)}
+                            onClick={() => handleEditClick(certificate)}
                             className="btn btn-light-info btn-icon btn-sm m-1"
                           >
                             <Icon name={"edit"} className={"svg-icon"} />
                           </button>
 
                           <button
-                            title="view academic level"
+                            title="view admit card"
                             type="button"
-                            onClick={() => handleViewClick(timeTable)}
+                            onClick={() => handleViewClick(certificate)}
                             className="btn btn-success btn-icon btn-sm m-1"
                           >
                             <Icon name={"search"} className={"svg-icon"} />
@@ -218,4 +166,4 @@ const TimeTable = () => {
   );
 };
 
-export default TimeTable;
+export default Certificate;
