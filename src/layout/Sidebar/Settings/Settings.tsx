@@ -118,33 +118,33 @@ const menuItems: MenuItem[] = [
       },
       {
         title: "Vouchers",
-        route: "/*",
+        route: "/vouchers",
         submenu: [
           {
             title: "Payment",
-            route: "*",
-          },
-          {
-            title: "Receipt",
-            route: "*",
-          },
-          {
-            title: "Journal",
-            route: "*",
-          },
-          {
-            title: "Contra",
-            route: "*",
-          },
-          {
-            title: "Dr. Note",
-            route: "*",
-          },
-          {
-            title: "Cr. Note",
-            route: "*",
+            route: "vouchers/create",
           },
         ],
+      },
+    ],
+  },
+  {
+    title: "Import Data",
+    route: "/imports  ",
+    submenu: [
+      {
+        title: "Students",
+        route: "imports/students",
+      },
+    ],
+  },
+  {
+    title: "Export Data",
+    route: "/exports",
+    submenu: [
+      {
+        title: "Students",
+        route: "exports/students",
       },
     ],
   },

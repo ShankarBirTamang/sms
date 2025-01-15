@@ -9,16 +9,15 @@ import AcademicRoute from "./Academics/AcademicRoute";
 import { PermissionProvider } from "./context/permissionContext";
 import NotFound from "./pages/error/NotFound";
 import StudentRoute from "./Modules/Student/StudentRoute";
-import InstituteRoute from "./general/Institute/InstituteRoute";
+import InstituteRoute from "./General/Institute/InstituteRoute";
 import DesignServicesRoute from "./DesignServices/DesignServicesRoute";
 import Vehicles from "./Transportation/pages/Vehicles";
 import TransportRoutes from "./Transportation/pages/TransportRoutes";
 import EmployeeRoute from "./Modules/Employee/EmployeeRoute";
-<<<<<<< HEAD
 import AccountRoute from "./Modules/Accounts/AccountRoutes";
-=======
-import Address from "./general/pages/Address/Address";
->>>>>>> origin/branch-dev-1
+import Address from "./General/pages/Address/Address";
+import ImportRoute from "./Modules/Import/ImportRoute";
+import ExportRoute from "./Modules/Export/ExportRoute";
 
 const App = () => {
   return (
@@ -52,6 +51,8 @@ const App = () => {
               <Route path="students/*" element={<StudentRoute />} />
               <Route path="employees/*" element={<EmployeeRoute />} />
               <Route path="accounts/*" element={<AccountRoute />} />
+              <Route path="imports/*" element={<ImportRoute />} />
+              <Route path="exports/*" element={<ExportRoute />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

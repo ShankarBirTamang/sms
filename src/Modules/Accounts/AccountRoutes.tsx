@@ -8,6 +8,7 @@ import FeeStructure from "./pages/Masters/FeeStructure/FeeStructure";
 import StudentAccount from "./pages/Masters/Account/StudentAccount";
 import GroupSettings from "./pages/GroupSettings/GroupSettings";
 import Account from "./pages/Masters/Account/Account";
+import Voucher from "./pages/Voucher/Voucher";
 
 interface RouteConfig {
   path: string;
@@ -51,6 +52,11 @@ const routes: RouteConfig[] = [
     path: "masters/student-accounts",
     title: "Setup Student Accounts",
     element: <StudentAccount />,
+  },
+  {
+    path: "vouchers/create",
+    title: "Add Voucher",
+    element: <Voucher />,
   },
 ];
 

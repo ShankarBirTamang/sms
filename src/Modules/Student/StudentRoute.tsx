@@ -6,6 +6,7 @@ import Layout from "../../layout/Layout";
 import ProtectectedRoute from "../../components/Icon/ProtectedRoute";
 import Overview from "./pages/Student/Details/Overview";
 import StudentDetailLayout from "./pages/Student/Details/StudentDetailLayout";
+import StudentPhotograph from "./pages/StudentServices/Photograph/StudentPhotograph";
 
 const routes = [
   {
@@ -18,6 +19,11 @@ const routes = [
     path: "/create-edit",
     title: "Students",
     element: <StudentAddEdit />,
+  },
+  {
+    path: "/photographs",
+    title: "Student Photographs",
+    element: <StudentPhotograph />,
   },
 ];
 

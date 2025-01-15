@@ -1,190 +1,227 @@
-<div wire:id="Ot1pxyQq4ZfsDsdKiQJ4" className="card">
-  <div className="p-6 flex-wrap">
-    <div className="row">
+<div wire:id="jGTSuDn5hW3MDnPo4R3V" className="card mb-5">
+  <div className="card-header border-0 pt-6">
+    <h2>Import Students Data <br /><br /></h2>
+  </div>
+  <div className="card-body pt-0">
+    <div className="bg-danger p-2 mb-2 text-center">
+      <h2 className="text-white">
+        [Warning: When importing an Excel file, make sure to convert the dob_en
+        and dob_np columns to text format and use the YYYY-MM-DD date format for
+        both. Failing to do so may lead to incorrect data. ]
+      </h2>
+    </div>
+    <input
+      type="hidden"
+      name="_token"
+      value="91S1NSIFJCd20PUGIXfh7MgFM44RY4rwrfnblIpq"
+      autocomplete="off"
+    />
+    <form
+      action="https://sms.aanshtech.com/sms/imports/students/import"
+      method="POST"
+      enctype="multipart/form-data"
+    >
+      <input
+        type="hidden"
+        name="_token"
+        value="91S1NSIFJCd20PUGIXfh7MgFM44RY4rwrfnblIpq"
+        autocomplete="off"
+      />
+
+      <div wire:id="Ot2FvWbHQ4gwxtFT7FIJ" className="row">
+        <div className="col-4">
+          <div className="fv-row mb-7">
+            <label className="required fw-bold fs-6 mb-2"
+              >Select Academic Session</label
+            >
+            <select
+              className="form-control form-control-solid mb-3 mb-lg-0"
+              wire:model.live="sessionId"
+              name="session_id"
+            >
+              <option selected="" value="" hidden="">
+                Select Academic Session
+              </option>
+              <option value="1">Academic Year 2081</option>
+              <option value="2">Academic Session 2081-82 [+2]</option>
+            </select>
+          </div>
+        </div>
+        <div className="col-4">
+          <div className="fv-row mb-7">
+            <label className="required fw-bold fs-6 mb-2">Select Grade</label>
+            <select
+              className="form-control form-control-solid mb-3 mb-lg-0"
+              wire:model.live="gradeId"
+              name="grade_id"
+            >
+              <option selected="" value="">Select Grade</option>
+              <option value="1">Nursery</option>
+              <option value="2">Lower Kindergarten</option>
+              <option value="3">Upper Kindergarten</option>
+              <option value="4">Grade 1</option>
+              <option value="5">Grade 2</option>
+              <option value="6">Grade 3</option>
+              <option value="7">Grade 4</option>
+              <option value="8">Grade 5</option>
+              <option value="9">Grade 6</option>
+              <option value="10">Grade 7</option>
+              <option value="11">Grade 8</option>
+              <option value="12">Grade 9</option>
+              <option value="13">Grade 10</option>
+            </select>
+          </div>
+        </div>
+        <div className="col-4">
+          <div className="fv-row mb-7">
+            <label className="required fw-bold fs-6 mb-2">Select Section</label>
+            <select
+              wire:model.live="section_id"
+              className="form-control form-control-solid mb-3 mb-lg-0"
+              name="section_id"
+            >
+              <option selected="" value="">Select Section</option>
+              <option value="1">A1</option>
+              <option value="2">A2</option>
+            </select>
+          </div>
+        </div>
+        <span
+          wire:loading=""
+          className="spinner-border btn-spinner-border"
+          role="status"
+          style="
+            width: 20px;
+            height: 24px;
+            margin-left: -50px;
+            margin-top: 37px;
+          "
+        >
+          <span className="visually-hidden">Loading...</span>
+        </span>
+      </div>
       <div className="col-12">
-        <h2>Filter Students</h2>
-        <div wire:id="ifPhzqaI9UL5xdtdHjZT" className="row">
-          <div className="col-4">
-            <div className="fv-row mb-7">
-              <label className="required fw-bold fs-6 mb-2"
-                >Select Academic Session</label
-              >
-              <select
-                className="form-control form-control-solid mb-3 mb-lg-0"
-                wire:model.live="sessionId"
-                name="session_id"
-              >
-                <option selected="" value="" hidden="">
-                  Select Academic Session
-                </option>
-                <option value="1">Academic Year 2081</option>
-                <option value="2">Academic Session 2081-82 [+2]</option>
-              </select>
-            </div>
-          </div>
-          <div className="col-4">
-            <div className="fv-row mb-7">
-              <label className="required fw-bold fs-6 mb-2">Select Grade</label>
-              <select
-                className="form-control form-control-solid mb-3 mb-lg-0"
-                wire:model.live="gradeId"
-                name="grade_id"
-              >
-                <option selected="" value="">Select Grade</option>
-                <option value="1">Nursery</option>
-                <option value="2">Lower Kindergarten</option>
-                <option value="3">Upper Kindergarten</option>
-                <option value="4">Grade 1</option>
-                <option value="5">Grade 2</option>
-                <option value="6">Grade 3</option>
-                <option value="7">Grade 4</option>
-                <option value="8">Grade 5</option>
-                <option value="9">Grade 6</option>
-                <option value="10">Grade 7</option>
-                <option value="11">Grade 8</option>
-                <option value="12">Grade 9</option>
-                <option value="13">Grade 10</option>
-              </select>
-            </div>
-          </div>
-          <div className="col-4">
-            <div className="fv-row mb-7">
-              <label className="required fw-bold fs-6 mb-2"
-                >Select Section</label
-              >
-              <select
-                wire:model.live="section_id"
-                className="form-control form-control-solid mb-3 mb-lg-0"
-                name="section_id"
-              >
-                <option selected="" value="">Select Section</option>
-                <option value="1">A1</option>
-                <option value="2">A2</option>
-              </select>
-            </div>
-          </div>
-          <span
-            wire:loading=""
-            className="spinner-border btn-spinner-border"
-            role="status"
-            style="
-              width: 20px;
-              height: 24px;
-              margin-left: -50px;
-              margin-top: 37px;
-            "
+        <div className="fv-row mb-7">
+          <label className="required fw-bold fs-6 mb-2"
+            >Select Import FIle</label
           >
-            <span className="visually-hidden">Loading...</span>
-          </span>
+          <div className="row">
+            <div className="col-md-6">
+              <input
+                type="file"
+                required=""
+                name="import_file"
+                wire:model="importFile"
+                className="form-control form-control-solid mb-3 mb-lg-0"
+                accept=".xlsx,.xls"
+                placeholder=""
+              />
+            </div>
+            <div className="col" wire:loading="" wire:target="importFile">
+              <button className="btn btn-primary">Uploading ...</button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div className="card-body" wire:loading.className="d-none">
-    <table
-      className="table align-middle table-row-dashed fs-6 gy-5"
-      id="table_sessions"
-    >
-      <thead>
-        <tr
-          className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0"
-        >
-          <th className="w-30px" rowspan="2">S.N.</th>
 
-          <th className="w-50px" rowspan="2">Name</th>
-          <th className="w-50 text-center">Fee Structure</th>
-        </tr>
-        <tr>
-          <td>
-            <button className="btn btn-primary btn-sm" wire:click="setAll(1)">
-              Sett All Monthly
-            </button>
-            <button className="btn btn-primary btn-sm" wire:click="setAll(2)">
-              Sett All Semi Annual
-            </button>
-            <button className="btn btn-primary btn-sm" wire:click="setAll(3)">
-              Sett All Annual
-            </button>
-          </td>
-        </tr>
-      </thead>
-      <tbody className="">
-        <tr>
-          <td>1</td>
-          <td className="">
-            <a
-              href="#"
-              className="text-gray-800 text-hover-primary mb-1 fw-bold fs-2"
-              >AARAV BASNET</a
-            >
-            <br />
-            <small> Nursery (A1) </small>
-          </td>
-          <td>
-            <table className="styled-table">
-              <tbody>
-                <tr>
-                  <th style="width: 150px">
-                    <strong>Fee Payment Type</strong>
-                  </th>
-                  <td>
-                    <div className="d-flex flex-wrap text-black gap-5">
-                      <div className="form-check mb-2">
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          wire:model.live="students.0.fee_structure.Fee Payment Type.id"
-                          value="1"
-                          id="students_0_fee_structure_Fee Payment Type_1"
-                        />
-                        <label
-                          className="form-check-label"
-                          for="students_0_fee_structure_Fee Payment Type_1"
-                        >
-                          Monthly
-                        </label>
-                      </div>
-                      <div className="form-check mb-2">
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          wire:model.live="students.0.fee_structure.Fee Payment Type.id"
-                          value="2"
-                          id="students_0_fee_structure_Fee Payment Type_2"
-                        />
-                        <label
-                          className="form-check-label"
-                          for="students_0_fee_structure_Fee Payment Type_2"
-                        >
-                          Semi Annual
-                        </label>
-                      </div>
-                      <div className="form-check mb-2">
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          wire:model.live="students.0.fee_structure.Fee Payment Type.id"
-                          value="3"
-                          id="students_0_fee_structure_Fee Payment Type_3"
-                        />
-                        <label
-                          className="form-check-label"
-                          for="students_0_fee_structure_Fee Payment Type_3"
-                        >
-                          Annual
-                        </label>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div className="card-footer text-end" wire:loading.className="d-none">
-    <button className="btn btn-primary">Submit</button>
+      <input
+        type="hidden"
+        name="students"
+        value='[{"id":"1","roll":"1","first_name":"AARAV","middle_name":null,"last_name":"BASNET","gender":"Male","ethnicity":"Others","dob_en":"2021-03-16","dob_np":"2077-12-03","contact":"9817318724","address":"DHARAN-14","father_name":"GOPAL BASNET","father_contact":"","mother_name":"KHINA MAYA POUDEL","mother_contact":"","blood_group":"","nationality":"","mother_tongue":"","religion":"","iemis":"0601800098100001","alert":true,"bus":""},{"id":"2","roll":"2","first_name":"ABDUL","middle_name":null,"last_name":"RAHMAN","gender":"Male","ethnicity":"Dalit","dob_en":"2020-09-08","dob_np":"2077-05-23","contact":"9825366680","address":"DHARAN-12","father_name":"MD. SABIR","father_contact":"","mother_name":"MAMINA KHATUN","mother_contact":"","blood_group":"","nationality":"","mother_tongue":"","religion":"","iemis":"0601800098100002","alert":true,"bus":""},{"id":"3","roll":"3","first_name":"ANURAG","middle_name":null,"last_name":"PODDAR","gender":"Male","ethnicity":"Others","dob_en":"2020-03-10","dob_np":"2076-11-27","contact":"9826021787","address":"DHARAN-16","father_name":"RANJIT PODDAR","father_contact":"","mother_name":"PUJA KUMARI PODDAR","mother_contact":"","blood_group":"","nationality":"","mother_tongue":"","religion":"","iemis":"0601800098010117","alert":true,"bus":""},{"id":"4","roll":"4","first_name":"BINISHA","middle_name":null,"last_name":"TAMANG","gender":"Female","ethnicity":"Janajati","dob_en":"2021-03-02","dob_np":"2077-11-18","contact":"9707681145","address":"DHARAN-3","father_name":"RAJ TAMANG","father_contact":"","mother_name":"MIKMA BHOTE","mother_contact":"","blood_group":"","nationality":"","mother_tongue":"","religion":"","iemis":"0601800098100003","alert":true,"bus":""},{"id":"5","roll":"5","first_name":"DEBID","middle_name":null,"last_name":"SHRESTHA","gender":"Male","ethnicity":"Janajati","dob_en":"2020-11-08","dob_np":"2077-07-23","contact":"9800998785","address":"DHARAN-16","father_name":"KUMAR PRASAD SHRESTHA","father_contact":"","mother_name":"SHUSHILA LAWATI","mother_contact":"9702145907","blood_group":"","nationality":"","mother_tongue":"","religion":"","iemis":"0601800098100004","alert":true,"bus":""},{"id":"6","roll":"6","first_name":"KARTIK","middle_name":null,"last_name":"CHOUDHARY","gender":"Male","ethnicity":"Others","dob_en":"2020-10-17","dob_np":"2077-07-01","contact":"9817767228","address":"DHARAN-1","father_name":"MAHENDRA KUMAR CHOUDHARY","father_contact":"","mother_name":"RANJU CHOUDHARY","mother_contact":"","blood_group":"","nationality":"","mother_tongue":"","religion":"","iemis":"0601800098100005","alert":true,"bus":""},{"id":"7","roll":"7","first_name":"KRISTI","middle_name":null,"last_name":"PODDAR","gender":"Female","ethnicity":"Others","dob_en":"2018-10-16","dob_np":"2075-06-30","contact":"9826021787","address":"DHARAN-16","father_name":"RANJIT PODDAR","father_contact":"","mother_name":"PUJA KUMARI PODDAR","mother_contact":"","blood_group":"","nationality":"","mother_tongue":"","religion":"","iemis":"0601800098100006","alert":true,"bus":""},{"id":"8","roll":"8","first_name":"NICK","middle_name":null,"last_name":"SHAHI","gender":"Male","ethnicity":"Others","dob_en":"2020-12-01","dob_np":"2077-08-16","contact":"9702030196","address":"DHARAN-11","father_name":"NISCHANT SHAHI","father_contact":"","mother_name":"DHAN KUMARI HAYU","mother_contact":"","blood_group":"","nationality":"","mother_tongue":"","religion":"","iemis":"0601800098100007","alert":true,"bus":""},{"id":"9","roll":"9","first_name":"NINGMA","middle_name":null,"last_name":"SHERPA","gender":"Male","ethnicity":"Janajati","dob_en":"2024-05-28","dob_np":"2081-2-15","contact":"9827063475","address":"DHARAN-11","father_name":"PASANG SHERPA","father_contact":"","mother_name":"DAKI SHERPA","mother_contact":"","blood_group":"","nationality":"","mother_tongue":"","religion":"","iemis":"0601800098100008","alert":true,"bus":"bus"},{"id":"10","roll":"10","first_name":"NIRANJAN","middle_name":null,"last_name":"RUCHAL","gender":"Male","ethnicity":"Dalit","dob_en":"2020-09-08","dob_np":"2077-05-23","contact":"9806045228","address":"DHARAN-6","father_name":"KISHNA BISHWAKARMA","father_contact":"","mother_name":"BIMALA BISHWAKARMA","mother_contact":"","blood_group":"","nationality":"","mother_tongue":"","religion":"","iemis":"0601800098100009","alert":true,"bus":""},{"id":"11","roll":"11","first_name":"PAUL","middle_name":null,"last_name":"GAUTAM","gender":"Male","ethnicity":"Others","dob_en":"2020-09-10","dob_np":"2077-05-25","contact":"9823639322","address":"DHARAN-11","father_name":"PAWAN GAUTAM","father_contact":"","mother_name":"DEUKALA RAI","mother_contact":"","blood_group":"","nationality":"","mother_tongue":"","religion":"","iemis":"0601800098100010","alert":true,"bus":"bus"},{"id":"12","roll":"12","first_name":"PRINSA","middle_name":"SANWA","last_name":"LIMBU","gender":"Female","ethnicity":"Janajati","dob_en":"2021-01-22","dob_np":"2077-10-09","contact":"9803183480","address":"DHARAN-15","father_name":"PADAM BAHADUR SAWA LIMBU","father_contact":"","mother_name":"LAXMI RANA MAGAR","mother_contact":"","blood_group":"","nationality":"","mother_tongue":"","religion":"","iemis":"0601800098100011","alert":true,"bus":"bus"},{"id":"13","roll":"13","first_name":"SUJIT","middle_name":null,"last_name":"SHRESTHA","gender":"Male","ethnicity":"Janajati","dob_en":"2020-09-21","dob_np":"2077-06-05","contact":"9749231580","address":"DHARAN-12","father_name":"NETRA KUMAR SHRESTHA","father_contact":"","mother_name":"BISHNU KUMARI RAI","mother_contact":"","blood_group":"","nationality":"","mother_tongue":"","religion":"","iemis":"0601800098100012","alert":true,"bus":""},{"id":"14","roll":"14","first_name":"UPANSHU","middle_name":null,"last_name":"DANGI","gender":"Female","ethnicity":"Others","dob_en":"2020-08-10","dob_np":"2077-04-26","contact":"9817599105","address":"DHARAN-1","father_name":"HARI BAHADUR DAGI","father_contact":"","mother_name":"RADHIKA KARKI","mother_contact":"","blood_group":"","nationality":"","mother_tongue":"","religion":"","iemis":"0601800098100013","alert":true,"bus":""},{"id":"15","roll":"15","first_name":"YAMIMA","middle_name":null,"last_name":"RAI","gender":"Female","ethnicity":"Janajati","dob_en":"2020-05-13","dob_np":"2077-01-31","contact":"9817320935","address":"DHARAN-17","father_name":"PURAN RAI","father_contact":"","mother_name":"JENISHA RAI","mother_contact":"","blood_group":"","nationality":"","mother_tongue":"","religion":"","iemis":"0601800098100014","alert":true,"bus":"bus"},{"id":"16","roll":"16","first_name":"NARSING","middle_name":"KUMARI","last_name":"CHAUDHARI","gender":"Female","ethnicity":"Others","dob_en":"2020-01-07","dob_np":"2076-09-22","contact":"9801697822","address":"DHARAN-14","father_name":"TIRU CHAUDHARI","father_contact":"","mother_name":"URNILA CHAUDHARI","mother_contact":"","blood_group":"","nationality":"","mother_tongue":"","religion":"","iemis":"0601800098100015","alert":true,"bus":""},{"id":"17","roll":"17","first_name":"ALINA","middle_name":null,"last_name":"SINGH CHHETRI","gender":"Female","ethnicity":"Others","dob_en":"2020-02-13","dob_np":"2076-11-01","contact":"9819049585","address":"DHARAN-1","father_name":"TIKEN SINGH CHHETRI","father_contact":"","mother_name":"RINA CHHETRI","mother_contact":"","blood_group":"","nationality":"","mother_tongue":"","religion":"","iemis":"0601800098100016","alert":true,"bus":""},{"id":"18","roll":"18","first_name":"AARUSHI","middle_name":null,"last_name":"THAKUR","gender":"Female","ethnicity":"Others","dob_en":"2024-09-18","dob_np":"2078-02-05","contact":"9820390358","address":"DHARAN-1","father_name":"SANTOSH THAKUR","father_contact":"","mother_name":"BEAUTY KUMARI","mother_contact":"","blood_group":"","nationality":"","mother_tongue":"","religion":"","iemis":"0601800098100017","alert":true,"bus":""},{"id":"19","roll":"19","first_name":"SHINE","middle_name":null,"last_name":"BISHWAKARMA","gender":"Male","ethnicity":"Dalit","dob_en":"2017-09-08","dob_np":"2074-05-23","contact":"9825903513","address":"DHARAN-11","father_name":"BAM BAHADUR B.K","father_contact":"","mother_name":"PAMFA B.K","mother_contact":"","blood_group":"","nationality":"","mother_tongue":"","religion":"","iemis":"0601800098100018","alert":true,"bus":"bus"},{"id":"20","roll":"20","first_name":"JOSHIKA","middle_name":null,"last_name":"RAI","gender":"Female","ethnicity":"Janajati","dob_en":"2020-11-25","dob_np":"2077-08-10","contact":"9746971002","address":"DHARAN-15","father_name":"JAG BAHADUR RAI","father_contact":"","mother_name":"SHIKHA RAI","mother_contact":"","blood_group":"","nationality":"","mother_tongue":"","religion":"","iemis":"0601800098100019","alert":true,"bus":"bus"},{"id":"21","roll":"21","first_name":"ANJAL","middle_name":null,"last_name":"SHRESTHA","gender":"Female","ethnicity":"Janajati","dob_en":"2020-02-03","dob_np":"2076-10-20","contact":"9741714098","address":"DHARAN-12","father_name":"AMRIT SHRESTHA","father_contact":"","mother_name":"GANGA MADEN LIMBU","mother_contact":"","blood_group":"","nationality":"","mother_tongue":"","religion":"","iemis":"0601800098100020","alert":true,"bus":""},{"id":"1928","roll":"22","first_name":"AAYANSH","middle_name":"CHANDRA","last_name":"GUPTA","gender":"Male","ethnicity":"Others","dob_en":"2021-07-06","dob_np":"2078-03-22","contact":"9811760720","address":"DHARAN-15","father_name":"ISHWARYA CHANDRA GUPTA","father_contact":"9811760720","mother_name":"MANJU GUPTA","mother_contact":"9811760720","blood_group":"","nationality":"NEPALI","mother_tongue":"MAITHILI","religion":"HINDU","iemis":"0601800098100021","alert":true,"bus":""}]'
+      />
+      <div className="col-12 mt-3">
+        <hr />
+
+        <style>
+          table {
+            width: 100%;
+          }
+
+          table,
+          th,
+          td {
+            border: 1px solid;
+            font-size: 0.85rem;
+          }
+        </style>
+        <table>
+          <thead>
+            <tr>
+              <th><strong>ID</strong></th>
+              <th><strong>Roll</strong></th>
+              <th><strong>First Name</strong></th>
+              <th><strong>Middle Name</strong></th>
+              <th><strong>Last Name</strong></th>
+              <th><strong>IEMIS</strong></th>
+              <th><strong>Gender</strong></th>
+              <th><strong>Ethnicity</strong></th>
+              <th><strong>DOB EN</strong></th>
+              <th><strong>DOB NP</strong></th>
+              <th><strong>Contact</strong></th>
+              <th><strong>Address</strong></th>
+              <th><strong>Father's Name</strong></th>
+              <th><strong>Father's Contact</strong></th>
+              <th><strong>Mother's Name</strong></th>
+              <th><strong>Mother's Contact</strong></th>
+              <th><strong>Blood Group</strong></th>
+              <th><strong>Nationality</strong></th>
+              <th><strong>Mother's Tongue</strong></th>
+              <th><strong>Religion</strong></th>
+              <th><strong>Bus</strong></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="bg-danger text-white">
+              <td>1</td>
+              <td>1</td>
+              <td>AARAV</td>
+              <td></td>
+              <td>BASNET</td>
+              <td>0601800098100001</td>
+              <td>Male</td>
+              <td>Others</td>
+              <td>2021-03-16</td>
+              <td>2077-12-03</td>
+              <td>9817318724</td>
+              <td>DHARAN-14</td>
+              <td>GOPAL BASNET</td>
+              <td></td>
+              <td>KHINA MAYA POUDEL</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="col-12 pt-15">
+        <button
+          type="reset"
+          wire:click="readData()"
+          className="btn btn-light me-3"
+        >
+          Reset
+        </button>
+        <button
+          wire:loading.remove=""
+          wire:target="readData"
+          type="submit"
+          className="btn btn-primary"
+        >
+          Submit
+        </button>
+        <div wire:loading="" wire:target="readData">
+          <button className="btn btn-primary w-90px">
+            <span className="spinner-border btn-spinner-border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </form>
   </div>
 </div>
