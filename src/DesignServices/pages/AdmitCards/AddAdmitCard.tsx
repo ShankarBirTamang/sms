@@ -69,7 +69,12 @@ const AddAdmitCard = () => {
               </div>
             </div>
             <div className="">
-              <CodeEditor />
+              <CodeEditor
+                iframeHeight={86}
+                iframeWidth={54}
+                orientation="landscape"
+                wantBackgroundImage={false}
+              />
             </div>
             <div>
               <Signature />

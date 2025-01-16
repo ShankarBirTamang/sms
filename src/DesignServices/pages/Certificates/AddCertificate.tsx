@@ -22,7 +22,7 @@ const AddCertificate = () => {
       code: "",
       orientation: "portrait",
     },
-    resolver: zodResolver(certificateSchema),
+    // resolver: zodResolver(certificateSchema),
   });
 
   const {
@@ -33,17 +33,15 @@ const AddCertificate = () => {
     setValue,
   } = methods;
 
-  const selectedPaperSize = watch("paperSize");
-  console.log("paperSizeWatch", selectedPaperSize); //outputs A4, A5 etc
+  const selectedPaperSize = watch("paperSize"); //outputs A4, A5 etc
 
   //Height and Width to pass as the props to Code Editor to adjust it's size
   const iframeWidth =
     paperSizes[selectedPaperSize as keyof typeof paperSizes].width;
   const iframeHeight =
     paperSizes[selectedPaperSize as keyof typeof paperSizes].height;
-  const orientation = watch("orientation");
 
-  console.log("Sizes", iframeHeight, iframeWidth, orientation);
+  const orientation = watch("orientation");
 
   useEffect(() => {
     const { height, width } =
@@ -51,10 +49,30 @@ const AddCertificate = () => {
     setValue("paperSizes", {
       [selectedPaperSize]: { height, width },
     });
+    //Is equivalent to
+    // setValue(`paperSizes.${selectedPaperSize}.height`, height);
+    // setValue(`paperSizes.${selectedPaperSize}.width`, width);
   }, [selectedPaperSize, setValue]);
 
   const onSubmit = (data: CertificateInterface) => {
-    console.log("Submitted Form Data:", data);
+    console.log("Raw data to be submit", data);
+    const formData = new FormData();
+    for (const key in data) {
+      if (key !== "backgroundImage") {
+        Object.keys(data).forEach((key) => {
+          formData.append(key, data[key as keyof CertificateInterface] as any);
+        });
+      } else {
+        if (data.backgroundImage && data.backgroundImage[0]) {
+          formData.append("backgroundImage", data.backgroundImage[0]);
+        }
+      }
+    }
+
+    //Logging
+    formData.forEach((value, key) => {
+      console.log(key, value);
+    });
   };
 
   return (
@@ -76,7 +94,6 @@ const AddCertificate = () => {
                 control={control}
                 render={({ field }) => (
                   <input
-                    required
                     {...field}
                     type="string"
                     id="name"
@@ -89,7 +106,7 @@ const AddCertificate = () => {
             </div>
 
             <div className="row col-md-6">
-              <div className="mb-4 col-md-3">
+              <div className="col-md-3">
                 <label htmlFor="name" className="required form-label">
                   Paper Size
                 </label>
@@ -101,7 +118,6 @@ const AddCertificate = () => {
                       {...field}
                       id="paperSizes"
                       className="form-control form-control-solid"
-                      // value={field.value ? Object.keys(field.value)[0] : ""}
                     >
                       {Object.entries(paperSizes).map(([key, value]) => (
                         <option key={key} value={key}>
@@ -111,7 +127,7 @@ const AddCertificate = () => {
                     </select>
                   )}
                 />
-                <span className="text-danger">{errors.name?.message}</span>
+                <span className="text-danger">{errors.paperSize?.message}</span>
               </div>
               <div className="mb-4 col-md-3">
                 <label htmlFor="name" className="required form-label">
@@ -124,6 +140,7 @@ const AddCertificate = () => {
                     <input
                       required
                       {...field}
+                      disabled
                       type="number"
                       id="height"
                       placeholder="Height"
@@ -146,6 +163,7 @@ const AddCertificate = () => {
                   render={({ field }) => (
                     <input
                       required
+                      disabled
                       {...field}
                       type="number"
                       id="width"
@@ -194,6 +212,7 @@ const AddCertificate = () => {
                 iframeHeight={iframeHeight}
                 iframeWidth={iframeWidth}
                 orientation={orientation}
+                wantBackgroundImage={true}
               />
             </div>
             <div>

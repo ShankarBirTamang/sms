@@ -12,7 +12,7 @@ export interface CertificateInterface {
   paperSizes: {
     [paperSize: string]: PaperSizeInterface;
   };
-  backgroundImage: File | null;
+  backgroundImage?: FileList | null;
   code: string;
   orientation: string;
 }
@@ -45,7 +45,7 @@ export const paperSizes: PaperSizes = {
   A8: { height: 74, width: 52 },
   A9: { height: 52, width: 37 },
   A10: { height: 37, width: 26 },
-  IDCard: { height: 85.6, width: 53.98 },
+  IDCard: { height: 86, width: 54 },
   S4X6: { height: 152, width: 102 },
   S5X7: { height: 178, width: 127 },
   S8X10: { height: 254, width: 203 },
@@ -55,6 +55,18 @@ export const paperSizes: PaperSizes = {
   Tabloid: { height: 432, width: 279 },
 };
 
+// Schema for backgroundImage (optional)
+const backgroundImageSchema = z
+  .instanceof(FileList)
+  .refine((files) => files && files.length > 0, {
+    message: "Background image is required.", // Error when no file is selected
+  })
+  .refine((files) => files && files[0].type.startsWith("image/"), {
+    message: "Please upload a valid image file.", // Error for invalid file type
+  })
+  .optional(); // Make it optional if needed
+
+// Main schema
 export const certificateSchema = z.object({
   name: z.string().min(1, "Certificate Name is Required"),
   paperSize: z.string().min(1, "Paper Size is Required"),
@@ -65,9 +77,12 @@ export const certificateSchema = z.object({
       width: z.number().positive("Width must be a positive number"),
     })
   ),
-  backgroundImage: z.instanceof(File).nullable(), // Add validation for File | null
+  backgroundImage: backgroundImageSchema, // Use the updated schema
   code: z.string().min(1, "Code is required"),
   orientation: z.string().min(1, "Orientation is required"),
 });
+
+// Type for the form data
+// export type CertificateInterface = z.infer<typeof certificateSchema>;
 
 export default apiRoute("/employees");
