@@ -1,4 +1,4 @@
-import { useEffect, useState, ChangeEvent, FormEvent } from "react";
+import { useEffect, useState, ChangeEvent } from "react";
 import { CanceledError } from "../../services/apiClient";
 import {
     ApiResponseInterface,
@@ -151,7 +151,7 @@ const useVehicle = (
     return {
         vehicles, setVehicles,isEditing, setIsEditing,editingVehicleId, setEditingVehicleId
         ,handleChange , form , setForm , clearForm , addVehicle ,pagination,edgeLinks,handleReset,
-        updateVehicle
+        updateVehicle , error , isLoading
     }
 };
 export default useVehicle;

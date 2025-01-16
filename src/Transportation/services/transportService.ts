@@ -34,17 +34,8 @@ export interface CreateVehicleInterface extends Vehicle {
   max_capacity:number;
 }
 
-export interface UpdateVehicleInterface{
-    name:string;
-    description:string;
-  vehicle_type: string;
-  vehicle_condition:string;
-  max_capacity:number;
-  chassis_number:string;
-  model_number:string;
-  year_made:string;
-  vehicle_number:string;
-  note:string;
+export interface UpdateVehicleInterface extends CreateVehicleInterface{
+id:number;
 }
 
 // export interface AcademicLevelsResponse {

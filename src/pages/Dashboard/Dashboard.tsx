@@ -25,7 +25,7 @@ const Dashboard = () => {
     {
       title: "Examination",
       icon: "exam",
-      route: "",
+      route: "/examination/session",
     },
   ];
   const totalStudents = 1000;

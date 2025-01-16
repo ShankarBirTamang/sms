@@ -14,6 +14,7 @@ import DesignServicesRoute from "./DesignServices/DesignServicesRoute";
 import Vehicles from "./Transportation/pages/Vehicles";
 import TransportRoutes from "./Transportation/pages/TransportRoutes";
 import EmployeeRoute from "./Modules/Employee/EmployeeRoute";
+import ExamRoute from "./Modules/Examination/examRoute";
 import AccountRoute from "./Modules/Accounts/AccountRoutes";
 import Address from "./General/pages/Address/Address";
 import ImportRoute from "./Modules/Import/ImportRoute";
@@ -31,7 +32,7 @@ const App = () => {
               <Route element={<Layout />}>
                 <Route path="/" element={<Dashboard />} />
 
-                {/* Include academic routes */}
+                {/* Include transportation routes */}
                 <Route
                   path="/transportation/vehicles/*"
                   element={<Vehicles />}
@@ -40,9 +41,11 @@ const App = () => {
                   path="/transportation/routes/*"
                   element={<TransportRoutes />}
                 />
+
                 <Route path="address/*" element={<Address />} />
               </Route>
               <Route path="academics/*" element={<AcademicRoute />} />
+              <Route path="examination/*" element={<ExamRoute />} />
               <Route
                 path="design-services/*"
                 element={<DesignServicesRoute />}

@@ -1,4 +1,4 @@
-import { useEffect, useState, ChangeEvent, FormEvent } from "react";
+import { useEffect, useState } from "react";
 import { CanceledError } from "../../services/apiClient";
 import {
     ApiResponseInterface,
@@ -142,73 +142,78 @@ const useTransportRoute = (
       }
     };
 
-             //updateFunction
-             const updateRoutes = async ({
-              id,name
-            }: UpdateRouteInterface) => {
-              const params = {
-                id,name
-              };
-              const originalRoutes = [...routes];
-          
-              try {
-                console.log("Original Routes:", originalRoutes);
-          
-                const result =
-                  await routeService.update<UpdateRouteInterface>(params);
-                  setRoutes(
-                    routes.map((route) =>
-                    route.id === result.data.data.id ? result.data.data : route
-                  )
-                );           
-                console.log(`${name} : Updated Successfully!  `);
-                toast.success(`${name} : Updated Successfully!`);
-              } catch (err) {
-                if (err instanceof Error) {
-                  setError(err.message);
-                } else {
-                  setError("An unknown error occurred.");
-                }
-              }
-            };
-            
-            //Update Checkpoint Function
-            const updateCheckPoint = async ({
-              id,location_name,latitude,longitude
-                }: UpdateCheckpointInterface) => {
-                  const params = {
-                    id,location_name,latitude,longitude
-                  };
-                  const originalRoutes = [...routes];
+      //updateFunction
+      const updateRoutes = async ({
+      id,name
+    }: UpdateRouteInterface) => {
+      const params = {
+        id,name
+      };
+      const originalRoutes = [...routes];
+  
+      try {
+        console.log("Original Routes:", originalRoutes);
+  
+        const result =
+          await routeService.update<UpdateRouteInterface>(params);
+          setRoutes(
+            routes.map((route) =>
+            route.id === result.data.data.id ? result.data.data : route
+          )
+        );           
+        console.log(`${name} : Updated Successfully!  `);
+        toast.success(`${name} : Updated Successfully!`);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unknown error occurred.");
+        }
+      }
+    };
+    
+    //Update Checkpoint Function
+    const updateCheckPoint = async ({
+      id,location_name,latitude,longitude
+        }: UpdateCheckpointInterface) => {
+          const params = {
+            id,location_name,latitude,longitude
+          };
+          const originalRoutes = [...routes];
+      
+          try {
+            console.log("Original Routes:", originalRoutes);
+            const result =
+              await checkpointRoutes.update<UpdateCheckpointInterface>(params);
               
-                  try {
-                    console.log("Original Routes:", originalRoutes);
-                    const result =
-                      await checkpointRoutes.update<UpdateCheckpointInterface>(params);
-                      setRoutes((prevRoutes)=>
-                        prevRoutes.map(
-                          (route)=>
-                            route.id === currentRouteId        
-                            ?{
-                              ...route,
-                              route_checkpoints: route.route_checkpoints.map(
-                                (checkpoint) =>
-                                checkpoint.id === result.data.data.id ? result.data.data : checkpoint
-                              )         
-                            }:route 
-                        )
-                    );           
-                    console.log(`${location_name} : Checkpoint Updated Successfully!  `);
-                    toast.success("Edited successfully!");
-                  } catch (err) {
-                    if (err instanceof Error) {
-                      setError(err.message);
-                    } else {
-                      setError("An unknown error occurred.");
-                    }
-                  }
-                };
-                //Update Checkpoint Function Ends
+              setRoutes((prevRoutes)=>
+                prevRoutes.map(
+                  (route)=>
+                    route.id === currentRouteId        
+                    ?{
+                      ...route,
+                      route_checkpoints: route.route_checkpoints.map(
+                        (checkpoint) =>
+                        checkpoint.id === result.data.data.id ? result.data.data : checkpoint
+                      )         
+                    }:route 
+                )
+            );           
+            console.log(`${location_name} : Checkpoint Updated Successfully!  `);
+            toast.success("Edited successfully!");
+          } catch (err) {
+            if (err instanceof Error) {
+              setError(err.message);
+            } else {
+              setError("An unknown error occurred.");
+            }
+          }
+        };
+        //Update Checkpoint Function Ends
+
+
+        //Delete Checkpoint Function
+
 
 
   return {
@@ -216,7 +221,7 @@ const useTransportRoute = (
     newRouteName,setNewRouteName, currentRouteId,setCurrentRouteId,
     checkpointName,setCheckpointForm,checkpointForm,setCheckpointName,
     handleReset,editingCheckpoint,setEditingCheckpoint,
-    handleCancelEdit,pagination, edgeLinks,
+    handleCancelEdit,pagination, edgeLinks,error, isLoading,
     addRoutes,updateRoutes,addCheckpoint,updateCheckPoint,
 }
 }
