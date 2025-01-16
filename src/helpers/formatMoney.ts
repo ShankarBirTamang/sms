@@ -11,6 +11,19 @@ export const formatMoneyToNepali = (amount: number): string => {
     .replace("NPR", "Rs.");
 };
 
+export const formatMoneyToNepali2 = (amount: number): string => {
+  if (isNaN(amount)) return "Invalid amount";
+
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "NPR",
+    currencyDisplay: "symbol",
+    minimumFractionDigits: 0,
+  })
+    .format(amount)
+    .replace("NPR", "");
+};
+
 const numberToWords = (num: number): string => {
   const belowTwenty = [
     "Zero",

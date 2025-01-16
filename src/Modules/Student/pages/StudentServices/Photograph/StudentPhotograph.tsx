@@ -13,16 +13,26 @@ import Loading from "../../../../../components/Loading/Loading";
 import photos from "../../../../../constants/images";
 import DrawerModal from "../../../../../components/DrawerModal/DrawerModal";
 import CapturePhotograph from "./CapturePhotograph";
+import useDocumentTitle from "../../../../../hooks/useDocumentTitle";
+import useDebounce from "../../../../../hooks/useDebounce";
+import Icon from "../../../../../components/Icon/Icon";
 
 const StudentPhotograph = () => {
+  useDocumentTitle("Capture Student Photograph");
   const { getSectionStudents } = useGrade({});
   const [isLoading, setIsLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const fileInputs = useRef<HTMLInputElement[]>([]);
-  const [capturePhotoDrawer, setCapturePhotoDrawer] = useState(true);
+  const [capturePhotoDrawer, setCapturePhotoDrawer] = useState(false);
 
   const [students, setStudents] = useState<StudentInterface[]>([]);
+  const [filteredStudents, setFilteredStudents] = useState<StudentInterface[]>(
+    []
+  );
+  const [selectedStudent, setSelectedStudent] = useState<StudentInterface>();
   const handleSessionSelectChange = useCallback(
     async (selectedValues: {
       level: number | null;
@@ -39,6 +49,7 @@ const StudentPhotograph = () => {
         setIsLoading(true);
         const newStudents = await getSectionStudents(selectedValues.section);
         setStudents(newStudents);
+        setFilteredStudents(newStudents);
         setIsLoading(false);
       }
     },
@@ -47,7 +58,8 @@ const StudentPhotograph = () => {
 
   useEffect(() => {
     console.log(selectedFiles);
-  }, [selectedFiles]);
+    console.log(filteredStudents);
+  }, [filteredStudents, selectedFiles]);
 
   const handleFileChange = (
     event: ChangeEvent<HTMLInputElement>,
@@ -60,8 +72,29 @@ const StudentPhotograph = () => {
     }
   };
 
-  const toggleCapturePhotoDrawer = () => {
+  useEffect(() => {
+    const filteredStudents = students.filter((student) => {
+      return student.full_name
+        ?.toLowerCase()
+        .includes(debouncedSearchTerm.toLocaleLowerCase());
+    });
+    setFilteredStudents(filteredStudents);
+  }, [debouncedSearchTerm, students]);
+
+  const toggleCapturePhotoDrawer = async (
+    student?: StudentInterface,
+    photo?: string
+  ) => {
     setCapturePhotoDrawer(!capturePhotoDrawer);
+    console.log(photo);
+
+    if (student && photo) {
+      const updatedStudents = filteredStudents.map((s) =>
+        s.id === student.id ? { ...s, photo } : s
+      );
+      setFilteredStudents(updatedStudents);
+    }
+    setSelectedStudent(student);
   };
 
   return (
@@ -77,14 +110,38 @@ const StudentPhotograph = () => {
               colSize={3}
             />
           </div>
+        </div>
+      </div>{" "}
+      {isLoading && <Loading />}{" "}
+      {!isLoading && students.length > 0 && (
+        <>
+          <div className="card mb-5">
+            <div className="card-header">
+              <h2 className="card-title">
+                Students of {students[0].grade?.name} (
+                {students[0].section?.faculty?.name}:{students[0].section?.name}
+                )
+              </h2>
+              <div className="card-toolbar">
+                <div className="d-flex align-items-center position-relative">
+                  <Icon
+                    name="searchDark"
+                    className="svg-icon svg-icon-1 position-absolute ms-6"
+                  />
 
-          <div className="col-12 mt-3">
-            {isLoading && <Loading />}
-
-            {!isLoading && students.length > 0 && (
-              <>
-                <hr />
-
+                  <input
+                    type="text"
+                    id="data_search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="form-control w-250px ps-14"
+                    placeholder="Search Students"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="card-body pt-6">
+              <div className="col-12 mt-3">
                 <table className="table align-middle table-row-dashed fs-6 gy-1">
                   <thead>
                     <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
@@ -100,7 +157,7 @@ const StudentPhotograph = () => {
                     </tr>
                   </thead>
                   <tbody className="text-gray-600 fw-bold">
-                    {students.map((student, index) => (
+                    {filteredStudents.map((student, index) => (
                       <tr key={index}>
                         <td>1</td>
                         <td className="d-flex align-items-center">
@@ -146,7 +203,6 @@ const StudentPhotograph = () => {
                               onChange={(event) =>
                                 handleFileChange(event, index)
                               }
-                              // style={{ display: "none" }}
                             />
                             <button
                               type="button"
@@ -158,7 +214,7 @@ const StudentPhotograph = () => {
                             <button
                               type="button"
                               className="btn btn-sm btn-primary"
-                              onClick={toggleCapturePhotoDrawer}
+                              onClick={() => toggleCapturePhotoDrawer(student)}
                             >
                               Capture Photo
                             </button>
@@ -168,21 +224,29 @@ const StudentPhotograph = () => {
                     ))}
                   </tbody>
                 </table>
-              </>
-            )}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <DrawerModal
-        isOpen={capturePhotoDrawer}
-        onClose={toggleCapturePhotoDrawer}
-        position="center"
-        width="900px"
-        height="620px"
-        title="Capture Student Photo"
-      >
-        <CapturePhotograph />
-      </DrawerModal>
+          {selectedStudent && (
+            <DrawerModal
+              isOpen={capturePhotoDrawer}
+              onClose={toggleCapturePhotoDrawer}
+              position="center"
+              width="900px"
+              height="620px"
+              title="Capture Student Photo"
+            >
+              <CapturePhotograph
+                target={selectedStudent}
+                onSave={(photo: string) =>
+                  toggleCapturePhotoDrawer(selectedStudent, photo)
+                }
+                targetFor="Student"
+              />
+            </DrawerModal>
+          )}
+        </>
+      )}
     </>
   );
 };
