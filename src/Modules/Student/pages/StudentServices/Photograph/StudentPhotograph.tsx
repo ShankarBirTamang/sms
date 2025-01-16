@@ -16,10 +16,18 @@ import CapturePhotograph from "./CapturePhotograph";
 import useDocumentTitle from "../../../../../hooks/useDocumentTitle";
 import useDebounce from "../../../../../hooks/useDebounce";
 import Icon from "../../../../../components/Icon/Icon";
+import useGeneralFunction from "../../../../../hooks/useGeneralFunction";
+import {
+  UploadPhotoInterface,
+  UploadPhotoResponse,
+} from "../../../../../services/generalService";
+import useHelpers from "../../../../../hooks/useHelpers";
+import toast from "react-hot-toast";
 
 const StudentPhotograph = () => {
   useDocumentTitle("Capture Student Photograph");
   const { getSectionStudents } = useGrade({});
+  const { convertFileToBase64 } = useHelpers();
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
@@ -33,6 +41,7 @@ const StudentPhotograph = () => {
     []
   );
   const [selectedStudent, setSelectedStudent] = useState<StudentInterface>();
+  const { uploadPhoto } = useGeneralFunction();
   const handleSessionSelectChange = useCallback(
     async (selectedValues: {
       level: number | null;
@@ -56,22 +65,48 @@ const StudentPhotograph = () => {
     [getSectionStudents]
   );
 
-  useEffect(() => {
-    console.log(selectedFiles);
-    console.log(filteredStudents);
-  }, [filteredStudents, selectedFiles]);
-
-  const handleFileChange = (
+  const handleFileChange = async (
     event: ChangeEvent<HTMLInputElement>,
-    index: number
+    index: number,
+    stud: StudentInterface
   ) => {
-    if (event.target.files) {
+    if (
+      event.target.files &&
+      event.target.files.length > 0 &&
+      event.target.files[0]
+    ) {
+      const file = event.target.files[0];
       const newFiles = [...selectedFiles];
-      newFiles[index] = event.target.files[0];
+      newFiles[index] = file;
       setSelectedFiles(newFiles);
+      try {
+        const base64File = await convertFileToBase64(file);
+        const data: UploadPhotoInterface = {
+          id: stud.id,
+          image: base64File,
+          for: "Student",
+        };
+
+        const response = await uploadPhoto(data);
+        if (response) {
+          const uploadResponse: UploadPhotoResponse = response;
+          const photo = uploadResponse.data.photo;
+          const updatedStudents = filteredStudents.map((s) =>
+            s.id === stud.id ? { ...s, photo } : s
+          );
+          setFilteredStudents(updatedStudents);
+          setSelectedStudent(undefined);
+          event.target.value = "";
+        }
+      } catch {
+        toast.error("Error Uploading Photo");
+      }
+    } else {
+      // If no file is selected, reset the selected student and clear the input value
+      setSelectedStudent(undefined);
+      event.target.value = ""; // Clear the file input
     }
   };
-
   useEffect(() => {
     const filteredStudents = students.filter((student) => {
       return student.full_name
@@ -86,15 +121,14 @@ const StudentPhotograph = () => {
     photo?: string
   ) => {
     setCapturePhotoDrawer(!capturePhotoDrawer);
-    console.log(photo);
-
+    setSelectedStudent(student);
     if (student && photo) {
       const updatedStudents = filteredStudents.map((s) =>
         s.id === student.id ? { ...s, photo } : s
       );
       setFilteredStudents(updatedStudents);
+      setSelectedStudent(undefined);
     }
-    setSelectedStudent(student);
   };
 
   return (
@@ -111,7 +145,7 @@ const StudentPhotograph = () => {
             />
           </div>
         </div>
-      </div>{" "}
+      </div>
       {isLoading && <Loading />}{" "}
       {!isLoading && students.length > 0 && (
         <>
@@ -159,7 +193,7 @@ const StudentPhotograph = () => {
                   <tbody className="text-gray-600 fw-bold">
                     {filteredStudents.map((student, index) => (
                       <tr key={index}>
-                        <td>1</td>
+                        <td>{index + 1}</td>
                         <td className="d-flex align-items-center">
                           <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
                             <a href="#">
@@ -185,10 +219,13 @@ const StudentPhotograph = () => {
                             </a>
                           </div>
                         </td>
-                        <td>Nursery A1</td>
-                        <td>Male</td>
-                        <td>9817318724</td>
-                        <td>DHARAN-14</td>
+                        <td>
+                          {student.grade?.name}({student.section?.faculty.name}:
+                          {student.section?.name})
+                        </td>
+                        <td>{student.gender}</td>
+                        <td>{student.contact}</td>
+                        <td>{student.address}</td>
 
                         <td className="text-end">
                           <div className="d-flex gap-3 justify-content-end">
@@ -200,16 +237,24 @@ const StudentPhotograph = () => {
                                   fileInputs.current[index] = input;
                                 }
                               }}
-                              onChange={(event) =>
-                                handleFileChange(event, index)
-                              }
+                              onChange={(event) => {
+                                handleFileChange(event, index, student);
+                              }}
+                              style={{
+                                display: "none",
+                              }}
                             />
                             <button
                               type="button"
                               className="btn btn-sm btn-info"
-                              onClick={() => fileInputs.current[index].click()}
+                              onClick={() => {
+                                fileInputs.current[index].click();
+                                setSelectedStudent(student);
+                              }}
                             >
-                              Upload Photo
+                              {selectedStudent?.id == student.id
+                                ? "Uploading..."
+                                : "Upload Photo"}
                             </button>
                             <button
                               type="button"

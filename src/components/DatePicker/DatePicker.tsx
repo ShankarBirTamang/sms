@@ -31,6 +31,9 @@ const DatePicker = ({
 }: DatePickerProps) => {
   const [adDate, setAdDate] = useState<string>(valueAD); // Ensure initial state is defined
   const [bsDate, setBsDate] = useState<string>(valueBS);
+  // console.log(adDate);
+  // console.log(bsDate);
+
   const [renderKey, setRenderKey] = useState("");
 
   useEffect(() => {

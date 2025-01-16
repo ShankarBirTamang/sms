@@ -32,7 +32,7 @@ const menuItems: MenuItem[] = [
     prefix: "students",
     submenu: [
       { title: "Photographs", route: "photographs" },
-      { title: "Student Details", route: "student-details" },
+      { title: "Student Bulk Update", route: "bulk-edit" },
       { title: "Gate Pass", route: "gate-pass" },
       { title: "ID Cards", route: "id-cards" },
       {

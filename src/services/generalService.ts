@@ -3,3 +3,10 @@ export interface UploadPhotoInterface {
   image: string;
   for: string;
 }
+
+export interface UploadPhotoResponse {
+  data: {
+    message: string;
+    photo: string;
+  };
+}
