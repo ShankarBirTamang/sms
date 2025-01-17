@@ -186,7 +186,7 @@ const AddCertificate = () => {
                     <select
                       {...field}
                       id="landscape"
-                      className="form-control form-control-solid"
+                      className="form-select form-select-solid"
                     >
                       <option value="portrait">Portrait</option>
                       <option value="landscape">Landscape</option>
