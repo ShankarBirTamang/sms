@@ -62,7 +62,6 @@ const AddCertificate = () => {
         Object.keys(data).forEach((key) => {
           formData.append(key, data[key as keyof CertificateInterface] as any);
         });
-      } else {
         if (data.backgroundImage && data.backgroundImage[0]) {
           formData.append("backgroundImage", data.backgroundImage[0]);
         }

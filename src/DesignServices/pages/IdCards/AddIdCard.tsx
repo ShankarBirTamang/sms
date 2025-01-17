@@ -12,7 +12,7 @@ const AddIdCard = () => {
       cardHolder: "",
       cardType: "",
       backgroundImage: null,
-      primaryColor: "",
+      primaryColor: "#000000",
       signatures: [{ signee: "", signature: "" }],
     },
     resolver: zodResolver(IdCardSchema),
@@ -25,8 +25,26 @@ const AddIdCard = () => {
   } = methods;
 
   const onSubmit = (data: IdCardInterface) => {
-    console.log("Submitted Form Data:", data);
+    const formData = new FormData();
+
+    for (const key in data) {
+      if (key !== "backgroundImage") {
+        Object.keys(data).forEach((key) => {
+          formData.append(key, data[key as keyof IdCardInterface] as any);
+        });
+      } else {
+        if (data.backgroundImage && data.backgroundImage[0]) {
+          formData.append("backgroundImage", data.backgroundImage[0]);
+        }
+      }
+    }
+
+    //Logging
+    formData.forEach((value, key) => {
+      console.log(key, value);
+    });
   };
+
   return (
     <FormProvider {...methods}>
       <form className="col-md-12" onSubmit={handleSubmit(onSubmit)}>
