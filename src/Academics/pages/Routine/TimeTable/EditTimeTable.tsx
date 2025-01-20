@@ -6,8 +6,7 @@ import { TimetableFormValues } from "../../../services/timeTableServic";
 
 const EditTimeTable = () => {
   const { timeTableId } = useParams<{ timeTableId: string }>();
-  const { getOneTimeTable, timeTable, updateTimeTable, isLoadingUpdate } =
-    useTimeTable({});
+  const { getOneTimeTable, timeTable, isLoadingUpdate } = useTimeTable({});
   const [defaultValues, setDefaultValues] =
     useState<TimetableFormValues | null>(null);
 

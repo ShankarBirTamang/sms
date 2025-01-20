@@ -1,35 +1,37 @@
 import { useState } from "react";
 import useDebounce from "../../../hooks/useDebounce";
 import Icon from "../../../components/Icon/Icon";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Loading from "../../../components/Loading/Loading";
 import Pagination from "../../../components/Pagination/Pagination";
 import useAdmitCard from "../../hooks/useAdmitCard";
-import { AdmitCardInterface } from "../../services/admitCardService";
+import { GetAdmitCardInterface } from "../../services/admitCardService";
 
 const AdmitCard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
   const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
-  const { isLoading, admitCards, pagination, edgeLinks } = useAdmitCard({
-    search: debouncedSearchTerm,
-    currentPage,
-    itemsPerPage,
-  });
+  const navigate = useNavigate();
+  const { isLoading, admitCardList, pagination, edgeLinks, deleteAdmitCard } =
+    useAdmitCard({
+      search: debouncedSearchTerm,
+      currentPage,
+      itemsPerPage,
+    });
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
-  const handleViewClick = (admitCard: AdmitCardInterface) => {};
-
-  const handleEditClick = (admitCard: AdmitCardInterface) => {};
+  const handleEditClick = (admitCard: GetAdmitCardInterface) => {
+    navigate(`/design-services/admit-cards/${admitCard.id}/edit`);
+  };
+  const handleDeleteClick = (admitCard: GetAdmitCardInterface) => {};
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-  const handleDeleteClick = () => {};
   const handleItemsPerPageChange = (value: number | null) => {
     setItemsPerPage(value);
     setCurrentPage(1);
@@ -95,7 +97,7 @@ const AdmitCard = () => {
           <div className="card-body pt-0">
             <div>
               {isLoading && <Loading />}
-              {!isLoading && admitCards.length === 0 && (
+              {!isLoading && admitCardList.length === 0 && (
                 <div className="alert alert-info">
                   No Academic Sessions Found
                 </div>
@@ -116,7 +118,7 @@ const AdmitCard = () => {
                     </tr>
                   </thead>
                   <tbody className="text-gray-600 fw-bold table">
-                    {admitCards.map((admitCard, index) => (
+                    {admitCardList.map((admitCard, index) => (
                       <tr key={index} className="odd">
                         <td>
                           {currentPage * (itemsPerPage ?? 0) +
@@ -133,21 +135,22 @@ const AdmitCard = () => {
                         <td></td>
                         <td className="text-end">
                           <button
-                            title="edit admit card"
+                            title="Delete"
+                            type="button"
+                            onClick={() => handleDeleteClick(admitCard)}
+                            className="btn btn-light-danger btn-sm m-1"
+                          >
+                            <Icon name={"delete"} className={"svg-icon"} />
+                            Delete
+                          </button>
+                          <button
+                            title="Edit"
                             type="button"
                             onClick={() => handleEditClick(admitCard)}
-                            className="btn btn-light-info btn-icon btn-sm m-1"
+                            className="btn btn-light-success btn-sm m-1"
                           >
                             <Icon name={"edit"} className={"svg-icon"} />
-                          </button>
-
-                          <button
-                            title="view admit card"
-                            type="button"
-                            onClick={() => handleViewClick(admitCard)}
-                            className="btn btn-success btn-icon btn-sm m-1"
-                          >
-                            <Icon name={"search"} className={"svg-icon"} />
+                            Edit
                           </button>
                         </td>
                       </tr>

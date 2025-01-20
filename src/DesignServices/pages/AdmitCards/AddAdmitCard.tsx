@@ -6,13 +6,15 @@ import {
 } from "../../services/admitCardService";
 import CodeEditor from "../../../components/CodeEditor/CodeEditor";
 import { zodResolver } from "@hookform/resolvers/zod";
+import useAdmitCard from "../../hooks/useAdmitCard";
 
 const AddAdmitCard = () => {
+  const { isLoadingSubmit, saveAdmitCard } = useAdmitCard({});
   const methods = useForm<AdmitCardInterface>({
     defaultValues: {
       name: "",
       html: "",
-      signers: [{ name: "", signature: "" }],
+      signers: [{ title: "", signature_id: "" }],
     },
     resolver: zodResolver(admitCardSchema),
   });
@@ -24,7 +26,8 @@ const AddAdmitCard = () => {
   } = methods;
 
   const onSubmit = (data: AdmitCardInterface) => {
-    console.log("Submitted Form Data:", data);
+    console.log("Submitted Form Data:", JSON.stringify(data));
+    saveAdmitCard(data);
   };
   return (
     <FormProvider {...methods}>
@@ -80,7 +83,11 @@ const AddAdmitCard = () => {
               <Signature />
             </div>
             <div className="text-center my-7">
-              <button type="submit" className="btn btn-info">
+              <button
+                type="submit"
+                className="btn btn-info"
+                disabled={isLoadingSubmit}
+              >
                 Submit
               </button>
             </div>

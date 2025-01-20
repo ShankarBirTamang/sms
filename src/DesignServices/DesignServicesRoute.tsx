@@ -8,6 +8,7 @@ import Marksheet from "./pages/Marksheets/Marksheet";
 import AddAdmitCard from "./pages/AdmitCards/AddAdmitCard";
 import AddCertificate from "./pages/Certificates/AddCertificate";
 import AddIdCard from "./pages/IdCards/AddIdCard";
+import EditAdmitCard from "./pages/AdmitCards/EditAdmitCard";
 
 type RouteConfig = {
   path: string;
@@ -35,6 +36,11 @@ const routes: RouteConfig[] = [
     path: "admit-cards/create",
     title: "Admit Cards",
     element: <AddAdmitCard />,
+  },
+  {
+    path: "admit-cards/:admitCardId/edit",
+    title: "Admit Cards",
+    element: <EditAdmitCard />,
   },
   {
     path: "certificates",

@@ -124,7 +124,7 @@ const CodeEditor = ({
               render={({ field }) => (
                 <MonacoEditorWrapper
                   {...field}
-                  height="65vh"
+                  height="70vh"
                   defaultLanguage="html"
                   value={html}
                   onChange={(value: any) => {
@@ -142,6 +142,7 @@ const CodeEditor = ({
         <div className="col-md-7 p-0">
           <div style={{ transform: "scale(0.8)" }}>
             <iframe
+              className="card"
               srcDoc={iframeContent}
               title="Output"
               style={{

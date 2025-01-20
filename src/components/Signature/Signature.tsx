@@ -5,8 +5,8 @@ import toast from "react-hot-toast";
 const baseUrl = import.meta.env.VITE_API_URL;
 
 interface SignatureInterface {
-  name?: string;
-  signature?: string;
+  title?: string;
+  signature_id?: string;
 }
 
 interface GetSignatureInterface {
@@ -63,7 +63,7 @@ const Signature = () => {
               <td>{index + 1}</td>
               <td>
                 <Controller
-                  name={`signers.${index}.name`}
+                  name={`signers.${index}.title`}
                   control={control}
                   render={({ field }) => (
                     <input
@@ -74,16 +74,16 @@ const Signature = () => {
                   )}
                 />
                 <span className="text-danger">
-                  {errors.signers?.[index]?.name?.message}
+                  {errors.signers?.[index]?.title?.message}
                 </span>
               </td>
               <td>
                 <Controller
-                  name={`signers.${index}.signature`}
+                  name={`signers.${index}.signature_id`}
                   control={control}
                   render={({ field }) => (
                     <select
-                      className="form-control form-control-solid"
+                      className="form-select form-select-solid"
                       {...field}
                     >
                       <option value="" hidden>
@@ -98,7 +98,7 @@ const Signature = () => {
                   )}
                 />
                 <span className="text-danger">
-                  {errors.signers?.[index]?.signature?.message}
+                  {errors.signers?.[index]?.signature_id?.message}
                 </span>
               </td>
               <td className="text-end">
@@ -119,7 +119,7 @@ const Signature = () => {
           type="button"
           className="btn btn-success"
           onClick={() => {
-            append({ name: "", signature: "" });
+            append({ title: "", signature_id: "" });
           }}
         >
           Add +

@@ -135,11 +135,11 @@ const useTimeTable = ({
   return {
     error,
     isLoading,
+    timeTable,
     timeTables,
     pagination,
     edgeLinks,
     itemsPerPage,
-    timeTable,
     isLoadingSave,
     isLoadingUpdate,
     setIsLoading,
