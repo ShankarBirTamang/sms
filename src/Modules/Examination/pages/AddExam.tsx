@@ -74,6 +74,7 @@ const AddExam = ({ onSave }: AddExamProps) => {
     reset,
     formState: { errors },
     setValue,
+    getValues,
   } = useForm<ExamFormData>({ resolver: zodResolver(schema) });
 
   const handleDateChange = (
@@ -115,11 +116,15 @@ const AddExam = ({ onSave }: AddExamProps) => {
     setValue("isMerge", value);
   };
   const handleGradeSelection = (gradeId: number) => {
-    if (selectedGrades.includes(gradeId)) {
-      setSelectedGrades(selectedGrades.filter((id) => id !== gradeId)); // Deselect
-    } else {
-      setSelectedGrades([...selectedGrades, gradeId]); // Select
-    }
+    const updatedGrades = selectedGrades.includes(gradeId)
+      ? selectedGrades.filter((id) => id !== gradeId)
+      : [...selectedGrades, gradeId];
+
+    setSelectedGrades(updatedGrades);
+    setValue(
+      "grades",
+      updatedGrades.map((id) => ({ id }))
+    ); // Update form field
   };
 
   const handleAdmitCardDesignChange = (value: string | null) => {
@@ -170,12 +175,17 @@ const AddExam = ({ onSave }: AddExamProps) => {
     setRenderKey(Math.floor((Math.random() + 1) * 10).toString());
   };
 
+  useEffect(() => {
+    setValue(
+      "grades",
+      selectedGrades.map((id) => ({ id }))
+    );
+    console.log("Selected Grades: ", selectedGrades);
+    console.log("Form Grades: ", getValues("grades"));
+  }, [selectedGrades, setValue]);
+
   const onSubmit: SubmitHandler<ExamFormData> = (data) => {
-    const formData = {
-      ...data,
-      grades: selectedGrades.map((id) => ({ id })), // Convert selected grades to the required format
-    };
-    console.log("Submitted data: ", formData);
+    console.log("Submitted data: ", data);
     resetForm();
   };
 
