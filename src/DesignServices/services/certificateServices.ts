@@ -12,8 +12,18 @@ export interface CertificateInterface {
   paperSizes: {
     [paperSize: string]: PaperSizeInterface;
   };
-  backgroundImage?: FileList | null;
-  code: string;
+  background?: FileList | null;
+  html: string;
+  orientation: string;
+}
+
+export interface GetCertificateInterface {
+  name: string;
+  paperSize: string;
+  height: number;
+  width: number;
+  background?: FileList | null;
+  html: string;
   orientation: string;
 }
 
@@ -55,16 +65,17 @@ export const paperSizes: PaperSizes = {
   Tabloid: { height: 432, width: 279 },
 };
 
-// Schema for backgroundImage (optional)
-const backgroundImageSchema = z
-  .instanceof(FileList)
-  .refine((files) => files && files.length > 0, {
-    message: "Background image is required.", // Error when no file is selected
-  })
-  .refine((files) => files && files[0].type.startsWith("image/"), {
-    message: "Please upload a valid image file.", // Error for invalid file type
-  })
-  .optional(); // Make it optional if needed
+const backgroundSchema = z
+  .instanceof(FileList) // Ensure it's a FileList
+  .refine((files) => files.length > 0, "Background image is required") // Ensure at least one file is selected
+  .refine(
+    (files) => files[0].size <= 5 * 1024 * 1024, // 5MB limit
+    "File size must be less than 5MB"
+  )
+  .refine(
+    (files) => ["image/jpeg", "image/png", "image/jpg"].includes(files[0].type), // Allowed file types
+    "Only .jpg, .jpeg, and .png files are allowed"
+  );
 
 // Main schema
 export const certificateSchema = z.object({
@@ -77,8 +88,8 @@ export const certificateSchema = z.object({
       width: z.number().positive("Width must be a positive number"),
     })
   ),
-  backgroundImage: backgroundImageSchema, // Use the updated schema
-  code: z.string().min(1, "Code is required"),
+  background: backgroundSchema, // Use the updated schema
+  html: z.string().min(1, "Code is required"),
   orientation: z.string().min(1, "Orientation is required"),
 });
 

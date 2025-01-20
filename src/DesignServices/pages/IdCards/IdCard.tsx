@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import Loading from "../../../components/Loading/Loading";
 import Pagination from "../../../components/Pagination/Pagination";
 import useIdCard from "../../hooks/useIdCard";
-import { IdCardInterface } from "../../services/idCardService";
+import { GetIdCardInterface } from "../../services/idCardService";
 
 const IdCard = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,9 +22,9 @@ const IdCard = () => {
     setSearchTerm(event.target.value);
   };
 
-  const handleViewClick = (idCard: IdCardInterface) => {};
+  const handleViewClick = (idCard: GetIdCardInterface) => {};
 
-  const handleEditClick = (idCard: IdCardInterface) => {};
+  const handleEditClick = (idCard: GetIdCardInterface) => {};
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -126,9 +126,11 @@ const IdCard = () => {
                             (itemsPerPage ?? 0)}
                         </td>
                         <td className="sorting_1">{idCard.name}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>{idCard.id_card_type.name}</td>
+                        <td>
+                          <img src={idCard.background}></img>
+                        </td>
+                        <td>{idCard.signers[0].name}</td>
                         <td className="text-end">
                           <button
                             title="edit admit card"

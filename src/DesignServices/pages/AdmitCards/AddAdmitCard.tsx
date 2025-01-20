@@ -11,8 +11,8 @@ const AddAdmitCard = () => {
   const methods = useForm<AdmitCardInterface>({
     defaultValues: {
       name: "",
-      code: "",
-      signatures: [{ signee: "", signature: "" }],
+      html: "",
+      signers: [{ name: "", signature: "" }],
     },
     resolver: zodResolver(admitCardSchema),
   });

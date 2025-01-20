@@ -18,11 +18,11 @@ const AddCertificate = () => {
       paperSizes: {
         A4: { height: 297, width: 210 },
       },
-      backgroundImage: null,
-      code: "",
+      background: null,
+      html: "",
       orientation: "portrait",
     },
-    // resolver: zodResolver(certificateSchema),
+    resolver: zodResolver(certificateSchema),
   });
 
   const {
@@ -58,12 +58,12 @@ const AddCertificate = () => {
     console.log("Raw data to be submit", data);
     const formData = new FormData();
     for (const key in data) {
-      if (key !== "backgroundImage") {
+      if (key !== "background") {
         Object.keys(data).forEach((key) => {
           formData.append(key, data[key as keyof CertificateInterface] as any);
         });
-        if (data.backgroundImage && data.backgroundImage[0]) {
-          formData.append("backgroundImage", data.backgroundImage[0]);
+        if (data.background && data.background[0]) {
+          formData.append("background", data.background[0]);
         }
       }
     }
@@ -211,7 +211,7 @@ const AddCertificate = () => {
                 iframeHeight={iframeHeight}
                 iframeWidth={iframeWidth}
                 orientation={orientation}
-                wantBackgroundImage={true}
+                wantBackground={true}
               />
             </div>
             <div>

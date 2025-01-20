@@ -3,15 +3,15 @@ import { Controller, useFormContext } from "react-hook-form";
 import MonacoEditor from "@monaco-editor/react";
 
 interface CodeEditorInterface {
-  code: string;
-  backgroundImage: FileList | null;
+  html: string;
+  background: FileList | null;
 }
 
 interface CodeEditorProps {
   iframeHeight: number;
   iframeWidth: number;
   orientation: string;
-  wantBackgroundImage: boolean;
+  wantBackground: boolean;
 }
 
 const MonacoEditorWrapper = React.forwardRef((props: any, ref) => {
@@ -22,11 +22,9 @@ const CodeEditor = ({
   iframeHeight,
   iframeWidth,
   orientation,
-  wantBackgroundImage,
+  wantBackground,
 }: CodeEditorProps) => {
-  const [backgroundImageUrl, setBackgroundImageUrl] = useState<string | null>(
-    null
-  );
+  const [backgroundUrl, setBackgroundUrl] = useState<string | null>(null);
 
   //We can omit SetValues and it still works.. Why?
   const {
@@ -34,7 +32,7 @@ const CodeEditor = ({
     getValues,
     formState: { errors },
   } = useFormContext<CodeEditorInterface>();
-  const [html, setHtml] = useState(getValues("code") || "<h1>Hello World</h1>");
+  const [html, setHtml] = useState(getValues("html") || "<h1>Hello World</h1>");
   const [iframeContent, setIframeContent] = useState("");
 
   useEffect(() => {
@@ -67,19 +65,19 @@ const CodeEditor = ({
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const backgroundUrl = URL.createObjectURL(file);
-      setBackgroundImageUrl(backgroundUrl);
+      setBackgroundUrl(backgroundUrl);
     } else {
-      setBackgroundImageUrl(null);
+      setBackgroundUrl(null);
     }
   };
 
   useEffect(() => {
     return () => {
-      if (backgroundImageUrl) {
-        URL.revokeObjectURL(backgroundImageUrl);
+      if (backgroundUrl) {
+        URL.revokeObjectURL(backgroundUrl);
       }
     };
-  }, [backgroundImageUrl]);
+  }, [backgroundUrl]);
 
   if (orientation === "landscape") {
     // Swap height and width for landscape orientation
@@ -90,13 +88,13 @@ const CodeEditor = ({
     <div className="container-fluid">
       <div className="row">
         <div className="col-md-5 mb-4">
-          {wantBackgroundImage && (
+          {wantBackground && (
             <div className="mb-1">
-              <label htmlFor="backgroundImage" className="required form-label">
+              <label htmlFor="background" className="required form-label">
                 Background Image
               </label>
               <Controller
-                name="backgroundImage"
+                name="background"
                 control={control}
                 defaultValue={null}
                 render={({ field }) => (
@@ -104,7 +102,7 @@ const CodeEditor = ({
                     {...field}
                     type="file"
                     accept=".png, .jpg, .jpeg"
-                    id="backgroundImage"
+                    id="background"
                     className="form-control form-control-solid"
                     value={undefined}
                     onChange={(e) => {
@@ -114,16 +112,14 @@ const CodeEditor = ({
                   />
                 )}
               />
-              <span className="text-danger">
-                {errors.backgroundImage?.message}
-              </span>
+              <span className="text-danger">{errors.background?.message}</span>
             </div>
           )}
 
           <div>
             <h3>HTML</h3>
             <Controller
-              name="code"
+              name="html"
               control={control}
               render={({ field }) => (
                 <MonacoEditorWrapper
@@ -153,8 +149,8 @@ const CodeEditor = ({
                 height: `${iframeHeight}mm`,
                 width: `${iframeWidth}mm`,
                 overflow: "hidden",
-                backgroundImage: backgroundImageUrl
-                  ? `url('${backgroundImageUrl}')`
+                backgroundImage: backgroundUrl
+                  ? `url('${backgroundUrl}')`
                   : "none",
                 backgroundRepeat: "no-repeat",
                 backgroundSize: "cover",

@@ -4,8 +4,14 @@ import {
   PaginationAndSearch,
 } from "../../Interface/Interface";
 import { PaginationProps } from "../../components/Pagination/Pagination";
-import idCardService, { IdCardInterface } from "../services/idCardService";
+import idCardService, {
+  GetIdCardInterface,
+  IdCardInterface,
+  IdCardTypeInterface,
+} from "../services/idCardService";
 import toast from "react-hot-toast";
+import axiosInstance from "../../../axiosConfig";
+const baseUrl = import.meta.env.VITE_API_URL;
 
 const useIdCard = ({
   search = "",
@@ -13,7 +19,8 @@ const useIdCard = ({
   itemsPerPage = null,
 }: PaginationAndSearch) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [idCards, setIdCards] = useState<IdCardInterface[]>([]);
+  const [idCards, setIdCards] = useState<GetIdCardInterface[]>([]);
+  const [idCardTypes, setIdCardTypes] = useState<IdCardTypeInterface[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   //For Pagination
@@ -33,7 +40,7 @@ const useIdCard = ({
     }
 
     const { request, cancel } =
-      idCardService.getAll<ApiResponseInterface<IdCardInterface>>(params);
+      idCardService.getAll<ApiResponseInterface<GetIdCardInterface>>(params);
 
     request
       .then((result) => {
@@ -41,8 +48,6 @@ const useIdCard = ({
         setPagination(result.data.meta);
         setEdgeLinks(result.data.links);
         setIsLoading(false);
-        // console.log("result after fetching Admit Cards", result.data.data);
-        console.log("result after fetching Admit Cards meta", result.data);
       })
       .catch((error) => {
         console.log("Error while fetching Admit Cards", error);
@@ -52,6 +57,20 @@ const useIdCard = ({
 
     // return () => cancel();
   }, [search, currentPage, itemsPerPage]);
+
+  const getIdCardType = async () => {
+    try {
+      const idCardTypesResponse = await axiosInstance.get(
+        `${baseUrl}/design-services/id-card-types`
+      );
+      setIdCardTypes(idCardTypesResponse.data.data);
+    } catch (error) {
+      console.log("Error fetching Id Card Type", error);
+    }
+  };
+  useEffect(() => {
+    getIdCardType();
+  }, []);
 
   // const saveIdCard = async ({ name, signers }) => {
   //   console.log("create Id card fn");
@@ -67,6 +86,7 @@ const useIdCard = ({
     edgeLinks,
     isLoading,
     idCards,
+    idCardTypes,
   };
 };
 

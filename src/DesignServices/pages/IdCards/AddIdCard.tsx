@@ -3,17 +3,18 @@ import Signature from "../../../components/Signature/Signature";
 import { IdCardInterface, IdCardSchema } from "../../services/idCardService";
 import CodeEditor from "../../../components/CodeEditor/CodeEditor";
 import { zodResolver } from "@hookform/resolvers/zod";
+import useIdCard from "../../hooks/useIdCard";
 
 const AddIdCard = () => {
+  const { idCardTypes } = useIdCard({});
   const methods = useForm<IdCardInterface>({
     defaultValues: {
       name: "",
-      code: "",
-      cardHolder: "",
-      cardType: "",
-      backgroundImage: null,
+      html: "",
+      id_card_type: "",
+      background: null,
       primaryColor: "#000000",
-      signatures: [{ signee: "", signature: "" }],
+      signers: [{ name: "", signature: "" }],
     },
     resolver: zodResolver(IdCardSchema),
   });
@@ -25,24 +26,26 @@ const AddIdCard = () => {
   } = methods;
 
   const onSubmit = (data: IdCardInterface) => {
+    console.log("raw submitted data", data);
     const formData = new FormData();
 
-    for (const key in data) {
-      if (key !== "backgroundImage") {
-        Object.keys(data).forEach((key) => {
-          formData.append(key, data[key as keyof IdCardInterface] as any);
-        });
-      } else {
-        if (data.backgroundImage && data.backgroundImage[0]) {
-          formData.append("backgroundImage", data.backgroundImage[0]);
-        }
-      }
+    formData.append("name", data.name);
+    formData.append("html", data.html || "");
+    formData.append("primaryColor", data.primaryColor);
+
+    formData.append("id_card_type", data.id_card_type?.toString() || "");
+
+    if (data.background?.[0]) {
+      formData.append("background", data.background[0]);
     }
 
-    //Logging
-    formData.forEach((value, key) => {
-      console.log(key, value);
+    data.signers.forEach((signer, index) => {
+      formData.append(`signers[${index}][name]`, signer.name || "");
+      formData.append(`signers[${index}][signature]`, signer.signature || "");
     });
+
+    // Logging for debugging
+    formData.forEach((value, key) => console.log(key, value));
   };
 
   return (
@@ -65,6 +68,7 @@ const AddIdCard = () => {
                 render={({ field }) => (
                   <input
                     {...field}
+                    value={field.value ?? ""}
                     type="string"
                     id="name"
                     placeholder="Eg: Employee, Primary Students, Bus Students, etc."
@@ -75,50 +79,33 @@ const AddIdCard = () => {
               <span className="text-danger">{errors.name?.message}</span>
             </div>
             <div className="mb-4 col-md-3">
-              <label htmlFor="cardHolder" className="required form-label">
-                Select Card Holder
-              </label>
-              <Controller
-                name="cardHolder"
-                control={control}
-                render={({ field }) => (
-                  <select
-                    {...field}
-                    id="cardHolder"
-                    className="form-select form-select-solid"
-                  >
-                    <option value="" hidden>
-                      Select Holder
-                    </option>
-                    <option value="student">Student</option>
-                    <option value="staff">Staff</option>
-                  </select>
-                )}
-              />
-              <span className="text-danger">{errors.cardHolder?.message}</span>
-            </div>
-            <div className="mb-4 col-md-3">
               <label htmlFor="cardType" className="required form-label">
                 Select Card Type
               </label>
               <Controller
-                name="cardType"
+                name="id_card_type"
                 control={control}
                 render={({ field }) => (
                   <select
                     {...field}
-                    id="cardType"
+                    id="id_card_type"
                     className="form-select form-select-solid"
+                    value={field.value ?? ""}
                   >
                     <option value="" hidden>
                       Select Card Type
                     </option>
-                    <option value="general">General</option>
-                    <option value="transport">Transport</option>
+                    {idCardTypes.map((idCardType, index) => (
+                      <option key={idCardType.id} value={idCardType.id}>
+                        {idCardType.name}
+                      </option>
+                    ))}
                   </select>
                 )}
               />
-              <span className="text-danger">{errors.cardType?.message}</span>
+              <span className="text-danger">
+                {errors.id_card_type?.message}
+              </span>
             </div>
             <div className="mb-4 col-md-3">
               <label htmlFor="primaryColor" className="required form-label">
@@ -157,7 +144,7 @@ const AddIdCard = () => {
                 iframeHeight={86}
                 iframeWidth={54}
                 orientation="portrait"
-                wantBackgroundImage={true}
+                wantBackground={true}
               />
             </div>
             <div>

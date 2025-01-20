@@ -2,33 +2,59 @@ import { z } from "zod";
 import apiRoute from "../../services/httpService";
 
 export interface SignatureInterface {
-  signee?: string;
+  name?: string;
   signature?: string;
 }
 
 export interface IdCardInterface {
   name: string;
-  code: string;
-  cardHolder: string;
-  cardType: string;
-  backgroundImage: FileList | null;
+  html: string;
+  id_card_type: string;
+  background: FileList | null;
   primaryColor: string;
-  signatures: SignatureInterface[];
+  signers: SignatureInterface[];
 }
+
+export interface GetIdCardInterface {
+  name: string;
+  html: string;
+  id_card_type: {
+    name: string;
+  };
+  background: string;
+  primaryColor: string;
+  signers: SignatureInterface[];
+}
+
+const backgroundSchema = z
+  .instanceof(FileList) // Ensure it's a FileList
+  .refine((files) => files.length > 0, "Background image is required") // Ensure at least one file is selected
+  .refine(
+    (files) => files[0].size <= 5 * 1024 * 1024, // 5MB limit
+    "File size must be less than 5MB"
+  )
+  .refine(
+    (files) => ["image/jpeg", "image/png", "image/jpg"].includes(files[0].type), // Allowed file types
+    "Only .jpg, .jpeg, and .png files are allowed"
+  );
 
 export const IdCardSchema = z.object({
   name: z.string().min(1, "Id Card name is required!"),
-  code: z.string().optional(),
-  cardHolder: z.string().min(1, "Cardholder is required!"),
-  cardType: z.string().min(1, "Card Type is required!"),
+  html: z.string().optional(),
+  id_card_type: z.string().min(1, "Id Card Type is required"),
   primaryColor: z.string(),
-  backgroundImage: z.instanceof(FileList),
-  signatures: z.array(
+  background: backgroundSchema,
+  signers: z.array(
     z.object({
-      signee: z.string().optional(),
+      name: z.string().optional(),
       signature: z.string().optional(),
     })
   ),
 });
 
-export default apiRoute("/employees");
+export interface IdCardTypeInterface {
+  id: number;
+  name: string;
+}
+
+export default apiRoute("/design-services/id-cards");
