@@ -89,7 +89,7 @@ const CodeEditor = ({
       <div className="row">
         <div className="col-md-5 mb-4">
           {wantBackground && (
-            <div className="mb-1">
+            <div className="mb-5">
               <label htmlFor="background" className="required form-label">
                 Background Image
               </label>

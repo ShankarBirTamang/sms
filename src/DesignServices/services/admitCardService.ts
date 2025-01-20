@@ -25,4 +25,4 @@ export const admitCardSchema = z.object({
   ),
 });
 
-export default apiRoute("/employees");
+export default apiRoute("/design-services/admit-cards");

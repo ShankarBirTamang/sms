@@ -110,7 +110,8 @@ const AdmitCard = () => {
                     <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                       <th> #</th>
                       <th className="min-w-225px">Session Name</th>
-                      <th>Signees</th>
+                      <th className="min-w-225px">HTML</th>
+                      <th>Signers</th>
                       <th className="text-end">Actions</th>
                     </tr>
                   </thead>
@@ -124,6 +125,11 @@ const AdmitCard = () => {
                             (itemsPerPage ?? 0)}
                         </td>
                         <td className="sorting_1">{admitCard.name}</td>
+                        <td>
+                          <div
+                            dangerouslySetInnerHTML={{ __html: admitCard.html }}
+                          />
+                        </td>
                         <td></td>
                         <td className="text-end">
                           <button

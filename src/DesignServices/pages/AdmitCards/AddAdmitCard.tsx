@@ -73,7 +73,7 @@ const AddAdmitCard = () => {
                 iframeHeight={86}
                 iframeWidth={54}
                 orientation="landscape"
-                wantBackgroundImage={false}
+                wantBackground={false}
               />
             </div>
             <div>

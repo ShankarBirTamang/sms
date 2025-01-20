@@ -1,6 +1,11 @@
 import { z } from "zod";
 import apiRoute from "../../services/httpService";
 
+export interface SignatureInterface {
+  name?: string;
+  signature?: string;
+}
+
 export interface PaperSizeInterface {
   height: number;
   width: number;
@@ -15,6 +20,7 @@ export interface CertificateInterface {
   background?: FileList | null;
   html: string;
   orientation: string;
+  signers: SignatureInterface[];
 }
 
 export interface GetCertificateInterface {
@@ -91,6 +97,12 @@ export const certificateSchema = z.object({
   background: backgroundSchema, // Use the updated schema
   html: z.string().min(1, "Code is required"),
   orientation: z.string().min(1, "Orientation is required"),
+  signers: z.array(
+    z.object({
+      name: z.string().optional(),
+      signature: z.string().optional(),
+    })
+  ),
 });
 
 // Type for the form data
