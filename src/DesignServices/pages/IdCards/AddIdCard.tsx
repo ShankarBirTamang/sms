@@ -145,6 +145,7 @@ const AddIdCard = () => {
                 iframeWidth={54}
                 orientation="portrait"
                 wantBackground={true}
+                scale={1.1}
               />
             </div>
             <div>

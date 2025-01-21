@@ -1,22 +1,10 @@
 import { z } from "zod";
 import apiRoute from "../../services/httpService";
 
-export interface SignatureInterface {
-  title?: string;
-  signature_id?: string;
-}
-
-export interface GetSignatureInterface {
-  title?: string;
-  name?: string;
-  id?: string;
-  signature?: string;
-}
-
 export interface AdmitCardInterface {
   name: string;
   html: string;
-  signers: SignatureInterface[];
+  signers: { title?: string; signature_id?: number }[];
 }
 
 export interface GetAdmitCardInterface {
@@ -24,7 +12,11 @@ export interface GetAdmitCardInterface {
   name: string;
   html: string;
   background: string;
-  signers: GetSignatureInterface[];
+  signers: { title?: string; name?: string; id?: number; signature?: number }[];
+}
+
+export interface UpdateAdmitCardInterface extends AdmitCardInterface {
+  id: number;
 }
 
 export const admitCardSchema = z.object({
@@ -35,7 +27,7 @@ export const admitCardSchema = z.object({
   signers: z.array(
     z.object({
       title: z.string().optional(),
-      signature_id: z.string().optional(),
+      signature_id: z.number().optional(),
     })
   ),
 });

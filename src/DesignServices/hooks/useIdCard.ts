@@ -68,6 +68,7 @@ const useIdCard = ({
       console.log("Error fetching Id Card Type", error);
     }
   };
+
   useEffect(() => {
     getIdCardType();
   }, []);

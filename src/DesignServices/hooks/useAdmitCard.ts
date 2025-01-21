@@ -8,9 +8,9 @@ import { PaginationProps } from "../../components/Pagination/Pagination";
 import admitCardService, {
   AdmitCardInterface,
   GetAdmitCardInterface,
+  UpdateAdmitCardInterface,
 } from "../services/admitCardService";
 import toast from "react-hot-toast";
-import { number } from "zod";
 import { CanceledError } from "axios";
 
 const useAdmitCard = ({
@@ -53,8 +53,10 @@ const useAdmitCard = ({
         setPagination(result.data.meta);
         setEdgeLinks(result.data.links);
         setIsLoading(false);
-        // console.log("result after fetching Admit Cards", result.data.data);
-        console.log("Result after fetching Admit Cards meta", result.data);
+        console.log(
+          "AdmitCard List result after fetching Admit Cards",
+          result.data.data
+        );
       })
       .catch((error) => {
         console.log("Error while fetching Admit Cards", error);
@@ -95,7 +97,28 @@ const useAdmitCard = ({
     }
   };
 
-  const updateAdmitCard = async () => {};
+  const updateAdmitCard = async (data: UpdateAdmitCardInterface) => {
+    setIsLoadingSubmit(true);
+    console.log("data id", data.id);
+    try {
+      const response = await admitCardService.update<UpdateAdmitCardInterface>(
+        data
+      );
+      console.log("admit card response", response.data.data);
+      // setAdmitCardList((prev) =>
+      //   prev.map((admitCard) =>
+      //     admitCard.id === response.data.data.id
+      //       ? response.data.data
+      //       : admitCard
+      //   )
+      // );
+      toast.success("Admit Card updated successfully");
+    } catch (error) {
+      toast.error("An error occurred when trying to update Admit Card");
+    } finally {
+      setIsLoadingSubmit(false);
+    }
+  };
   const deleteAdmitCard = async () => {};
 
   return {

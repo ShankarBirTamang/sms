@@ -12,6 +12,8 @@ interface CodeEditorProps {
   iframeWidth: number;
   orientation: string;
   wantBackground: boolean;
+  scale: number;
+  code?: string;
 }
 
 const MonacoEditorWrapper = React.forwardRef((props: any, ref) => {
@@ -23,8 +25,12 @@ const CodeEditor = ({
   iframeWidth,
   orientation,
   wantBackground,
+  scale,
+  code,
 }: CodeEditorProps) => {
   const [backgroundUrl, setBackgroundUrl] = useState<string | null>(null);
+
+  console.log("code", code);
 
   //We can omit SetValues and it still works.. Why?
   const {
@@ -32,8 +38,12 @@ const CodeEditor = ({
     getValues,
     formState: { errors },
   } = useFormContext<CodeEditorInterface>();
-  const [html, setHtml] = useState(getValues("html") || "<h1>Hello World</h1>");
+  const [html, setHtml] = useState(code || "<h1>Hello World</h1>");
   const [iframeContent, setIframeContent] = useState("");
+
+  useEffect(() => {
+    setHtml(code || "<h1>Hello World</h1>");
+  }, [code]);
 
   useEffect(() => {
     setIframeContent(`
@@ -140,7 +150,7 @@ const CodeEditor = ({
         </div>
 
         <div className="col-md-7 p-0">
-          <div style={{ transform: "scale(0.8)" }}>
+          <span style={{ transform: `scale(${scale})` }} className="">
             <iframe
               className="card"
               srcDoc={iframeContent}
@@ -159,7 +169,7 @@ const CodeEditor = ({
               }}
               sandbox="allow-scripts"
             ></iframe>
-          </div>
+          </span>
         </div>
       </div>
     </div>

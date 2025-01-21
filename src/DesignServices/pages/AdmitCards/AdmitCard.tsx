@@ -27,7 +27,7 @@ const AdmitCard = () => {
   const handleEditClick = (admitCard: GetAdmitCardInterface) => {
     navigate(`/design-services/admit-cards/${admitCard.id}/edit`);
   };
-  const handleDeleteClick = (admitCard: GetAdmitCardInterface) => {};
+  const handleViewClick = (admitCard: GetAdmitCardInterface) => {};
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -132,25 +132,34 @@ const AdmitCard = () => {
                             dangerouslySetInnerHTML={{ __html: admitCard.html }}
                           />
                         </td>
-                        <td></td>
+                        <td>
+                          {admitCard.signers.map((signer) => (
+                            <span
+                              key={signer.id}
+                              className="badge rounded-pill bg-primary p-2 fs-7 me-1"
+                            >
+                              {signer.name}
+                            </span>
+                          ))}
+                        </td>
                         <td className="text-end">
                           <button
                             title="Delete"
                             type="button"
-                            onClick={() => handleDeleteClick(admitCard)}
-                            className="btn btn-light-danger btn-sm m-1"
+                            onClick={() => handleEditClick(admitCard)}
+                            className="btn btn-light-info btn-sm m-1"
                           >
-                            <Icon name={"delete"} className={"svg-icon"} />
-                            Delete
+                            <Icon name={"edit"} className={"svg-icon"} />
+                            Edit
                           </button>
                           <button
                             title="Edit"
                             type="button"
-                            onClick={() => handleEditClick(admitCard)}
+                            onClick={() => handleViewClick(admitCard)}
                             className="btn btn-light-success btn-sm m-1"
                           >
-                            <Icon name={"edit"} className={"svg-icon"} />
-                            Edit
+                            <Icon name={"search"} className={"svg-icon"} />
+                            View
                           </button>
                         </td>
                       </tr>

@@ -130,24 +130,35 @@ const IdCard = () => {
                         <td>
                           <img src={idCard.background}></img>
                         </td>
-                        <td>{idCard.signers[0].name}</td>
+                        <td>
+                          {idCard.signers.map((signer) => (
+                            <span
+                              className="badge rounded-pill bg-primary p-2 fs-7 me-1"
+                              key={signer.id}
+                            >
+                              {signer.name}
+                            </span>
+                          ))}
+                        </td>
                         <td className="text-end">
                           <button
                             title="edit admit card"
                             type="button"
                             onClick={() => handleEditClick(idCard)}
-                            className="btn btn-light-info btn-icon btn-sm m-1"
+                            className="btn btn-light-info btn-sm m-1"
                           >
                             <Icon name={"edit"} className={"svg-icon"} />
+                            Edit
                           </button>
 
                           <button
                             title="view admit card"
                             type="button"
                             onClick={() => handleViewClick(idCard)}
-                            className="btn btn-success btn-icon btn-sm m-1"
+                            className="btn btn-light-success btn-sm m-1"
                           >
                             <Icon name={"search"} className={"svg-icon"} />
+                            View
                           </button>
                         </td>
                       </tr>

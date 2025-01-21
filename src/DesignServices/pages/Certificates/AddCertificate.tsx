@@ -212,6 +212,7 @@ const AddCertificate = () => {
                 iframeWidth={iframeWidth}
                 orientation={orientation}
                 wantBackground={true}
+                scale={0.8}
               />
             </div>
             <div>

@@ -6,6 +6,12 @@ export interface SignatureInterface {
   signature?: string;
 }
 
+export interface GetSignatureInterface {
+  id: number;
+  name?: string;
+  signature?: string;
+}
+
 export interface IdCardInterface {
   name: string;
   html: string;
@@ -23,7 +29,7 @@ export interface GetIdCardInterface {
   };
   background: string;
   primaryColor: string;
-  signers: SignatureInterface[];
+  signers: GetSignatureInterface[];
 }
 
 const backgroundSchema = z
