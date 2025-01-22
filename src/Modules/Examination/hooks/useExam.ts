@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
     ApiResponseInterface,
     PaginationAndSearch,
@@ -29,7 +29,7 @@ const useExam = ({
 const [edgeLinks, setEdgeLinks] = useState<PaginationProps["edgeLinks"]>();
 //end for Pagination
 
-useEffect(() => {
+const fetchExam = useCallback(async() => {
     setLoading(true);
     const params: Record<string, string | number | null> = {
       per_page: itemsPerPage,
@@ -58,7 +58,11 @@ useEffect(() => {
 
   return () => cancel();
 
-}, [search, currentPage, itemsPerPage, statusChanged]);
+}, [search, currentPage, itemsPerPage]);
+
+useEffect(() => {
+  fetchExam();
+}, [fetchExam]);
 
 const createExam = async ({
   name ,
@@ -98,8 +102,9 @@ const createExam = async ({
             const result =
               await examSessionService.create<CreateExamInterface>(params);
             // Update state only after successful creation
-            setExaminations([...examinations,result.data.data]);
-            
+           
+            // setExaminations([...examinations,result.data.data]);
+            console.log("use Exam");
           } catch (err) {
             if (err instanceof Error) {
               setError(err.message);
@@ -110,7 +115,9 @@ const createExam = async ({
 }
 
   return {
-    isLoading,pagination,edgeLinks,error , examinations ,setStatusChanged, setExaminations ,createExam
+    isLoading,pagination,edgeLinks,error , examinations ,setStatusChanged, 
+    fetchExam,
+    setExaminations ,createExam
   }
 }
 

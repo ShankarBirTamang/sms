@@ -38,9 +38,15 @@ interface ExamAttributesInterface{
   name:string;
   html:string;
   background : string ;
-  signers : string[];
+  signers : Signers[];
 }
-
+interface Signers {
+  id: number ;
+  name: string ;
+  holder : { id?: number; name?: string; } ;
+  signature? : string;
+  title : string ;
+}
 interface ExamAttributes {
   admit_card : ExamAttributesInterface;
   mark_sheet : ExamAttributesInterface ;
@@ -52,7 +58,7 @@ interface ExamGrades {
   grade_name : string;
 }
 
-export interface CreateExamInterface extends ExamSessionInterface {
+export interface CreateExamInterface {
   name : string;
   start_date: string;
   start_date_np: string;
@@ -65,7 +71,7 @@ export interface CreateExamInterface extends ExamSessionInterface {
   academic_session_id : number;
   grades : number[];
   is_merged : boolean;
-  merged_exams? : number[];
+  merged_exams : number[];
   admit_card_id : number;
   marksheet_id : number;
 }

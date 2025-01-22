@@ -3,7 +3,6 @@ import Icon from "../../../components/Icon/Icon";
 import useExam from "../hooks/useExam";
 import useDebounce from "../../../hooks/useDebounce";
 import Loading from "../../../components/Loading/Loading";
-import { ExamInterface } from "../services/examSessionService";
 import { useNavigate } from "react-router-dom";
 import Pagination from "../../../components/Pagination/Pagination";
 import DrawerModal from "../../../components/DrawerModal/DrawerModal";
@@ -15,31 +14,6 @@ const ExamSession = () => {
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(null);
   const [addExamDrawer, setAddExamDrawer] = useState(false);
   const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
-  // const [examination, setExamination] = useState<ExamInterface[]>([
-  //   {
-  //     id: 1,
-  //     name: "Exam 1",
-  //     start_date_ad: "2022-01-01",
-  //     start_date_np: "2080-01-01",
-  //     end_date_ad: "2022-02-01",
-  //     end_date_np: "2080-02-01",
-  //     exam_level: "Nursery to 10",
-  //     session: "Academic session 2080",
-  //     is_completed: false,
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Exam 2",
-  //     start_date_ad: "2023-01-01",
-  //     start_date_np: "2081-01-01",
-  //     end_date_ad: "2023-02-01",
-  //     end_date_np: "2081-02-01",
-  //     exam_level: "Nursery to 10",
-  //     session: "Academic session 2081",
-  //     is_completed: false,
-  //   },
-  // ]);
-  // const [currentId, setCurrentId] = useState<number | null>(null);
 
   const toggleCompletionStatus = (id: number) => {
     setExaminations((prevExamination) =>
@@ -51,6 +25,9 @@ const ExamSession = () => {
 
   const toggleAddExamDrawer = () => {
     setAddExamDrawer(!addExamDrawer);
+    if (addExamDrawer) {
+      fetchExam();
+    }
   };
 
   //header functions
@@ -70,12 +47,18 @@ const ExamSession = () => {
 
   //header function ends here
 
-  const { isLoading, pagination, edgeLinks, examinations, setExaminations } =
-    useExam({
-      search: debouncedSearchTerm,
-      currentPage,
-      itemsPerPage,
-    });
+  const {
+    isLoading,
+    pagination,
+    edgeLinks,
+    examinations,
+    setExaminations,
+    fetchExam,
+  } = useExam({
+    search: debouncedSearchTerm,
+    currentPage,
+    itemsPerPage,
+  });
 
   const navigate = useNavigate();
 

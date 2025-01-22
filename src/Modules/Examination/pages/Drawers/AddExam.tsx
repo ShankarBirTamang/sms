@@ -22,8 +22,9 @@ const AddExam = ({ onSave }: AddExamProps) => {
     useState<string>("gradedFormatWithPR");
   const [selectedSessionId, setSelectedSessionId] = useState<number>();
   const [selectedGrades, setSelectedGrades] = useState<number[]>([]);
+  const [selectedExams, setSelectedExams] = useState<number[]>([]);
 
-  const [isSubmitting, setisSubmitting] = useState<boolean>(false);
+  // const [isSubmitting, setisSubmitting] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const [renderKey, setRenderKey] = useState("");
   const [startValueAD, setStartValueAD] = useState("");
@@ -36,7 +37,7 @@ const AddExam = ({ onSave }: AddExamProps) => {
   const [resultValueBS, setResultValueBS] = useState("");
 
   const { academicSessions } = useAcademicSession({});
-  const { createExam } = useExam({});
+  const { createExam, examinations } = useExam({});
   const academicSessionOptions = academicSessions
     .filter((session) => session.is_active)
     .map((session) => ({
@@ -66,7 +67,9 @@ const AddExam = ({ onSave }: AddExamProps) => {
     grades: z
       .array(z.number())
       .min(1, { message: "At least one grade must be selected." }),
-    merged_exams: z.array(z.number()).default([]),
+    merged_exams: z
+      .array(z.number())
+      .min(1, { message: "At least one exam must be selected." }),
   });
 
   type ExamFormData = z.infer<typeof schema>;
@@ -125,6 +128,14 @@ const AddExam = ({ onSave }: AddExamProps) => {
 
     setSelectedGrades(updatedGrades);
     setValue("grades", updatedGrades);
+  };
+  const handleExamSelection = (examId: number) => {
+    const updatedExams = selectedExams.includes(examId)
+      ? selectedExams.filter((id) => id !== examId)
+      : [...selectedExams, examId];
+
+    setSelectedExams(updatedExams);
+    setValue("merged_exams", updatedExams);
   };
 
   const handleAdmitCardDesignChange = (value: string) => {
@@ -212,17 +223,20 @@ const AddExam = ({ onSave }: AddExamProps) => {
       marksheet_id: 1,
     });
     setSelectedGrades([]);
+    setSelectedExams([]);
     setRenderKey(Math.floor((Math.random() + 1) * 10).toString());
   };
 
   useEffect(() => {
     setValue("grades", selectedGrades);
-    console.log("Selected Grades: ", selectedGrades);
+    setValue("merged_exams", selectedExams);
+    // console.log("Selected Grades: ", selectedGrades);
     console.log("Form Grades: ", getValues("grades"));
-  }, [selectedGrades, setValue]);
+    console.log("Form Merged Exams: ", getValues("merged_exams"));
+  }, [selectedGrades, setValue, selectedExams]);
 
   const onSubmit: SubmitHandler<ExamFormData> = async (data: ExamFormData) => {
-    setisSubmitting(true);
+    // setisSubmitting(true);
     console.log("Submitted data: ", data);
     try {
       const examData: CreateExamInterface = {
@@ -246,8 +260,9 @@ const AddExam = ({ onSave }: AddExamProps) => {
     } catch (error) {
       console.log("Error saving exam data: ", error);
     } finally {
-      setisSubmitting(false);
+      // setisSubmitting(false);
       onSave();
+
       // resetForm();
     }
   };
@@ -600,6 +615,44 @@ const AddExam = ({ onSave }: AddExamProps) => {
               </div>
             </>
           )}
+
+          {isMerged && (
+            <>
+              <div className="col-12">
+                <label className=" fw-bold fs-6 mb-2">
+                  Select Examination to be Merged
+                </label>
+                <div className="row g-3">
+                  <div className="col-12">
+                    <div className="row row-cols-1 row-cols-md-2 g-3">
+                      {examinations.map((exam) => (
+                        <div key={exam.id} className="mb-3">
+                          <div className="form-check ">
+                            <input
+                              className={`form-check-input gradeCheckbox-${exam.id}`}
+                              type="checkbox"
+                              id={`exam-${exam.id}`}
+                              name="examinations[]"
+                              value={exam.id}
+                              checked={selectedExams.includes(exam.id)}
+                              onChange={() => handleExamSelection(exam.id)}
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor={`exam-${exam.id}`}
+                            >
+                              {exam.name}
+                            </label>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
           <div className="text-center pt-15">
             <button
               type="button"
