@@ -382,6 +382,7 @@ const SubjectType = () => {
                         }}
                       >
                         <tr>
+                          <th>S.N.</th>
                           <th>Name</th>
                           <th className="text-center">Marking Scheme</th>
                           <th className="text-center">Default</th>
@@ -392,6 +393,12 @@ const SubjectType = () => {
                       <tbody>
                         {subjectTypes.map((type, index) => (
                           <tr key={index}>
+                            <td>
+                              {" "}
+                              {(currentPage - 1) * (itemsPerPage ?? 1) +
+                                index +
+                                1}
+                            </td>
                             <td>{type.name}</td>
                             <td className="text-center">
                               {capitalizeFirstLetter(type.marking_scheme)}

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
+    "@monaco-editor/react": "^4.6.0",
     "@react-buddy/ide-toolbox": "^2.4.0",
     "@sbmdkl/nepali-date-converter": "^2.0.3",
     "@sbmdkl/nepali-datepicker-reactjs": "^1.2.2",
@@ -19,6 +20,7 @@
     "dotenv": "^16.4.5",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.7",
+    "react-data-grid": "^7.0.0-beta.47",
     "react-data-table-component": "^7.6.2",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.54.2",
@@ -27,6 +29,7 @@
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.26.2",
     "react-select": "^5.8.3",
+    "react-webcam": "^7.2.0",
     "styled-components": "^6.1.13",
     "sweetalert2": "^11.14.5",
     "sweetalert2-react-content": "^5.0.7",

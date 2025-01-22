@@ -146,9 +146,11 @@ const Employee = () => {
                     </tr>
                   </thead>
                   <tbody className="text-gray-600 fw-bold">
-                    {employees.map((employee) => (
+                    {employees.map((employee, index) => (
                       <tr key={employee.id}>
-                        <td>1</td>
+                        <td>
+                          {(currentPage - 1) * (itemsPerPage ?? 1) + index + 1}
+                        </td>
                         <td>
                           <div className="d-flex align-items-center">
                             {employee.photo ? (
@@ -184,7 +186,7 @@ const Employee = () => {
                               {employee.full_name}
                               <div className="d-flex gap-2">
                                 <span
-                                  className="badge bg-info fw-bold"
+                                  className="badge badge-light-info fw-bold"
                                   style={{
                                     width: "fit-content",
                                   }}

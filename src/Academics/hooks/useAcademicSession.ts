@@ -138,6 +138,7 @@ const useAcademicSession = ({
     id,
   }: ChangeAcademicSessionStatusInterface) => {
     try {
+      console.log("id during changing academic session status", id);
       // Update the status of the academic session
       await academicSessionService.changeStatus<ChangeAcademicSessionStatusInterface>(
         {

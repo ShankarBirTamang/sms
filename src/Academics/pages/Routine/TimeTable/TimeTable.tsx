@@ -7,20 +7,29 @@ import useAcademicLevels from "../../../hooks/useAcademicLevels";
 import { Link, useNavigate } from "react-router-dom";
 import useTimeTable from "../../../hooks/useTimeTable";
 import { UpdateTimeTableInterface } from "../../../services/timeTableServic";
+import ProcessingButton from "../../../../components/ProcessingButton/ProcessingButton";
 
 const TimeTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
-  const [hoveredSessionId, setHoveredSessionId] = useState<number | null>(null);
   const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
   const { academicLevels } = useAcademicLevels({});
+  const [processingTimeTableId, setProcessingTimeTableId] = useState<
+    number | null
+  >(null);
   const navigate = useNavigate();
   const [formMode, setFormMode] = useState<"create" | "edit" | "view">(
     "create"
   );
 
-  const { timeTables, isLoading, pagination, edgeLinks } = useTimeTable({
+  const {
+    timeTables,
+    isLoading,
+    pagination,
+    edgeLinks,
+    changeTimeTableStatus,
+  } = useTimeTable({
     search: debouncedSearchTerm,
     currentPage,
     itemsPerPage,
@@ -49,6 +58,18 @@ const TimeTable = () => {
   const handleViewClick = (updatedTimeTable: UpdateTimeTableInterface) => {
     setFormMode("view");
     navigate(`/academics/routine/time-table/${updatedTimeTable.id}/view`);
+  };
+
+  const toggleTimeTableStatus = async (timeTableId: number) => {
+    try {
+      setProcessingTimeTableId(timeTableId);
+      console.log("timeTableId", timeTableId);
+      await changeTimeTableStatus(timeTableId);
+    } catch (error) {
+      console.log("Error", error);
+    } finally {
+      setProcessingTimeTableId(null);
+    }
   };
 
   return (
@@ -141,23 +162,18 @@ const TimeTable = () => {
                         </td>
                         <td className="sorting_1">{timeTable.name}</td>
                         <td>
-                          <button
-                            className={`btn btn-sm ${
-                              timeTable.is_active ? "btn-success" : "btn-danger"
-                            } w-100px`}
-                            onMouseEnter={() =>
-                              setHoveredSessionId(timeTable.id)
+                          <ProcessingButton
+                            isProcessing={
+                              processingTimeTableId === timeTable.id
                             }
-                            onMouseLeave={() => setHoveredSessionId(null)}
-                          >
-                            {hoveredSessionId === timeTable.id
-                              ? timeTable.is_active
-                                ? "Deactivate"
-                                : "Activate"
-                              : timeTable.is_active
-                              ? "Active"
-                              : "Inactive"}
-                          </button>
+                            isActive={timeTable.is_active ?? false}
+                            onClick={() => toggleTimeTableStatus(timeTable.id)}
+                            hoverText={
+                              timeTable.is_active ? "Deactivate" : "Activate"
+                            }
+                            activeText="Active"
+                            inactiveText="Inactive"
+                          />
                         </td>
                         <td className="text-end">
                           <button

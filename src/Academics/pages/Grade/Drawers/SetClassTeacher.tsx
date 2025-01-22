@@ -4,7 +4,6 @@ import {
   AddClassTeacher,
   Section,
   TeacherInterface,
-  UpdateGradeInterface,
 } from "../../../services/gradeService";
 import Loading from "../../../../components/Loading/Loading";
 import CustomSelect from "../../../../components/CustomSelect/CustomSelect";
@@ -78,10 +77,6 @@ const SetClassTeacher = ({ grade, onSave }: AddClassTeacher) => {
       }
 
       setValue("sections", updatedSections);
-      console.log(
-        "currentSections at line 64 in Drawers/SetClassTeacher.tsx:",
-        updatedSections
-      );
     }
   };
 
@@ -97,7 +92,7 @@ const SetClassTeacher = ({ grade, onSave }: AddClassTeacher) => {
 
   const onSubmit = async (data: FormData) => {
     setisSubmitting(true);
-    await setClassTeacher({ gradeId: grade.id, data });
+    await setClassTeacher({ gradeId: grade.id, data: data.sections });
     onSave();
     setisSubmitting(false);
   };
