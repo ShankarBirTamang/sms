@@ -6,15 +6,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import useIdCard from "../../hooks/useIdCard";
 
 const AddIdCard = () => {
-  const { idCardTypes } = useIdCard({});
+  const { idCardTypes, saveIdCard, isLoadingSubmit } = useIdCard({});
   const methods = useForm<IdCardInterface>({
     defaultValues: {
       name: "",
       html: "",
-      id_card_type: "",
+      id_card_type_id: "",
       background: null,
-      primaryColor: "#000000",
-      signers: [{ name: "", signature: "" }],
+      // primaryColor: "#000000",
+      signers: [{ title: "", signature_id: "" }],
     },
     resolver: zodResolver(IdCardSchema),
   });
@@ -31,21 +31,16 @@ const AddIdCard = () => {
 
     formData.append("name", data.name);
     formData.append("html", data.html || "");
-    formData.append("primaryColor", data.primaryColor);
+    // formData.append("primaryColor", data.primaryColor);
 
-    formData.append("id_card_type", data.id_card_type?.toString() || "");
+    formData.append("id_card_type_id", data.id_card_type_id?.toString() || "");
 
-    if (data.background?.[0]) {
+    if (data.background instanceof FileList && data.background[0]) {
       formData.append("background", data.background[0]);
     }
+    formData.append("signers", JSON.stringify(data.signers));
 
-    data.signers.forEach((signer, index) => {
-      formData.append(`signers[${index}][name]`, signer.name || "");
-      formData.append(`signers[${index}][signature]`, signer.signature || "");
-    });
-
-    // Logging for debugging
-    formData.forEach((value, key) => console.log(key, value));
+    saveIdCard(formData);
   };
 
   return (
@@ -83,7 +78,7 @@ const AddIdCard = () => {
                 Select Card Type
               </label>
               <Controller
-                name="id_card_type"
+                name="id_card_type_id"
                 control={control}
                 render={({ field }) => (
                   <select
@@ -104,10 +99,10 @@ const AddIdCard = () => {
                 )}
               />
               <span className="text-danger">
-                {errors.id_card_type?.message}
+                {errors.id_card_type_id?.message}
               </span>
             </div>
-            <div className="mb-4 col-md-3">
+            {/* <div className="mb-4 col-md-3">
               <label htmlFor="primaryColor" className="required form-label">
                 Primary Color
               </label>
@@ -126,7 +121,7 @@ const AddIdCard = () => {
               <span className="text-danger">
                 {errors.primaryColor?.message}
               </span>
-            </div>
+            </div> */}
           </div>
 
           <div className="card-body pt-0">
@@ -152,7 +147,11 @@ const AddIdCard = () => {
               <Signature />
             </div>
             <div className="text-center my-7">
-              <button type="submit" className="btn btn-info">
+              <button
+                type="submit"
+                className="btn btn-info"
+                disabled={isLoadingSubmit}
+              >
                 Submit
               </button>
             </div>

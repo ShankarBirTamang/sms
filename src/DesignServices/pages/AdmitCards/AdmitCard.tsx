@@ -127,9 +127,16 @@ const AdmitCard = () => {
                             (itemsPerPage ?? 0)}
                         </td>
                         <td className="sorting_1">{admitCard.name}</td>
-                        <td>
+                        <td
+                          style={{
+                            tableLayout: "fixed",
+                            wordWrap: "break-word",
+                          }}
+                        >
                           <div
-                            dangerouslySetInnerHTML={{ __html: admitCard.html }}
+                            dangerouslySetInnerHTML={{
+                              __html: admitCard.html,
+                            }}
                           />
                         </td>
                         <td>

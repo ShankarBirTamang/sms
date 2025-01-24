@@ -12,7 +12,7 @@ const IdCard = () => {
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
   const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
-  const { isLoading, idCards, pagination, edgeLinks } = useIdCard({
+  const { isLoading, idCardList, pagination, edgeLinks } = useIdCard({
     search: debouncedSearchTerm,
     currentPage,
     itemsPerPage,
@@ -95,7 +95,7 @@ const IdCard = () => {
           <div className="card-body pt-0">
             <div>
               {isLoading && <Loading />}
-              {!isLoading && idCards.length === 0 && (
+              {!isLoading && idCardList.length === 0 && (
                 <div className="alert alert-info">
                   No Academic Sessions Found
                 </div>
@@ -117,7 +117,7 @@ const IdCard = () => {
                     </tr>
                   </thead>
                   <tbody className="text-gray-600 fw-bold table">
-                    {idCards.map((idCard, index) => (
+                    {idCardList.map((idCard, index) => (
                       <tr key={index} className="odd">
                         <td>
                           {currentPage * (itemsPerPage ?? 0) +

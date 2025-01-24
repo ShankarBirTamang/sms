@@ -11,6 +11,7 @@ import idCardService, {
 } from "../services/idCardService";
 import toast from "react-hot-toast";
 import axiosInstance from "../../../axiosConfig";
+import { set } from "react-hook-form";
 const baseUrl = import.meta.env.VITE_API_URL;
 
 const useIdCard = ({
@@ -19,7 +20,8 @@ const useIdCard = ({
   itemsPerPage = null,
 }: PaginationAndSearch) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [idCards, setIdCards] = useState<GetIdCardInterface[]>([]);
+  const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
+  const [idCardList, setIdCardList] = useState<GetIdCardInterface[]>([]);
   const [idCardTypes, setIdCardTypes] = useState<IdCardTypeInterface[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,7 +46,7 @@ const useIdCard = ({
 
     request
       .then((result) => {
-        setIdCards(result.data.data);
+        setIdCardList(result.data.data);
         setPagination(result.data.meta);
         setEdgeLinks(result.data.links);
         setIsLoading(false);
@@ -73,21 +75,50 @@ const useIdCard = ({
     getIdCardType();
   }, []);
 
-  // const saveIdCard = async ({ name, signers }) => {
-  //   console.log("create Id card fn");
+  const saveIdCard = async (formData: FormData) => {
+    // Logging for debugging
+    const formDataObject: { [key: string]: any } = {};
+    for (const [key, value] of formData.entries()) {
+      formDataObject[key] = value;
+    }
+    console.log("FormData as plain object hehe:", formDataObject);
 
-  //   const params = { name, signers };
-  //   const response = await idCardService.create<IdCardInterface>(params);
-  //   console.log("Id card response", response);
-  //   setIdCards((prev) => [...prev, response.data.data]);
-  // };
+    const idCardData: IdCardInterface = {
+      name: formData.get("name") as string,
+      html: formData.get("html") as string,
+      id_card_type_id: formData.get("id_card_type_id") as string,
+      background: formData.get("background") as FileList | null,
+      signers: JSON.parse(formData.get("signers") as string).map(
+        (signer: any) => ({
+          title: signer.title ?? undefined,
+          signature_id: signer.signature_id ?? undefined,
+        })
+      ),
+    };
+
+    console.log("Id Card Data Yo", idCardData);
+
+    setIsLoadingSubmit(true);
+    try {
+      const response = await idCardService.create<IdCardInterface>(idCardData);
+      console.log("Id card response", response.data.data);
+      // setIdCardList((prev) => [...prev, response.data.data]);
+      toast.success("Id Card saved successfully");
+    } catch (error) {
+      toast.error("Error while saving Id Card");
+    } finally {
+      setIsLoadingSubmit(false);
+    }
+  };
 
   return {
     pagination,
     edgeLinks,
     isLoading,
-    idCards,
+    isLoadingSubmit,
+    idCardList,
     idCardTypes,
+    saveIdCard,
   };
 };
 

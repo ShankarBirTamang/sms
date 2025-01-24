@@ -77,7 +77,7 @@ const AddAdmitCard = () => {
       reset({
         name: "",
         html: "",
-        signers: [{ title: "", signature_id: undefined }],
+        signers: [{ title: "", signature_id: "" }],
       });
       setCode("<h1>Hello World</h1>");
     }
@@ -85,15 +85,18 @@ const AddAdmitCard = () => {
 
   return (
     <FormProvider {...methods}>
-      <form className="col-md-12" onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="col-md-12 container-fluid"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <div className="card">
-          <div className="card-header mb-6">
+          <div className="row card-header mb-6">
             <div className="card-title w-100">
               <h1 className="d-flex justify-content-between align-items-center position-relative my-3 w-100">
                 {isEditMode ? "Edit Admit Card" : "Create New Admit Card"}
               </h1>
             </div>
-            <div className="mb-4 col-md-4">
+            <div className="mb-4 col-md-5">
               <label htmlFor="name" className="required form-label">
                 Admit Card Name
               </label>
@@ -102,7 +105,6 @@ const AddAdmitCard = () => {
                 control={control}
                 render={({ field }) => (
                   <input
-                    required
                     {...field}
                     type="string"
                     id="name"
@@ -112,6 +114,55 @@ const AddAdmitCard = () => {
                 )}
               />
               <span className="text-danger">{errors.name?.message}</span>
+            </div>
+            <div className="mb-4 col-md-3">
+              <label htmlFor="page_size" className="required form-label">
+                Size of Page
+              </label>
+              <Controller
+                name="page_size"
+                control={control}
+                render={({ field }) => (
+                  <select
+                    {...field}
+                    id="page_size"
+                    className="form-select form-select-solid"
+                  >
+                    <option value="" hidden>
+                      Select Paper Size
+                    </option>
+                    <option value="A4">A4</option>
+                  </select>
+                )}
+              />
+              <span className="text-danger">{errors.page_size?.message}</span>
+            </div>
+            <div className="mb-4 col-md-3">
+              <label htmlFor="page_size" className="required form-label">
+                No of Admit Card per Page
+              </label>
+              <Controller
+                name="no_of_admit_card"
+                control={control}
+                render={({ field }) => (
+                  <select
+                    {...field}
+                    id="no_of_admit_card"
+                    className="form-select form-select-solid"
+                  >
+                    <option value="" hidden>
+                      Select No. of Admit Card Per Page
+                    </option>
+                    <option value="2">2</option>
+                    <option value="4">4</option>
+                    <option value="8">8</option>
+                    <option value="16">16</option>
+                  </select>
+                )}
+              />
+              <span className="text-danger">
+                {errors.no_of_admit_card?.message}
+              </span>
             </div>
           </div>
 

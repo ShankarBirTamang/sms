@@ -4,15 +4,19 @@ import apiRoute from "../../services/httpService";
 export interface AdmitCardInterface {
   name: string;
   html: string;
-  signers: { title?: string; signature_id?: number }[];
+  page_size: number | string; //value of select page size can be id which is string or number
+  no_of_admit_card: number | string; //value of select no of admit card can be id which is string or number
+  signers: { title?: string; signature_id?: string | number }[]; //value of select signature id can be id which is string or number
 }
 
 export interface GetAdmitCardInterface {
   id: number;
   name: string;
   html: string;
+  page_size: number | string; //value of select page size can be id which is string or number
+  no_of_admit_card: number | string; //value of select no of admit card can be id which is string or number
   background: string;
-  signers: { title?: string; name?: string; id?: number; signature?: number }[];
+  signers: { id?: number; title?: string; name?: string; signature?: string }[];
 }
 
 export interface UpdateAdmitCardInterface extends AdmitCardInterface {
@@ -23,11 +27,19 @@ export const admitCardSchema = z.object({
   name: z
     .string()
     .min(3, "Admit Card Name is required and must be minimum of 3 characters!"),
+  page_size: z.union([
+    z.string().min(1, "Page Size is required!"),
+    z.number().min(1, "Page Size is required!"),
+  ]),
+  no_of_admit_card: z.union([
+    z.string().min(1, "No. of Admit Card/Page is required!"),
+    z.number().min(1, "No. of Admit Card/Page is required!"),
+  ]),
   html: z.string().optional(),
   signers: z.array(
     z.object({
       title: z.string().optional(),
-      signature_id: z.number().optional(),
+      signature_id: z.union([z.string(), z.number()]).optional(),
     })
   ),
 });

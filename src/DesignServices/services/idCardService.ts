@@ -2,23 +2,23 @@ import { z } from "zod";
 import apiRoute from "../../services/httpService";
 
 export interface SignatureInterface {
-  name?: string;
-  signature?: string;
+  title?: string;
+  signature_id?: number | string;
+}
+export interface IdCardInterface {
+  name: string;
+  html: string;
+  id_card_type_id: string;
+  background: FileList | File | null;
+  // primaryColor: string;
+  signers: SignatureInterface[];
 }
 
 export interface GetSignatureInterface {
   id: number;
+  title?: string;
   name?: string;
   signature?: string;
-}
-
-export interface IdCardInterface {
-  name: string;
-  html: string;
-  id_card_type: string;
-  background: FileList | null;
-  primaryColor: string;
-  signers: SignatureInterface[];
 }
 
 export interface GetIdCardInterface {
@@ -28,7 +28,7 @@ export interface GetIdCardInterface {
     name: string;
   };
   background: string;
-  primaryColor: string;
+  // primaryColor: string;
   signers: GetSignatureInterface[];
 }
 
@@ -47,13 +47,16 @@ const backgroundSchema = z
 export const IdCardSchema = z.object({
   name: z.string().min(1, "Id Card name is required!"),
   html: z.string().optional(),
-  id_card_type: z.string().min(1, "Id Card Type is required"),
-  primaryColor: z.string(),
+  id_card_type_id: z.union([
+    z.string().min(1, "Id Card Type is required"),
+    z.number().min(1, "Id Card Type is required"),
+  ]),
+  // primaryColor: z.string(),
   background: backgroundSchema,
   signers: z.array(
     z.object({
-      name: z.string().optional(),
-      signature: z.string().optional(),
+      title: z.string().optional(),
+      signature_id: z.string().optional(),
     })
   ),
 });

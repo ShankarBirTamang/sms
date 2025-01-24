@@ -6,13 +6,13 @@ const baseUrl = import.meta.env.VITE_API_URL;
 
 interface SignatureInterface {
   title?: string;
-  signature_id?: string;
+  signature_id?: string | number; //value of select signature id can be id which is string or number
 }
 
 interface GetSignatureInterface {
   id: string;
   name?: string;
-  signature?: string;
+  signature?: string | number; //value of select signature can be id which is string or number
 }
 
 const Signature = () => {
