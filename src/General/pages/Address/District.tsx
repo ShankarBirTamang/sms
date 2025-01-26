@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { DistrictType } from "../../Services/addressServices";
 import { icons } from "../../../components/Icon/icons";
+import Icon from "../../../components/Icon/Icon";
 
 interface DistrictProps {
   districts: DistrictType[];
@@ -63,16 +64,11 @@ const District = ({
   };
 
   return (
-    <div className="card card-flush">
-      <div
-        className="card-header rounded bgi-no-repeat bgi-size-cover bgi-position-y-top bgi-position-x-center align-items-center h-50px"
-        style={{
-          backgroundImage:
-            "url('https://publichighschool.edu.np/main/media/svg/shapes/top-green.png')",
-        }}
-        data-theme="light"
-      >
-        <h2 className="text-white">District</h2>
+    <div className="card">
+      <div className="card-header">
+        <h2 className="card-title">
+          <strong>District</strong>
+        </h2>
       </div>
       <div className="card-body">
         <ul className="list-group">
@@ -130,7 +126,7 @@ const District = ({
                         handleEditClick(district);
                       }}
                     >
-                      {icons.edit}
+                      <Icon name="edit" className="scg-icon-1" />
                     </button>
                   </>
                 )}

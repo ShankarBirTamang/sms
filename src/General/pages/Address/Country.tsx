@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { CountryType } from "../../Services/addressServices";
 import { icons } from "../../../components/Icon/icons";
+import Icon from "../../../components/Icon/Icon";
 
 interface CountryProps {
   countries: CountryType[];
@@ -23,12 +24,12 @@ const Country = ({
   countryFormInput,
   setCountryFormInput,
 }: CountryProps) => {
-  const [editingCountryId, setEditingCountryId] = useState<number | null>(null); // Tracks which country is being edited
-  const [editInput, setEditInput] = useState<string>(""); // Tracks the value being edited
+  const [editingCountryId, setEditingCountryId] = useState<number | null>(null);
+  const [editInput, setEditInput] = useState<string>("");
 
   const handleEditClick = (country: CountryType) => {
-    setEditingCountryId(country.id); // Set the country being edited
-    setEditInput(country.name); // Pre-fill the input with the current name
+    setEditingCountryId(country.id);
+    setEditInput(country.name);
   };
 
   const handleSaveEdit = () => {
@@ -39,40 +40,35 @@ const Country = ({
       name: editInput,
       provinces:
         countries.find((country) => country.id === editingCountryId)
-          ?.provinces || [], // Preserve existing provinces or default to an empty array
+          ?.provinces || [],
     };
 
-    onEditCountry(updatedCountry); // Call the parent callback with the updated country
-    setEditingCountryId(null); // Exit edit mode
-    setEditInput(""); // Reset the input field
+    onEditCountry(updatedCountry);
+    setEditingCountryId(null);
+    setEditInput("");
   };
 
   const handleCancelEdit = () => {
-    setEditingCountryId(null); // Exit edit mode without saving
-    setEditInput(""); // Reset the input field
+    setEditingCountryId(null);
+    setEditInput("");
   };
 
   const handleAddCountry = () => {
     const newCountry: CountryType = {
-      id: countries.length + 1, // Generate a new ID
+      id: countries.length + 1,
       name: countryFormInput.country,
-      provinces: [], // Initialize provinces as an empty array
+      provinces: [],
     };
 
-    onAddCountry(newCountry); // Call the parent callback to add the new country
+    onAddCountry(newCountry);
   };
 
   return (
-    <div className="card card-flush">
-      <div
-        className="card-header rounded bgi-no-repeat bgi-size-cover bgi-position-y-top bgi-position-x-center align-items-center h-50px"
-        style={{
-          backgroundImage:
-            "url('https://publichighschool.edu.np/main/media/svg/shapes/top-green.png')",
-        }}
-        data-theme="light"
-      >
-        <h2 className="text-white">Country</h2>
+    <div className="card">
+      <div className="card-header">
+        <h2 className="card-title">
+          <strong>Country</strong>
+        </h2>
       </div>
       <div className="card-body">
         <ul className="list-group">
@@ -89,7 +85,6 @@ const Country = ({
             >
               <div className="d-flex justify-content-between align-items-center">
                 {editingCountryId === country.id ? (
-                  // Render the input field and Save/Cancel buttons when editing
                   <div className="w-100 d-flex align-items-center">
                     <input
                       placeholder={country.name}
@@ -116,7 +111,6 @@ const Country = ({
                     </button>
                   </div>
                 ) : (
-                  // Render the country name and Edit button normally
                   <>
                     <span className="country-name flex-grow-1">
                       <strong>{country.name}</strong>
@@ -126,11 +120,11 @@ const Country = ({
                       type="button"
                       className="btn btn-light-info btn-icon btn-sm"
                       onClick={(e) => {
-                        e.stopPropagation(); // Prevent triggering the select event
+                        e.stopPropagation();
                         handleEditClick(country);
                       }}
                     >
-                      {icons.edit}
+                      <Icon name="edit" className="scg-icon-1" />
                     </button>
                   </>
                 )}

@@ -2,7 +2,7 @@ import { useState } from "react";
 import Country from "./Country";
 import Province from "./Province";
 import {
-  CityType,
+  MunicipalityType,
   DistrictType,
   ProvinceType,
   CountryType,
@@ -10,59 +10,43 @@ import {
 import useDebounce from "../../../hooks/useDebounce";
 import useAddress from "../../hooks/useAddress";
 import District from "./District";
-import City from "./City";
+import Municipality from "./Municipality";
+import useDocumentTitle from "../../../hooks/useDocumentTitle";
 
-// Main Address Component
 const Address = () => {
-  const [searchTerm, setSearchTerm] = useState(""); // New state for search term
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
-  const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
-
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+  useDocumentTitle("Address Setup");
   const {
     countries,
     provinces,
     districts,
-    cities,
+    municipalities,
     selectedCountry,
     selectedProvince,
     selectedDistrict,
-    selectedCity,
+    selectedMunicipality,
 
     addCountry,
     addProvince,
     addDistrict,
-    addCity,
-    handleEditCity,
+    addMunicipality,
+    handleEditMunicipality,
     handleEditDistrict,
     handleEditProvince,
     handleEditCountry,
     handleSelectCountry,
     handleSelectProvince,
     handleSelectDistrict,
-    handleSelectCity,
+    handleSelectMunicipality,
   } = useAddress({
     search: debouncedSearchTerm,
     currentPage,
     itemsPerPage,
   });
 
-  // // header functions
-  // const handlePageChange = (page: number) => {
-  //   setCurrentPage(page);
-  // };
-
-  // const handleItemsPerPageChange = (value: number | null) => {
-  //   setItemsPerPage(value);
-  //   setCurrentPage(1);
-  // };
-
-  // const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setSearchTerm(event.target.value);
-  //   setCurrentPage(1); // Reset to the first page on new search
-  // };
-
-  //Form Input state
   const [countryFormInput, setCountryFormInput] = useState<{ country: string }>(
     { country: "" }
   );
@@ -72,21 +56,17 @@ const Address = () => {
   const [districtFormInput, setDistrictFormInput] = useState<{
     district: string;
   }>({ district: "" });
-  const [cityFormInput, setCityFormInput] = useState<{
-    city: string;
-  }>({ city: "" });
+  const [municipalityFormInput, setMunicipalityFormInput] = useState<{
+    municipality: string;
+  }>({ municipality: "" });
 
-  //handleAdd Functions
   const handleAddCountry = (countryName: CountryType) => {
-    //checking whether the country already exists
     const countryExists = countries.find(
       (country) => country.name === countryName.name
     );
     if (!countryExists) {
       const newCountry = {
-        // id: countries.length + 1,
         name: countryName.name,
-        // provinces: [],
       };
       setCountryFormInput({
         country: "",
@@ -101,7 +81,6 @@ const Address = () => {
     }
   };
   const handleAddProvince = (provinceName: ProvinceType) => {
-    //checking whether the province already exists
     const provinceExists = provinces.find(
       (province) => province.name === provinceName.name
     );
@@ -109,7 +88,6 @@ const Address = () => {
       const newProvince = {
         country_id: selectedCountry?.id ?? -1,
         name: provinceName.name,
-        // districts: [],
       };
       addProvince(newProvince);
       setProvinceFormInput({ province: "" });
@@ -120,7 +98,6 @@ const Address = () => {
   };
 
   const handleAddDistrict = (districtName: DistrictType) => {
-    //checking whether the district already exists
     const districtExists = districts.find(
       (district) => district.name === districtName.name
     );
@@ -137,31 +114,34 @@ const Address = () => {
       setDistrictFormInput({ district: "" });
     }
   };
-  const handleAddCity = (cityName: CityType, no_of_wards: number) => {
-    //checking whether the district already exists
-    const cityExists = cities.find((city) => city.name === cityName.name);
-    if (!cityExists) {
-      const newCity = {
+  const handleAddMunicipality = (
+    municipalityName: MunicipalityType,
+    no_of_wards: number
+  ) => {
+    const municipalityExists = municipalities.find(
+      (municipality) => municipality.name === municipalityName.name
+    );
+    if (!municipalityExists) {
+      const newMunicipality = {
         district_id: selectedDistrict?.id ?? -1,
-        name: cityName.name,
+        name: municipalityName.name,
         total_wards: no_of_wards,
       };
-      addCity(newCity);
-      setCityFormInput({ city: "" });
-      console.log("New City Added: ", newCity.name);
+      addMunicipality(newMunicipality);
+      setMunicipalityFormInput({ municipality: "" });
+      console.log("New Municipality Added: ", newMunicipality.name);
     } else {
-      alert(`${cityName.name} already exists`);
-      setCityFormInput({ city: "" });
+      alert(`${municipalityName.name} already exists`);
+      setMunicipalityFormInput({ municipality: "" });
     }
   };
 
   return (
     <div>
       <>
-        <h1 className="text-white">Address : </h1>
         <div className="row">
           <div className="col-xl-3 mb-xl-10">
-            {/* Country List */}
+            {}
             <Country
               countries={countries}
               selectedCountry={selectedCountry}
@@ -174,7 +154,7 @@ const Address = () => {
           </div>
 
           <div className="col-xl-3 mb-xl-10">
-            {/* Province List */}
+            {}
             <Province
               provinces={provinces}
               selectedProvince={selectedProvince}
@@ -187,7 +167,7 @@ const Address = () => {
           </div>
 
           <div className="col-xl-3 mb-xl-10">
-            {/* District List */}
+            {}
             <District
               districts={districts}
               selectedDistrict={selectedDistrict}
@@ -200,25 +180,19 @@ const Address = () => {
           </div>
 
           <div className="col-xl-3 mb-xl-10">
-            {/* Cities List */}
-            <City
-              cities={cities}
-              selectedCity={selectedCity}
-              onSelectCity={handleSelectCity}
-              onAddCity={handleAddCity}
-              cityFormInput={cityFormInput}
-              setCityFormInput={setCityFormInput}
-              onEditCity={handleEditCity}
+            {}
+            <Municipality
+              municipalities={municipalities}
+              selectedMunicipality={selectedMunicipality}
+              onSelectMunicipality={handleSelectMunicipality}
+              onAddMunicipality={handleAddMunicipality}
+              municipalityFormInput={municipalityFormInput}
+              setMunicipalityFormInput={setMunicipalityFormInput}
+              onEditMunicipality={handleEditMunicipality}
             />
           </div>
         </div>
       </>
-
-      {/* Display Data */}
-      <div>
-        <h2>Data Structure</h2>
-        <pre>{JSON.stringify(countries, null, 2)}</pre>
-      </div>
     </div>
   );
 };

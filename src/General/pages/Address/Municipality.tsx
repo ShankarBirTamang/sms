@@ -1,94 +1,99 @@
 import React, { useState } from "react";
-import { ProvinceType } from "../../Services/addressServices";
+import { MunicipalityType } from "../../Services/addressServices";
 import { icons } from "../../../components/Icon/icons";
 import Icon from "../../../components/Icon/Icon";
 
-interface ProvinceProps {
-  provinces: ProvinceType[];
-  selectedProvince: ProvinceType | null;
-  onSelectProvince: (province: ProvinceType) => void;
-  onAddProvince: (newProvince: ProvinceType) => void;
-  onEditProvince: (updatedProvince: ProvinceType) => void;
-  provinceFormInput: { province: string };
-  setProvinceFormInput: React.Dispatch<
-    React.SetStateAction<{ province: string }>
+interface MunicipalityProps {
+  municipalities: MunicipalityType[];
+  selectedMunicipality: MunicipalityType | null;
+  onSelectMunicipality: (municipality: MunicipalityType) => void;
+  onAddMunicipality: (
+    newMunicipality: MunicipalityType,
+    no_of_wards: number
+  ) => void;
+  onEditMunicipality: (updatedMunicipality: MunicipalityType) => void;
+  municipalityFormInput: { municipality: string };
+  setMunicipalityFormInput: React.Dispatch<
+    React.SetStateAction<{ municipality: string }>
   >;
 }
 
-const Province = ({
-  provinces,
-  selectedProvince,
-  onSelectProvince,
-  onAddProvince,
-  onEditProvince,
-  provinceFormInput,
-  setProvinceFormInput,
-}: ProvinceProps) => {
-  const [editingProvinceId, setEditingProvinceId] = useState<number | null>(
-    null
-  );
+const Municipality = ({
+  municipalities,
+  selectedMunicipality,
+  onSelectMunicipality,
+  onAddMunicipality,
+  onEditMunicipality,
+  municipalityFormInput,
+  setMunicipalityFormInput,
+}: MunicipalityProps) => {
+  const [editingMunicipalityId, setEditingMunicipalityId] = useState<
+    number | null
+  >(null);
   const [editInput, setEditInput] = useState<string>("");
 
-  const handleEditClick = (province: ProvinceType) => {
-    setEditingProvinceId(province.id);
-    setEditInput(province.name);
-    console.log(`Editing ${province.name}`);
+  const handleEditClick = (municipality: MunicipalityType) => {
+    setEditingMunicipalityId(municipality.id);
+    setEditInput(municipality.name);
+    console.log(`Editing ${municipality.name}`);
   };
 
   const handleSaveEdit = () => {
-    if (editingProvinceId === null) return;
-    const updatedProvince = {
-      id: editingProvinceId,
+    if (editingMunicipalityId === null) return;
+    const updatedMunicipality = {
+      id: editingMunicipalityId,
       name: editInput,
-      districts:
-        provinces.find((province) => province.id === editingProvinceId)
-          ?.districts || [],
+      no_of_wards:
+        municipalities.find(
+          (municipality) => municipality.id === editingMunicipalityId
+        )?.no_of_wards || 0,
     };
-    onEditProvince(updatedProvince);
-    setEditingProvinceId(null); //Exit edit mode
+    onEditMunicipality(updatedMunicipality);
+    setEditingMunicipalityId(null); //Exit edit mode
     setEditInput(""); //reset the input field
   };
 
   const handleCancelEdit = () => {
-    setEditingProvinceId(null); //Exit edit mode
+    setEditingMunicipalityId(null); //Exit edit mode
     setEditInput(""); //reset the input field
   };
 
-  const handleAddProvince = () => {
-    const newProvince: ProvinceType = {
-      id: provinces.length + 1,
-      name: provinceFormInput.province,
-      districts: [],
+  const handleAddMunicipality = () => {
+    const newMunicipality: MunicipalityType = {
+      id: municipalities.length + 1,
+      name: municipalityFormInput.municipality,
+      no_of_wards: 0,
     };
-    onAddProvince(newProvince);
+    onAddMunicipality(newMunicipality, newMunicipality.no_of_wards ?? 0);
+    setMunicipalityFormInput({ municipality: "" });
   };
 
   return (
     <div className="card">
       <div className="card-header">
         <h2 className="card-title">
-          <strong>Province</strong>
+          <strong>Municipality</strong>
         </h2>
       </div>
       <div className="card-body">
         <ul className="list-group">
-          {provinces.map((province) => (
+          {municipalities.map((municipality) => (
             <li
-              key={province.id}
+              key={municipality.id}
               className={`${
-                selectedProvince?.id === province.id
+                selectedMunicipality?.id === municipality.id
                   ? "list-group-item active"
                   : "list-group-item"
               }`}
-              onClick={() => onSelectProvince(province)}
+              onClick={() => onSelectMunicipality(municipality)}
               style={{ cursor: "pointer" }}
             >
               <div className="d-flex justify-content-between align-items-center">
-                {editingProvinceId === province.id ? (
+                {editingMunicipalityId === municipality.id ? (
                   // Render the input field and Save/Cancel buttons when editing
                   <div className="w-100 d-flex align-items-center">
                     <input
-                      placeholder={province.name}
+                      placeholder={municipality.name}
                       type="text"
                       value={editInput}
                       onChange={(e) => setEditInput(e.target.value)}
@@ -112,18 +117,18 @@ const Province = ({
                     </button>
                   </div>
                 ) : (
-                  // Render the province name and Edit button normally
+                  // Render the Municipality name and Edit button normally
                   <>
-                    <span className="province-name flex-grow-1">
-                      <strong>{province.name}</strong>
+                    <span className="Municipality-name flex-grow-1">
+                      <strong>{municipality.name}</strong>
                     </span>
                     <button
-                      title="Edit Province"
+                      title="Edit Municipality"
                       type="button"
                       className="btn btn-light-info btn-icon btn-sm"
                       onClick={(e) => {
                         e.stopPropagation(); // Prevent triggering the select event
-                        handleEditClick(province);
+                        handleEditClick(municipality);
                       }}
                     >
                       <Icon name="edit" className="scg-icon-1" />
@@ -140,20 +145,22 @@ const Province = ({
           <input
             className="form-control"
             type="text"
-            placeholder="New Province"
-            value={provinceFormInput.province}
-            onChange={(e) => setProvinceFormInput({ province: e.target.value })}
+            placeholder="New Municipality"
+            value={municipalityFormInput.municipality}
+            onChange={(e) =>
+              setMunicipalityFormInput({ municipality: e.target.value })
+            }
           />
         </div>
         <button
-          onClick={handleAddProvince}
+          onClick={handleAddMunicipality}
           className="btn btn-sm btn-light-info w-20 mb-2 d-flex"
         >
-          <strong> Add More Province</strong>
+          <strong> Add More Municipality</strong>
         </button>
       </div>
     </div>
   );
 };
 
-export default Province;
+export default Municipality;
