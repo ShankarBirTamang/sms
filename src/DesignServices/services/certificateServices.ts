@@ -2,8 +2,14 @@ import { z } from "zod";
 import apiRoute from "../../services/httpService";
 
 export interface SignatureInterface {
-  name?: string;
-  signature?: string;
+  title?: string;
+  signature_id?: string | number;
+}
+
+export interface GetSignatureInterface {
+  id: number;
+  title?: string;
+  signature_id?: string | number;
 }
 
 export interface PaperSizeInterface {
@@ -13,27 +19,31 @@ export interface PaperSizeInterface {
 
 export interface CertificateInterface {
   name: string;
-  paperSize: string;
-  paperSizes: {
-    [paperSize: string]: PaperSizeInterface;
-  };
-  background?: FileList | null;
   html: string;
+  size: string;
+  height: number;
+  width: number;
+  background?: FileList | File | string | null;
   orientation: string;
   signers: SignatureInterface[];
 }
-
+export interface UpdateCertificateInterface extends CertificateInterface {
+  id: number;
+}
 export interface GetCertificateInterface {
+  id: number;
   name: string;
-  paperSize: string;
-  height: number;
-  width: number;
-  background?: FileList | null;
   html: string;
+  size: string;
+  sizes: {
+    [size: string]: PaperSizeInterface;
+  };
   orientation: string;
+  background?: string;
+  signers: GetSignatureInterface[];
 }
 
-interface PaperSizes {
+interface Sizes {
   A3: PaperSizeInterface;
   A4: PaperSizeInterface;
   A5: PaperSizeInterface;
@@ -52,7 +62,7 @@ interface PaperSizes {
   Tabloid: PaperSizeInterface;
 }
 
-export const paperSizes: PaperSizes = {
+export const sizes: Sizes = {
   A3: { height: 420, width: 297 },
   A4: { height: 297, width: 210 },
   A5: { height: 210, width: 148 },
@@ -86,8 +96,8 @@ const backgroundSchema = z
 // Main schema
 export const certificateSchema = z.object({
   name: z.string().min(1, "Certificate Name is Required"),
-  paperSize: z.string().min(1, "Paper Size is Required"),
-  paperSizes: z.record(
+  size: z.string().min(1, "Paper Size is Required"),
+  sizes: z.record(
     z.string(),
     z.object({
       height: z.number().positive("Height must be a positive number"),
@@ -100,7 +110,7 @@ export const certificateSchema = z.object({
   signers: z.array(
     z.object({
       name: z.string().optional(),
-      signature: z.string().optional(),
+      signature: z.union([z.string(), z.number()]).optional(),
     })
   ),
 });
@@ -108,4 +118,4 @@ export const certificateSchema = z.object({
 // Type for the form data
 // export type CertificateInterface = z.infer<typeof certificateSchema>;
 
-export default apiRoute("/employees");
+export default apiRoute("/design-services/certificates");

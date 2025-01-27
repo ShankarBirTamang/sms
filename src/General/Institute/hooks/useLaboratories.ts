@@ -84,7 +84,6 @@ const useLaboratories = ({
       const params = {
         id,
         name,
-
         description,
       };
 

@@ -25,24 +25,25 @@ const AddAdmitCard = () => {
     defaultValues: {
       name: "",
       html: "",
-      signers: [{ title: "", signature_id: undefined }],
+      page_size: "",
+      no_of_admit_card: "",
+      signers: [{ title: "", signature_id: "" }],
     },
     resolver: zodResolver(admitCardSchema),
   });
-
-  const params = useParams();
-  const { admitCardId } = params;
-  const isEditMode = !!admitCardId;
-  console.log("isEditMode", isEditMode);
 
   const {
     handleSubmit,
     control,
     formState: { errors },
     reset,
-    setValue,
   } = methods;
 
+  //For Edit Mode
+  const params = useParams();
+  const { admitCardId } = params;
+  const isEditMode = !!admitCardId;
+  console.log("isEditMode", isEditMode);
   useEffect(() => {
     if (admitCardId) {
       getOneAdmitCard(Number(admitCardId));
@@ -54,6 +55,8 @@ const AddAdmitCard = () => {
     if (isEditMode && admitCard) {
       reset({
         name: admitCard.name,
+        page_size: admitCard.page_size,
+        no_of_admit_card: admitCard.no_of_admit_card,
         signers: admitCard.signers.map((signer: any) => ({
           title: signer.title,
           signature_id: signer.id,
@@ -63,23 +66,31 @@ const AddAdmitCard = () => {
     }
   }, [admitCard, isEditMode, reset]);
 
-  const onSubmit = (data: AdmitCardInterface | UpdateAdmitCardInterface) => {
-    if (isEditMode) {
-      const updatedData = {
-        ...data,
-        id: Number(admitCardId),
-        background: admitCard?.background || "",
-      };
-      console.log("raw submitted data", updatedData);
-      updateAdmitCard(updatedData as UpdateAdmitCardInterface);
-    } else {
-      saveAdmitCard(data as AdmitCardInterface);
-      reset({
-        name: "",
-        html: "",
-        signers: [{ title: "", signature_id: "" }],
-      });
-      setCode("<h1>Hello World</h1>");
+  const onSubmit = async (
+    data: AdmitCardInterface | UpdateAdmitCardInterface
+  ) => {
+    console.log("raw submitted data", data);
+
+    try {
+      if (isEditMode) {
+        const updatedData = {
+          ...data,
+          id: Number(admitCardId),
+        };
+        await updateAdmitCard(updatedData);
+      } else {
+        await saveAdmitCard(data);
+        reset({
+          name: "",
+          html: "",
+          page_size: "",
+          no_of_admit_card: "",
+          signers: [{ title: "", signature_id: "" }],
+        });
+        setCode("<h1>Hello World</h1>");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
     }
   };
 
@@ -178,11 +189,11 @@ const AddAdmitCard = () => {
             </div>
             <div className="">
               <CodeEditor
-                iframeHeight={86}
-                iframeWidth={86}
+                iframeHeight={297}
+                iframeWidth={210}
                 orientation="landscape"
                 wantBackground={false}
-                scale={1.1}
+                scale={0.7}
                 code={code}
               />
             </div>

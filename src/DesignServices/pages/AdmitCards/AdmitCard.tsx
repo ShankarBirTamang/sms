@@ -13,12 +13,11 @@ const AdmitCard = () => {
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
   const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
   const navigate = useNavigate();
-  const { isLoading, admitCardList, pagination, edgeLinks, deleteAdmitCard } =
-    useAdmitCard({
-      search: debouncedSearchTerm,
-      currentPage,
-      itemsPerPage,
-    });
+  const { isLoading, admitCardList, pagination, edgeLinks } = useAdmitCard({
+    search: debouncedSearchTerm,
+    currentPage,
+    itemsPerPage,
+  });
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);

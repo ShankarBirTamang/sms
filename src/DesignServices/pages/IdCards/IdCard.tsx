@@ -1,7 +1,7 @@
 import { useState } from "react";
 import useDebounce from "../../../hooks/useDebounce";
 import Icon from "../../../components/Icon/Icon";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Loading from "../../../components/Loading/Loading";
 import Pagination from "../../../components/Pagination/Pagination";
 import useIdCard from "../../hooks/useIdCard";
@@ -12,6 +12,7 @@ const IdCard = () => {
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
   const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
+  const navigate = useNavigate();
   const { isLoading, idCardList, pagination, edgeLinks } = useIdCard({
     search: debouncedSearchTerm,
     currentPage,
@@ -24,7 +25,9 @@ const IdCard = () => {
 
   const handleViewClick = (idCard: GetIdCardInterface) => {};
 
-  const handleEditClick = (idCard: GetIdCardInterface) => {};
+  const handleEditClick = (idCard: GetIdCardInterface) => {
+    navigate(`/design-services/id-cards/${idCard.id}/edit`);
+  };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);

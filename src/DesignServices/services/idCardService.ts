@@ -8,8 +8,8 @@ export interface SignatureInterface {
 export interface IdCardInterface {
   name: string;
   html: string;
-  id_card_type_id: string;
-  background: FileList | File | null;
+  id_card_type_id: string | number;
+  background: FileList | File | null | string;
   // primaryColor: string;
   signers: SignatureInterface[];
 }
@@ -22,14 +22,20 @@ export interface GetSignatureInterface {
 }
 
 export interface GetIdCardInterface {
+  id: number;
   name: string;
   html: string;
   id_card_type: {
+    id: number;
     name: string;
   };
   background: string;
   // primaryColor: string;
   signers: GetSignatureInterface[];
+}
+
+export interface UpdateIdCardInterface extends IdCardInterface {
+  id: number;
 }
 
 const backgroundSchema = z
@@ -56,7 +62,7 @@ export const IdCardSchema = z.object({
   signers: z.array(
     z.object({
       title: z.string().optional(),
-      signature_id: z.string().optional(),
+      signature_id: z.union([z.string(), z.number()]).optional(),
     })
   ),
 });
@@ -66,4 +72,4 @@ export interface IdCardTypeInterface {
   name: string;
 }
 
-export default apiRoute("/design-services/id-cards");
+export default apiRoute("design-services/id-cards");

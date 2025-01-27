@@ -10,9 +10,9 @@ interface CodeEditorInterface {
 interface CodeEditorProps {
   iframeHeight: number;
   iframeWidth: number;
-  orientation: string;
+  orientation?: string;
   wantBackground: boolean;
-  scale: number;
+  scale?: number;
   code?: string;
 }
 
@@ -35,7 +35,7 @@ const CodeEditor = ({
   //We can omit SetValues and it still works.. Why?
   const {
     control,
-    getValues,
+    watch,
     formState: { errors },
   } = useFormContext<CodeEditorInterface>();
   const [html, setHtml] = useState(code || "<h1>Hello World</h1>");
@@ -71,23 +71,23 @@ const CodeEditor = ({
     setHtml(value || "");
   };
 
-  const handleBackgroundChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
+  const backgroundImage = watch("background");
+  //For previewing the background image in iframe
+  useEffect(() => {
+    if (backgroundImage instanceof FileList && backgroundImage[0]) {
+      const file = backgroundImage[0];
       const backgroundUrl = URL.createObjectURL(file);
       setBackgroundUrl(backgroundUrl);
+
+      return () => {
+        URL.revokeObjectURL(backgroundUrl); // Clean up the object URL
+      };
+    } else if (typeof backgroundImage === "string") {
+      setBackgroundUrl(backgroundImage);
     } else {
       setBackgroundUrl(null);
     }
-  };
-
-  useEffect(() => {
-    return () => {
-      if (backgroundUrl) {
-        URL.revokeObjectURL(backgroundUrl);
-      }
-    };
-  }, [backgroundUrl]);
+  }, [backgroundImage]);
 
   if (orientation === "landscape") {
     // Swap height and width for landscape orientation
@@ -116,8 +116,11 @@ const CodeEditor = ({
                     className="form-control form-control-solid"
                     value={undefined}
                     onChange={(e) => {
-                      handleBackgroundChange(e); // Handle the background image change
-                      field.onChange(e.target.files); // Ensure the FileList is passed to the form state
+                      if (e.target.files && e.target.files[0]) {
+                        field.onChange(e.target.files); // Update the form field with the selected file
+                      } else {
+                        field.onChange(null); // Reset if no file is selected
+                      }
                     }}
                   />
                 )}
@@ -126,7 +129,7 @@ const CodeEditor = ({
             </div>
           )}
 
-          <div>
+          <div className="m-5">
             <h3>HTML</h3>
             <Controller
               name="html"
@@ -149,10 +152,10 @@ const CodeEditor = ({
           </div>
         </div>
 
-        <div className="col-md-7 p-0">
-          <span style={{ transform: `scale(${scale})` }} className="">
+        <div className="col-md-7 p-0 d-flex justify-content-center align-items-center">
+          <span>
             <iframe
-              className="card"
+              className=" card"
               srcDoc={iframeContent}
               title="Output"
               style={{
@@ -166,6 +169,7 @@ const CodeEditor = ({
                 backgroundRepeat: "no-repeat",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
+                transform: `scale(${scale})`,
               }}
               sandbox="allow-scripts"
             ></iframe>

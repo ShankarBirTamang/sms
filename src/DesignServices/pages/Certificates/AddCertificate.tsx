@@ -6,23 +6,33 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   CertificateInterface,
   certificateSchema,
-  paperSizes,
+  sizes,
 } from "../../services/certificateServices";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import useCertificate from "../../hooks/useCertificate";
 
 const AddCertificate = () => {
+  const [code, setCode] = useState("");
+  const {
+    certificate,
+    isLoadingSubmit,
+    saveCertificate,
+    getOneCertificate,
+    updateCertificate,
+  } = useCertificate({});
   const methods = useForm<CertificateInterface>({
     defaultValues: {
       name: "",
-      paperSize: "A4",
-      paperSizes: {
-        A4: { height: 297, width: 210 },
-      },
+      size: "A4",
+      height: 297,
+      width: 210,
       background: null,
       html: "",
       orientation: "portrait",
+      signers: [{ title: "", signature_id: "" }],
     },
-    resolver: zodResolver(certificateSchema),
+    // resolver: zodResolver(certificateSchema),
   });
 
   const {
@@ -31,47 +41,76 @@ const AddCertificate = () => {
     formState: { errors },
     watch,
     setValue,
+    reset,
   } = methods;
 
-  const selectedPaperSize = watch("paperSize"); //outputs A4, A5 etc
-
-  //Height and Width to pass as the props to Code Editor to adjust it's size
-  const iframeWidth =
-    paperSizes[selectedPaperSize as keyof typeof paperSizes].width;
-  const iframeHeight =
-    paperSizes[selectedPaperSize as keyof typeof paperSizes].height;
-
-  const orientation = watch("orientation");
+  //For Edit Mode
+  const params = useParams();
+  const { certificateId } = params;
+  const isEditMode = !!certificateId;
+  console.log("isEditMode", isEditMode);
 
   useEffect(() => {
-    const { height, width } =
-      paperSizes[selectedPaperSize as keyof typeof paperSizes];
-    setValue("paperSizes", {
-      [selectedPaperSize]: { height, width },
-    });
-    //Is equivalent to
-    // setValue(`paperSizes.${selectedPaperSize}.height`, height);
-    // setValue(`paperSizes.${selectedPaperSize}.width`, width);
+    if (certificateId) {
+      getOneCertificate(Number(certificateId));
+    }
+  }, [certificateId]);
+
+  const selectedPaperSize = watch("size"); //outputs A4, A5 etc
+  const orientation = watch("orientation");
+
+  //Height and Width to pass as the props to Code Editor to adjust it's size
+  const iframeWidth = sizes[selectedPaperSize as keyof typeof sizes].width;
+  const iframeHeight = sizes[selectedPaperSize as keyof typeof sizes].height;
+
+  //Doesn't need to be here
+  useEffect(() => {
+    const { height, width } = sizes[selectedPaperSize as keyof typeof sizes];
+    setValue("height", height);
+    setValue("width", width);
+    //another method to set value
+    // setValue(`sizes.${selectedPaperSize}.height`, height);
+    // setValue(`sizes.${selectedPaperSize}.width`, width);
   }, [selectedPaperSize, setValue]);
 
-  const onSubmit = (data: CertificateInterface) => {
+  const onSubmit = async (data: CertificateInterface) => {
     console.log("Raw data to be submit", data);
+
     const formData = new FormData();
-    for (const key in data) {
-      if (key !== "background") {
-        Object.keys(data).forEach((key) => {
-          formData.append(key, data[key as keyof CertificateInterface] as any);
-        });
-        if (data.background && data.background[0]) {
-          formData.append("background", data.background[0]);
-        }
-      }
+    formData.append("name", data.name);
+    formData.append("size", data.size);
+    formData.append("html", data.html || "");
+    formData.append("height", data.height.toString());
+    formData.append("width", data.width.toString());
+    formData.append("orientation", data.orientation);
+    formData.append("signers", JSON.stringify(data.signers));
+    if (data.background instanceof FileList && data.background[0]) {
+      formData.append("background", data.background[0]);
+    } else if (isEditMode && certificate?.background) {
+      formData.append("background", certificate.background);
     }
 
-    //Logging
-    formData.forEach((value, key) => {
-      console.log(key, value);
-    });
+    try {
+      if (isEditMode) {
+        formData.append("id", certificateId!);
+        await updateCertificate(formData);
+      } else {
+        await saveCertificate(formData);
+        reset({
+          name: "",
+          size: "A4",
+          height: 297,
+          width: 210,
+          background: null,
+          html: "",
+          orientation: "portrait",
+          signers: [{ title: "", signature_id: "" }],
+        });
+        setCode("<h1>Hello World</h1>");
+      }
+    } catch (error) {
+      console.log("Error while saving certificate", error);
+    }
   };
 
   return (
@@ -110,15 +149,15 @@ const AddCertificate = () => {
                   Paper Size
                 </label>
                 <Controller
-                  name="paperSize"
+                  name="size"
                   control={control}
                   render={({ field }) => (
                     <select
                       {...field}
-                      id="paperSizes"
+                      id="sizes"
                       className="form-control form-control-solid"
                     >
-                      {Object.entries(paperSizes).map(([key, value]) => (
+                      {Object.entries(sizes).map(([key, value]) => (
                         <option key={key} value={key}>
                           {key}
                         </option>
@@ -126,14 +165,14 @@ const AddCertificate = () => {
                     </select>
                   )}
                 />
-                <span className="text-danger">{errors.paperSize?.message}</span>
+                <span className="text-danger">{errors.size?.message}</span>
               </div>
               <div className="mb-4 col-md-3">
                 <label htmlFor="name" className="required form-label">
                   Height(mm)
                 </label>
                 <Controller
-                  name={`paperSizes.${selectedPaperSize}.height`}
+                  name="height"
                   control={control}
                   render={({ field }) => (
                     <input
@@ -148,8 +187,7 @@ const AddCertificate = () => {
                   )}
                 />
                 <span className="text-danger">
-                  {errors.paperSizes?.[selectedPaperSize]?.height?.message ??
-                    ""}
+                  {errors.height?.message ?? ""}
                 </span>
               </div>
               <div className="mb-4 col-md-3">
@@ -157,7 +195,7 @@ const AddCertificate = () => {
                   Width(mm)
                 </label>
                 <Controller
-                  name={`paperSizes.${selectedPaperSize}.width`}
+                  name="width"
                   control={control}
                   render={({ field }) => (
                     <input
@@ -172,7 +210,7 @@ const AddCertificate = () => {
                   )}
                 />
                 <span className="text-danger">
-                  {errors.paperSizes?.[selectedPaperSize]?.width?.message ?? ""}
+                  {errors.width?.message ?? ""}
                 </span>
               </div>
               <div className="mb-4 col-md-3">
@@ -213,13 +251,18 @@ const AddCertificate = () => {
                 orientation={orientation}
                 wantBackground={true}
                 scale={0.8}
+                code={code}
               />
             </div>
             <div>
               <Signature />
             </div>
             <div className="text-center my-7">
-              <button type="submit" className="btn btn-info">
+              <button
+                type="submit"
+                className="btn btn-info"
+                disabled={isLoadingSubmit}
+              >
                 Submit
               </button>
             </div>

@@ -88,7 +88,7 @@ const useAdmitCard = ({
     try {
       const response = await admitCardService.create<AdmitCardInterface>(data);
       console.log("admit card response", response.data.data);
-      setAdmitCardList((prev) => [...prev, response.data.data]);
+      // setAdmitCardList((prev) => [...prev, response.data.data]);
       toast.success("Admit Card submitted successfully");
     } catch (error) {
       toast.error("An error occurred when trying to submit Admit Card");
@@ -105,13 +105,6 @@ const useAdmitCard = ({
         data
       );
       console.log("admit card response", response.data.data);
-      // setAdmitCardList((prev) =>
-      //   prev.map((admitCard) =>
-      //     admitCard.id === response.data.data.id
-      //       ? response.data.data
-      //       : admitCard
-      //   )
-      // );
       toast.success("Admit Card updated successfully");
     } catch (error) {
       toast.error("An error occurred when trying to update Admit Card");
@@ -119,7 +112,6 @@ const useAdmitCard = ({
       setIsLoadingSubmit(false);
     }
   };
-  const deleteAdmitCard = async () => {};
 
   return {
     pagination,
@@ -131,7 +123,6 @@ const useAdmitCard = ({
     getOneAdmitCard,
     saveAdmitCard,
     updateAdmitCard,
-    deleteAdmitCard,
   };
 };
 

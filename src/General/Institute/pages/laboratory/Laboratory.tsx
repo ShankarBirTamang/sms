@@ -86,6 +86,7 @@ const Laboratory = () => {
         }
       }
     } catch (error) {
+      console.log("Error while submitting laboratory", error);
     } finally {
       resetForm();
       setIsSubmitting(false);

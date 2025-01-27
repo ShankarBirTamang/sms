@@ -1,18 +1,22 @@
 import { useState } from "react";
 import useDebounce from "../../../hooks/useDebounce";
 import Icon from "../../../components/Icon/Icon";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Loading from "../../../components/Loading/Loading";
 import Pagination from "../../../components/Pagination/Pagination";
 import useCertificate from "../../hooks/useCertificate";
-import { CertificateInterface } from "../../services/certificateServices";
+import {
+  CertificateInterface,
+  GetCertificateInterface,
+} from "../../services/certificateServices";
 
 const Certificate = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
   const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
-  const { isLoading, certificates, pagination, edgeLinks } = useCertificate({
+  const { isLoading, certificateList, pagination, edgeLinks } = useCertificate({
     search: debouncedSearchTerm,
     currentPage,
     itemsPerPage,
@@ -22,14 +26,16 @@ const Certificate = () => {
     setSearchTerm(event.target.value);
   };
 
-  const handleViewClick = (certificate: CertificateInterface) => {};
+  const handleViewClick = (certificate: GetCertificateInterface) => {};
 
-  const handleEditClick = (certificate: CertificateInterface) => {};
+  const handleEditClick = (certificate: GetCertificateInterface) => {
+    navigate(`/design-services/certificateList/${certificate.id}/edit`);
+  };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-  const handleDeleteClick = () => {};
+
   const handleItemsPerPageChange = (value: number | null) => {
     setItemsPerPage(value);
     setCurrentPage(1);
@@ -95,7 +101,7 @@ const Certificate = () => {
           <div className="card-body pt-0">
             <div>
               {isLoading && <Loading />}
-              {!isLoading && certificates.length === 0 && (
+              {!isLoading && certificateList.length === 0 && (
                 <div className="alert alert-info">No Certificates Found</div>
               )}
               {!isLoading && (
@@ -109,11 +115,12 @@ const Certificate = () => {
                       <th> #</th>
                       <th className="min-w-225px">Certificate Name</th>
                       <th>Background</th>
+                      <th>Signers</th>
                       <th className="text-end">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="text-gray-600 fw-bold table">
-                    {certificates.map((certificate, index) => (
+                    {certificateList.map((certificate, index) => (
                       <tr key={index} className="odd">
                         <td>
                           {currentPage * (itemsPerPage ?? 0) +
@@ -123,23 +130,35 @@ const Certificate = () => {
                         </td>
                         <td className="sorting_1">{certificate.name}</td>
                         <td></td>
+                        <td>
+                          {certificate.signers.map((signer, index) => (
+                            <span
+                              className="badge rounded-pill bg-primary p-2 fs-7 me-1"
+                              key={signer.id}
+                            >
+                              {signer.name}
+                            </span>
+                          ))}
+                        </td>
                         <td className="text-end">
                           <button
                             title="edit admit card"
                             type="button"
                             onClick={() => handleEditClick(certificate)}
-                            className="btn btn-light-info btn-icon btn-sm m-1"
+                            className="btn btn-light-info btn-sm m-1"
                           >
                             <Icon name={"edit"} className={"svg-icon"} />
+                            Edit
                           </button>
 
                           <button
                             title="view admit card"
                             type="button"
                             onClick={() => handleViewClick(certificate)}
-                            className="btn btn-success btn-icon btn-sm m-1"
+                            className="btn btn-light-success btn-sm m-1"
                           >
                             <Icon name={"search"} className={"svg-icon"} />
+                            View
                           </button>
                         </td>
                       </tr>

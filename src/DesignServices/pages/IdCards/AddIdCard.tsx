@@ -1,12 +1,27 @@
 import { useForm, FormProvider, Controller } from "react-hook-form";
 import Signature from "../../../components/Signature/Signature";
-import { IdCardInterface, IdCardSchema } from "../../services/idCardService";
+import {
+  IdCardInterface,
+  IdCardSchema,
+  UpdateIdCardInterface,
+} from "../../services/idCardService";
 import CodeEditor from "../../../components/CodeEditor/CodeEditor";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useIdCard from "../../hooks/useIdCard";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const AddIdCard = () => {
-  const { idCardTypes, saveIdCard, isLoadingSubmit } = useIdCard({});
+  const [code, setCode] = useState("");
+  const {
+    idCardTypes,
+    saveIdCard,
+    isLoadingSubmit,
+    idCard,
+    getOneIdCard,
+    updateIdCard,
+  } = useIdCard({});
+
   const methods = useForm<IdCardInterface>({
     defaultValues: {
       name: "",
@@ -22,25 +37,73 @@ const AddIdCard = () => {
   const {
     handleSubmit,
     control,
+    reset,
     formState: { errors },
   } = methods;
 
-  const onSubmit = (data: IdCardInterface) => {
-    console.log("raw submitted data", data);
-    const formData = new FormData();
+  //For Edit Mode
+  const params = useParams();
+  const { idCardId } = params;
+  const isEditMode = !!idCardId;
+  console.log("isEditMode", isEditMode);
 
+  useEffect(() => {
+    if (idCardId) {
+      getOneIdCard(Number(idCardId));
+    }
+  }, [idCardId]);
+
+  //GetOneAdmitCard is a function that fetches the admit card data from the server and above idCard is it's response
+  useEffect(() => {
+    if (isEditMode && idCard) {
+      reset({
+        name: idCard.name,
+        id_card_type_id: idCard.id_card_type.id,
+        background:
+          "https://img.freepik.com/free-vector/copy-space--spring-lights-background_52683-55649.jpg?t=st=1737950949~exp=1737954549~hmac=d83993be1872bb39a9d9a5a98057f0feadc2dd725b8ae00dfd41fbd2b4ff3eef&w=1060",
+        signers: idCard.signers.map((signer: any) => ({
+          title: signer.title,
+          signature_id: signer.id,
+        })),
+      });
+      setCode(idCard.html);
+    }
+  }, [idCard, isEditMode, reset]);
+
+  const onSubmit = async (data: IdCardInterface | UpdateIdCardInterface) => {
+    console.log("raw submitted data", data);
+
+    const formData = new FormData();
     formData.append("name", data.name);
     formData.append("html", data.html || "");
     // formData.append("primaryColor", data.primaryColor);
-
     formData.append("id_card_type_id", data.id_card_type_id?.toString() || "");
-
+    formData.append("signers", JSON.stringify(data.signers));
     if (data.background instanceof FileList && data.background[0]) {
       formData.append("background", data.background[0]);
+    } else if (isEditMode && idCard?.background) {
+      formData.append("background", idCard.background);
     }
-    formData.append("signers", JSON.stringify(data.signers));
 
-    saveIdCard(formData);
+    try {
+      if (isEditMode) {
+        formData.append("id", idCardId!);
+        await updateIdCard(formData);
+      } else {
+        await saveIdCard(formData);
+        reset({
+          name: "",
+          html: "",
+          id_card_type_id: "",
+          background: null,
+          // primaryColor: "#000000",
+          signers: [{ title: "", signature_id: "" }],
+        });
+        setCode("<h1>Hello World</h1>");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
 
   return (
@@ -53,7 +116,7 @@ const AddIdCard = () => {
                 New Id Card Design
               </h1>
             </div>
-            <div className="mb-4 col-md-5">
+            <div className="mb-4 col-md-6">
               <label htmlFor="name" className="required form-label">
                 Id Card Name
               </label>
@@ -73,7 +136,7 @@ const AddIdCard = () => {
               />
               <span className="text-danger">{errors.name?.message}</span>
             </div>
-            <div className="mb-4 col-md-3">
+            <div className="mb-4 col-md-4">
               <label htmlFor="cardType" className="required form-label">
                 Select Card Type
               </label>
@@ -141,6 +204,7 @@ const AddIdCard = () => {
                 orientation="portrait"
                 wantBackground={true}
                 scale={1.1}
+                code={code}
               />
             </div>
             <div>
