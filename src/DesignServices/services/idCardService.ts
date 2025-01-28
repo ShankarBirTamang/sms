@@ -52,7 +52,7 @@ const backgroundSchema = z
 
 export const IdCardSchema = z.object({
   name: z.string().min(1, "Id Card name is required!"),
-  html: z.string().optional(),
+  html: z.string().min(1, "Html code is required!"),
   id_card_type_id: z.union([
     z.string().min(1, "Id Card Type is required"),
     z.number().min(1, "Id Card Type is required"),

@@ -36,14 +36,12 @@ const CodeEditor = ({
   const {
     control,
     watch,
+    setValue,
     formState: { errors },
   } = useFormContext<CodeEditorInterface>();
   const [html, setHtml] = useState(code || "<h1>Hello World</h1>");
+  setValue("html", html);
   const [iframeContent, setIframeContent] = useState("");
-
-  useEffect(() => {
-    setHtml(code || "<h1>Hello World</h1>");
-  }, [code]);
 
   useEffect(() => {
     setIframeContent(`
@@ -131,6 +129,7 @@ const CodeEditor = ({
 
           <div className="m-5">
             <h3>HTML</h3>
+            <span className="text-danger">{errors.html?.message}</span>
             <Controller
               name="html"
               control={control}
@@ -167,7 +166,8 @@ const CodeEditor = ({
                   ? `url('${backgroundUrl}')`
                   : "none",
                 backgroundRepeat: "no-repeat",
-                backgroundSize: "cover",
+                // backgroundSize: "cover",
+                backgroundSize: "100% 100%",
                 backgroundPosition: "center",
                 transform: `scale(${scale})`,
               }}

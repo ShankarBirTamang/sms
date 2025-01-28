@@ -59,6 +59,7 @@ const AddIdCard = () => {
       reset({
         name: idCard.name,
         id_card_type_id: idCard.id_card_type.id,
+        html: idCard.html, // Ensure the html field is set
         background:
           "https://img.freepik.com/free-vector/copy-space--spring-lights-background_52683-55649.jpg?t=st=1737950949~exp=1737954549~hmac=d83993be1872bb39a9d9a5a98057f0feadc2dd725b8ae00dfd41fbd2b4ff3eef&w=1060",
         signers: idCard.signers.map((signer: any) => ({
