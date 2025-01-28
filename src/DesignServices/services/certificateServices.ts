@@ -1,6 +1,17 @@
 import { z } from "zod";
 import apiRoute from "../../services/httpService";
 
+export interface SignatureInterface {
+  title?: string;
+  signature_id?: string | number;
+}
+
+export interface GetSignatureInterface {
+  id: number;
+  title?: string;
+  signature_id?: string | number;
+}
+
 export interface PaperSizeInterface {
   height: number;
   width: number;
@@ -8,16 +19,31 @@ export interface PaperSizeInterface {
 
 export interface CertificateInterface {
   name: string;
-  paperSize: string;
-  paperSizes: {
-    [paperSize: string]: PaperSizeInterface;
-  };
-  backgroundImage: File | null;
-  code: string;
+  html: string;
+  size: string;
+  height: number;
+  width: number;
+  background?: FileList | File | string | null;
   orientation: string;
+  signers: SignatureInterface[];
+}
+export interface UpdateCertificateInterface extends CertificateInterface {
+  id: number;
+}
+export interface GetCertificateInterface {
+  id: number;
+  name: string;
+  html: string;
+  size: string;
+  sizes: {
+    [size: string]: PaperSizeInterface;
+  };
+  orientation: string;
+  background?: string;
+  signers: GetSignatureInterface[];
 }
 
-interface PaperSizes {
+interface Sizes {
   A3: PaperSizeInterface;
   A4: PaperSizeInterface;
   A5: PaperSizeInterface;
@@ -36,7 +62,7 @@ interface PaperSizes {
   Tabloid: PaperSizeInterface;
 }
 
-export const paperSizes: PaperSizes = {
+export const sizes: Sizes = {
   A3: { height: 420, width: 297 },
   A4: { height: 297, width: 210 },
   A5: { height: 210, width: 148 },
@@ -45,7 +71,7 @@ export const paperSizes: PaperSizes = {
   A8: { height: 74, width: 52 },
   A9: { height: 52, width: 37 },
   A10: { height: 37, width: 26 },
-  IDCard: { height: 85.6, width: 53.98 },
+  IDCard: { height: 86, width: 54 },
   S4X6: { height: 152, width: 102 },
   S5X7: { height: 178, width: 127 },
   S8X10: { height: 254, width: 203 },
@@ -55,19 +81,41 @@ export const paperSizes: PaperSizes = {
   Tabloid: { height: 432, width: 279 },
 };
 
+const backgroundSchema = z
+  .instanceof(FileList) // Ensure it's a FileList
+  .refine((files) => files.length > 0, "Background image is required") // Ensure at least one file is selected
+  .refine(
+    (files) => files[0].size <= 5 * 1024 * 1024, // 5MB limit
+    "File size must be less than 5MB"
+  )
+  .refine(
+    (files) => ["image/jpeg", "image/png", "image/jpg"].includes(files[0].type), // Allowed file types
+    "Only .jpg, .jpeg, and .png files are allowed"
+  );
+
+// Main schema
 export const certificateSchema = z.object({
   name: z.string().min(1, "Certificate Name is Required"),
-  paperSize: z.string().min(1, "Paper Size is Required"),
-  paperSizes: z.record(
+  size: z.string().min(1, "Paper Size is Required"),
+  sizes: z.record(
     z.string(),
     z.object({
       height: z.number().positive("Height must be a positive number"),
       width: z.number().positive("Width must be a positive number"),
     })
   ),
-  backgroundImage: z.instanceof(File).nullable(), // Add validation for File | null
-  code: z.string().min(1, "Code is required"),
+  background: backgroundSchema, // Use the updated schema
+  html: z.string().min(1, "Code is required"),
   orientation: z.string().min(1, "Orientation is required"),
+  signers: z.array(
+    z.object({
+      name: z.string().optional(),
+      signature: z.union([z.string(), z.number()]).optional(),
+    })
+  ),
 });
 
-export default apiRoute("/employees");
+// Type for the form data
+// export type CertificateInterface = z.infer<typeof certificateSchema>;
+
+export default apiRoute("/design-services/certificates");

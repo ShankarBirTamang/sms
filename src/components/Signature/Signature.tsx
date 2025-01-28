@@ -1,21 +1,50 @@
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
+import axiosInstance from "../../../axiosConfig";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+const baseUrl = import.meta.env.VITE_API_URL;
 
 interface SignatureInterface {
-  signee?: string;
-  signature?: string;
+  title?: string;
+  signature_id?: string | number; //value of select signature id can be id which is string or number
+}
+
+interface GetSignatureInterface {
+  id: string;
+  name?: string;
+  signature?: string | number; //value of select signature can be id which is string or number
 }
 
 const Signature = () => {
+  const [signatureList, setSignatureList] = useState<GetSignatureInterface[]>(
+    []
+  );
   const {
     control,
     formState: { errors },
-  } = useFormContext<{ signatures: SignatureInterface[] }>();
+  } = useFormContext<{ signers: SignatureInterface[] }>();
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "signatures",
+    name: "signers",
   });
 
+  useEffect(() => {
+    getAllSignatures();
+  }, []);
+
+  const getAllSignatures = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `${baseUrl}/design-services/signatures`
+      );
+      setSignatureList(response.data.data);
+    } catch (error) {
+      toast("Error fetching Signature List");
+      console.log("Error fetching Signature List", error);
+    } finally {
+    }
+  };
   return (
     <div className="col-md-12">
       <h3>Signers For Admit Card</h3>
@@ -34,7 +63,7 @@ const Signature = () => {
               <td>{index + 1}</td>
               <td>
                 <Controller
-                  name={`signatures.${index}.signee`}
+                  name={`signers.${index}.title`}
                   control={control}
                   render={({ field }) => (
                     <input
@@ -45,27 +74,31 @@ const Signature = () => {
                   )}
                 />
                 <span className="text-danger">
-                  {errors.signatures?.[index]?.signee?.message}
+                  {errors.signers?.[index]?.title?.message}
                 </span>
               </td>
               <td>
                 <Controller
-                  name={`signatures.${index}.signature`}
+                  name={`signers.${index}.signature_id`}
                   control={control}
                   render={({ field }) => (
                     <select
-                      className="form-control form-control-solid"
+                      className="form-select form-select-solid"
                       {...field}
                     >
-                      <option hidden>Select Associated Signature</option>
-                      <option value="1">Principal</option>
-                      <option value="2">Vice Principal</option>
-                      <option value="3">Chief</option>
+                      <option value="" hidden>
+                        Select Associated Signature
+                      </option>
+                      {signatureList.map((signature) => (
+                        <option key={signature.id} value={signature.id}>
+                          {signature.name}
+                        </option>
+                      ))}
                     </select>
                   )}
                 />
                 <span className="text-danger">
-                  {errors.signatures?.[index]?.signature?.message}
+                  {errors.signers?.[index]?.signature_id?.message}
                 </span>
               </td>
               <td className="text-end">
@@ -86,7 +119,7 @@ const Signature = () => {
           type="button"
           className="btn btn-success"
           onClick={() => {
-            append({ signee: "", signature: "" });
+            append({ title: "", signature_id: "" });
           }}
         >
           Add +

@@ -58,12 +58,11 @@ const useRoomHalls = ({
     // return () => cancel();
   }, [search, currentPage, itemsPerPage]);
 
-  const saveRoomHall = async ({ name, number, description }: RoomHallsForm) => {
+  const saveRoomHall = async ({ name, description }: RoomHallsForm) => {
     setIsLoadingSubmit(true);
     try {
       const params = {
         name,
-        number,
         description,
       };
       const response = await roomHallsService.create<RoomHallsForm>(params);
@@ -80,11 +79,10 @@ const useRoomHalls = ({
 
   const updateRoomHall = async (data: UpdateRoomHallsForm) => {
     try {
-      const { id, name, number, description } = data;
+      const { id, name, description } = data;
       const params = {
         id,
         name,
-        number,
         description,
       };
 

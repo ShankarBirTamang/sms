@@ -20,8 +20,8 @@ interface FormData {
   website: string;
   short_desc: string;
   long_desc: string;
-  logo: FileList | null;
-  cover: FileList | null;
+  logo?: FileList | null;
+  cover?: FileList | null;
 }
 
 const Details = () => {
@@ -106,6 +106,7 @@ const Details = () => {
     getInstituteDetails();
   }, [instituteDetails]);
 
+  //Watching to convert Image file to it's respectiive url To Preview
   const watchLogo = watch("logo");
   useEffect(() => {
     console.log("watchlogo", watchLogo);

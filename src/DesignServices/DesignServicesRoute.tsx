@@ -27,12 +27,22 @@ const routes: RouteConfig[] = [
     element: <AddIdCard />,
   },
   {
+    path: "id-cards/:idCardId/edit",
+    title: "Id Cards",
+    element: <AddIdCard />,
+  },
+  {
     path: "admit-cards",
     title: "Admit Cards",
     element: <AdmitCard />,
   },
   {
     path: "admit-cards/create",
+    title: "Admit Cards",
+    element: <AddAdmitCard />,
+  },
+  {
+    path: "admit-cards/:admitCardId/edit",
     title: "Admit Cards",
     element: <AddAdmitCard />,
   },
@@ -46,7 +56,11 @@ const routes: RouteConfig[] = [
     title: "Certificates",
     element: <AddCertificate />,
   },
-
+  {
+    path: "certificates/:certificateId/edit",
+    title: "Certificates",
+    element: <AddCertificate />,
+  },
   {
     path: "marksheets",
     title: "Marksheet",

@@ -1,18 +1,33 @@
-import { useForm, FormProvider, Controller } from "react-hook-form";
+import { useForm, FormProvider, Controller, get, set } from "react-hook-form";
 import Signature from "../../../components/Signature/Signature";
 import {
   AdmitCardInterface,
   admitCardSchema,
+  GetAdmitCardInterface,
+  UpdateAdmitCardInterface,
 } from "../../services/admitCardService";
 import CodeEditor from "../../../components/CodeEditor/CodeEditor";
 import { zodResolver } from "@hookform/resolvers/zod";
+import useAdmitCard from "../../hooks/useAdmitCard";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const AddAdmitCard = () => {
-  const methods = useForm<AdmitCardInterface>({
+  const [code, setCode] = useState("");
+  const {
+    isLoadingSubmit,
+    saveAdmitCard,
+    getOneAdmitCard,
+    admitCard,
+    updateAdmitCard,
+  } = useAdmitCard({});
+  const methods = useForm<AdmitCardInterface | GetAdmitCardInterface>({
     defaultValues: {
       name: "",
-      code: "",
-      signatures: [{ signee: "", signature: "" }],
+      html: "",
+      page_size: "",
+      no_of_admit_card: "",
+      signers: [{ title: "", signature_id: "" }],
     },
     resolver: zodResolver(admitCardSchema),
   });
@@ -21,22 +36,78 @@ const AddAdmitCard = () => {
     handleSubmit,
     control,
     formState: { errors },
+    reset,
   } = methods;
 
-  const onSubmit = (data: AdmitCardInterface) => {
-    console.log("Submitted Form Data:", data);
+  //For Edit Mode
+  const params = useParams();
+  const { admitCardId } = params;
+  const isEditMode = !!admitCardId;
+  console.log("isEditMode", isEditMode);
+  useEffect(() => {
+    if (admitCardId) {
+      getOneAdmitCard(Number(admitCardId));
+    }
+  }, [admitCardId]);
+
+  //GetOneAdmitCard is a function that fetches the admit card data from the server and above admitCard is it's response
+  useEffect(() => {
+    if (isEditMode && admitCard) {
+      reset({
+        name: admitCard.name,
+        page_size: admitCard.page_size,
+        no_of_admit_card: admitCard.no_of_admit_card,
+        signers: admitCard.signers.map((signer: any) => ({
+          title: signer.title,
+          signature_id: signer.id,
+        })),
+      });
+      setCode(admitCard.html);
+    }
+  }, [admitCard, isEditMode, reset]);
+
+  const onSubmit = async (
+    data: AdmitCardInterface | UpdateAdmitCardInterface
+  ) => {
+    console.log("raw submitted data", data);
+
+    try {
+      if (isEditMode) {
+        const updatedData = {
+          ...data,
+          id: Number(admitCardId),
+        };
+        await updateAdmitCard(updatedData);
+      } else {
+        await saveAdmitCard(data);
+        reset({
+          name: "",
+          html: "",
+          page_size: "",
+          no_of_admit_card: "",
+          signers: [{ title: "", signature_id: "" }],
+        });
+        setCode("<h1>Hello World</h1>");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
+
   return (
     <FormProvider {...methods}>
-      <form className="col-md-12" onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="col-md-12 container-fluid"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <div className="card">
-          <div className="card-header mb-6">
+          <div className="row card-header mb-6">
             <div className="card-title w-100">
               <h1 className="d-flex justify-content-between align-items-center position-relative my-3 w-100">
-                New Admit Card Design
+                {isEditMode ? "Edit Admit Card" : "Create New Admit Card"}
               </h1>
             </div>
-            <div className="mb-4 col-md-4">
+            <div className="mb-4 col-md-5">
               <label htmlFor="name" className="required form-label">
                 Admit Card Name
               </label>
@@ -45,7 +116,6 @@ const AddAdmitCard = () => {
                 control={control}
                 render={({ field }) => (
                   <input
-                    required
                     {...field}
                     type="string"
                     id="name"
@@ -55,6 +125,55 @@ const AddAdmitCard = () => {
                 )}
               />
               <span className="text-danger">{errors.name?.message}</span>
+            </div>
+            <div className="mb-4 col-md-3">
+              <label htmlFor="page_size" className="required form-label">
+                Size of Page
+              </label>
+              <Controller
+                name="page_size"
+                control={control}
+                render={({ field }) => (
+                  <select
+                    {...field}
+                    id="page_size"
+                    className="form-select form-select-solid"
+                  >
+                    <option value="" hidden>
+                      Select Paper Size
+                    </option>
+                    <option value="A4">A4</option>
+                  </select>
+                )}
+              />
+              <span className="text-danger">{errors.page_size?.message}</span>
+            </div>
+            <div className="mb-4 col-md-3">
+              <label htmlFor="page_size" className="required form-label">
+                No of Admit Card per Page
+              </label>
+              <Controller
+                name="no_of_admit_card"
+                control={control}
+                render={({ field }) => (
+                  <select
+                    {...field}
+                    id="no_of_admit_card"
+                    className="form-select form-select-solid"
+                  >
+                    <option value="" hidden>
+                      Select No. of Admit Card Per Page
+                    </option>
+                    <option value="2">2</option>
+                    <option value="4">4</option>
+                    <option value="8">8</option>
+                    <option value="16">16</option>
+                  </select>
+                )}
+              />
+              <span className="text-danger">
+                {errors.no_of_admit_card?.message}
+              </span>
             </div>
           </div>
 
@@ -69,14 +188,25 @@ const AddAdmitCard = () => {
               </div>
             </div>
             <div className="">
-              <CodeEditor />
+              <CodeEditor
+                iframeHeight={297}
+                iframeWidth={210}
+                orientation="landscape"
+                wantBackground={false}
+                scale={0.7}
+                code={code}
+              />
             </div>
             <div>
               <Signature />
             </div>
             <div className="text-center my-7">
-              <button type="submit" className="btn btn-info">
-                Submit
+              <button
+                type="submit"
+                className="btn btn-info"
+                disabled={isLoadingSubmit}
+              >
+                {isEditMode ? "Update" : "Submit"}
               </button>
             </div>
           </div>

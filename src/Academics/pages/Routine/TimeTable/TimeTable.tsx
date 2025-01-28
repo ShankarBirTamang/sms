@@ -19,9 +19,6 @@ const TimeTable = () => {
     number | null
   >(null);
   const navigate = useNavigate();
-  const [formMode, setFormMode] = useState<"create" | "edit" | "view">(
-    "create"
-  );
 
   const {
     timeTables,
@@ -51,12 +48,10 @@ const TimeTable = () => {
   };
 
   const handleEditClick = (updatedTimeTable: UpdateTimeTableInterface) => {
-    setFormMode("edit");
     navigate(`/academics/routine/time-table/${updatedTimeTable.id}/edit`);
   };
 
   const handleViewClick = (updatedTimeTable: UpdateTimeTableInterface) => {
-    setFormMode("view");
     navigate(`/academics/routine/time-table/${updatedTimeTable.id}/view`);
   };
 
