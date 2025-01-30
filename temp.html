@@ -1,244 +1,102 @@
-<div className="card mt-5">
-  <div className="card-header pt-6">
-    <div className="card-title w-100 justify-content-between">
-      <h2>Student List</h2>
-      <div className="d-flex align-items-end gap-5"></div>
+<div className="row">
+  <div className="col-4">
+    <div className="fv-row mb-7">
+      <label className="required fw-bold fs-6 mb-2"
+        >Guardian Name (AS per citizenship)</label
+      >
+      <input
+        type="text"
+        className="form-control mb-3 mb-lg-0"
+        placeholder=" Guardian's Full Name "
+      />
     </div>
-    <hr />
   </div>
-
-  <div className="card-body">
-    @if(count($students) > 0)
-    <div className="row">
-      <div className="col-12 text-center">
-        <div wire:loading>
-          <x-loading />
-        </div>
-        <div className="students">
-          <div id="#table_student" className="table-container">
-            <table className="student-table">
-              <thead>
-                <tr>
-                  <th className="headcol col-roll">Roll</th>
-                  <th className="headcol col-first-name first-col">
-                    First Name
-                  </th>
-                  <th className="headcol col-middle-name middle-col">
-                    Middle Name
-                  </th>
-                  <th className="headcol col-last-name last-col">Last Name</th>
-                  <th className="col-iemis">IEMIS</th>
-                  <th className="col-gender">Gender</th>
-                  <th className="col-ethnicity">Ethnicity</th>
-                  <th className="col-dob">Date of Birth</th>
-                  <th className="col-address">Address</th>
-                  <th className="col-contact">Contact</th>
-                  <th className="col-blood-group">Blood Group</th>
-                  <th className="col-nationality">Nationality</th>
-                  <th className="col-mother-tongue">Mother Tongue</th>
-                  <th className="col-religion">Religion</th>
-                  <th className="col-contact">Contact</th>
-                  <th className="col-father-name">Father's Name</th>
-                  <th className="col-father-contact">Father's Contact</th>
-                  <th className="col-mother-name">Mother's Name</th>
-                  <th className="col-mother-contact">Mother's Contact</th>
-                  <th className="col-actions" style="z-index: 25">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach($students as $stu => $student)
-                <tr>
-                  <td className="headcol col-roll">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.roll"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="headcol col-first-name first-col">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.first_name"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="headcol col-middle-name middle-col">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.middle_name"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="headcol col-last-name last-col">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.last_name"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="col-iemis">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.iemis"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="col-gender">
-                    <select
-                      wire:model="students.{{$stu}}.gender"
-                      className="form-control @error('gender')is-invalid @enderror"
-                    >
-                      <option value="" selected hidden>Gender</option>
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                      <option value="Others">Others</option>
-                    </select>
-                  </td>
-                  <td className="col-gender">
-                    <select
-                      wire:model="students.{{$stu}}.ethnicity"
-                      className="form-control @error('gender')is-invalid @enderror"
-                    >
-                      <option value="" selected hidden>Ethnicity</option>
-                      <option value="Others">Others</option>
-                      <option value="Dalit">Dalit</option>
-                      <option value="Janajati">Janajati</option>
-                    </select>
-                  </td>
-
-                  <td className="col-dob">
-                    <livewire:general.date-converter
-                      wire:key="date-{{ $stu }}"
-                      inputName="dob_{{ $stu }}"
-                      dateModel="dob_{{ $stu }}"
-                      value="{{  $student['dob_en'] }}"
-                      valueNp="{{  $student['dob_np'] }}"
-                    />
-                  </td>
-                  <td className="col-address">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.address"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="col-contact">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.contact"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="col-blood-group">
-                    <select
-                      wire:model="students.{{$stu}}.blood"
-                      className="form-control @error('blood_group')is-invalid @enderror"
-                    >
-                      <option value="" selected hidden>Blood</option>
-                      @foreach($bloodGroups as $bg)
-                      <option value="{{ $bg }}+">{{ $bg }}+</option>
-                      <option value="{{ $bg }}-">{{ $bg }}-</option>
-                      @endforeach
-                    </select>
-                  </td>
-                  <td className="col-nationality">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.nationality"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="col-mother-tongue">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.mother_tongue"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="col-religion">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.religion"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="col-contact">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.contact"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="col-father-name">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.father_name"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="col-father-contact">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.father_contact"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="col-mother-name">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.mother_name"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="col-mother-contact">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.mother_contact"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="col-actions">
-                    <button
-                      wire:loading.remove
-                      wire:target="saveStudent({{ $stu }})"
-                      wire:click="saveStudent({{ $stu }})"
-                      type="button"
-                      className="btn btn-sm btn-primary"
-                    >
-                      Save
-                    </button>
-                    <div wire:loading wire:target="saveStudent({{ $stu }})">
-                      <button className="btn btn-sm btn-danger">
-                        <span
-                          className="spinner-border btn-spinner-border"
-                          role="status"
-                        >
-                          <span className="visually-hidden">Loading...</span>
-                        </span>
-                      </button>
-                    </div>
-                    {{--
-                    <button
-                      className="btn btn-primary btn-sm"
-                      --}}
-                      {{--
-                      wire:click="saveStudent({{ $stu }})"
-                    >
-                      Save--}} {{--</button
-                    >--}}
-                  </td>
-                </tr>
-                @endforeach
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+  <div className="col-4">
+    <div className="fv-row mb-7">
+      <label className="required fw-bold fs-6 mb-2">Relation with Child</label>
+      <input
+        type="text"
+        wire:model="relation"
+        className="form-control mb-3 mb-lg-0"
+        placeholder=" Eg : Father"
+      />
     </div>
-
-    <div className="mt-3 text-center">
-      <h4>No Students Selected</h4>
+  </div>
+  <div className="col-4">
+    <div className="fv-row mb-7">
+      <label className="required fw-bold fs-6 mb-2">Guardian Type</label>
+      <select
+        className="form-control form-select mb-3 mb-lg-0"
+        wire:model="type"
+      >
+        <option selected="" hidden="" value="">Select Guardian Type</option>
+        <option value="Parent">Parent</option>
+        <option value="Local Guardian">Local Guardian</option>
+      </select>
     </div>
-    f
+  </div>
+  <div className="col-6">
+    <div className="fv-row mb-7">
+      <label className="fw-bold fs-6 mb-2">Email</label>
+      <input
+        type="email"
+        wire:model="email"
+        className="form-control mb-3 mb-lg-0"
+        placeholder=" Eg : abc@gmail.com"
+      />
+    </div>
+  </div>
+  <div className="col-6">
+    <div className="fv-row mb-7">
+      <label className="required fw-bold fs-6 mb-2"
+        >Contact Number (Seperate by comma)</label
+      >
+      <input
+        type="text"
+        wire:model="contact"
+        className="form-control mb-3 mb-lg-0"
+        placeholder=" Eg : 9812345678,9832165498"
+      />
+    </div>
+  </div>
+  <div className="col-12">
+    <div className="fv-row mb-7">
+      <label className="required fw-bold fs-6 mb-2">Address</label>
+      <input
+        type="text"
+        wire:model="address"
+        className="form-control mb-3 mb-lg-0"
+        placeholder=" Eg : Father"
+      />
+    </div>
+  </div>
+  <div className="col-6">
+    <div className="fv-row mb-7">
+      <label className="required fw-bold fs-6 mb-2">Education</label>
+      <input
+        type="text"
+        wire:model="education"
+        className="form-control mb-3 mb-lg-0"
+        placeholder=" Eg : Father"
+      />
+    </div>
+  </div>
+  <div className="col-6">
+    <div className="fv-row mb-7">
+      <label className="required fw-bold fs-6 mb-2">Occupation</label>
+      <input
+        type="text"
+        wire:model="occupation"
+        className="form-control mb-3 mb-lg-0"
+        placeholder=" Eg : Father"
+      />
+    </div>
+  </div>
+  <div className="col-12 text-end">
+    <hr />
+    <button className="btn btn-secondary" type="button" wire:click="formReset">
+      Cancel
+    </button>
+    <button className="btn btn-primary" type="submit">Submit</button>
   </div>
 </div>

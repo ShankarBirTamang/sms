@@ -100,6 +100,7 @@ const StudentPhotograph = () => {
         }
       } catch {
         toast.error("Error Uploading Photo");
+        setSelectedStudent(undefined);
       }
     } else {
       // If no file is selected, reset the selected student and clear the input value
@@ -186,7 +187,6 @@ const StudentPhotograph = () => {
 
                       <th className="min-w-125px">Gender</th>
                       <th className="min-w-125px">Contact</th>
-                      <th className="min-w-125px">Address</th>
                       <th className="text-end min-w-175px">Actions</th>
                     </tr>
                   </thead>
@@ -225,7 +225,6 @@ const StudentPhotograph = () => {
                         </td>
                         <td>{student.gender}</td>
                         <td>{student.contact}</td>
-                        <td>{student.address}</td>
 
                         <td className="text-end">
                           <div className="d-flex gap-3 justify-content-end">

@@ -4,6 +4,11 @@ const useHelpers = () => {
   };
   const convertFileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
+      if (!(file instanceof Blob)) {
+        resolve(""); // Allow empty values and return an empty string
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = () => {
         if (reader.result) {
@@ -18,6 +23,7 @@ const useHelpers = () => {
       reader.readAsDataURL(file);
     });
   };
+
   return {
     capitalizeFirstLetter,
     convertFileToBase64,

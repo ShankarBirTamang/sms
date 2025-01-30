@@ -1,13 +1,14 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Student from "./pages/Student/Student";
-import StudentAddEdit from "./pages/Student/StudentAddEdit";
 import Layout from "../../layout/Layout";
 import ProtectectedRoute from "../../components/Icon/ProtectedRoute";
 import Overview from "./pages/Student/Details/Overview";
 import StudentDetailLayout from "./pages/Student/Details/StudentDetailLayout";
 import StudentPhotograph from "./pages/StudentServices/Photograph/StudentPhotograph";
 import StudentBulkEdit from "./pages/StudentServices/BulkEdit/StudentBulkEdit";
+import StudentCreate from "./pages/Student/StudentCreate";
+import StudentEdit from "./pages/Student/StudentEdit";
 
 const routes = [
   {
@@ -17,9 +18,14 @@ const routes = [
   },
 
   {
-    path: "/create-edit",
-    title: "Students",
-    element: <StudentAddEdit />,
+    path: "/create",
+    title: "Add Student",
+    element: <StudentCreate />,
+  },
+  {
+    path: "/:studentId/edit",
+    title: "Edit Student",
+    element: <StudentEdit />,
   },
   {
     path: "/photographs",

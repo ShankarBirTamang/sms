@@ -3,7 +3,21 @@ import {
   SectionInterface,
 } from "../../../Academics/services/gradeService";
 import apiRoute from "../../../services/httpService";
-
+export interface AddressInterface {
+  id: number;
+  type: string;
+  country: string;
+  country_id: number;
+  province: string;
+  province_id: number;
+  district: string;
+  district_id: number;
+  municipality: string;
+  municipality_id: number;
+  ward_no: number;
+  street_address: string;
+  full_address: string;
+}
 export interface StudentInterface {
   id: number;
   roll_no?: string | number;
@@ -13,11 +27,13 @@ export interface StudentInterface {
   middle_name?: string | null;
   last_name: string;
   photo: string;
+  thumbnail?: string;
   nickname?: string | null;
   dob_en?: string | null;
   dob_np?: string | null;
   contact?: string | null;
-  address?: string | null;
+  permanent_address?: AddressInterface;
+  current_address?: AddressInterface;
   email?: string | null;
   gender?: string | null;
   blood_group?: string | null;
@@ -50,7 +66,39 @@ export interface AddStudentInterface {
   mother_tongue?: string;
   religion?: string;
   ethnicity?: string;
-  photo?: File; // Assuming the photo is uploaded as a file
+  photo?: Base64URLString; // Assuming the photo is uploaded as a file
+  permanent_country_id?: number;
+  permanent_province_id?: number;
+  permanent_district_id?: number;
+  permanent_municipality_id?: number;
+  permanent_ward_no?: number;
+  permanent_street_address?: string;
+  current_country_id?: number;
+  current_province_id?: number;
+  current_district_id?: number;
+  current_municipality_id?: number;
+  current_ward_no?: number;
+  current_street_address?: string;
+}
+
+export interface EditStudentInterface {
+  id: number;
+  first_name: string;
+  middle_name?: string;
+  last_name: string;
+  nickname?: string;
+  iemis?: string;
+  dob_en?: string; // Date of birth in English format
+  don_np?: string; // Date of birth in Nepali format
+  contact?: string;
+  email?: string | null;
+  gender?: string;
+  blood_group?: string;
+  nationality?: string;
+  mother_tongue?: string;
+  religion?: string;
+  ethnicity?: string;
+  photo?: Base64URLString; // Assuming the photo is uploaded as a file
   permanent_country_id?: number;
   permanent_province_id?: number;
   permanent_district_id?: number;
@@ -66,14 +114,41 @@ export interface AddStudentInterface {
 }
 
 export interface StudentGuardianInterface {
-  id?: number;
+  id: number;
   name: string;
+  type: "parent" | "guardian";
   relation: string;
   contact: string;
   email?: string;
   address?: string;
   occupation?: string;
   education?: string;
+  photo?: string;
 }
 
+export interface AddStudentGuardianInterface {
+  name: string;
+  relation: string;
+  type: "parent" | "guardian";
+  contact: string;
+  email?: string;
+  address: string;
+  occupation?: string;
+  education?: string;
+  photo?: Base64URLString;
+  student_id: number;
+}
+
+export interface EditStudentGuardianInterface {
+  id: number;
+  name: string;
+  type: "parent" | "guardian";
+  relation: string;
+  contact: string;
+  email?: string;
+  address: string;
+  occupation?: string;
+  education?: string;
+  photo?: Base64URLString;
+}
 export default apiRoute("/students");
