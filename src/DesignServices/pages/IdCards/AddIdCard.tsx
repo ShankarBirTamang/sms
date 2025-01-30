@@ -27,7 +27,7 @@ const AddIdCard = () => {
       name: "",
       html: "",
       id_card_type_id: "",
-      background: null,
+      background: "",
       color: "#000000",
       signers: [{ title: "", signature_id: "" }],
     },
@@ -73,24 +73,12 @@ const AddIdCard = () => {
   const onSubmit = async (data: IdCardInterface | UpdateIdCardInterface) => {
     console.log("raw submitted data", data);
 
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("html", data.html || "");
-    formData.append("color", data.color);
-    formData.append("id_card_type_id", data.id_card_type_id?.toString() || "");
-    formData.append("signers", JSON.stringify(data.signers));
-    if (data.background instanceof FileList && data.background[0]) {
-      formData.append("background", data.background[0]);
-    } else if (isEditMode && idCard?.background) {
-      formData.append("background", idCard.background);
-    }
-
     try {
-      if (isEditMode) {
-        formData.append("id", idCardId!);
-        await updateIdCard(formData);
+      if (isEditMode && idCard) {
+        const updatedData = { ...data, id: idCard?.id };
+        await updateIdCard(updatedData as UpdateIdCardInterface);
       } else {
-        await saveIdCard(formData);
+        await saveIdCard(data as IdCardInterface);
         // reset({
         //   name: "",
         //   html: "",
@@ -214,7 +202,11 @@ const AddIdCard = () => {
                 className="btn btn-info"
                 disabled={isLoadingSubmit}
               >
-                Submit
+                {isLoadingSubmit
+                  ? "........."
+                  : isEditMode
+                  ? "Update"
+                  : "Submit"}
               </button>
             </div>
           </div>

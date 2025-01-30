@@ -84,7 +84,7 @@ const useIdCard = ({
 
     request
       .then((result) => {
-        console.log("Onee Admit Card", result.data.data);
+        console.log("Getting one Id Card", result.data.data);
         setIdCard(result.data.data);
       })
       .catch((err) => {
@@ -94,17 +94,12 @@ const useIdCard = ({
     return () => cancel();
   };
 
-  const saveIdCard = async (formData: FormData) => {
-    // Log the form data
-    const formDataObject: { [key: string]: any } = {};
-    for (const [key, value] of formData.entries()) {
-      formDataObject[key] = value;
-    }
-    console.log("FormData as plain object", formDataObject);
+  const saveIdCard = async (data: IdCardInterface) => {
+    console.log("FormData in Save", data);
 
     setIsLoadingSubmit(true);
     try {
-      const response = await idCardService.create(formData); // Make sure you pass `formData` directly
+      const response = await idCardService.create<IdCardInterface>(data); // Make sure you pass `formData` directly
       console.log("Id card response", response.data.data);
       toast.success("Id Card saved successfully..");
     } catch (error) {
@@ -114,65 +109,14 @@ const useIdCard = ({
     }
   };
 
-  const saveIdCards = async (formData: FormData) => {
-    // Logging for debugging
-    const formDataObject: { [key: string]: any } = {};
-    for (const [key, value] of formData.entries()) {
-      formDataObject[key] = value;
-    }
-    console.log("FormData as plain object hehe:", formDataObject);
-    ///
-
-    console.log("Id Card Data Yo", idCardData);
-
+  const updateIdCard = async (data: UpdateIdCardInterface) => {
     setIsLoadingSubmit(true);
     try {
-      const response = await idCardService.create(formData);
+      const response = await idCardService.update<UpdateIdCardInterface>(data);
       console.log("Id card response", response.data.data);
-      // setIdCardList((prev) => [...prev, response.data.data]);
-      toast.success("Id Card saved successfully..");
+      toast.success("Id Card updated successfully..");
     } catch (error) {
-      toast.error("Error while saving Id Card..");
-    } finally {
-      setIsLoadingSubmit(false);
-    }
-  };
-
-  const updateIdCard = async (formData: FormData) => {
-    // Logging for debugging
-    const formDataObject: { [key: string]: any } = {};
-    for (const [key, value] of formData.entries()) {
-      formDataObject[key] = value;
-    }
-    console.log("FormData as plain object hehe:", formDataObject);
-    ///
-
-    const updatedIdCardData: UpdateIdCardInterface = {
-      id: Number(formData.get("id")),
-      name: formData.get("name") as string,
-      html: formData.get("html") as string,
-      color: formData.get("color") as string,
-      id_card_type_id: formData.get("id_card_type_id") as string,
-      background: formData.get("background") as FileList | strong | null,
-      signers: JSON.parse(formData.get("signers") as string).map(
-        (signer: any) => ({
-          title: signer.title ?? undefined,
-          signature_id: signer.signature_id ?? undefined,
-        })
-      ),
-    };
-
-    console.log("Updated Id Card Data Yo", updatedIdCardData);
-    setIsLoadingSubmit(true);
-
-    try {
-      const response = await idCardService.update<UpdateIdCardInterface>(
-        updatedIdCardData
-      );
-      console.log("admit card response", response.data.data);
-      toast.success("Admit Card updated successfully..");
-    } catch (error) {
-      toast.error("An error occurred when trying to update Admit Card..");
+      toast.error("An error occurred when trying to update Id Card..");
     } finally {
       setIsLoadingSubmit(false);
     }

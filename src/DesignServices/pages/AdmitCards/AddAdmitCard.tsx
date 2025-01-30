@@ -191,7 +191,7 @@ const AddAdmitCard = () => {
               <CodeEditor
                 iframeHeight={297}
                 iframeWidth={210}
-                orientation="landscape"
+                orientation="portrait"
                 wantBackground={false}
                 scale={0.7}
                 code={code}

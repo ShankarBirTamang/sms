@@ -1,10 +1,11 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import MonacoEditor from "@monaco-editor/react";
+import useHelpers from "../../hooks/useHelpers";
 
 interface CodeEditorInterface {
   html: string;
-  background: FileList | null;
+  background: FileList | File | string | null;
 }
 
 interface CodeEditorProps {
@@ -29,17 +30,15 @@ const CodeEditor = ({
   code,
 }: CodeEditorProps) => {
   const [backgroundUrl, setBackgroundUrl] = useState<string | null>(null);
-
-  console.log("code", code);
-
-  //We can omit SetValues and it still works.. Why?
+  const { convertFileToBase64 } = useHelpers();
   const {
     control,
     watch,
     setValue,
     formState: { errors },
   } = useFormContext<CodeEditorInterface>();
-  const [html, setHtml] = useState(code || "<h1>Hello World</h1>");
+
+  const [html, setHtml] = useState("<h1>Hello World</h1>");
   const [iframeContent, setIframeContent] = useState("");
 
   useEffect(() => {
@@ -64,31 +63,47 @@ const CodeEditor = ({
         `);
   }, [html]);
 
-  // useEffect(() => {
-  //   setValue("html", html);
-  // }, []);
+  //During edit mode set the 'code' from the props to show in iframe
+  useEffect(() => {
+    if (code) {
+      console.log("Updating html state from code:", code);
+      setHtml(code);
+    }
+  }, [code]);
 
+  //Set the initial value of the editor for default for create form submission
+  useEffect(() => {
+    setValue("html", html);
+  }, []);
+
+  //Handle change in the editor, this html State is just to show the changes in the editor
   const handleChange = (value: any) => {
     setHtml(value || "");
   };
 
-  const backgroundImage = watch("background");
+  const backgroundImages = watch("background");
   //For previewing the background image in iframe
-  useEffect(() => {
-    if (backgroundImage instanceof FileList && backgroundImage[0]) {
-      const file = backgroundImage[0];
-      const backgroundUrl = URL.createObjectURL(file);
-      setBackgroundUrl(backgroundUrl);
 
-      return () => {
-        URL.revokeObjectURL(backgroundUrl); // Clean up the object URL
-      };
-    } else if (typeof backgroundImage === "string") {
-      setBackgroundUrl(backgroundImage);
+  async function uploadBackgroundImage() {
+    if (backgroundImages instanceof FileList && backgroundImages[0]) {
+      const file = backgroundImages[0];
+      try {
+        const backgroundBase64 = await convertFileToBase64(file);
+        setBackgroundUrl(backgroundBase64);
+        setValue("background", backgroundBase64);
+      } catch (error) {
+        console.log("Error uploading background image", error);
+      }
+    } else if (typeof backgroundImages === "string") {
+      setBackgroundUrl(backgroundImages);
     } else {
       setBackgroundUrl(null);
     }
-  }, [backgroundImage]);
+  }
+
+  useEffect(() => {
+    uploadBackgroundImage();
+  }, [backgroundImages]);
 
   if (orientation === "landscape") {
     // Swap height and width for landscape orientation
@@ -107,7 +122,6 @@ const CodeEditor = ({
               <Controller
                 name="background"
                 control={control}
-                defaultValue={null}
                 render={({ field }) => (
                   <input
                     {...field}
@@ -169,7 +183,6 @@ const CodeEditor = ({
                   ? `url('${backgroundUrl}')`
                   : "none",
                 backgroundRepeat: "no-repeat",
-                // backgroundSize: "cover",
                 backgroundSize: "100% 100%",
                 backgroundPosition: "center",
                 transform: `scale(${scale})`,

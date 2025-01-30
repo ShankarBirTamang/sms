@@ -80,36 +80,36 @@ const useCertificate = ({
     return () => cancel();
   };
 
-  const saveCertificate = async (formData: FormData) => {
-    // Logging for debugging
-    const formDataObject: { [key: string]: any } = {};
-    for (const [key, value] of formData.entries()) {
-      formDataObject[key] = value;
-    }
-    console.log("FormData as plain object hehe:", formDataObject);
-    ///
-
-    const idCardData: CertificateInterface = {
-      name: formData.get("name") as string,
-      html: formData.get("html") as string,
-      size: formData.get("size") as string,
-      height: Number(formData.get("height") as unknown as string),
-      width: Number(formData.get("width") as unknown as string),
-      orientation: formData.get("orientation") as string,
-      background: formData.get("background") as FileList | null,
-      signers: JSON.parse(formData.get("signers") as string).map(
-        (signer: any) => ({
-          title: signer.title ?? undefined,
-          signature_id: signer.signature_id ?? undefined,
-        })
-      ),
-    };
-
-    console.log("Id Card Data in SaveCertificate", idCardData);
+  const saveCertificate = async (data: CertificateInterface) => {
     setIsLoadingSubmit(true);
+    console.log("data to be saved", data);
+    try {
+      const response = await certificateServices.create<CertificateInterface>(
+        data
+      );
+      console.log("response", response.data.data);
+      toast.success("Certificate saved successfully");
+    } catch (error) {
+      console.log("Error while saving certificate", error);
+      toast.error("Error while saving certificate");
+    } finally {
+      setIsLoadingSubmit(false);
+    }
   };
 
-  const updateCertificate = async (formData: FormData) => {};
+  const updateCertificate = async (data: UpdateCertificateInterface) => {
+    setIsLoadingSubmit(true);
+    try {
+      const response =
+        await certificateServices.update<UpdateCertificateInterface>(data);
+      console.log("Certificate response", response.data.data);
+      toast.success("Certificate updated successfully..");
+    } catch (error) {
+      toast.error("An error occurred when trying to update Certificate..");
+    } finally {
+      setIsLoadingSubmit(false);
+    }
+  };
 
   return {
     pagination,
