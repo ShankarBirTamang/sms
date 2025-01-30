@@ -72,37 +72,39 @@ const Details = () => {
     },
   });
 
-  const getInstituteDetails = async () => {
-    try {
-      const response = await axiosInstance.get(`${baseUrl}/general/institute`);
-      const details = response.data.data;
-      setInstituteDetails(details);
-
-      if (details.logo) {
-        setPreviewLogo(details.logo);
-        setBackendLogo(details.logo);
-      } else {
-        setBackendLogo(""); // Reset to empty if no logo
-      }
-
-      if (details.cover) {
-        setPreviewCover(details.cover); // Set cover URL from details
-      } else {
-        setPreviewCover(""); // Reset to empty if no cover
-      }
-    } catch (error) {
-      console.error("Error fetching Institute Details:", error);
-    } finally {
-      console.log(
-        "Institute Details from getInstitute state",
-        instituteDetails
-      );
-    }
-  };
-
   useEffect(() => {
+    const getInstituteDetails = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `${baseUrl}/general/institute`
+        );
+        const details = response.data.data;
+        setInstituteDetails(details);
+
+        if (details.logo) {
+          setPreviewLogo(details.logo);
+          setBackendLogo(details.logo);
+        } else {
+          setBackendLogo(""); // Reset to empty if no logo
+        }
+
+        if (details.cover) {
+          setPreviewCover(details.cover); // Set cover URL from details
+        } else {
+          setPreviewCover(""); // Reset to empty if no cover
+        }
+      } catch (error) {
+        console.error("Error fetching Institute Details:", error);
+      } finally {
+        console.log(
+          "Institute Details from getInstitute state",
+          instituteDetails
+        );
+      }
+    };
+
     getInstituteDetails();
-  }, []);
+  }, [instituteDetails]);
 
   //Watching to convert Image file to it's respectiive url To Preview
   const watchLogo = watch("logo");

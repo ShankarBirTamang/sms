@@ -126,7 +126,6 @@ const AddGrade = ({ onSave, oldGrades }: AddGradeProps) => {
 
   const onSubmit = async (data: FormData) => {
     setisSubmitting(true);
-
     try {
       const gradeData: AddGradeInterface = {
         name: data.name,

@@ -11,6 +11,7 @@ export interface CreateAcademicLevelInterface {
   name: string;
   description: string;
   academic_sessions?: UpdateAcademicSessionInterface[];
+  active_academic_session: UpdateAcademicSessionInterface[];
 }
 
 export interface UpdateAcademicLevelInterface

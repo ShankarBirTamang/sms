@@ -90,6 +90,7 @@ const Sidebar = () => {
             title="Quick actions"
           >
             <button
+              title="button"
               type="button"
               onClick={handleToggle}
               className="btn btn-custom"

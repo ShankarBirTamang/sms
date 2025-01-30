@@ -1,0 +1,132 @@
+.table-container {
+  overflow-x: auto;
+  position: relative;
+  white-space: nowrap;
+  height: 500px;
+  cursor: grab;
+}
+
+.student-table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.student-table th,
+.student-table td {
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #ddd;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.student-table th {
+  background-color: #f2f2f2;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.col-roll {
+  width: 80px;
+}
+
+.col-first-name {
+  width: 150px;
+}
+
+.col-middle-name {
+  width: 150px;
+}
+
+.col-last-name {
+  width: 150px;
+}
+
+.col-iemis {
+  width: 250px;
+}
+
+.col-gender {
+  width: 100px;
+}
+
+.col-ethnicity {
+  width: 100px;
+}
+
+.col-dob {
+  width: 300px;
+}
+
+.col-address {
+  width: 200px;
+}
+
+.col-contact {
+  width: 150px;
+}
+
+.col-blood-group {
+  width: 100px;
+}
+
+.col-nationality {
+  width: 150px;
+}
+
+.col-mother-tongue {
+  width: 150px;
+}
+
+.col-religion {
+  width: 150px;
+}
+
+.col-father-name {
+  width: 200px;
+}
+
+.col-father-contact {
+  width: 150px;
+}
+
+.col-mother-name {
+  width: 200px;
+}
+
+.col-mother-contact {
+  width: 150px;
+}
+
+.col-actions {
+  width: 80px;
+  position: sticky;
+  right: -5px;
+  background-color: #f2f2f2;
+  z-index: 20;
+}
+
+.headcol {
+  position: sticky;
+  left: 0;
+  background-color: #f2f2f2;
+  z-index: 20;
+}
+
+.student-table thead .headcol {
+  z-index: 30;
+}
+
+.first-col {
+  left: 80px;
+}
+
+.middle-col {
+  left: 230px;
+}
+
+.last-col {
+  left: 380px;
+}

@@ -32,7 +32,7 @@ const menuItems: MenuItem[] = [
     prefix: "students",
     submenu: [
       { title: "Photographs", route: "photographs" },
-      { title: "Student Details", route: "student-details" },
+      { title: "Student Bulk Update", route: "bulk-edit" },
       { title: "Gate Pass", route: "gate-pass" },
       { title: "ID Cards", route: "id-cards" },
       {
@@ -86,6 +86,66 @@ const menuItems: MenuItem[] = [
       { title: "Certificates", route: "certificates" },
       { title: "Admit Cards", route: "admit-cards" },
       { title: "Marksheets", route: "marksheets" },
+    ],
+  },
+  {
+    title: "Accounts",
+    prefix: "accounts",
+    submenu: [
+      {
+        title: "Masters",
+        route: "masters",
+        submenu: [
+          { title: "Fiscal year", route: "masters/fiscal-years" },
+          {
+            title: "Setup Fees/Groups",
+            route: "masters/group-setup",
+          },
+
+          {
+            title: "Fees Structure",
+            route: "masters/fee-structures",
+          },
+          {
+            title: "Accounts",
+            route: "masters/accounts",
+          },
+          {
+            title: "Setup Student Account",
+            route: "masters/student-accounts",
+          },
+        ],
+      },
+      {
+        title: "Vouchers",
+        route: "/vouchers",
+        submenu: [
+          {
+            title: "Payment",
+            route: "vouchers/create",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Import Data",
+    route: "/imports  ",
+    submenu: [
+      {
+        title: "Students",
+        route: "imports/students",
+      },
+    ],
+  },
+  {
+    title: "Export Data",
+    route: "/exports",
+    submenu: [
+      {
+        title: "Students",
+        route: "exports/students",
+      },
     ],
   },
 ];

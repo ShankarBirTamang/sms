@@ -156,14 +156,25 @@ const useGrade = ({
   );
   interface SetClassTeacher {
     gradeId: number;
-    data: any;
+    data: { sectionId: number; classTeacherId: number }[];
   }
 
   const setClassTeacher = async ({ gradeId, data }: SetClassTeacher) => {
-    await axiosInstance.post(
-      `academics/grades/${gradeId}/set-class-teacher`,
-      data
-    );
+    try {
+      const result = await axiosInstance.post(
+        `academics/grades/${gradeId}/set-class-teacher`,
+        data
+      );
+      toast.success(result.data.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        toast.error(err.message);
+        setError(err.message);
+      } else {
+        toast.error("An unknown error occurred.");
+        setError("An unknown error occurred.");
+      }
+    }
   };
 
   const getSectionStudents = useCallback(async (sectionId: number) => {
@@ -171,7 +182,6 @@ const useGrade = ({
       const result = await axiosInstance.get(
         `academics/grades/section/${sectionId}/students`
       );
-
       return result.data;
     } catch (err) {
       if (err instanceof Error) {

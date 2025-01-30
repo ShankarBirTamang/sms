@@ -1,11 +1,15 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CanceledError } from "../../../services/apiClient";
 import {
   ApiResponseInterface,
   PaginationAndSearch,
 } from "../../../Interface/Interface";
 import { PaginationProps } from "../../../components/Pagination/Pagination";
-import studentService, { StudentInterface } from "../services/studentService";
+import studentService, {
+  AddStudentInterface,
+  StudentInterface,
+} from "../services/studentService";
+import toast from "react-hot-toast";
 
 const useStudent = ({
   search = "",
@@ -22,7 +26,7 @@ const useStudent = ({
 
   const [students, setStudents] = useState<StudentInterface[]>([]);
 
-  useEffect(() => {
+  const fetchStudents = useCallback(async () => {
     setLoading(true);
     const params: Record<string, string | number | null> = {
       per_page: itemsPerPage,
@@ -32,7 +36,7 @@ const useStudent = ({
       params.page = currentPage;
     }
 
-    const { request, cancel } =
+    const { request } =
       studentService.getAll<ApiResponseInterface<StudentInterface>>(params);
     request
       .then((result) => {
@@ -46,9 +50,11 @@ const useStudent = ({
         setError(err.message);
         setLoading(false);
       });
-
-    return () => cancel();
   }, [search, currentPage, itemsPerPage]);
+
+  useEffect(() => {
+    fetchStudents();
+  }, [fetchStudents]);
 
   const getSingleStudent = async (id: number) => {
     try {
@@ -60,6 +66,23 @@ const useStudent = ({
     }
   };
 
+  const saveStudent = async (data: AddStudentInterface) => {
+    try {
+      const result = await studentService.create<AddStudentInterface>(data);
+      // setStudents([...students, result.data.data]);
+      fetchStudents();
+      return result.data.data;
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+        toast.error(err.message);
+      } else {
+        setError("An unknown error occurred.");
+        toast.error("An unknown error occurred.");
+      }
+    }
+  };
+
   return {
     students,
     pagination,
@@ -67,6 +90,8 @@ const useStudent = ({
     error,
     edgeLinks,
     getSingleStudent,
+    fetchStudents,
+    saveStudent,
   };
 };
 

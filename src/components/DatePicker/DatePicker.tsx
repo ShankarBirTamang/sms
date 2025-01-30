@@ -17,6 +17,7 @@ interface DatePickerProps {
   errorAD?: string;
   valueAD?: string;
   valueBS?: string;
+  noLabel?: boolean;
 }
 
 const DatePicker = ({
@@ -26,9 +27,13 @@ const DatePicker = ({
   errorBS,
   valueAD = "",
   valueBS = "",
+  noLabel = false,
 }: DatePickerProps) => {
   const [adDate, setAdDate] = useState<string>(valueAD); // Ensure initial state is defined
   const [bsDate, setBsDate] = useState<string>(valueBS);
+  // console.log(adDate);
+  // console.log(bsDate);
+
   const [renderKey, setRenderKey] = useState("");
 
   useEffect(() => {
@@ -66,7 +71,9 @@ const DatePicker = ({
   return (
     <div className="row">
       <div className="col-6">
-        <label className="required fw-bold fs-6 mb-2">{title} (BS)</label>
+        {!noLabel && (
+          <label className="required fw-bold fs-6 mb-2">{title} (BS)</label>
+        )}
         <Calendar
           key={renderKey}
           className={`form-control mb-3 mb-lg-0 ${errorBS && "is-invalid"}`}
@@ -80,7 +87,9 @@ const DatePicker = ({
         {errorBS && <span className="text-danger">{errorBS}</span>}
       </div>
       <div className="col-6">
-        <label className="required fw-bold fs-6 mb-2">{title} (AD)</label>
+        {!noLabel && (
+          <label className="required fw-bold fs-6 mb-2">{title} (AD)</label>
+        )}
         <input
           title="english date"
           type="date"

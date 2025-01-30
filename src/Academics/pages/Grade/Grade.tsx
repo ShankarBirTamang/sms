@@ -176,7 +176,9 @@ const Grade = () => {
               <tbody className="text-gray-600 fw-bold">
                 {grades.map((grade, index) => (
                   <tr key={index}>
-                    <td>1</td>
+                    <td>
+                      {(currentPage - 1) * (itemsPerPage ?? 1) + index + 1}
+                    </td>
                     <td className="">
                       {grade.name} ({grade.short_name})
                     </td>
