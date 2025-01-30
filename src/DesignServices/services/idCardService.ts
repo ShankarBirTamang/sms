@@ -10,7 +10,7 @@ export interface IdCardInterface {
   html: string;
   id_card_type_id: string | number;
   background: FileList | File | null | string;
-  // primaryColor: string;
+  color: string;
   signers: SignatureInterface[];
 }
 
@@ -30,7 +30,7 @@ export interface GetIdCardInterface {
     name: string;
   };
   background: string;
-  // primaryColor: string;
+  color: string;
   signers: GetSignatureInterface[];
 }
 
@@ -57,7 +57,7 @@ export const IdCardSchema = z.object({
     z.string().min(1, "Id Card Type is required"),
     z.number().min(1, "Id Card Type is required"),
   ]),
-  // primaryColor: z.string(),
+  color: z.string(),
   background: backgroundSchema,
   signers: z.array(
     z.object({

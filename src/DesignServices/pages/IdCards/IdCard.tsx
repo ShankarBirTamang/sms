@@ -131,7 +131,10 @@ const IdCard = () => {
                         <td className="sorting_1">{idCard.name}</td>
                         <td>{idCard.id_card_type.name}</td>
                         <td>
-                          <img src={idCard.background}></img>
+                          <img
+                            style={{ width: "8rem", height: "8rem" }}
+                            src={idCard.background}
+                          ></img>
                         </td>
                         <td>
                           {idCard.signers.map((signer) => (

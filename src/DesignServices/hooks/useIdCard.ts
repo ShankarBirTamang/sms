@@ -95,6 +95,26 @@ const useIdCard = ({
   };
 
   const saveIdCard = async (formData: FormData) => {
+    // Log the form data
+    const formDataObject: { [key: string]: any } = {};
+    for (const [key, value] of formData.entries()) {
+      formDataObject[key] = value;
+    }
+    console.log("FormData as plain object", formDataObject);
+
+    setIsLoadingSubmit(true);
+    try {
+      const response = await idCardService.create(formData); // Make sure you pass `formData` directly
+      console.log("Id card response", response.data.data);
+      toast.success("Id Card saved successfully..");
+    } catch (error) {
+      toast.error("Error while saving Id Card..");
+    } finally {
+      setIsLoadingSubmit(false);
+    }
+  };
+
+  const saveIdCards = async (formData: FormData) => {
     // Logging for debugging
     const formDataObject: { [key: string]: any } = {};
     for (const [key, value] of formData.entries()) {
@@ -103,24 +123,11 @@ const useIdCard = ({
     console.log("FormData as plain object hehe:", formDataObject);
     ///
 
-    const idCardData: IdCardInterface = {
-      name: formData.get("name") as string,
-      html: formData.get("html") as string,
-      id_card_type_id: formData.get("id_card_type_id") as string,
-      background: formData.get("background") as FileList | null,
-      signers: JSON.parse(formData.get("signers") as string).map(
-        (signer: any) => ({
-          title: signer.title ?? undefined,
-          signature_id: signer.signature_id ?? undefined,
-        })
-      ),
-    };
-
     console.log("Id Card Data Yo", idCardData);
 
     setIsLoadingSubmit(true);
     try {
-      const response = await idCardService.create<IdCardInterface>(idCardData);
+      const response = await idCardService.create(formData);
       console.log("Id card response", response.data.data);
       // setIdCardList((prev) => [...prev, response.data.data]);
       toast.success("Id Card saved successfully..");
@@ -144,8 +151,9 @@ const useIdCard = ({
       id: Number(formData.get("id")),
       name: formData.get("name") as string,
       html: formData.get("html") as string,
+      color: formData.get("color") as string,
       id_card_type_id: formData.get("id_card_type_id") as string,
-      background: formData.get("background") as FileList | null,
+      background: formData.get("background") as FileList | strong | null,
       signers: JSON.parse(formData.get("signers") as string).map(
         (signer: any) => ({
           title: signer.title ?? undefined,

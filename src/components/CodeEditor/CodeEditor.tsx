@@ -40,7 +40,6 @@ const CodeEditor = ({
     formState: { errors },
   } = useFormContext<CodeEditorInterface>();
   const [html, setHtml] = useState(code || "<h1>Hello World</h1>");
-  setValue("html", html);
   const [iframeContent, setIframeContent] = useState("");
 
   useEffect(() => {
@@ -64,6 +63,10 @@ const CodeEditor = ({
           </html>
         `);
   }, [html]);
+
+  // useEffect(() => {
+  //   setValue("html", html);
+  // }, []);
 
   const handleChange = (value: any) => {
     setHtml(value || "");

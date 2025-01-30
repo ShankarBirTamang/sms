@@ -28,7 +28,7 @@ const AddIdCard = () => {
       html: "",
       id_card_type_id: "",
       background: null,
-      // primaryColor: "#000000",
+      color: "#000000",
       signers: [{ title: "", signature_id: "" }],
     },
     resolver: zodResolver(IdCardSchema),
@@ -60,8 +60,7 @@ const AddIdCard = () => {
         name: idCard.name,
         id_card_type_id: idCard.id_card_type.id,
         html: idCard.html, // Ensure the html field is set
-        background:
-          "https://img.freepik.com/free-vector/copy-space--spring-lights-background_52683-55649.jpg?t=st=1737950949~exp=1737954549~hmac=d83993be1872bb39a9d9a5a98057f0feadc2dd725b8ae00dfd41fbd2b4ff3eef&w=1060",
+        background: idCard.background,
         signers: idCard.signers.map((signer: any) => ({
           title: signer.title,
           signature_id: signer.id,
@@ -77,7 +76,7 @@ const AddIdCard = () => {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("html", data.html || "");
-    // formData.append("primaryColor", data.primaryColor);
+    formData.append("color", data.color);
     formData.append("id_card_type_id", data.id_card_type_id?.toString() || "");
     formData.append("signers", JSON.stringify(data.signers));
     if (data.background instanceof FileList && data.background[0]) {
@@ -92,15 +91,15 @@ const AddIdCard = () => {
         await updateIdCard(formData);
       } else {
         await saveIdCard(formData);
-        reset({
-          name: "",
-          html: "",
-          id_card_type_id: "",
-          background: null,
-          // primaryColor: "#000000",
-          signers: [{ title: "", signature_id: "" }],
-        });
-        setCode("<h1>Hello World</h1>");
+        // reset({
+        //   name: "",
+        //   html: "",
+        //   id_card_type_id: "",
+        //   background: null,
+        // color: "#000000",
+        //   signers: [{ title: "", signature_id: "" }],
+        // });
+        // setCode("<h1>Hello World</h1>");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -166,26 +165,24 @@ const AddIdCard = () => {
                 {errors.id_card_type_id?.message}
               </span>
             </div>
-            {/* <div className="mb-4 col-md-3">
-              <label htmlFor="primaryColor" className="required form-label">
+            <div className="mb-4 col-md-3">
+              <label htmlFor="color" className="required form-label">
                 Primary Color
               </label>
               <Controller
-                name="primaryColor"
+                name="color"
                 control={control}
                 render={({ field }) => (
                   <input
                     type="color"
                     {...field}
-                    id="primaryColor"
+                    id="color"
                     className="form-control form-control-solid"
                   ></input>
                 )}
               />
-              <span className="text-danger">
-                {errors.primaryColor?.message}
-              </span>
-            </div> */}
+              <span className="text-danger">{errors.color?.message}</span>
+            </div>
           </div>
 
           <div className="card-body pt-0">
