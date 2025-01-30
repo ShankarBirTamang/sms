@@ -29,7 +29,7 @@ const Certificate = () => {
   const handleViewClick = (certificate: GetCertificateInterface) => {};
 
   const handleEditClick = (certificate: GetCertificateInterface) => {
-    navigate(`/design-services/certificateList/${certificate.id}/edit`);
+    navigate(`/design-services/certificates/${certificate.id}/edit`);
   };
 
   const handlePageChange = (page: number) => {
@@ -136,7 +136,7 @@ const Certificate = () => {
                               className="badge rounded-pill bg-primary p-2 fs-7 me-1"
                               key={signer.id}
                             >
-                              {signer.name}
+                              {signer.title}
                             </span>
                           ))}
                         </td>

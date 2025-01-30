@@ -23,7 +23,7 @@ export interface CertificateInterface {
   size: string;
   height: number;
   width: number;
-  background?: FileList | File | string | null;
+  background?: string;
   orientation: string;
   signers: SignatureInterface[];
 }
@@ -35,31 +35,15 @@ export interface GetCertificateInterface {
   name: string;
   html: string;
   size: string;
-  sizes: {
-    [size: string]: PaperSizeInterface;
-  };
+  height: number;
+  width: number;
   orientation: string;
   background?: string;
   signers: GetSignatureInterface[];
 }
 
 interface Sizes {
-  A3: PaperSizeInterface;
-  A4: PaperSizeInterface;
-  A5: PaperSizeInterface;
-  A6: PaperSizeInterface;
-  A7: PaperSizeInterface;
-  A8: PaperSizeInterface;
-  A9: PaperSizeInterface;
-  A10: PaperSizeInterface;
-  IDCard: PaperSizeInterface;
-  S4X6: PaperSizeInterface;
-  S5X7: PaperSizeInterface;
-  S8X10: PaperSizeInterface;
-  Executive: PaperSizeInterface;
-  Legal: PaperSizeInterface;
-  Letter: PaperSizeInterface;
-  Tabloid: PaperSizeInterface;
+  [key: string]: PaperSizeInterface;
 }
 
 export const sizes: Sizes = {
@@ -81,30 +65,13 @@ export const sizes: Sizes = {
   Tabloid: { height: 432, width: 279 },
 };
 
-const backgroundSchema = z
-  .instanceof(FileList) // Ensure it's a FileList
-  .refine((files) => files.length > 0, "Background image is required") // Ensure at least one file is selected
-  .refine(
-    (files) => files[0].size <= 5 * 1024 * 1024, // 5MB limit
-    "File size must be less than 5MB"
-  )
-  .refine(
-    (files) => ["image/jpeg", "image/png", "image/jpg"].includes(files[0].type), // Allowed file types
-    "Only .jpg, .jpeg, and .png files are allowed"
-  );
-
 // Main schema
 export const certificateSchema = z.object({
   name: z.string().min(1, "Certificate Name is Required"),
   size: z.string().min(1, "Paper Size is Required"),
-  sizes: z.record(
-    z.string(),
-    z.object({
-      height: z.number().positive("Height must be a positive number"),
-      width: z.number().positive("Width must be a positive number"),
-    })
-  ),
-  background: backgroundSchema, // Use the updated schema
+  height: z.number().positive("Height must be a positive number"),
+  width: z.number().positive("Width must be a positive number"),
+  background: z.string().min(1, "Background is required"), // Use the updated schema
   html: z.string().min(1, "Code is required"),
   orientation: z.string().min(1, "Orientation is required"),
   signers: z.array(

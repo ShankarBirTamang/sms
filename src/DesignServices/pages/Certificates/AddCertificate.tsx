@@ -7,6 +7,7 @@ import {
   CertificateInterface,
   certificateSchema,
   sizes,
+  UpdateCertificateInterface,
 } from "../../services/certificateServices";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -27,12 +28,12 @@ const AddCertificate = () => {
       size: "A4",
       height: 297,
       width: 210,
-      background: null,
+      background: "",
       html: "",
       orientation: "portrait",
       signers: [{ title: "", signature_id: "" }],
     },
-    // resolver: zodResolver(certificateSchema),
+    resolver: zodResolver(certificateSchema),
   });
 
   const {
@@ -55,6 +56,27 @@ const AddCertificate = () => {
       getOneCertificate(Number(certificateId));
     }
   }, [certificateId]);
+  console.log("isEditMode sdfsadfsadfsdfsdf", certificate);
+
+  //To load the Certificate data initally in the form to Edit
+  useEffect(() => {
+    if (isEditMode && certificate) {
+      reset({
+        name: certificate.name,
+        size: certificate.size,
+        height: certificate.height,
+        width: certificate.width,
+        background: certificate.background,
+        html: certificate.html,
+        orientation: certificate.orientation,
+        signers: certificate.signers.map((signer) => ({
+          title: signer.title,
+          signature_id: signer.id,
+        })),
+      });
+      setCode(certificate.html);
+    }
+  }, [certificate, isEditMode, reset]);
 
   const selectedPaperSize = watch("size"); //outputs A4, A5 etc
   const orientation = watch("orientation");
@@ -63,7 +85,7 @@ const AddCertificate = () => {
   const iframeWidth = sizes[selectedPaperSize as keyof typeof sizes].width;
   const iframeHeight = sizes[selectedPaperSize as keyof typeof sizes].height;
 
-  //Doesn't need to be here
+  //Height and width to set values in the form according to paper size
   useEffect(() => {
     const { height, width } = sizes[selectedPaperSize as keyof typeof sizes];
     setValue("height", height);
@@ -73,40 +95,33 @@ const AddCertificate = () => {
     // setValue(`sizes.${selectedPaperSize}.width`, width);
   }, [selectedPaperSize, setValue]);
 
-  const onSubmit = async (data: CertificateInterface) => {
+  const onSubmit = async (
+    data: CertificateInterface | UpdateCertificateInterface
+  ) => {
     console.log("Raw data to be submit", data);
 
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("size", data.size);
-    formData.append("html", data.html || "");
-    formData.append("height", data.height.toString());
-    formData.append("width", data.width.toString());
-    formData.append("orientation", data.orientation);
-    formData.append("signers", JSON.stringify(data.signers));
-    if (data.background instanceof FileList && data.background[0]) {
-      formData.append("background", data.background[0]);
-    } else if (isEditMode && certificate?.background) {
-      formData.append("background", certificate.background);
-    }
-
     try {
-      if (isEditMode) {
-        formData.append("id", certificateId!);
-        await updateCertificate(formData);
+      if (isEditMode && certificate) {
+        const updatedNewCertificate = {
+          ...data,
+          id: certificate?.id,
+        };
+        await updateCertificate(
+          updatedNewCertificate as UpdateCertificateInterface
+        );
       } else {
-        await saveCertificate(formData);
-        reset({
-          name: "",
-          size: "A4",
-          height: 297,
-          width: 210,
-          background: null,
-          html: "",
-          orientation: "portrait",
-          signers: [{ title: "", signature_id: "" }],
-        });
-        setCode("<h1>Hello World</h1>");
+        await saveCertificate(data as CertificateInterface);
+        // reset({
+        //   name: "",
+        //   size: "A4",
+        //   height: 297,
+        //   width: 210,
+        //   background: '',
+        //   html: "",
+        //   orientation: "portrait",
+        //   signers: [{ title: "", signature_id: "" }],
+        // });
+        // setCode("<h1>Hello World</h1>");
       }
     } catch (error) {
       console.log("Error while saving certificate", error);
@@ -263,7 +278,11 @@ const AddCertificate = () => {
                 className="btn btn-info"
                 disabled={isLoadingSubmit}
               >
-                Submit
+                {isLoadingSubmit
+                  ? "........"
+                  : isEditMode
+                  ? "Update"
+                  : "Submit"}
               </button>
             </div>
           </div>
