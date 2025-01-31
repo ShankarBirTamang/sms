@@ -5,4 +5,13 @@ export interface EmployeeTypeInterface {
   name: string;
 }
 
+export interface AddEmployeeTypeInterface {
+  name: string;
+}
+
+export interface UpdateEmployeeTypeInterface {
+  id: number;
+  name: string;
+}
+
 export default apiRoute("/employee-types");

@@ -1,102 +1,25 @@
-<div className="row">
-  <div className="col-4">
-    <div className="fv-row mb-7">
-      <label className="required fw-bold fs-6 mb-2"
-        >Guardian Name (AS per citizenship)</label
-      >
-      <input
-        type="text"
-        className="form-control mb-3 mb-lg-0"
-        placeholder=" Guardian's Full Name "
-      />
-    </div>
-  </div>
-  <div className="col-4">
-    <div className="fv-row mb-7">
-      <label className="required fw-bold fs-6 mb-2">Relation with Child</label>
-      <input
-        type="text"
-        wire:model="relation"
-        className="form-control mb-3 mb-lg-0"
-        placeholder=" Eg : Father"
-      />
-    </div>
-  </div>
-  <div className="col-4">
-    <div className="fv-row mb-7">
-      <label className="required fw-bold fs-6 mb-2">Guardian Type</label>
-      <select
-        className="form-control form-select mb-3 mb-lg-0"
-        wire:model="type"
-      >
-        <option selected="" hidden="" value="">Select Guardian Type</option>
-        <option value="Parent">Parent</option>
-        <option value="Local Guardian">Local Guardian</option>
-      </select>
-    </div>
-  </div>
-  <div className="col-6">
-    <div className="fv-row mb-7">
-      <label className="fw-bold fs-6 mb-2">Email</label>
-      <input
-        type="email"
-        wire:model="email"
-        className="form-control mb-3 mb-lg-0"
-        placeholder=" Eg : abc@gmail.com"
-      />
-    </div>
-  </div>
-  <div className="col-6">
-    <div className="fv-row mb-7">
-      <label className="required fw-bold fs-6 mb-2"
-        >Contact Number (Seperate by comma)</label
-      >
-      <input
-        type="text"
-        wire:model="contact"
-        className="form-control mb-3 mb-lg-0"
-        placeholder=" Eg : 9812345678,9832165498"
-      />
-    </div>
-  </div>
+<div wire:id="bodnjvZjrW8sDx1rjkLq" className="row">
   <div className="col-12">
     <div className="fv-row mb-7">
-      <label className="required fw-bold fs-6 mb-2">Address</label>
-      <input
-        type="text"
-        wire:model="address"
-        className="form-control mb-3 mb-lg-0"
-        placeholder=" Eg : Father"
-      />
+      <label className="required">Allow Employee to Login ? </label>
+      <label
+        ><input
+          type="radio"
+          value="true"
+          wire:model.live="addUser"
+          name="addUser"
+        />
+        Yes</label
+      >
+      <label
+        ><input
+          type="radio"
+          value="false"
+          wire:model.live="addUser"
+          name="addUser"
+        />
+        No</label
+      >
     </div>
-  </div>
-  <div className="col-6">
-    <div className="fv-row mb-7">
-      <label className="required fw-bold fs-6 mb-2">Education</label>
-      <input
-        type="text"
-        wire:model="education"
-        className="form-control mb-3 mb-lg-0"
-        placeholder=" Eg : Father"
-      />
-    </div>
-  </div>
-  <div className="col-6">
-    <div className="fv-row mb-7">
-      <label className="required fw-bold fs-6 mb-2">Occupation</label>
-      <input
-        type="text"
-        wire:model="occupation"
-        className="form-control mb-3 mb-lg-0"
-        placeholder=" Eg : Father"
-      />
-    </div>
-  </div>
-  <div className="col-12 text-end">
-    <hr />
-    <button className="btn btn-secondary" type="button" wire:click="formReset">
-      Cancel
-    </button>
-    <button className="btn btn-primary" type="submit">Submit</button>
   </div>
 </div>

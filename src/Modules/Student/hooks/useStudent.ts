@@ -74,7 +74,6 @@ const useStudent = ({
   const saveStudent = async (data: AddStudentInterface) => {
     try {
       const result = await studentService.create<AddStudentInterface>(data);
-      // setStudents([...students, result.data.data]);
       fetchStudents();
       return result.data.data;
     } catch (err) {
