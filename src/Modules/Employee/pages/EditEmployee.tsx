@@ -2,98 +2,149 @@ import { useCallback, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
-import DatePicker from "../../../../components/DatePicker/DatePicker";
-import AddressSelector from "../../../../components/AddressSelector/AddressSelector";
-import ImagePicker from "../../../../assets/ImagePicker/ImagePicker";
+import useHelpers from "../../../hooks/useHelpers";
+import ToastWithLink from "../../../components/ToastWithLink/ToastWithLink";
+import useEmployee from "../hooks/useEmployee";
 import {
-  EditStudentInterface,
-  StudentInterface,
-} from "../../services/studentService";
-import useStudent from "../../hooks/useStudent";
-import ToastWithLink from "../../../../components/ToastWithLink/ToastWithLink";
+  EditEmployeeInterface,
+  EmployeeInterface,
+} from "../services/employeeService";
+import DatePicker from "../../../components/DatePicker/DatePicker";
+import ImagePicker from "../../../assets/ImagePicker/ImagePicker";
+import AddressSelector from "../../../components/AddressSelector/AddressSelector";
+import useEmployeeTypes from "../hooks/useEmployeeType";
+import useRoles from "../../../General/hooks/useRoles";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import Loading from "../../../../components/Loading/Loading";
-import useHelpers from "../../../../hooks/useHelpers";
+import Loading from "../../../components/Loading/Loading";
 
-const StudentSchema = z.object({
-  firstName: z.string().min(1, "First Name is required"),
-  middleName: z.string().optional(),
-  lastName: z.string().min(1, "Last Name is required"),
-  iemis: z.string().optional(),
-  nickname: z.string().optional(),
-  dob_en: z.string().optional(),
-  dob_np: z.string().optional(),
-  email: z
-    .string()
-    .nullable()
-    .optional()
-    .refine(
-      (value) =>
-        value === null || value === "" || /.+@.+\..+/.test(value ?? ""),
-      { message: "Invalid email address" }
-    ),
-  photo: z.any().optional(), // Assuming photo is a file input
-  permanentAddress: z.object({
-    countryId: z.number().optional(),
-    provinceId: z.number().optional(),
-    districtId: z.number().optional(),
-    municipalityId: z.number().optional(),
-    ward: z.string().optional(),
-    street: z.string().optional(),
-  }),
-  currentAddress: z.object({
-    countryId: z.number().optional(),
-    provinceId: z.number().optional(),
-    districtId: z.number().optional(),
-    municipalityId: z.number().optional(),
-    ward: z.string().optional(),
-    street: z.string().optional(),
-  }),
-  gender: z.string().optional(),
-  bloodGroup: z.string().optional(),
-  nationality: z.string().optional(),
-  ethnicity: z.string().optional(),
-  motherTongue: z.string().optional(),
-  contact: z.string().optional(),
-  religion: z.string().optional(),
-});
-type FormData = z.infer<typeof StudentSchema>;
-
-const StudentEdit = () => {
+const EditEmployee = () => {
   const [renderKey, setRenderKey] = useState("");
-  const [student, setStudent] = useState<StudentInterface>();
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [lastStudent, setLastStudent] = useState<StudentInterface>();
-  const { getSingleStudent, updateStudent, isLoading } = useStudent({});
+  const [lastEmployee, setLastEmployee] = useState<EmployeeInterface>();
+  const [allowLogin, setAllowLogin] = useState(false);
   const { convertFileToBase64 } = useHelpers();
-  const { studentId } = useParams<{ studentId: string }>();
+  const { getSingleEmployee, updateEmployee } = useEmployee({});
+  const { employeeTypes } = useEmployeeTypes({});
+  const { roles } = useRoles({});
+  const employeeTypeValues = employeeTypes.map((type) => type.id.toString());
+  const roleValues = roles.map((role) => role.name.toString());
+  const [employee, setEmployee] = useState<EmployeeInterface>();
+  const { employeeId } = useParams<{ employeeId: string }>();
+
+  const fetchEmployee = useCallback(async () => {
+    try {
+      const data = await getSingleEmployee(Number(employeeId));
+      setEmployee(data.data);
+      console.log(data);
+      setAllowLogin(data.data.allow_login);
+    } catch {
+      toast.error("Error fetching student");
+    }
+  }, [getSingleEmployee, employeeId]);
+
+  useEffect(() => {
+    if (employeeId) {
+      fetchEmployee();
+    }
+  }, [employeeId, fetchEmployee]);
+
+  const EmployeeSchema = z
+    .object({
+      firstName: z.string().min(1, "First Name is required"),
+      middleName: z.string().optional(),
+      lastName: z.string().min(1, "Last Name is required"),
+      type: z.enum(employeeTypeValues as [string, ...string[]], {
+        message: "Employee Type is Required",
+      }),
+      email: z.string().optional(),
+      password: z.string().optional(),
+      role: z
+        .enum(roleValues as [string, ...string[]], { message: "Required" })
+        .optional()
+        .nullable(),
+      allowLogin: z.boolean().default(employee?.allow_login ?? false),
+      nickname: z.string().optional(),
+      dob_en: z.string().optional(),
+      dob_np: z.string().optional(),
+      photo: z.any().optional(),
+      permanentAddress: z.object({
+        countryId: z.number().optional(),
+        provinceId: z.number().optional(),
+        districtId: z.number().optional(),
+        municipalityId: z.number().optional(),
+        ward: z.string().optional(),
+        street: z.string().optional(),
+      }),
+      currentAddress: z.object({
+        countryId: z.number().optional(),
+        provinceId: z.number().optional(),
+        districtId: z.number().optional(),
+        municipalityId: z.number().optional(),
+        ward: z.string().optional(),
+        street: z.string().optional(),
+      }),
+      gender: z.string().optional(),
+      bloodGroup: z.string().optional(),
+      nationality: z.string().optional(),
+      ethnicity: z.string().optional(),
+      motherTongue: z.string().optional(),
+      contact: z.string().optional(),
+      religion: z.string().optional(),
+    })
+    .superRefine((data, ctx) => {
+      if (data.allowLogin) {
+        if (!data.email) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Email is required",
+            path: ["email"],
+          });
+        }
+        if (!data.password) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Password is required",
+            path: ["password"],
+          });
+        }
+        if (!data.role) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Role is Required",
+            path: ["role"],
+          });
+        }
+      }
+    });
+  type FormData = z.infer<typeof EmployeeSchema>;
 
   const {
     register,
     handleSubmit,
     setValue,
     control,
+    watch,
+    clearErrors,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(StudentSchema),
+    resolver: zodResolver(EmployeeSchema),
   });
 
-  const fetchStudent = useCallback(async () => {
-    try {
-      const data = await getSingleStudent(Number(studentId));
-      setStudent(data.data);
-    } catch {
-      toast.error("Error fetching student");
+  const handleAllowLoginChange = (value: boolean) => {
+    setAllowLogin(value);
+    setValue("allowLogin", value);
+    if (!value) {
+      // Reset role, email, and password fields
+      setValue("role", null);
+      setValue("email", "");
+      setValue("password", "");
+      // Clear validation errors
+      clearErrors(["email", "password", "role"]);
     }
-  }, [getSingleStudent, studentId]);
-
-  useEffect(() => {
-    if (studentId) {
-      fetchStudent();
-    }
-  }, [fetchStudent, studentId]);
+  };
+  const watchAllowLogin = watch("allowLogin"); // Watch for changes
 
   const handleCurrentAddressValuesChange = (selectedValues: {
     country: number | null;
@@ -106,7 +157,7 @@ const StudentEdit = () => {
     setValue("currentAddress.provinceId", selectedValues.province || 0);
     setValue("currentAddress.districtId", selectedValues.district || 0);
     setValue("currentAddress.municipalityId", selectedValues.municipality || 0);
-    setValue("currentAddress.ward", selectedValues.ward || "");
+    setValue("currentAddress.ward", selectedValues.ward ?? "");
   };
 
   const handlePermanentAddressValuesChange = (selectedValues: {
@@ -123,13 +174,15 @@ const StudentEdit = () => {
       "permanentAddress.municipalityId",
       selectedValues.municipality || 0
     );
-    setValue("permanentAddress.ward", selectedValues.ward || "");
+    setValue("permanentAddress.ward", selectedValues.ward ?? "");
   };
 
   const handleDateChange = (
     dates: { bsDate: string; adDate: string },
     field: "startDate" | "endDate"
   ) => {
+    console.log(dates);
+
     setValue("dob_en", dates.adDate);
     setValue("dob_np", dates.bsDate);
   };
@@ -138,17 +191,20 @@ const StudentEdit = () => {
     setIsSubmitting(true);
     setIsSuccess(false);
     const base64File = await convertFileToBase64(data.photo);
-    const saveData: EditStudentInterface = {
-      id: student!.id,
+    const saveData: EditEmployeeInterface = {
+      id: employee!.id,
       first_name: data.firstName,
       middle_name: data.middleName,
       last_name: data.lastName,
+      type: data.type,
+      allowLogin: data.allowLogin,
+      email: data.email,
+      password: data.password,
+      role: data.role ?? undefined,
       nickname: data.nickname,
-      iemis: data.iemis,
       dob_en: data.dob_en,
       don_np: data.dob_np,
       contact: data.contact,
-      email: data.email ?? undefined,
       gender: data.gender,
       blood_group: data.bloodGroup,
       nationality: data.nationality,
@@ -168,15 +224,24 @@ const StudentEdit = () => {
       current_ward_no: data.currentAddress.ward,
       current_street_address: data.currentAddress.street,
     };
-
-    const lastStudent: StudentInterface = await updateStudent({
+    const lastEmployee: EmployeeInterface = await updateEmployee({
       ...saveData,
       photo: base64File,
     });
     setIsSubmitting(false);
     setIsSuccess(true);
-    setLastStudent(lastStudent);
+    console.log("Last Employee", lastEmployee);
+
+    setLastEmployee(lastEmployee);
+    console.log("Form Data Submitted:", JSON.stringify(saveData, null, 2));
   };
+
+  useEffect(() => {
+    if (!watchAllowLogin) {
+      clearErrors(["email", "password", "role"]); // Clear specific errors
+    }
+    console.log(watchAllowLogin);
+  }, [clearErrors, watchAllowLogin]);
 
   useEffect(() => {
     console.log("main", errors);
@@ -184,14 +249,14 @@ const StudentEdit = () => {
 
   return (
     <>
-      {!student && (
+      {!employee && (
         <div className="card">
           <div className="card-body">
             <Loading />
           </div>
         </div>
       )}
-      {student && (
+      {employee && (
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="row">
             <div className="col-md-5">
@@ -217,7 +282,7 @@ const StudentEdit = () => {
                                 errors.firstName && "is-invalid"
                               } form-control mb-3 mb-lg-0`}
                               placeholder="First Name"
-                              defaultValue={student.first_name}
+                              defaultValue={employee?.first_name}
                             />
                             {errors.firstName && (
                               <span className="text-danger">
@@ -238,7 +303,7 @@ const StudentEdit = () => {
                                 errors.middleName && "is-invalid"
                               } form-control mb-3 mb-lg-0`}
                               placeholder="Middle name"
-                              defaultValue={student.middle_name}
+                              defaultValue={employee.middle_name}
                             />
                           </div>
                         </div>
@@ -254,12 +319,163 @@ const StudentEdit = () => {
                                 errors.lastName && "is-invalid"
                               } form-control mb-3 mb-lg-0`}
                               placeholder="Last Name"
-                              defaultValue={student.last_name}
+                              defaultValue={employee.last_name}
                             />
                             {errors.lastName && (
                               <span className="text-danger">
                                 {errors.lastName.message}
                               </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="col-md-4">
+                          <div className="fv-row mb-7">
+                            <label
+                              className="required fw-bold fs-6 mb-2"
+                              htmlFor="type"
+                            >
+                              Employee Type
+                            </label>
+
+                            <select
+                              id="type"
+                              {...register("type")}
+                              className={`form-control ${
+                                errors.type && "is-invalid"
+                              } form-control mb-3 mb-lg-0`}
+                              defaultValue={employee.employee_type?.id ?? ""}
+                            >
+                              <option value="" hidden disabled>
+                                Select Emp. Type
+                              </option>
+                              {employeeTypes.map((type) => (
+                                <option key={type.id} value={type.id}>
+                                  {type.name}
+                                </option>
+                              ))}
+                            </select>
+                            {errors.type && (
+                              <span className="text-danger">
+                                {errors.type.message}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="col-12">
+                          <hr />
+                          <div className="row">
+                            <div className="col-12 mb-5">
+                              <label className="form-check form-switch form-switch-sm form-check-custom">
+                                <input
+                                  className="form-check-input me-4"
+                                  type="checkbox"
+                                  onChange={(e) =>
+                                    handleAllowLoginChange(e.target.checked)
+                                  }
+                                  checked={allowLogin}
+                                />
+                                <span className="form-check-label text-gray-700 fs-6 fw-semibold ms-0 me-2">
+                                  Allow user to login?
+                                </span>
+                              </label>
+                            </div>
+                            {allowLogin && (
+                              <div className="col-12">
+                                <div className="row">
+                                  <div className="col-12 text-center">
+                                    <h3 className="fw-bolder text-uppercase">
+                                      Login INfo
+                                    </h3>
+                                    <hr />
+                                  </div>
+                                  <div className="col-5">
+                                    <div className="fv-row mb-7">
+                                      <label className="required fw-bold fs-6 mb-2">
+                                        Email
+                                      </label>
+                                      <Controller
+                                        name="email"
+                                        control={control}
+                                        defaultValue={employee.email}
+                                        render={({ field }) => (
+                                          <input
+                                            {...field}
+                                            type="email"
+                                            className={`form-control ${
+                                              errors.email && "is-invalid"
+                                            } form-control mb-3 mb-lg-0`}
+                                            placeholder="Ex: admin@email.com"
+                                          />
+                                        )}
+                                      />
+                                      {errors.email && (
+                                        <span className="text-danger">
+                                          {errors.email.message}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div className="col-5">
+                                    <div className="fv-row mb-7">
+                                      <label className="required fw-bold fs-6 mb-2">
+                                        Password
+                                      </label>
+                                      <input
+                                        type="text"
+                                        {...register("password")}
+                                        className={`form-control ${
+                                          errors.password && "is-invalid"
+                                        } form-control mb-3 mb-lg-0`}
+                                      />
+                                      {errors.password && (
+                                        <span className="text-danger">
+                                          {errors.password.message}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>{" "}
+                                  <div className="col-md-2">
+                                    <div className="fv-row mb-7">
+                                      <label
+                                        className="required fw-bold fs-6 mb-2"
+                                        htmlFor="role"
+                                      >
+                                        Role
+                                      </label>
+
+                                      <select
+                                        id="role"
+                                        {...register("role")}
+                                        className={`form-control ${
+                                          errors.role && "is-invalid"
+                                        } form-control mb-3 mb-lg-0`}
+                                        defaultValue={employee.role ?? ""}
+                                      >
+                                        <option value="" hidden disabled>
+                                          Sel. Role
+                                        </option>
+                                        {roles
+                                          .filter((role) => {
+                                            return role.name !== "Super Admin";
+                                          })
+                                          .map((role) => (
+                                            <option
+                                              key={role.id}
+                                              value={role.name}
+                                            >
+                                              {role.name}
+                                            </option>
+                                          ))}
+                                      </select>
+                                      {errors.role && (
+                                        <span className="text-danger">
+                                          {errors.role.message}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
                             )}
                           </div>
                         </div>
@@ -291,25 +507,6 @@ const StudentEdit = () => {
                       <div className="row">
                         <div className="col-md-6">
                           <div className="fv-row mb-7">
-                            <label className="required fw-bold fs-6 mb-2">
-                              IEMIS-No.
-                            </label>
-                            <input
-                              type="text"
-                              {...register("iemis")}
-                              className="form-control mb-3 mb-lg-0"
-                              placeholder=""
-                              defaultValue={student.iemis}
-                            />
-                            {errors.iemis && (
-                              <span className="text-danger">
-                                {errors.iemis.message}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="col-md-6">
-                          <div className="fv-row mb-7">
                             <label className="fw-bold fs-6 mb-2">
                               Nickname
                             </label>
@@ -318,7 +515,7 @@ const StudentEdit = () => {
                               {...register("nickname")}
                               className="form-control mb-3 mb-lg-0"
                               placeholder=""
-                              defaultValue={student.nickname}
+                              defaultValue={employee.nickname}
                             />
                           </div>
                         </div>
@@ -331,25 +528,29 @@ const StudentEdit = () => {
                             title="Date of Birth"
                             errorAD={errors.dob_en?.message}
                             errorBS={errors.dob_np?.message}
-                            valueAD={student.dob_en ?? undefined}
-                            valueBS={student.dob_np ?? undefined}
+                            valueBS={employee.dob_np}
+                            valueAD={employee.dob_en}
                           />
                         </div>
                         <div className="col-md-6">
                           <div className="fv-row mb-7">
-                            <label
-                              className="required fw-bold fs-6 mb-2"
-                              htmlFor="email"
-                            >
+                            <label className="required fw-bold fs-6 mb-2">
                               Email
                             </label>
-                            <input
-                              id="email"
-                              type="email"
-                              {...register("email")}
-                              className="form-control mb-3 mb-lg-0"
-                              placeholder=""
-                              defaultValue={student.email}
+                            <Controller
+                              name="email"
+                              control={control}
+                              defaultValue={employee.email}
+                              render={({ field }) => (
+                                <input
+                                  {...field}
+                                  type="email"
+                                  className={`form-control ${
+                                    errors.email && "is-invalid"
+                                  } form-control mb-3 mb-lg-0`}
+                                  placeholder="Ex: admin@email.com"
+                                />
+                              )}
                             />
                             {errors.email && (
                               <span className="text-danger">
@@ -368,7 +569,7 @@ const StudentEdit = () => {
                               {...register("contact")}
                               className="form-control mb-3 mb-lg-0"
                               placeholder=""
-                              defaultValue={student.contact}
+                              defaultValue={employee.contact}
                             />
                             {errors.contact && (
                               <span className="text-danger">
@@ -392,7 +593,7 @@ const StudentEdit = () => {
                         render={({ field, fieldState }) => (
                           <ImagePicker
                             onChange={(file) => field.onChange(file)}
-                            value={field.value ?? student.photo}
+                            value={employee.photo ?? field.value}
                             errors={fieldState.error}
                           />
                         )}
@@ -410,19 +611,20 @@ const StudentEdit = () => {
                               </label>
                               <hr className="my-2" />
                               <AddressSelector
+                                idPrefix="permanent"
                                 colSize={6}
                                 onChange={handlePermanentAddressValuesChange}
                                 errors={errors.permanentAddress}
                                 value={{
                                   country:
-                                    student.permanent_address?.country_id,
+                                    employee.permanent_address?.country_id,
                                   province:
-                                    student.permanent_address?.province_id,
+                                    employee.permanent_address?.province_id,
                                   district:
-                                    student.permanent_address?.district_id,
+                                    employee.permanent_address?.district_id,
                                   municipality:
-                                    student.permanent_address?.municipality_id,
-                                  ward: student.permanent_address?.ward_no,
+                                    employee.permanent_address?.municipality_id,
+                                  ward: employee.permanent_address?.ward_no,
                                 }}
                               />
                             </div>
@@ -430,18 +632,18 @@ const StudentEdit = () => {
                               <div className="fv-row mb-7">
                                 <label
                                   className="required fw-bold fs-6 mb-2"
-                                  htmlFor="address"
+                                  htmlFor="perm_address"
                                 >
                                   Permanent Street
                                 </label>
                                 <input
-                                  id="address"
+                                  id="perm_address"
                                   type="text"
                                   {...register("permanentAddress.street")}
                                   className="form-control mb-3 mb-lg-0"
                                   placeholder=""
                                   defaultValue={
-                                    student.permanent_address?.street_address
+                                    employee.permanent_address?.street_address
                                   }
                                 />
                                 {errors.permanentAddress?.street && (
@@ -468,25 +670,25 @@ const StudentEdit = () => {
                                     <input
                                       className="form-check-input"
                                       type="checkbox"
-                                      value="1"
                                     />
                                   </label>
                                 </div>
                               </div>
                               <hr className="my-2" />
                               <AddressSelector
+                                idPrefix="current"
                                 colSize={6}
                                 onChange={handleCurrentAddressValuesChange}
                                 errors={errors.currentAddress}
                                 value={{
-                                  country: student.current_address?.country_id,
+                                  country: employee.current_address?.country_id,
                                   province:
-                                    student.current_address?.province_id,
+                                    employee.current_address?.province_id,
                                   district:
-                                    student.current_address?.district_id,
+                                    employee.current_address?.district_id,
                                   municipality:
-                                    student.current_address?.municipality_id,
-                                  ward: student.current_address?.ward_no,
+                                    employee.current_address?.municipality_id,
+                                  ward: employee.current_address?.ward_no,
                                 }}
                               />
                             </div>
@@ -505,7 +707,7 @@ const StudentEdit = () => {
                                   className="form-control mb-3 mb-lg-0"
                                   placeholder=""
                                   defaultValue={
-                                    student.current_address?.street_address
+                                    employee.current_address?.street_address
                                   }
                                 />
                                 {errors.currentAddress?.street && (
@@ -533,7 +735,7 @@ const StudentEdit = () => {
                           id="gender"
                           {...register("gender")}
                           className="form-control"
-                          defaultValue={student.gender ?? ""}
+                          defaultValue={employee.gender ?? ""}
                         >
                           <option value="" hidden disabled>
                             Select Gender
@@ -559,7 +761,7 @@ const StudentEdit = () => {
                           id="bloodGroup"
                           {...register("bloodGroup")}
                           className="form-control"
-                          defaultValue={student.blood_group ?? ""}
+                          defaultValue={employee.blood_group ?? ""}
                         >
                           <option value="" hidden disabled>
                             Select Blood Group
@@ -590,7 +792,7 @@ const StudentEdit = () => {
                           {...register("nationality")}
                           className="form-control mb-3 mb-lg-0"
                           placeholder=""
-                          defaultValue={student.nationality ?? ""}
+                          defaultValue={employee.nationality}
                         />
                         {errors.nationality && (
                           <span className="text-danger">
@@ -608,7 +810,7 @@ const StudentEdit = () => {
                           id="ethnicity"
                           {...register("ethnicity")}
                           className="form-control"
-                          defaultValue={student.ethnicity ?? ""}
+                          defaultValue={employee.ethnicity ?? ""}
                         >
                           <option value="" hidden disabled>
                             Select Ethnicity
@@ -634,7 +836,7 @@ const StudentEdit = () => {
                           {...register("motherTongue")}
                           className="form-control mb-3 mb-lg-0"
                           placeholder=""
-                          defaultValue={student.mother_tongue ?? ""}
+                          defaultValue={employee.mother_tongue}
                         />
                         {errors.motherTongue && (
                           <span className="text-danger">
@@ -654,7 +856,7 @@ const StudentEdit = () => {
                           {...register("religion")}
                           className="form-control mb-3 mb-lg-0"
                           placeholder=""
-                          defaultValue={student.religion ?? ""}
+                          defaultValue={employee.religion}
                         />
                         {errors.religion && (
                           <span className="text-danger">
@@ -677,11 +879,11 @@ const StudentEdit = () => {
               </div>
             </div>
           </div>
-          {!isSubmitting && isSuccess && lastStudent && (
+          {!isSubmitting && isSuccess && lastEmployee && (
             <ToastWithLink
-              message="Student Updated Successfully. Visit Profile of:"
-              linkText={lastStudent.full_name ?? "Student"}
-              linkUrl={`/students/details/${lastStudent.id}/overview`}
+              message="Employee Added Successfully. Visit Profile of:"
+              linkText={lastEmployee.full_name ?? "Employee"}
+              linkUrl={`/employees/details/${lastEmployee.id}/overview`}
             />
           )}
         </form>
@@ -690,4 +892,4 @@ const StudentEdit = () => {
   );
 };
 
-export default StudentEdit;
+export default EditEmployee;

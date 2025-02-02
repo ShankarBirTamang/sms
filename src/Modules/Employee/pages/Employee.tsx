@@ -6,6 +6,7 @@ import Icon from "../../../components/Icon/Icon";
 import { useNavigate } from "react-router-dom";
 import Pagination from "../../../components/Pagination/Pagination";
 import useEmployee from "../hooks/useEmployee";
+import { EmployeeInterface } from "../services/employeeService";
 
 const Employee = () => {
   useDocumentTitle("All Employees");
@@ -18,6 +19,7 @@ const Employee = () => {
     currentPage,
     itemsPerPage,
   });
+  const [selectedEmployee, setSelectedEmployee] = useState<EmployeeInterface>();
   const navigate = useNavigate();
 
   const addEmployeeRoute = () => {
@@ -59,6 +61,11 @@ const Employee = () => {
 
   const handleEmployeeOverviewNavigate = (employeeId: number) => {
     navigate(`details/${employeeId}/overview`);
+  };
+
+  const handleEditEmployeeNavigate = (employee: EmployeeInterface) => {
+    setSelectedEmployee(employee);
+    navigate(`${employee.id}/edit`);
   };
 
   return (
@@ -234,13 +241,15 @@ const Employee = () => {
                             >
                               <Icon name={"search"} className={"svg-icon-2"} />
                             </button>
-                            <a
+                            <button
                               title="edit"
-                              href="#"
+                              onClick={() =>
+                                handleEditEmployeeNavigate(employee)
+                              }
                               className="btn btn-light-success btn-sm btn-icon"
                             >
                               <Icon name={"edit"} className={"svg-icon-2"} />
-                            </a>
+                            </button>
                           </div>
                         </td>
                       </tr>

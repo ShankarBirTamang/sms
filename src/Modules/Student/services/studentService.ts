@@ -14,32 +14,32 @@ export interface AddressInterface {
   district_id: number;
   municipality: string;
   municipality_id: number;
-  ward_no: number;
+  ward_no: string;
   street_address: string;
   full_address: string;
 }
 export interface StudentInterface {
   id: number;
   roll_no?: string | number;
-  iemis: string | null;
+  iemis: string;
   full_name?: string;
   first_name: string;
-  middle_name?: string | null;
+  middle_name?: string;
   last_name: string;
   photo: string;
   thumbnail?: string;
-  nickname?: string | null;
-  dob_en?: string | null;
-  dob_np?: string | null;
-  contact?: string | null;
+  nickname?: string;
+  dob_en?: string;
+  dob_np?: string;
+  contact?: string;
   permanent_address?: AddressInterface;
   current_address?: AddressInterface;
-  email?: string | null;
-  gender?: string | null;
-  blood_group?: string | null;
-  nationality?: string | null;
-  mother_tongue?: string | null;
-  religion?: string | null;
+  email?: string;
+  gender?: string;
+  blood_group?: string;
+  nationality?: string;
+  mother_tongue?: string;
+  religion?: string;
   ethnicity: string;
   is_active: boolean;
   guardians?: StudentGuardianInterface[];
@@ -59,7 +59,7 @@ export interface AddStudentInterface {
   dob_en?: string; // Date of birth in English format
   don_np?: string; // Date of birth in Nepali format
   contact?: string;
-  email?: string | null;
+  email?: string;
   gender?: string;
   blood_group?: string;
   nationality?: string;
@@ -71,13 +71,13 @@ export interface AddStudentInterface {
   permanent_province_id?: number;
   permanent_district_id?: number;
   permanent_municipality_id?: number;
-  permanent_ward_no?: number;
+  permanent_ward_no?: string;
   permanent_street_address?: string;
   current_country_id?: number;
   current_province_id?: number;
   current_district_id?: number;
   current_municipality_id?: number;
-  current_ward_no?: number;
+  current_ward_no?: string;
   current_street_address?: string;
 }
 
@@ -91,7 +91,7 @@ export interface EditStudentInterface {
   dob_en?: string; // Date of birth in English format
   don_np?: string; // Date of birth in Nepali format
   contact?: string;
-  email?: string | null;
+  email?: string;
   gender?: string;
   blood_group?: string;
   nationality?: string;
@@ -103,13 +103,13 @@ export interface EditStudentInterface {
   permanent_province_id?: number;
   permanent_district_id?: number;
   permanent_municipality_id?: number;
-  permanent_ward_no?: number;
+  permanent_ward_no?: string;
   permanent_street_address?: string;
   current_country_id?: number;
   current_province_id?: number;
   current_district_id?: number;
   current_municipality_id?: number;
-  current_ward_no?: number;
+  current_ward_no?: string;
   current_street_address?: string;
 }
 

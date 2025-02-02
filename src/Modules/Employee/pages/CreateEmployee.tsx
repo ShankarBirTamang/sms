@@ -13,49 +13,7 @@ import DatePicker from "../../../components/DatePicker/DatePicker";
 import ImagePicker from "../../../assets/ImagePicker/ImagePicker";
 import AddressSelector from "../../../components/AddressSelector/AddressSelector";
 import useEmployeeTypes from "../hooks/useEmployeeType";
-
-const EmployeeSchema = z.object({
-  firstName: z.string().min(1, "First Name is required"),
-  middleName: z.string().optional(),
-  lastName: z.string().min(1, "Last Name is required"),
-  nickname: z.string().optional(),
-  dob_en: z.string().optional(),
-  dob_np: z.string().optional(),
-  email: z
-    .string()
-    .nullable()
-    .optional()
-    .refine(
-      (value) =>
-        value === null || value === "" || /.+@.+\..+/.test(value ?? ""),
-      { message: "Invalid email address" }
-    ),
-  photo: z.any().optional(), // Assuming photo is a file input
-  permanentAddress: z.object({
-    countryId: z.number().optional(),
-    provinceId: z.number().optional(),
-    districtId: z.number().optional(),
-    municipalityId: z.number().optional(),
-    ward: z.number().optional(),
-    street: z.string().optional(),
-  }),
-  currentAddress: z.object({
-    countryId: z.number().optional(),
-    provinceId: z.number().optional(),
-    districtId: z.number().optional(),
-    municipalityId: z.number().optional(),
-    ward: z.number().optional(),
-    street: z.string().optional(),
-  }),
-  gender: z.string().optional(),
-  bloodGroup: z.string().optional(),
-  nationality: z.string().optional(),
-  ethnicity: z.string().optional(),
-  motherTongue: z.string().optional(),
-  contact: z.string().optional(),
-  religion: z.string().optional(),
-});
-type FormData = z.infer<typeof EmployeeSchema>;
+import useRoles from "../../../General/hooks/useRoles";
 
 const CreateEmployee = () => {
   const [renderKey, setRenderKey] = useState("");
@@ -66,32 +24,119 @@ const CreateEmployee = () => {
   const { convertFileToBase64 } = useHelpers();
   const { saveEmployee } = useEmployee({});
   const { employeeTypes } = useEmployeeTypes({});
+  const { roles } = useRoles({});
+  const employeeTypeValues = employeeTypes.map((type) => type.id.toString());
+  const roleValues = roles.map((role) => role.name.toString());
+
+  const EmployeeSchema = z
+    .object({
+      firstName: z.string().min(1, "First Name is required"),
+      middleName: z.string().optional(),
+      lastName: z.string().min(1, "Last Name is required"),
+      type: z.enum(employeeTypeValues as [string, ...string[]], {
+        message: "Employee Type is Required",
+      }),
+      email: z.string().optional(),
+      password: z.string().optional(),
+      role: z
+        .enum(roleValues as [string, ...string[]], { message: "Required" })
+        .optional()
+        .nullable(),
+      allowLogin: z.boolean().default(false),
+      nickname: z.string().optional(),
+      dob_en: z.string().optional(),
+      dob_np: z.string().optional(),
+      photo: z.any().optional(),
+      permanentAddress: z.object({
+        countryId: z.number().optional(),
+        provinceId: z.number().optional(),
+        districtId: z.number().optional(),
+        municipalityId: z.number().optional(),
+        ward: z.string().optional(),
+        street: z.string().optional(),
+      }),
+      currentAddress: z.object({
+        countryId: z.number().optional(),
+        provinceId: z.number().optional(),
+        districtId: z.number().optional(),
+        municipalityId: z.number().optional(),
+        ward: z.string().optional(),
+        street: z.string().optional(),
+      }),
+      gender: z.string().optional(),
+      bloodGroup: z.string().optional(),
+      nationality: z.string().optional(),
+      ethnicity: z.string().optional(),
+      motherTongue: z.string().optional(),
+      contact: z.string().optional(),
+      religion: z.string().optional(),
+    })
+    .superRefine((data, ctx) => {
+      if (data.allowLogin) {
+        if (!data.email) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Email is required",
+            path: ["email"],
+          });
+        }
+        if (!data.password) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Password is required",
+            path: ["password"],
+          });
+        }
+        if (!data.role) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Role is Required",
+            path: ["role"],
+          });
+        }
+      }
+    });
+  type FormData = z.infer<typeof EmployeeSchema>;
+
   const {
     register,
     handleSubmit,
     setValue,
     control,
+    watch,
+    clearErrors,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(EmployeeSchema),
   });
 
-  const handleAllowLoginChange = (value) => {
-    setAllowLogin(!allowLogin);
+  const handleAllowLoginChange = (value: boolean) => {
+    setAllowLogin(value);
+    setValue("allowLogin", value);
+
+    if (!value) {
+      // Reset role, email, and password fields
+      setValue("role", null);
+      setValue("email", "");
+      setValue("password", "");
+      // Clear validation errors
+      clearErrors(["email", "password", "role"]);
+    }
   };
+  const watchAllowLogin = watch("allowLogin"); // Watch for changes
 
   const handleCurrentAddressValuesChange = (selectedValues: {
     country: number | null;
     province: number | null;
     district: number | null;
     municipality: number | null;
-    ward: number | null;
+    ward: string | null;
   }) => {
     setValue("currentAddress.countryId", selectedValues.country || 0);
     setValue("currentAddress.provinceId", selectedValues.province || 0);
     setValue("currentAddress.districtId", selectedValues.district || 0);
     setValue("currentAddress.municipalityId", selectedValues.municipality || 0);
-    setValue("currentAddress.ward", selectedValues.ward || 0);
+    setValue("currentAddress.ward", selectedValues.ward || undefined);
   };
 
   const handlePermanentAddressValuesChange = (selectedValues: {
@@ -99,7 +144,7 @@ const CreateEmployee = () => {
     province: number | null;
     district: number | null;
     municipality: number | null;
-    ward: number | null;
+    ward: string | null;
   }) => {
     setValue("permanentAddress.countryId", selectedValues.country || 0);
     setValue("permanentAddress.provinceId", selectedValues.province || 0);
@@ -108,7 +153,7 @@ const CreateEmployee = () => {
       "permanentAddress.municipalityId",
       selectedValues.municipality || 0
     );
-    setValue("permanentAddress.ward", selectedValues.ward || 0);
+    setValue("permanentAddress.ward", selectedValues.ward || undefined);
   };
 
   const handleDateChange = (
@@ -129,11 +174,15 @@ const CreateEmployee = () => {
       first_name: data.firstName,
       middle_name: data.middleName,
       last_name: data.lastName,
+      type: data.type,
+      allowLogin: data.allowLogin,
+      email: data.email,
+      password: data.password,
+      role: data.role ?? undefined,
       nickname: data.nickname,
       dob_en: data.dob_en,
       don_np: data.dob_np,
       contact: data.contact,
-      email: data.email,
       gender: data.gender,
       blood_group: data.bloodGroup,
       nationality: data.nationality,
@@ -164,6 +213,13 @@ const CreateEmployee = () => {
     setLastEmployee(lastEmployee);
     console.log("Form Data Submitted:", JSON.stringify(saveData, null, 2));
   };
+
+  useEffect(() => {
+    if (!watchAllowLogin) {
+      clearErrors(["email", "password", "role"]); // Clear specific errors
+    }
+    console.log(watchAllowLogin);
+  }, [clearErrors, watchAllowLogin]);
 
   useEffect(() => {
     console.log("main", errors);
@@ -240,15 +296,17 @@ const CreateEmployee = () => {
                       <div className="fv-row mb-7">
                         <label
                           className="required fw-bold fs-6 mb-2"
-                          htmlFor="gender"
+                          htmlFor="type"
                         >
                           Employee Type
                         </label>
 
                         <select
-                          id="gender"
-                          {...register("gender")}
-                          className="form-control"
+                          id="type"
+                          {...register("type")}
+                          className={`form-control ${
+                            errors.type && "is-invalid"
+                          } form-control mb-3 mb-lg-0`}
                           defaultValue={""}
                         >
                           <option value="" hidden disabled>
@@ -260,9 +318,9 @@ const CreateEmployee = () => {
                             </option>
                           ))}
                         </select>
-                        {errors.gender && (
+                        {errors.type && (
                           <span className="text-danger">
-                            {errors.gender.message}
+                            {errors.type.message}
                           </span>
                         )}
                       </div>
@@ -275,8 +333,9 @@ const CreateEmployee = () => {
                             <input
                               className="form-check-input me-4"
                               type="checkbox"
-                              value="1"
-                              onChange={(e) => setAllowLogin(e.target.checked)}
+                              onChange={(e) =>
+                                handleAllowLoginChange(e.target.checked)
+                              }
                             />
                             <span className="form-check-label text-gray-700 fs-6 fw-semibold ms-0 me-2">
                               Allow user to login?
@@ -292,30 +351,87 @@ const CreateEmployee = () => {
                                 </h3>
                                 <hr />
                               </div>
-                              <div className="col-6">
+                              <div className="col-5">
                                 <div className="fv-row mb-7">
                                   <label className="required fw-bold fs-6 mb-2">
                                     Email
                                   </label>
-                                  <input
-                                    type="text"
+                                  <Controller
                                     name="email"
-                                    className="form-control mb-3 mb-lg-0"
-                                    placeholder="Ex: admin@email.com"
+                                    control={control}
+                                    defaultValue=""
+                                    render={({ field }) => (
+                                      <input
+                                        {...field}
+                                        type="email"
+                                        className={`form-control ${
+                                          errors.email && "is-invalid"
+                                        } form-control mb-3 mb-lg-0`}
+                                        placeholder="Ex: admin@email.com"
+                                      />
+                                    )}
                                   />
+                                  {errors.email && (
+                                    <span className="text-danger">
+                                      {errors.email.message}
+                                    </span>
+                                  )}
                                 </div>
                               </div>
-                              <div className="col-6">
+                              <div className="col-5">
                                 <div className="fv-row mb-7">
                                   <label className="required fw-bold fs-6 mb-2">
                                     Password
                                   </label>
                                   <input
                                     type="text"
-                                    name="password"
-                                    value=""
-                                    className="form-control mb-3 mb-lg-0"
+                                    {...register("password")}
+                                    className={`form-control ${
+                                      errors.password && "is-invalid"
+                                    } form-control mb-3 mb-lg-0`}
                                   />
+                                  {errors.password && (
+                                    <span className="text-danger">
+                                      {errors.password.message}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>{" "}
+                              <div className="col-md-2">
+                                <div className="fv-row mb-7">
+                                  <label
+                                    className="required fw-bold fs-6 mb-2"
+                                    htmlFor="role"
+                                  >
+                                    Role
+                                  </label>
+
+                                  <select
+                                    id="role"
+                                    {...register("role")}
+                                    className={`form-control ${
+                                      errors.role && "is-invalid"
+                                    } form-control mb-3 mb-lg-0`}
+                                    defaultValue={""}
+                                  >
+                                    <option value="" hidden disabled>
+                                      Sel. Role
+                                    </option>
+                                    {roles
+                                      .filter((role) => {
+                                        return role.name !== "Super Admin";
+                                      })
+                                      .map((role) => (
+                                        <option key={role.id} value={role.name}>
+                                          {role.name}
+                                        </option>
+                                      ))}
+                                  </select>
+                                  {errors.role && (
+                                    <span className="text-danger">
+                                      {errors.role.message}
+                                    </span>
+                                  )}
                                 </div>
                               </div>
                             </div>
@@ -373,18 +489,23 @@ const CreateEmployee = () => {
                     </div>
                     <div className="col-md-6">
                       <div className="fv-row mb-7">
-                        <label
-                          className="required fw-bold fs-6 mb-2"
-                          htmlFor="email"
-                        >
+                        <label className="required fw-bold fs-6 mb-2">
                           Email
                         </label>
-                        <input
-                          id="email"
-                          type="email"
-                          {...register("email")}
-                          className="form-control mb-3 mb-lg-0"
-                          placeholder=""
+                        <Controller
+                          name="email"
+                          control={control}
+                          defaultValue=""
+                          render={({ field }) => (
+                            <input
+                              {...field}
+                              type="email"
+                              className={`form-control ${
+                                errors.email && "is-invalid"
+                              } form-control mb-3 mb-lg-0`}
+                              placeholder="Ex: admin@email.com"
+                            />
+                          )}
                         />
                         {errors.email && (
                           <span className="text-danger">
@@ -442,6 +563,7 @@ const CreateEmployee = () => {
                           </label>
                           <hr className="my-2" />
                           <AddressSelector
+                            idPrefix="permanent"
                             colSize={6}
                             onChange={handlePermanentAddressValuesChange}
                             errors={errors.permanentAddress}
@@ -456,7 +578,7 @@ const CreateEmployee = () => {
                               Permanent Street
                             </label>
                             <input
-                              id="address"
+                              id="perm_address"
                               type="text"
                               {...register("permanentAddress.street")}
                               className="form-control mb-3 mb-lg-0"
@@ -493,6 +615,7 @@ const CreateEmployee = () => {
                           </div>
                           <hr className="my-2" />
                           <AddressSelector
+                            idPrefix="current"
                             colSize={6}
                             onChange={handleCurrentAddressValuesChange}
                             errors={errors.currentAddress}
@@ -507,7 +630,7 @@ const CreateEmployee = () => {
                               Current Street
                             </label>
                             <input
-                              id="address"
+                              id="curr_address"
                               type="text"
                               {...register("currentAddress.street")}
                               className="form-control mb-3 mb-lg-0"

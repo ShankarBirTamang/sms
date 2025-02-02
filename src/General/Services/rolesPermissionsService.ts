@@ -5,5 +5,10 @@ export interface RoleInterface {
   name: string;
 }
 
-export const rolesRoute = apiRoute("/roles");
-export const permissionsRoute = apiRoute("/permissions");
+export interface PermissionInterface {
+  id: number;
+  name: string;
+}
+
+export const rolesRoute = apiRoute("/general/roles");
+export const permissionsRoute = apiRoute("/general/permissions");

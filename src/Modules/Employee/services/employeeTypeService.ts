@@ -1,7 +1,7 @@
 import apiRoute from "../../../services/httpService";
 
 export interface EmployeeTypeInterface {
-  id?: number;
+  id: number;
   name: string;
 }
 

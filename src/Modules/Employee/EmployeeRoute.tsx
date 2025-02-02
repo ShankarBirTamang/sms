@@ -6,6 +6,7 @@ import ProtectectedRoute from "../../components/Icon/ProtectedRoute";
 import CreateEmployee from "./pages/CreateEmployee";
 import Overview from "./pages/ShowEmployee/Overview";
 import ShowEmployeeLayout from "./pages/ShowEmployee/ShowEmployeeLayout";
+import EditEmployee from "./pages/EditEmployee";
 
 const routes = [
   {
@@ -17,6 +18,11 @@ const routes = [
     path: "/create",
     title: "Add Employee",
     element: <CreateEmployee />,
+  },
+  {
+    path: "/:employeeId/edit",
+    title: "Edit Employee",
+    element: <EditEmployee />,
   },
 ];
 

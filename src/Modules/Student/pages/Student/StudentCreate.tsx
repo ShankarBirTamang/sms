@@ -43,7 +43,7 @@ const StudentSchema = z.object({
     provinceId: z.number().optional(),
     districtId: z.number().optional(),
     municipalityId: z.number().optional(),
-    ward: z.number().optional(),
+    ward: z.string().optional(),
     street: z.string().optional(),
   }),
   currentAddress: z.object({
@@ -51,7 +51,7 @@ const StudentSchema = z.object({
     provinceId: z.number().optional(),
     districtId: z.number().optional(),
     municipalityId: z.number().optional(),
-    ward: z.number().optional(),
+    ward: z.string().optional(),
     street: z.string().optional(),
   }),
   gender: z.string().optional(),
@@ -98,13 +98,13 @@ const StudentCreate = () => {
     province: number | null;
     district: number | null;
     municipality: number | null;
-    ward: number | null;
+    ward: string | null;
   }) => {
     setValue("currentAddress.countryId", selectedValues.country || 0);
     setValue("currentAddress.provinceId", selectedValues.province || 0);
     setValue("currentAddress.districtId", selectedValues.district || 0);
     setValue("currentAddress.municipalityId", selectedValues.municipality || 0);
-    setValue("currentAddress.ward", selectedValues.ward || 0);
+    setValue("currentAddress.ward", selectedValues.ward || "");
   };
 
   const handlePermanentAddressValuesChange = (selectedValues: {
@@ -112,7 +112,7 @@ const StudentCreate = () => {
     province: number | null;
     district: number | null;
     municipality: number | null;
-    ward: number | null;
+    ward: string | null;
   }) => {
     setValue("permanentAddress.countryId", selectedValues.country || 0);
     setValue("permanentAddress.provinceId", selectedValues.province || 0);
@@ -121,7 +121,7 @@ const StudentCreate = () => {
       "permanentAddress.municipalityId",
       selectedValues.municipality || 0
     );
-    setValue("permanentAddress.ward", selectedValues.ward || 0);
+    setValue("permanentAddress.ward", selectedValues.ward || "");
   };
 
   const handleDateChange = (
@@ -148,7 +148,7 @@ const StudentCreate = () => {
       dob_en: data.dob_en,
       don_np: data.dob_np,
       contact: data.contact,
-      email: data.email,
+      email: data.email ?? undefined,
       gender: data.gender,
       blood_group: data.bloodGroup,
       nationality: data.nationality,
