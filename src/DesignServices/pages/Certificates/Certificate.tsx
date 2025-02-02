@@ -88,7 +88,7 @@ const Certificate = () => {
                   <Link
                     to={"/design-services/certificates/create"}
                     className="btn btn-primary btn-sm ms-2 align-content-center"
-                    title="Add TimeTable"
+                    title="Add Certificate"
                   >
                     <Icon name={"add"} className={"svg-icon"} />
                     Add Certificate
@@ -102,7 +102,7 @@ const Certificate = () => {
             <div>
               {isLoading && <Loading />}
               {!isLoading && certificateList.length === 0 && (
-                <div className="alert alert-info">No Certificates Found</div>
+                <div className="alert alert-info">No Certificates Found!!</div>
               )}
               {!isLoading && (
                 <table

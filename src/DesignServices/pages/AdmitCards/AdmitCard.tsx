@@ -83,7 +83,7 @@ const AdmitCard = () => {
                   <Link
                     to={"/design-services/admit-cards/create"}
                     className="btn btn-primary btn-sm ms-2 align-content-center"
-                    title="Add TimeTable"
+                    title="Add Admit Card"
                   >
                     <Icon name={"add"} className={"svg-icon"} />
                     Add Admit Card
@@ -97,9 +97,7 @@ const AdmitCard = () => {
             <div>
               {isLoading && <Loading />}
               {!isLoading && admitCardList.length === 0 && (
-                <div className="alert alert-info">
-                  No Academic Sessions Found
-                </div>
+                <div className="alert alert-info">No Admit Card found!!</div>
               )}
               {!isLoading && (
                 <table
@@ -110,7 +108,7 @@ const AdmitCard = () => {
                   <thead>
                     <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                       <th> #</th>
-                      <th className="min-w-225px">Session Name</th>
+                      <th className="min-w-225px">Admit Card Name</th>
                       <th className="min-w-225px">Cards per Page</th>
                       <th className="min-w-225px">Background</th>
                       <th>Signers</th>
