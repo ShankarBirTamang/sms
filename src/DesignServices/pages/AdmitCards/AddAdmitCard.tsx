@@ -21,12 +21,12 @@ const AddAdmitCard = () => {
     admitCard,
     updateAdmitCard,
   } = useAdmitCard({});
-  const methods = useForm<AdmitCardInterface | GetAdmitCardInterface>({
+  const methods = useForm<AdmitCardInterface>({
     defaultValues: {
       name: "",
       html: "",
-      page_size: "",
-      no_of_admit_card: "",
+      size: "",
+      cards_per_page: "",
       signers: [{ title: "", signature_id: "" }],
     },
     resolver: zodResolver(admitCardSchema),
@@ -55,8 +55,9 @@ const AddAdmitCard = () => {
     if (isEditMode && admitCard) {
       reset({
         name: admitCard.name,
-        page_size: admitCard.page_size,
-        no_of_admit_card: admitCard.no_of_admit_card,
+        size: admitCard.size,
+        background: admitCard.background,
+        cards_per_page: admitCard.cards_per_page,
         signers: admitCard.signers.map((signer: any) => ({
           title: signer.title,
           signature_id: signer.id,
@@ -80,13 +81,14 @@ const AddAdmitCard = () => {
         await updateAdmitCard(updatedData);
       } else {
         await saveAdmitCard(data);
-        reset({
-          name: "",
-          html: "",
-          page_size: "",
-          no_of_admit_card: "",
-          signers: [{ title: "", signature_id: "" }],
-        });
+        // reset({
+        //   name: "",
+        //   html: "",
+        //   size: "",
+        //   background:'',
+        //   cards_per_page: "",
+        //   signers: [{ title: "", signature_id: "" }],
+        // });
         setCode("<h1>Hello World</h1>");
       }
     } catch (error) {
@@ -127,16 +129,16 @@ const AddAdmitCard = () => {
               <span className="text-danger">{errors.name?.message}</span>
             </div>
             <div className="mb-4 col-md-3">
-              <label htmlFor="page_size" className="required form-label">
+              <label htmlFor="size" className="required form-label">
                 Size of Page
               </label>
               <Controller
-                name="page_size"
+                name="size"
                 control={control}
                 render={({ field }) => (
                   <select
                     {...field}
-                    id="page_size"
+                    id="size"
                     className="form-select form-select-solid"
                   >
                     <option value="" hidden>
@@ -146,19 +148,19 @@ const AddAdmitCard = () => {
                   </select>
                 )}
               />
-              <span className="text-danger">{errors.page_size?.message}</span>
+              <span className="text-danger">{errors.size?.message}</span>
             </div>
             <div className="mb-4 col-md-3">
-              <label htmlFor="page_size" className="required form-label">
+              <label htmlFor="size" className="required form-label">
                 No of Admit Card per Page
               </label>
               <Controller
-                name="no_of_admit_card"
+                name="cards_per_page"
                 control={control}
                 render={({ field }) => (
                   <select
                     {...field}
-                    id="no_of_admit_card"
+                    id="cards_per_page"
                     className="form-select form-select-solid"
                   >
                     <option value="" hidden>
@@ -172,7 +174,7 @@ const AddAdmitCard = () => {
                 )}
               />
               <span className="text-danger">
-                {errors.no_of_admit_card?.message}
+                {errors.cards_per_page?.message}
               </span>
             </div>
           </div>
@@ -192,7 +194,7 @@ const AddAdmitCard = () => {
                 iframeHeight={297}
                 iframeWidth={210}
                 orientation="portrait"
-                wantBackground={false}
+                wantBackground={true}
                 scale={0.7}
                 code={code}
               />
@@ -206,7 +208,11 @@ const AddAdmitCard = () => {
                 className="btn btn-info"
                 disabled={isLoadingSubmit}
               >
-                {isEditMode ? "Update" : "Submit"}
+                {isLoadingSubmit
+                  ? "........"
+                  : isEditMode
+                  ? "Update"
+                  : "Submit"}
               </button>
             </div>
           </div>

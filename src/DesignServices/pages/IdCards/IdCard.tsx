@@ -132,7 +132,7 @@ const IdCard = () => {
                         <td>{idCard.id_card_type.name}</td>
                         <td>
                           <img
-                            style={{ width: "8rem", height: "8rem" }}
+                            style={{ height: "10rem", width: "auto" }}
                             src={idCard.background}
                           ></img>
                         </td>

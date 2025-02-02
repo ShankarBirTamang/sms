@@ -129,7 +129,12 @@ const Certificate = () => {
                             (itemsPerPage ?? 0)}
                         </td>
                         <td className="sorting_1">{certificate.name}</td>
-                        <td></td>
+                        <td>
+                          <img
+                            style={{ width: "auto", height: "10rem" }}
+                            src={certificate.background}
+                          ></img>
+                        </td>
                         <td>
                           {certificate.signers.map((signer, index) => (
                             <span

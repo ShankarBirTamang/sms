@@ -111,7 +111,8 @@ const AdmitCard = () => {
                     <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                       <th> #</th>
                       <th className="min-w-225px">Session Name</th>
-                      <th className="min-w-225px">HTML</th>
+                      <th className="min-w-225px">Cards per Page</th>
+                      <th className="min-w-225px">Background</th>
                       <th>Signers</th>
                       <th className="text-end">Actions</th>
                     </tr>
@@ -126,17 +127,12 @@ const AdmitCard = () => {
                             (itemsPerPage ?? 0)}
                         </td>
                         <td className="sorting_1">{admitCard.name}</td>
-                        <td
-                          style={{
-                            tableLayout: "fixed",
-                            wordWrap: "break-word",
-                          }}
-                        >
-                          <div
-                            dangerouslySetInnerHTML={{
-                              __html: admitCard.html,
-                            }}
-                          />
+                        <td>{admitCard.cards_per_page}</td>
+                        <td>
+                          <img
+                            style={{ width: "auto", height: "10rem" }}
+                            src={admitCard.background}
+                          ></img>
                         </td>
                         <td>
                           {admitCard.signers.map((signer) => (
