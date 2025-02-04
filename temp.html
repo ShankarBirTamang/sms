@@ -1,25 +1,108 @@
-<div wire:id="bodnjvZjrW8sDx1rjkLq" className="row">
-  <div className="col-12">
-    <div className="fv-row mb-7">
-      <label className="required">Allow Employee to Login ? </label>
-      <label
-        ><input
-          type="radio"
-          value="true"
-          wire:model.live="addUser"
-          name="addUser"
-        />
-        Yes</label
-      >
-      <label
-        ><input
-          type="radio"
-          value="false"
-          wire:model.live="addUser"
-          name="addUser"
-        />
-        No</label
-      >
+<div className="card mt-5">
+  <div className="card-header pt-6">
+    <div className="card-title w-100 justify-content-between">
+      <h2>Student Records</h2>
     </div>
+    <hr />
+  </div>
+  <div className="card-body">
+    <div className="row">
+      <div
+        className="col-12"
+        wire:target="sectionId"
+        wire:loading.className="d-none"
+      >
+        <table
+          className="table align-middle table-row-dashed fs-6 gy-5 table-hover"
+          id="table_sessions"
+        >
+          <thead>
+            <tr
+              className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0"
+            >
+              <th className="min-w-125px">Name</th>
+              <th className="min-w-125px">Chooseable Subjects</th>
+            </tr>
+          </thead>
+          <tbody className="text-gray-600 fw-bold">
+            <tr>
+              <td className="d-flex align-items-center">
+                <div
+                  className="symbol symbol-circle symbol-50px overflow-hidden me-3"
+                >
+                  <a href="https://sms.aanshtech.com/sms/students/2118">
+                    <div className="symbol-label">
+                      <img
+                        src="https://sms.aanshtech.com/storage/1940/2118.webp"
+                        alt="YAMUNA  JOSHI"
+                        className="w-100"
+                      />
+                    </div>
+                  </a>
+                </div>
+                <div className="d-flex flex-column">
+                  <a
+                    href="https://sms.aanshtech.com/sms/students/2118"
+                    className="text-gray-800 text-hover-primary mb-1"
+                    >YAMUNA JOSHI
+                  </a>
+                  <span> Grade 12 (SA1) | Roll:1 || Biology Mathematics </span>
+                </div>
+              </td>
+
+              <td>
+                <div className="d-flex mt-3" style="gap: 15px">
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      value="137"
+                      wire:model.live="students.0.subject_choice"
+                      id="2118_137"
+                    />
+                    <label className="form-check-label" for="2118_137">
+                      Nepali
+                    </label>
+                  </div>
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      value="151"
+                      wire:model.live="students.0.subject_choice"
+                      id="2118_151"
+                    />
+                    <label className="form-check-label" for="2118_151">
+                      Mathematics
+                    </label>
+                  </div>
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      value="150"
+                      wire:model.live="students.0.subject_choice"
+                      id="2118_150"
+                    />
+                    <label className="form-check-label" for="2118_150">
+                      Biology
+                    </label>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div className="card-footer">
+    <button
+      className="btn btn-primary btn-submit"
+      type="button"
+      wire:click="submit"
+    >
+      Save
+    </button>
   </div>
 </div>

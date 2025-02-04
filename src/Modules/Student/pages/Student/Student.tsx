@@ -209,7 +209,7 @@ const Students = () => {
                         </td>
                         <td>{student.gender}</td>
                         <td>{student.contact}</td>
-                        <td>{student.address}</td>
+                        <td>{student.current_address?.full_address}</td>
 
                         <td className="text-end">
                           <div

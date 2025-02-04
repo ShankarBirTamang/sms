@@ -394,11 +394,7 @@ const AcademicSession = () => {
                     </div>
                   )}
                   {!isLoading && (
-                    <table
-                      className="table align-middle table-row-dashed fs-6 gy-1 dataTable no-footer"
-                      id="table_sessions"
-                      aria-describedby="table_sessions_info"
-                    >
+                    <table className="table align-middle table-row-dashed fs-6 gy-1 dataTable no-footer">
                       <thead>
                         <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                           <th className="w-30">SN.</th>

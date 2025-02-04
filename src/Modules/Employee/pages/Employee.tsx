@@ -12,8 +12,8 @@ const Employee = () => {
   useDocumentTitle("All Employees");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
-  const [searchTerm, setSearchTerm] = useState(""); // New state for search term
-  const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const { employees, isLoading, pagination, edgeLinks } = useEmployee({
     search: debouncedSearchTerm,
     currentPage,
@@ -26,7 +26,6 @@ const Employee = () => {
     navigate("/employees/create");
   };
 
-  // header functions
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -38,7 +37,7 @@ const Employee = () => {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1); // Reset to the first page on new search
+    setCurrentPage(1);
   };
 
   const [imageLoadStates, setImageLoadStates] = useState<
@@ -48,14 +47,14 @@ const Employee = () => {
   const handleImageLoad = (id: number) => {
     setImageLoadStates((prevStates) => ({
       ...prevStates,
-      [id]: false, // Mark the image as loaded
+      [id]: false,
     }));
   };
 
   const handleImageLoading = (id: number) => {
     setImageLoadStates((prevStates) => ({
       ...prevStates,
-      [id]: true, // Mark the image as loading
+      [id]: true,
     }));
   };
 
@@ -143,7 +142,7 @@ const Employee = () => {
                 <table className="table align-middle table-row-dashed fs-6 gy-2">
                   <thead>
                     <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
-                      <th className="">S.N.</th>
+                      <th className="w-40px">S.N.</th>
 
                       <th className="w-300px">Name</th>
                       <th className="w-125px">Gender</th>
@@ -162,28 +161,14 @@ const Employee = () => {
                           <div className="d-flex align-items-center">
                             {employee.photo ? (
                               <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
-                                <a href="#">
+                                <a
+                                  href={`/employees/details/${employee.id}/overview`}
+                                >
                                   <div className="symbol-label">
-                                    {imageLoadStates[employee.id] ? (
-                                      <div className="loading-spinner" />
-                                    ) : null}
                                     <img
                                       src={employee.photo}
                                       alt={employee.full_name}
-                                      className={`w-100 ${
-                                        imageLoadStates[employee.id]
-                                          ? "d-none"
-                                          : ""
-                                      }`}
-                                      onLoad={() =>
-                                        handleImageLoad(employee.id)
-                                      }
-                                      onError={() =>
-                                        handleImageLoad(employee.id)
-                                      } // Handle errors gracefully
-                                      onLoadStart={() =>
-                                        handleImageLoading(employee.id)
-                                      }
+                                      className={`w-100`}
                                     />
                                   </div>
                                 </a>
@@ -221,7 +206,7 @@ const Employee = () => {
                         </td>
                         <td>{employee.gender}</td>
                         <td>{employee.contact}</td>
-                        <td>{employee.address}</td>
+                        <td>{employee.current_address?.full_address}</td>
 
                         <td className="text-end">
                           <div

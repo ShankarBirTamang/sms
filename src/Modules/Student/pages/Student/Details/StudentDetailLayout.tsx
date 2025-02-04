@@ -62,7 +62,7 @@ const StudentDetailLayout = () => {
                     </span>
                     <br />
                     <span className="badge badge-light-info mt-2 badge-lg">
-                      Roll No: 1
+                      Roll No: {student.roll_no}
                     </span>
                   </div>
                 </div>

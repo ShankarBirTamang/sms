@@ -343,7 +343,9 @@ const EditEmployee = () => {
                               className={`form-control ${
                                 errors.type && "is-invalid"
                               } form-control mb-3 mb-lg-0`}
-                              defaultValue={employee.employee_type?.id ?? ""}
+                              defaultValue={
+                                employee.employee_type.id.toString() ?? ""
+                              }
                             >
                               <option value="" hidden disabled>
                                 Select Emp. Type

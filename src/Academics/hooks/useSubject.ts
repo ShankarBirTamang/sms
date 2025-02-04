@@ -38,7 +38,7 @@ const useSubject = ({
     useState<PaginationProps["pagination"]>(null);
   const [edgeLinks, setEdgeLinks] = useState<PaginationProps["edgeLinks"]>();
 
-  const [subjects, setSubjects] = useState<UpdateSubjectInterface[]>([]);
+  const [subjects, setSubjects] = useState<SubjectInterface[]>([]);
   const [statusChanged, setStatusChanged] = useState(false);
 
   const fetchData = useCallback(async () => {
@@ -57,6 +57,8 @@ const useSubject = ({
       const { request } =
         subjectService.getAll<ApiResponseInterface<SubjectInterface>>(params);
       const result = await request;
+      console.log(result);
+
       setSubjects(result.data.data);
       setPagination(result.data.meta);
       setEdgeLinks(result.data.links);

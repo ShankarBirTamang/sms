@@ -25,11 +25,12 @@ export interface EmployeeInterface {
   religion?: string;
   ethnicity: string;
   is_active: boolean;
-  employee_type?: EmployeeTypeInterface;
+  employee_type: EmployeeTypeInterface;
   class?: {
     grade: string;
     section: string;
     faculty: string;
+    full_grade: string;
   };
 }
 

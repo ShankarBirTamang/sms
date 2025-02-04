@@ -45,6 +45,7 @@ export interface StudentInterface {
   guardians?: StudentGuardianInterface[];
   grade?: GradeInterface;
   section?: SectionInterface;
+  subjects?: { id?: number; name?: string }[];
 }
 
 export interface AddStudentInterface {
