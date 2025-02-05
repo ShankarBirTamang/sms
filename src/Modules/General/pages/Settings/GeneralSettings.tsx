@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Email from "./Email";
+import Address from "../../../../General/pages/Address/Address";
 
 interface GroupProps {
   name: string;
@@ -8,13 +9,23 @@ interface GroupProps {
 }
 
 const GeneralSettings = () => {
-  const [tab, setTab] = useState("account-group"); // Set default tab to "account-group"
+  const [tab, setTab] = useState("roles");
 
   const groups: GroupProps[] = [
     {
-      name: "Email",
+      name: "Roles/Permission",
+      slug: "roles",
+      component: <Address />,
+    },
+    {
+      name: "Email Config",
       slug: "email",
       component: <Email />,
+    },
+    {
+      name: "Address",
+      slug: "address",
+      component: <Address />,
     },
   ];
 
@@ -23,7 +34,7 @@ const GeneralSettings = () => {
       <div className="card mb-5 mb-xl-10">
         <div className="card-body pb-0">
           <h2>
-            <strong className="">Account Settings</strong>
+            <strong className="">System Settings</strong>
           </h2>
           <ul className="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-5 fw-bold">
             {groups.map((group, index) => (

@@ -148,6 +148,16 @@ const menuItems: MenuItem[] = [
       },
     ],
   },
+  {
+    title: "System",
+    route: "/system",
+    submenu: [
+      {
+        title: "Settings",
+        route: "/general/system/settings",
+      },
+    ],
+  },
 ];
 
 const Settings = () => {

@@ -14,8 +14,8 @@ interface AddExamProps {
 }
 
 const AddExam = ({ onSave }: AddExamProps) => {
-  const [hasSymbol, setHasSymbol] = useState<boolean>(true);
-  const [hasRegistration, setHasRegistration] = useState<boolean>(true);
+  const [hasSymbol, setHasSymbol] = useState<boolean>(false);
+  const [hasRegistration, setHasRegistration] = useState<boolean>(false);
   const [isMerged, setIsMerged] = useState<boolean>(false);
   const [admitCardDesign, setAdmitCardDesign] = useState<string>("general");
   const [markSheetDesign, setMarkSheetDesign] =
@@ -67,9 +67,7 @@ const AddExam = ({ onSave }: AddExamProps) => {
     grades: z
       .array(z.number())
       .min(1, { message: "At least one grade must be selected." }),
-    merged_exams: z
-      .array(z.number())
-      .min(1, { message: "At least one exam must be selected." }),
+    merged_exams: z.array(z.number()).optional(),
   });
 
   type ExamFormData = z.infer<typeof schema>;
@@ -193,7 +191,7 @@ const AddExam = ({ onSave }: AddExamProps) => {
       )
     );
     console.log("Form errors: ", errors);
-  }, [academicSessions, errors]);
+  }, [academicSessions, errors, selectedSessionId]);
 
   const handleAcademicSessionChange = (
     selectedOption: { value: number; label: string } | null
@@ -280,7 +278,7 @@ const AddExam = ({ onSave }: AddExamProps) => {
               <div className="col-12">
                 <input
                   {...register("name")}
-                  className="form-control form-control-solid required"
+                  className="form-control required"
                   type="text"
                 />
                 {errors.name && (
@@ -388,7 +386,7 @@ const AddExam = ({ onSave }: AddExamProps) => {
               <hr />
             </div>
 
-            <div className="col-12 mb-7">
+            <div className="col-6 mb-7">
               <DatePicker
                 key={renderKey}
                 onDateChange={(date) => handleDateChange(date, "startDate")}
@@ -403,7 +401,7 @@ const AddExam = ({ onSave }: AddExamProps) => {
               {errors.start_date && <p>{errors.start_date.message}</p>}
             </div>
 
-            <div className="col-12 mb-7">
+            <div className="col-6 mb-7">
               <DatePicker
                 key={renderKey}
                 onDateChange={(date) => handleDateChange(date, "endDate")}
@@ -415,7 +413,7 @@ const AddExam = ({ onSave }: AddExamProps) => {
               />
             </div>
 
-            <div className="col-12 mb-5">
+            <div className="col-6 mb-5">
               <DatePicker
                 key={renderKey}
                 onDateChange={(date) => handleDateChange(date, "resultDate")}
@@ -624,9 +622,9 @@ const AddExam = ({ onSave }: AddExamProps) => {
                 </label>
                 <div className="row g-3">
                   <div className="col-12">
-                    <div className="row row-cols-1 row-cols-md-2 g-3">
+                    <div className="row">
                       {examinations.map((exam) => (
-                        <div key={exam.id} className="mb-3">
+                        <div key={exam.id} className="col-12 mb-3">
                           <div className="form-check ">
                             <input
                               className={`form-check-input gradeCheckbox-${exam.id}`}

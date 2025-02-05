@@ -7,18 +7,18 @@ import Grade from "../Academics/pages/Grade/Grade";
 import GradeSettings from "./pages/GradeSettings/GradeSettings";
 import TimeTable from "./pages/Routine/TimeTable/TimeTable";
 import AddTimeTable from "./pages/Routine/TimeTable/AddTimeTable";
-
-interface RouteConfig {
-  path: string;
-  title: string;
-  element: JSX.Element;
-}
 import AcademicSessionDetail from "./pages/AcademicSession/AcademicSessionDetail";
 import Subject from "./pages/Grade/Subject/Subject";
 import ViewTimeTable from "./pages/Routine/TimeTable/ViewTimeTable";
 import EditTimeTable from "./pages/Routine/TimeTable/EditTimeTable";
 import Student from "./pages/Grade/Students/Student";
 import SubjectStudent from "./pages/Grade/Subject/SubjectStudent/SubjectStudent";
+
+interface RouteConfig {
+  path: string;
+  title: string;
+  element: JSX.Element;
+}
 
 const routes: RouteConfig[] = [
   {
