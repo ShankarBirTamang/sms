@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
-import SessionGradePicker from "../../../../Academics/componenet/SessionGradePicker/SessionGradePicker";
 import DatePicker from "../../../../components/DatePicker/DatePicker";
 import AddressSelector from "../../../../components/AddressSelector/AddressSelector";
 import ImagePicker from "../../../../assets/ImagePicker/ImagePicker";
@@ -13,6 +12,7 @@ import {
 import useStudent from "../../hooks/useStudent";
 import ToastWithLink from "../../../../components/ToastWithLink/ToastWithLink";
 import useHelpers from "../../../../hooks/useHelpers";
+import SessionGradePicker from "../../../Academics/componenet/SessionGradePicker/SessionGradePicker";
 
 const StudentSchema = z.object({
   firstName: z.string().min(1, "First Name is required"),

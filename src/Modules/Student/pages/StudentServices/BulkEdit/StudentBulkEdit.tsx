@@ -2,11 +2,11 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import SessionGradePicker from "../../../../../Academics/componenet/SessionGradePicker/SessionGradePicker";
-import useGrade from "../../../../../Academics/hooks/useGrade";
 import { StudentInterface } from "../../../services/studentService";
 import "./bulkEdit.css";
 import DatePicker from "../../../../../components/DatePicker/DatePicker";
+import useGrade from "../../../../Academics/hooks/useGrade";
+import SessionGradePicker from "../../../../Academics/componenet/SessionGradePicker/SessionGradePicker";
 
 const StudentBulkEdit: React.FC = () => {
   const sliderRef = useRef<HTMLDivElement | null>(null);
@@ -142,7 +142,7 @@ const StudentBulkEdit: React.FC = () => {
           dob_en: student.dob_en ?? "",
           dob_np: student.dob_np ?? "",
           contact: student.contact ?? "",
-          address: student.address ?? "",
+          address: student.current_address?.full_address ?? "",
           email: student.email ?? "",
           gender: student.gender ?? "",
           blood_group: student.blood_group ?? null,

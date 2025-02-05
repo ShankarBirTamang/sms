@@ -5,17 +5,14 @@ import toast from "react-hot-toast";
 import useDocumentTitle from "../../../../../hooks/useDocumentTitle";
 import useDebounce from "../../../../../hooks/useDebounce";
 import useFeeStructure from "../../../hooks/useFeeStructure";
-import useGrade from "../../../../../Academics/hooks/useGrade";
 import Pagination from "../../../../../components/Pagination/Pagination";
 import useItem from "../../../hooks/useItem";
 import { StructureInterface } from "../../../services/feeStructureService";
 import AddFeeStructure from "./AddFeeStructure";
 import DrawerModal from "../../../../../components/DrawerModal/DrawerModal";
-import {
-  GradeInterface,
-  UpdateGradeInterface,
-} from "../../../../../Academics/services/gradeService";
+
 import { formatMoneyToNepali } from "../../../../../helpers/formatMoney";
+import useGrade from "../../../../Academics/hooks/useGrade";
 
 const FeeStructure = () => {
   const [currentPage, setCurrentPage] = useState(1);

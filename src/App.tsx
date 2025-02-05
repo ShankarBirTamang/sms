@@ -5,7 +5,6 @@ import Layout from "./layout/Layout";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import ProtectedRoute from "./components/Icon/ProtectedRoute";
 import Login from "./pages/Authentication/Login";
-import AcademicRoute from "./Academics/AcademicRoute";
 import { PermissionProvider } from "./context/permissionContext";
 import NotFound from "./pages/error/NotFound";
 import StudentRoute from "./Modules/Student/StudentRoute";
@@ -20,6 +19,7 @@ import Address from "./General/pages/Address/Address";
 import ImportRoute from "./Modules/Import/ImportRoute";
 import ExportRoute from "./Modules/Export/ExportRoute";
 import { RoleProvider } from "./context/roleContext";
+import AcademicRoute from "./Modules/Academics/AcademicRoute";
 
 const App = () => {
   return (
