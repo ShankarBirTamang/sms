@@ -43,10 +43,10 @@ const schema = z.object({
 
 const Details = () => {
   const [loading, setLoading] = useState(false);
+  const [previewLogoBackend, setPreviewLogoBackend] = useState<string>(""); // Set to default logo URL from Api
+  const [previewCoverBackend, setPreviewCoverBackend] = useState<string>(""); // Set to default cover URL from Api
   const [previewLogo, setPreviewLogo] = useState<string>(""); // Set to default logo URL
   const [previewCover, setPreviewCover] = useState<string>(""); // Set to default cover URL
-  const [previewCoverBackend, setPreviewCoverBackend] = useState<string>(""); // Set to default cover URL
-  const [previewLogoBackend, setPreviewLogoBackend] = useState<string>(""); // Set to default cover URL
   const [instituteDetails, setInstituteDetails] =
     useState<null | DetailsInterface>(null);
   const { convertFileToBase64 } = useHelpers();
@@ -99,6 +99,12 @@ const Details = () => {
           logo: details?.logo || "",
           cover: details?.cover || "",
         });
+        setPreviewLogoBackend(
+          typeof details?.logo === "string" ? details.logo : ""
+        );
+        setPreviewCoverBackend(
+          typeof details?.cover === "string" ? details.cover : ""
+        );
       } catch (error) {
         console.error("Error fetching Institute Details:", error);
       }
@@ -145,11 +151,6 @@ const Details = () => {
       } catch (error) {
         console.log("Error uploading logo", error);
       }
-    } else if (typeof watchLogo === "string") {
-      console.log("string watch logo", watchLogo);
-      setPreviewLogoBackend(watchLogo);
-    } else {
-      setPreviewLogo("");
     }
   }
 
@@ -161,13 +162,10 @@ const Details = () => {
         const coverBase64 = await convertFileToBase64(file);
         setPreviewCover(coverBase64);
         setValue("cover", coverBase64);
+        console.log("inside");
       } catch (error) {
         console.log("Error uploading cover", error);
       }
-    } else if (typeof watchCover === "string") {
-      setPreviewCoverBackend(watchCover);
-    } else {
-      setPreviewCover("");
     }
   }
 
@@ -181,12 +179,14 @@ const Details = () => {
 
   const handleCancelLogo = () => {
     setPreviewLogo(""); // Reset to default logo
+    setPreviewLogoBackend("");
     setValue("logo", "");
     console.log("logo cancelled");
   };
 
   const handleCancelCover = () => {
     setPreviewCover("");
+    setPreviewCoverBackend("");
     setValue("cover", "");
     console.log("cover cancelled");
   };
@@ -220,22 +220,22 @@ const Details = () => {
       <div className="card mb-5 mb-xl-10">
         <div className="card-body pt-9 pb-0">
           <div
-            className="d-flex flex-wrap flex-sm-nowrap mb-3 align-items-center"
+            className="d-flex flex-wrap flex-sm-nowrap mb-3 align-items-center border border-rounded"
             style={{
-              backgroundImage: `url(${previewCoverBackend})`,
               backgroundRepeat: "no-repeat",
-              // backgroundSize: "100% 100%",
               backgroundPosition: "center",
+              backgroundImage: `url(${previewCoverBackend})`,
             }}
           >
             <div className="me-7 mb-4">
               <div className="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative">
                 <img
-                  src={previewLogoBackend ?? defaultLogo}
+                  src={previewLogoBackend ? previewLogoBackend : defaultLogo}
                   alt="Institute Logo"
                 />
               </div>
             </div>
+
             <div className="flex-grow-1">
               <div className="d-flex justify-content-between align-items-start flex-wrap mb-2">
                 <div className="d-flex flex-column">
@@ -254,7 +254,7 @@ const Details = () => {
           <ul className="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-5 fw-bold">
             <li className="nav-item mt-2">
               <a
-                className="nav-link text-active-primary ms-0 me-10 py-5 active"
+                className="nav-link text-active-primary ms-0 me-10 py-1 active"
                 href=""
               >
                 Profile
@@ -297,7 +297,9 @@ const Details = () => {
                     <div
                       className="image-input-wrapper w-125px h-125px"
                       style={{
-                        backgroundImage: `url(${previewLogo})`,
+                        backgroundImage: `url(${
+                          previewLogo ? previewLogo : previewLogoBackend
+                        })`,
                       }}
                     ></div>
                     <label
@@ -362,7 +364,9 @@ const Details = () => {
                     <div
                       className="image-input-wrapper w-125px h-125px"
                       style={{
-                        backgroundImage: `url(${previewCover})`,
+                        backgroundImage: `url(${
+                          previewCover ? previewCover : previewCoverBackend
+                        })`,
                       }}
                     ></div>
                     <label
@@ -556,7 +560,15 @@ const Details = () => {
                   <Controller
                     name="short_desc"
                     control={control}
-                    render={({ field }) => <div {...field} ref={quillRef1} />}
+                    render={({ field }) => (
+                      <div
+                        {...field}
+                        ref={quillRef1}
+                        style={{
+                          height: "8rem",
+                        }}
+                      />
+                    )}
                   />
                   {
                     <div className="fv-plugins-message-container mt-2 text-danger">
@@ -574,7 +586,15 @@ const Details = () => {
                   <Controller
                     name="long_desc"
                     control={control}
-                    render={({ field }) => <div {...field} ref={quillRef2} />}
+                    render={({ field }) => (
+                      <div
+                        {...field}
+                        ref={quillRef2}
+                        style={{
+                          height: "12rem",
+                        }}
+                      />
+                    )}
                   />
                   {
                     <div className="fv-plugins-message-container mt-2 text-danger">
@@ -592,7 +612,7 @@ const Details = () => {
                     className="btn btn-primary"
                     disabled={loading}
                   >
-                    {loading ? "......." : "Save Changes"}
+                    {loading ? "............" : "Save Changes"}
                   </button>
                 </div>
               </div>
