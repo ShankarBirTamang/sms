@@ -12,6 +12,7 @@ import {
 } from "../../services/studentService";
 import useStudent from "../../hooks/useStudent";
 import ToastWithLink from "../../../../components/ToastWithLink/ToastWithLink";
+import useHelpers from "../../../../hooks/useHelpers";
 
 const StudentSchema = z.object({
   firstName: z.string().min(1, "First Name is required"),
@@ -42,7 +43,7 @@ const StudentSchema = z.object({
     provinceId: z.number().optional(),
     districtId: z.number().optional(),
     municipalityId: z.number().optional(),
-    ward: z.number().optional(),
+    ward: z.string().optional(),
     street: z.string().optional(),
   }),
   currentAddress: z.object({
@@ -50,7 +51,7 @@ const StudentSchema = z.object({
     provinceId: z.number().optional(),
     districtId: z.number().optional(),
     municipalityId: z.number().optional(),
-    ward: z.number().optional(),
+    ward: z.string().optional(),
     street: z.string().optional(),
   }),
   gender: z.string().optional(),
@@ -63,11 +64,12 @@ const StudentSchema = z.object({
 });
 type FormData = z.infer<typeof StudentSchema>;
 
-const StudentAddEdit = () => {
+const StudentCreate = () => {
   const [renderKey, setRenderKey] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [lastStudent, setLastStudent] = useState<StudentInterface>();
+  const { convertFileToBase64 } = useHelpers();
   const { saveStudent } = useStudent({});
   const {
     register,
@@ -96,13 +98,13 @@ const StudentAddEdit = () => {
     province: number | null;
     district: number | null;
     municipality: number | null;
-    ward: number | null;
+    ward: string | null;
   }) => {
     setValue("currentAddress.countryId", selectedValues.country || 0);
     setValue("currentAddress.provinceId", selectedValues.province || 0);
     setValue("currentAddress.districtId", selectedValues.district || 0);
     setValue("currentAddress.municipalityId", selectedValues.municipality || 0);
-    setValue("currentAddress.ward", selectedValues.ward || 0);
+    setValue("currentAddress.ward", selectedValues.ward || "");
   };
 
   const handlePermanentAddressValuesChange = (selectedValues: {
@@ -110,7 +112,7 @@ const StudentAddEdit = () => {
     province: number | null;
     district: number | null;
     municipality: number | null;
-    ward: number | null;
+    ward: string | null;
   }) => {
     setValue("permanentAddress.countryId", selectedValues.country || 0);
     setValue("permanentAddress.provinceId", selectedValues.province || 0);
@@ -119,7 +121,7 @@ const StudentAddEdit = () => {
       "permanentAddress.municipalityId",
       selectedValues.municipality || 0
     );
-    setValue("permanentAddress.ward", selectedValues.ward || 0);
+    setValue("permanentAddress.ward", selectedValues.ward || "");
   };
 
   const handleDateChange = (
@@ -133,6 +135,7 @@ const StudentAddEdit = () => {
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     setIsSuccess(false);
+    const base64File = await convertFileToBase64(data.photo);
     const saveData: AddStudentInterface = {
       first_name: data.firstName,
       middle_name: data.middleName,
@@ -145,14 +148,13 @@ const StudentAddEdit = () => {
       dob_en: data.dob_en,
       don_np: data.dob_np,
       contact: data.contact,
-      email: data.email,
+      email: data.email ?? undefined,
       gender: data.gender,
       blood_group: data.bloodGroup,
       nationality: data.nationality,
       mother_tongue: data.motherTongue,
       religion: data.religion,
       ethnicity: data.ethnicity,
-      photo: data.photo as File,
       permanent_country_id: data.permanentAddress.countryId,
       permanent_province_id: data.permanentAddress.provinceId,
       permanent_district_id: data.permanentAddress.districtId,
@@ -166,7 +168,10 @@ const StudentAddEdit = () => {
       current_ward_no: data.currentAddress.ward,
       current_street_address: data.currentAddress.street,
     };
-    const lastStudent: StudentInterface = await saveStudent(saveData);
+    const lastStudent: StudentInterface = await saveStudent({
+      ...saveData,
+      photo: base64File,
+    });
     setIsSubmitting(false);
     setIsSuccess(true);
     console.log("Last Student", lastStudent);
@@ -641,4 +646,4 @@ const StudentAddEdit = () => {
   );
 };
 
-export default StudentAddEdit;
+export default StudentCreate;

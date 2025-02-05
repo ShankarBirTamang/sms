@@ -34,7 +34,8 @@ const Student = () => {
     try {
       const grade = await getGrade(Number(gradeId));
       setCurrentGrade(grade);
-      if (grade && grade.sections) {
+
+      if (grade?.sections) {
         const firstSection = Object.values(grade.sections)?.[0]?.[0];
         setCurrentSection(firstSection);
       } else {
@@ -46,12 +47,15 @@ const Student = () => {
   }, [gradeId, getGrade]);
 
   const fetchStudents = useCallback(async () => {
-    if (currentSection !== undefined) {
+    if (currentSection) {
       try {
+        setIsLoading(true);
         const students = await getSectionStudents(currentSection.id);
         setStudents(students);
       } catch (error) {
         console.error("Error fetching students:", error);
+      } finally {
+        setIsLoading(false);
       }
     }
   }, [currentSection, getSectionStudents]);
@@ -61,25 +65,21 @@ const Student = () => {
   }, [fetchGrade]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-
-      if (currentSection) {
-        await fetchStudents();
-      }
-
-      setIsLoading(students.length === 0);
-    };
-
-    fetchData();
-  }, [currentSection, fetchStudents, students.length]);
+    if (currentSection) {
+      fetchStudents();
+    } else {
+      setStudents([]); // Clear students if no section is selected
+    }
+  }, [currentSection, fetchStudents]);
 
   const handleStudentOverviewNavigate = (studentId: number) => {
     navigate(`/students/details/${studentId}/overview`);
   };
-  const sortedStudents = students.sort(
+
+  const sortedStudents = [...students].sort(
     (a, b) => (Number(a.roll_no) || 0) - (Number(b.roll_no) || 0)
   );
+
   const maleStudents = sortedStudents.filter((student) => {
     return student.gender?.toLowerCase() === "male";
   });
@@ -245,7 +245,7 @@ const Student = () => {
                   <table className="table align-middle table-row-dashed fs-6 gy-2">
                     <thead>
                       <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
-                        <th className="">S.N.</th>
+                        <th className="w-30px">S.N.</th>
 
                         <th className="w-300px">Name</th>
                         <th className="w-125px">Gender</th>
@@ -277,7 +277,6 @@ const Student = () => {
                                   {student.full_name}
                                 </a>
                                 <span>
-                                  {" "}
                                   {student.grade?.name} (
                                   {student.section?.faculty.name !== "General"
                                     ? `: ${student.section?.faculty.name}`
@@ -291,7 +290,7 @@ const Student = () => {
                           </td>
                           <td>{student.gender}</td>
                           <td>{student.contact}</td>
-                          <td>{student.address}</td>
+                          <td>{student.current_address?.full_address}</td>
 
                           <td className="text-end">
                             <div

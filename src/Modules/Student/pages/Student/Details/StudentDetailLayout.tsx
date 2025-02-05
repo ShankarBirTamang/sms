@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useStudent from "../../../hooks/useStudent";
 import { StudentInterface } from "../../../services/studentService";
 import Loading from "../../../../../components/Loading/Loading";
@@ -11,6 +11,7 @@ const StudentDetailLayout = () => {
   const { studentId } = useParams<{ studentId: string }>();
   const { getSingleStudent, isLoading } = useStudent({});
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
   const fetchStudent = useCallback(async () => {
     try {
       const data = await getSingleStudent(Number(studentId));
@@ -31,6 +32,10 @@ const StudentDetailLayout = () => {
 
   if (isLoading) return <Loading />;
   if (error) return <div>{error}</div>;
+
+  const handleEditStudent = (student: StudentInterface) => {
+    navigate(`${student.id}/edit`);
+  };
   return (
     <>
       {!student && <Loading />}
@@ -57,7 +62,7 @@ const StudentDetailLayout = () => {
                     </span>
                     <br />
                     <span className="badge badge-light-info mt-2 badge-lg">
-                      Roll No: 1
+                      Roll No: {student.roll_no}
                     </span>
                   </div>
                 </div>
@@ -93,12 +98,13 @@ const StudentDetailLayout = () => {
                       data-bs-trigger="hover"
                       data-kt-initialized="1"
                     >
-                      <a
-                        href="https://sms.aanshtech.com/sms/students/506/edit"
+                      <button
+                        type="button"
+                        onClick={() => handleEditStudent(student)}
                         className="btn btn-sm btn-light-primary"
                       >
                         Edit
-                      </a>
+                      </button>
                     </span>
                     <span
                       data-bs-toggle="tooltip"
@@ -171,7 +177,11 @@ const StudentDetailLayout = () => {
                     </div>
                     <div className="col-md-12 pb-5 fs-6">
                       <div className="fw-bold mt-5">Address</div>
-                      <div className="text-gray-600">{student.address}</div>
+                      <div className="text-gray-600">
+                        Permanent : {student.permanent_address?.full_address}
+                        <br />
+                        Current: {student.current_address?.full_address}
+                      </div>
                     </div>
                   </div>
                   <div className="pb-5 fs-6"></div>

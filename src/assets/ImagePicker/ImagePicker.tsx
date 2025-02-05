@@ -11,7 +11,7 @@ interface ImagePickerProps {
       >
     | undefined;
   onChange: (file: File | null) => void;
-  value: File | null;
+  value: File | string | null; // Allow value to be a File, URL string, or null
 }
 
 const ImagePicker = ({ errors, onChange, value }: ImagePickerProps) => {
@@ -35,14 +35,20 @@ const ImagePicker = ({ errors, onChange, value }: ImagePickerProps) => {
     setPreview(null);
     onChange(null);
   };
+
   useEffect(() => {
-    if (value) {
+    if (value instanceof File) {
+      // If value is a File object, read it as a Data URL
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result as string);
       };
       reader.readAsDataURL(value);
+    } else if (typeof value === "string") {
+      // If value is a URL string, set it directly as the preview
+      setPreview(value);
     } else {
+      // If value is null, clear the preview
       setPreview(null);
     }
   }, [value]);

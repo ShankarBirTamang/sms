@@ -3,7 +3,7 @@ import { SectionInterface } from "./gradeService";
 import { SubjectTypeInterface } from "./subjectTypeService";
 
 export interface SubjectInterface {
-  id?: number;
+  id: number;
   rank?: number;
   name: string;
   subject_type_id?: number;
@@ -13,7 +13,7 @@ export interface SubjectInterface {
   is_active?: boolean;
   is_chooseable: boolean;
   is_section_specific: boolean;
-  sections?: string[];
+  sections?: SectionInterface[];
   teachers?: {
     id: number;
     name: string;
@@ -39,7 +39,6 @@ export interface UpdateSubjectInterface {
   is_active?: boolean;
   is_chooseable: boolean;
   is_section_specific: boolean;
-  sections?: SectionInterface[];
   teachers?: {
     id: number;
     name: string;

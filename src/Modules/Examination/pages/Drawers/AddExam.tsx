@@ -1,11 +1,13 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import CustomSelect from "../../../components/CustomSelect/CustomSelect";
-import Loading from "../../../components/Loading/Loading";
-import DatePicker from "../../../components/DatePicker/DatePicker";
-import useAcademicSession from "../../../Academics/hooks/useAcademicSession";
+import CustomSelect from "../../../../components/CustomSelect/CustomSelect";
+import Loading from "../../../../components/Loading/Loading";
+import DatePicker from "../../../../components/DatePicker/DatePicker";
+import useAcademicSession from "../../../../Academics/hooks/useAcademicSession";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import useExam from "../../hooks/useExam";
+import { CreateExamInterface } from "../../services/examSessionService";
 
 interface AddExamProps {
   onSave: () => void;
@@ -15,14 +17,14 @@ const AddExam = ({ onSave }: AddExamProps) => {
   const [hasSymbol, setHasSymbol] = useState<boolean>(true);
   const [hasRegistration, setHasRegistration] = useState<boolean>(true);
   const [isMerged, setIsMerged] = useState<boolean>(false);
-  const [admitCardDesign, setAdmitCardDesign] = useState<string | null>(
-    "general"
-  );
+  const [admitCardDesign, setAdmitCardDesign] = useState<string>("general");
   const [markSheetDesign, setMarkSheetDesign] =
     useState<string>("gradedFormatWithPR");
   const [selectedSessionId, setSelectedSessionId] = useState<number>();
   const [selectedGrades, setSelectedGrades] = useState<number[]>([]);
+  const [selectedExams, setSelectedExams] = useState<number[]>([]);
 
+  // const [isSubmitting, setisSubmitting] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const [renderKey, setRenderKey] = useState("");
   const [startValueAD, setStartValueAD] = useState("");
@@ -35,6 +37,7 @@ const AddExam = ({ onSave }: AddExamProps) => {
   const [resultValueBS, setResultValueBS] = useState("");
 
   const { academicSessions } = useAcademicSession({});
+  const { createExam, examinations } = useExam({});
   const academicSessionOptions = academicSessions
     .filter((session) => session.is_active)
     .map((session) => ({
@@ -44,17 +47,17 @@ const AddExam = ({ onSave }: AddExamProps) => {
 
   const schema = z.object({
     name: z.string().min(1, { message: "Exam name is required" }),
-    useSymbol: z.boolean().default(true),
-    useRegistration: z.boolean().default(true),
-    isMerge: z.boolean().default(false),
+    has_symbol_no: z.boolean().default(true),
+    has_registration_no: z.boolean().default(true),
+    is_merged: z.boolean().default(false),
     start_date: z.string({ message: "Start Date Field is required." }),
     start_date_np: z.string(),
     end_date: z.string({ message: "End Date Field is required." }),
     end_date_np: z.string(),
     result_date: z.string({ message: "Result Date Field is required." }),
     result_date_np: z.string(),
-    admit_card_design: z.string().nullable().default("general"),
-    mark_sheet_design: z.string().default("gradedFormatWithPR"),
+    admit_card_id: z.number().default(1),
+    marksheet_id: z.number().default(1),
     academic_session_id: z.number().refine(
       (id) => {
         return academicSessions.some((session) => session.id === id);
@@ -62,8 +65,11 @@ const AddExam = ({ onSave }: AddExamProps) => {
       { message: "Invalid academic session Id" }
     ),
     grades: z
-      .array(z.object({ id: z.number() }))
+      .array(z.number())
       .min(1, { message: "At least one grade must be selected." }),
+    merged_exams: z
+      .array(z.number())
+      .min(1, { message: "At least one exam must be selected." }),
   });
 
   type ExamFormData = z.infer<typeof schema>;
@@ -74,6 +80,7 @@ const AddExam = ({ onSave }: AddExamProps) => {
     reset,
     formState: { errors },
     setValue,
+    getValues,
   } = useForm<ExamFormData>({ resolver: zodResolver(schema) });
 
   const handleDateChange = (
@@ -102,33 +109,80 @@ const AddExam = ({ onSave }: AddExamProps) => {
   const handleHasSymbolData = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value === "true";
     setHasSymbol(value);
-    setValue("useSymbol", value);
+    setValue("has_symbol_no", value);
   };
   const handleHasRegistrationData = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value === "true";
     setHasRegistration(value);
-    setValue("useRegistration", value);
+    setValue("has_registration_no", value);
   };
   const handleIsMergedData = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value === "true";
     setIsMerged(value);
-    setValue("isMerge", value);
+    setValue("is_merged", value);
   };
   const handleGradeSelection = (gradeId: number) => {
-    if (selectedGrades.includes(gradeId)) {
-      setSelectedGrades(selectedGrades.filter((id) => id !== gradeId)); // Deselect
-    } else {
-      setSelectedGrades([...selectedGrades, gradeId]); // Select
-    }
+    const updatedGrades = selectedGrades.includes(gradeId)
+      ? selectedGrades.filter((id) => id !== gradeId)
+      : [...selectedGrades, gradeId];
+
+    setSelectedGrades(updatedGrades);
+    setValue("grades", updatedGrades);
+  };
+  const handleExamSelection = (examId: number) => {
+    const updatedExams = selectedExams.includes(examId)
+      ? selectedExams.filter((id) => id !== examId)
+      : [...selectedExams, examId];
+
+    setSelectedExams(updatedExams);
+    setValue("merged_exams", updatedExams);
   };
 
-  const handleAdmitCardDesignChange = (value: string | null) => {
+  const handleAdmitCardDesignChange = (value: string) => {
     setAdmitCardDesign(value);
-    setValue("admit_card_design", value);
+    const numericValue =
+      value === "general"
+        ? 1
+        : value === "employee"
+        ? 2
+        : value === "summerSeason"
+        ? 3
+        : 1;
+    setValue("admit_card_id", numericValue);
   };
   const handleMarkSheetDesignChange = (value: string) => {
     setMarkSheetDesign(value);
-    setValue("mark_sheet_design", value);
+    const nValue = value === "gradedFormatWithPR" ? 1 : 1;
+    setValue("marksheet_id", nValue);
+  };
+
+  const handleSelectAll = (sessionId: number, isChecked: boolean) => {
+    const sessionGrades =
+      academicSessions
+        .find((session: { id: number }) => session.id === sessionId)
+        ?.grades?.map((grade) => grade.id) || [];
+
+    if (isChecked) {
+      // Add all grades for the session to the selectedGrades state
+      setSelectedGrades((prevSelectedGrades) =>
+        Array.from(new Set([...prevSelectedGrades, ...sessionGrades]))
+      );
+    } else {
+      // Remove all grades for the session from the selectedGrades state
+      setSelectedGrades((prevSelectedGrades) =>
+        prevSelectedGrades.filter((gradeId) => !sessionGrades.includes(gradeId))
+      );
+    }
+  };
+
+  //For the checked value in Select All checkbox
+  const isAllGradesSelected = (sessionId: number) => {
+    const sessionGrades =
+      academicSessions
+        .find((session) => session.id === sessionId)
+        ?.grades?.map((grade) => grade.id) || [];
+
+    return sessionGrades.every((gradeId) => selectedGrades.includes(gradeId));
   };
 
   useEffect(() => {
@@ -155,9 +209,9 @@ const AddExam = ({ onSave }: AddExamProps) => {
   const resetForm = () => {
     reset({
       name: "",
-      useSymbol: false,
-      useRegistration: false,
-      isMerge: false,
+      has_registration_no: false,
+      has_symbol_no: false,
+      is_merged: false,
       academic_session_id: undefined,
       start_date: "",
       start_date_np: "",
@@ -165,35 +219,68 @@ const AddExam = ({ onSave }: AddExamProps) => {
       end_date_np: "",
       result_date: "",
       result_date_np: "",
-      admit_card_design: "general",
+      admit_card_id: 1,
+      marksheet_id: 1,
     });
+    setSelectedGrades([]);
+    setSelectedExams([]);
     setRenderKey(Math.floor((Math.random() + 1) * 10).toString());
   };
 
-  const onSubmit: SubmitHandler<ExamFormData> = (data) => {
-    const formData = {
-      ...data,
-      grades: selectedGrades.map((id) => ({ id })), // Convert selected grades to the required format
-    };
-    console.log("Submitted data: ", formData);
-    resetForm();
+  useEffect(() => {
+    setValue("grades", selectedGrades);
+    setValue("merged_exams", selectedExams);
+    // console.log("Selected Grades: ", selectedGrades);
+    console.log("Form Grades: ", getValues("grades"));
+    console.log("Form Merged Exams: ", getValues("merged_exams"));
+  }, [selectedGrades, setValue, selectedExams]);
+
+  const onSubmit: SubmitHandler<ExamFormData> = async (data: ExamFormData) => {
+    // setisSubmitting(true);
+    console.log("Submitted data: ", data);
+    try {
+      const examData: CreateExamInterface = {
+        name: data.name,
+        start_date: data.start_date,
+        start_date_np: data.start_date_np,
+        end_date: data.end_date,
+        end_date_np: data.end_date_np,
+        result_date: data.result_date,
+        result_date_np: data.result_date_np,
+        has_symbol_no: data.has_symbol_no,
+        has_registration_no: data.has_registration_no,
+        academic_session_id: data.academic_session_id,
+        grades: data.grades,
+        is_merged: data.is_merged,
+        merged_exams: data.merged_exams,
+        admit_card_id: data.admit_card_id,
+        marksheet_id: data.marksheet_id,
+      };
+      await createExam(examData);
+    } catch (error) {
+      console.log("Error saving exam data: ", error);
+    } finally {
+      // setisSubmitting(false);
+      onSave();
+
+      // resetForm();
+    }
   };
 
   return (
-    <div className="add-exam">
+    <div className="add-exam col-12 col-md-12">
       {isLoading && <Loading />}
       {!isLoading && (
         <form className="" onSubmit={handleSubmit(onSubmit)}>
           <div className="row ">
-            <div className="col-6 ">
+            <div className="col-12 col-md-6">
               <label className="required fw-bold fs-6 mb-2">
                 Examination Name
               </label>
-
-              <div className="col-10 ">
+              <div className="col-12">
                 <input
                   {...register("name")}
-                  className="form-control form-control-solid required "
+                  className="form-control form-control-solid required"
                   type="text"
                 />
                 {errors.name && (
@@ -202,7 +289,7 @@ const AddExam = ({ onSave }: AddExamProps) => {
               </div>
             </div>
 
-            <div className="col-md-3">
+            <div className="col-12 col-md-3">
               <label className="required fw-bold fs-6 mb-2">
                 Use Symbol No
               </label>
@@ -240,11 +327,13 @@ const AddExam = ({ onSave }: AddExamProps) => {
                   </div>
                 </div>
               </div>
-              {errors.useSymbol && (
-                <div className="text-danger">{errors.useSymbol.message}</div>
+              {errors.has_symbol_no && (
+                <div className="text-danger">
+                  {errors.has_symbol_no.message}
+                </div>
               )}
             </div>
-            <div className="col-md-3">
+            <div className="col-12 col-md-3">
               <label className="required fw-bold fs-6 mb-2">
                 Use Registration No
               </label>
@@ -288,9 +377,9 @@ const AddExam = ({ onSave }: AddExamProps) => {
                   </div>
                 </div>
               </div>
-              {errors.useRegistration && (
+              {errors.has_registration_no && (
                 <div className="text-danger">
-                  {errors.useRegistration.message}
+                  {errors.has_registration_no.message}
                 </div>
               )}
             </div>
@@ -345,27 +434,28 @@ const AddExam = ({ onSave }: AddExamProps) => {
             </div>
 
             <div className="col-md-6">
-              <label className=" fw-bold fs-6 mb-2 required">
+              <label className="fw-bold fs-6 mb-2 required">
                 Admit Card Design
               </label>
               <select
-                className="form-control w-full "
-                title="Admit Card Design "
-                id="admitCardDesign"
-                value={admitCardDesign ?? 0}
-                onChange={(e) =>
+                className="form-control w-full"
+                title="Admit Card Design"
+                id="admit_card_design"
+                value={admitCardDesign}
+                onChange={(e) => {
                   handleAdmitCardDesignChange(
                     e.target.value === "general" ? "general" : e.target.value
-                  )
-                }
+                  );
+                }}
               >
                 <option value="general">General</option>
                 <option value="employee">Employee</option>
                 <option value="summerSeason">Summer Season</option>
               </select>
             </div>
+
             <div className="col-md-6">
-              <label className=" fw-bold fs-6 mb-2 required">
+              <label className="fw-bold fs-6 mb-2 required">
                 Mark Sheet Design
               </label>
               <select
@@ -434,15 +524,10 @@ const AddExam = ({ onSave }: AddExamProps) => {
                               className="form-check-input selectAll"
                               type="checkbox"
                               id={`selectAll-${session.id}`}
+                              checked={isAllGradesSelected(session.id)}
                               onChange={(e) => {
                                 const isChecked = e.target.checked;
-                                document
-                                  .querySelectorAll<HTMLInputElement>(
-                                    `.gradeCheckbox-${session.id}`
-                                  )
-                                  .forEach(
-                                    (checkbox) => (checkbox.checked = isChecked)
-                                  );
+                                handleSelectAll(session.id, isChecked);
                               }}
                             />
                             <label
@@ -497,7 +582,7 @@ const AddExam = ({ onSave }: AddExamProps) => {
                         value="true"
                         id="isMerged_yes"
                         name="isMerged"
-                        checked={isMerged === true}
+                        checked={isMerged}
                         onChange={handleIsMergedData}
                       />
                       <label
@@ -524,12 +609,50 @@ const AddExam = ({ onSave }: AddExamProps) => {
                     </div>
                   </div>
                 </div>
-                {errors.isMerge && (
-                  <div className="text-danger">{errors.isMerge.message}</div>
+                {errors.is_merged && (
+                  <div className="text-danger">{errors.is_merged.message}</div>
                 )}
               </div>
             </>
           )}
+
+          {isMerged && (
+            <>
+              <div className="col-12">
+                <label className=" fw-bold fs-6 mb-2">
+                  Select Examination to be Merged
+                </label>
+                <div className="row g-3">
+                  <div className="col-12">
+                    <div className="row row-cols-1 row-cols-md-2 g-3">
+                      {examinations.map((exam) => (
+                        <div key={exam.id} className="mb-3">
+                          <div className="form-check ">
+                            <input
+                              className={`form-check-input gradeCheckbox-${exam.id}`}
+                              type="checkbox"
+                              id={`exam-${exam.id}`}
+                              name="examinations[]"
+                              value={exam.id}
+                              checked={selectedExams.includes(exam.id)}
+                              onChange={() => handleExamSelection(exam.id)}
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor={`exam-${exam.id}`}
+                            >
+                              {exam.name}
+                            </label>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
           <div className="text-center pt-15">
             <button
               type="button"

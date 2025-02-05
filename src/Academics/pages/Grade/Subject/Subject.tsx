@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Icon from "../../../../components/Icon/Icon";
 import DrawerModal from "../../../../components/DrawerModal/DrawerModal";
@@ -7,7 +8,6 @@ import gradeService, {
   TeacherInterface,
   UpdateGradeInterface,
 } from "../../../services/gradeService";
-import React, { useEffect, useState } from "react";
 import useSubject from "../../../hooks/useSubject";
 import useDebounce from "../../../../hooks/useDebounce";
 import useDocumentTitle from "../../../../hooks/useDocumentTitle";
@@ -28,30 +28,28 @@ import EditSubject from "./EditSubject";
 const Subject = () => {
   const navigate = useNavigate();
   useDocumentTitle("All Grade Subjects");
+  const { gradeId } = useParams<{ gradeId: string }>();
+
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
-  const [subjectTeacherDrawer, setSubjectTeacherDrawer] = useState(false);
-
-  const { gradeId } = useParams<{ gradeId: string }>();
   const [grade, setGrade] = useState<GradeInterface>();
-
   const [processingSubjectId, setProcessingSubjectId] = useState<number | null>(
     null
   );
   const [editSubject, setEditSubject] = useState<UpdateSubjectInterface>();
-
-  const [addSubjectDrawer, setAddSubjectDrawer] = useState(false);
-  const [editSubjectDrawer, setEditSubjectDrawer] = useState(false);
-  const [updateRankDrawer, setUpdateRankDrawer] = useState(false);
-
-  const { employees } = useEmployee({});
   const [addTeacherSubject, setAddTeacherSubject] =
     useState<SubjectInterface>();
   const [teachers, setTeachers] = useState<TeacherInterface[]>([]);
 
+  const [addSubjectDrawer, setAddSubjectDrawer] = useState(false);
+  const [editSubjectDrawer, setEditSubjectDrawer] = useState(false);
+  const [updateRankDrawer, setUpdateRankDrawer] = useState(false);
+  const [subjectTeacherDrawer, setSubjectTeacherDrawer] = useState(false);
+
+  const { employees } = useEmployee({});
   const {
     subjects,
     pagination,
@@ -67,33 +65,105 @@ const Subject = () => {
     grade_id: gradeId ? Number(gradeId) : -1,
   });
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
+  const filteredTeachers = useMemo(
+    () =>
+      employees
+        .filter((employee) => employee.employee_type?.name === "Teacher")
+        .map((teacher) => ({
+          value: teacher.id,
+          label: teacher.full_name,
+        })),
+    [employees]
+  );
 
-  const handleItemsPerPageChange = (value: number | null) => {
+  useEffect(() => {
+    setTeachers(filteredTeachers);
+  }, [filteredTeachers]);
+
+  useEffect(() => {
+    const fetchGradeData = async () => {
+      if (!gradeId) {
+        navigate("/404");
+        return;
+      }
+
+      const id = Number(gradeId);
+      if (isNaN(id)) {
+        navigate("/404");
+        return;
+      }
+
+      try {
+        const result = await gradeService.item<SingleGradeInterface>({ id });
+        setGrade(result.data.data);
+      } catch (error) {
+        console.error("Error fetching grade data:", error);
+        navigate("/404");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGradeData();
+  }, [gradeId, navigate, setLoading]);
+
+  const toggleDrawer = useCallback(
+    (
+      setter: React.Dispatch<React.SetStateAction<boolean>>,
+      fetchData?: () => void
+    ) => {
+      setter((prev) => {
+        if (prev && fetchData) fetchData();
+        return !prev;
+      });
+    },
+    []
+  );
+
+  const toggleSubjectStatus = useCallback(
+    async (subjectId: number) => {
+      try {
+        setProcessingSubjectId(subjectId);
+        await changeSubjectStatus({ id: subjectId });
+        toast.success("Subject Status Changed Successfully.");
+      } catch (error) {
+        console.error("Error updating Subject status:", error);
+      } finally {
+        setProcessingSubjectId(null);
+      }
+    },
+    [changeSubjectStatus]
+  );
+
+  const handlePageChange = useCallback(
+    (page: number) => setCurrentPage(page),
+    []
+  );
+  const handleItemsPerPageChange = useCallback((value: number | null) => {
     setItemsPerPage(value);
     setCurrentPage(1);
-  };
+  }, []);
+  const handleSearchChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchTerm(event.target.value);
+      setCurrentPage(1);
+    },
+    []
+  );
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-    setCurrentPage(1);
-  };
+  // const toggleAddSubjectDrawer = () => {
+  //   setAddSubjectDrawer(!addSubjectDrawer);
+  //   if (addSubjectDrawer) {
+  //     fetchData();
+  //   }
+  // };
 
-  const toggleAddSubjectDrawer = () => {
-    setAddSubjectDrawer(!addSubjectDrawer);
-    if (addSubjectDrawer) {
-      fetchData();
-    }
-  };
-
-  const toggleUpdateRankDrawer = () => {
-    setUpdateRankDrawer(!updateRankDrawer);
-    if (updateRankDrawer) {
-      fetchData();
-    }
-  };
+  // const toggleUpdateRankDrawer = () => {
+  //   setUpdateRankDrawer(!updateRankDrawer);
+  //   if (updateRankDrawer) {
+  //     fetchData();
+  //   }
+  // };
 
   const toggleEditSubjectDrawer = (subject?: UpdateSubjectInterface) => {
     setEditSubject(subject);
@@ -111,73 +181,14 @@ const Subject = () => {
     }
   };
 
-  useEffect(() => {
-    let isMounted = true;
+  if (!grade) return <Loading />;
 
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-
-        // Filter and set teachers
-        const filteredTeachers = employees
-          .filter((employee) => employee.employee_type?.name === "Teacher")
-          .map((teacher) => ({
-            value: teacher.id,
-            label: teacher.full_name,
-          }));
-        if (isMounted) {
-          setTeachers(filteredTeachers);
-        }
-
-        // Fetch grade data
-        if (gradeId !== undefined) {
-          const id = Number(gradeId);
-          if (!isNaN(id)) {
-            const result = await gradeService.item<SingleGradeInterface>({
-              id,
-            });
-            if (isMounted) {
-              setGrade(result.data.data);
-            }
-          } else {
-            navigate("/404");
-          }
-        } else {
-          navigate("/404");
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchData();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [employees, gradeId, navigate, setLoading]);
-
-  const toggleSubjectStatus = async (subjectId: number) => {
-    try {
-      setProcessingSubjectId(subjectId);
-      await changeSubjectStatus({ id: subjectId });
-      toast.success(" Subject Status Changed Successfully.");
-    } catch (error) {
-      console.error("Error updating Subject status:", error);
-    } finally {
-      setProcessingSubjectId(null);
-    }
-  };
   return (
     <>
       <div className="card">
         <div className="card-header">
           <div className="card-title">
-            <h3>All Subjects of {grade?.name}</h3>
+            <h3>All Subjects of {grade.name}</h3>
           </div>
           <div className="card-toolbar">
             <div className="d-flex gap-2 align-items-center justify-content-end">
@@ -186,7 +197,6 @@ const Subject = () => {
                   name="searchDark"
                   className="svg-icon svg-icon-1 position-absolute ms-6"
                 />
-
                 <input
                   type="text"
                   id="data_search"
@@ -196,7 +206,6 @@ const Subject = () => {
                   placeholder="Search Subjects"
                 />
               </div>
-
               <select
                 className="form-control w-50px"
                 title="Items per Page"
@@ -216,7 +225,7 @@ const Subject = () => {
               <button
                 type="button"
                 className="btn btn-primary"
-                onClick={toggleAddSubjectDrawer}
+                onClick={() => toggleDrawer(setAddSubjectDrawer, fetchData)}
               >
                 <Icon name="add" className="svg-icon svg-icon-2" />
                 Add Subject
@@ -224,7 +233,7 @@ const Subject = () => {
               <button
                 type="button"
                 className="btn btn-secondary"
-                onClick={toggleUpdateRankDrawer}
+                onClick={() => toggleDrawer(setUpdateRankDrawer, fetchData)}
               >
                 <Icon name="sync" className="svg-icon svg-icon-2" />
                 Update Rank
@@ -232,10 +241,10 @@ const Subject = () => {
             </div>
           </div>
         </div>
-
         <div className="card-body">
-          {isLoading && <Loading />}
-          {!isLoading && (
+          {isLoading ? (
+            <Loading />
+          ) : (
             <table
               className="table align-middle table-row-dashed fs-6 gy-5 w-100"
               id="kt_table_users"
@@ -243,7 +252,6 @@ const Subject = () => {
               <thead>
                 <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                   <th className="w-50px">Rank</th>
-
                   <th className="w-250px">Subject Name</th>
                   <th className="w-125px">Subject Type</th>
                   <th className="w-125px">Subject Code</th>
@@ -257,7 +265,6 @@ const Subject = () => {
                 {subjects.map((subject, index) => (
                   <tr key={index}>
                     <td>{subject.rank}</td>
-
                     <td>
                       <span className="">
                         <span>
@@ -292,45 +299,25 @@ const Subject = () => {
                       </span>
                     </td>
                     <td>
-                      {" "}
                       <div className="d-flex gap-1 flex-wrap">
-                        {subject.teachers && (
-                          <>
-                            {subject.teachers.map((teacher, t) => (
-                              <span
-                                className="badge badge-primary cursor-pointer"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  toggleSubjectTeacherDrawer(
-                                    subject as SubjectInterface
-                                  );
-                                }}
-                                key={`${index}-${t} `}
-                              >
-                                {teacher.name}
-                                {teacher.sections && (
-                                  <>
-                                    {teacher.sections.map((section, s) => (
-                                      <React.Fragment key={s}>
-                                        | {section.name}{" "}
-                                      </React.Fragment>
-                                    ))}
-                                  </>
-                                )}
-                              </span>
+                        {subject.teachers?.map((teacher, t) => (
+                          <span
+                            key={`${index}-${t}`}
+                            className="badge badge-primary cursor-pointer"
+                            onClick={() => toggleSubjectTeacherDrawer(subject)}
+                          >
+                            {teacher.name}
+                            {teacher.sections?.map((section, s) => (
+                              <React.Fragment key={s}>
+                                | {section.name}{" "}
+                              </React.Fragment>
                             ))}
-                          </>
-                        )}
-
+                          </span>
+                        ))}
                         <a
                           href="#"
                           className="badge badge-danger"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            toggleSubjectTeacherDrawer(
-                              subject as SubjectInterface
-                            );
-                          }}
+                          onClick={() => toggleSubjectTeacherDrawer(subject)}
                         >
                           +
                         </a>
@@ -338,12 +325,19 @@ const Subject = () => {
                     </td>
                     <td className="text-center">
                       {subject.is_chooseable ? (
-                        <span className="badge badge-success">Yes</span>
+                        <>
+                          <span className="badge badge-success">Yes</span>
+                          <br />
+                          <a href={`students/subjects`}>
+                            <span className="badge badge-primary pointer hover hover-scale">
+                              Assign Students
+                            </span>
+                          </a>
+                        </>
                       ) : (
                         <span className="badge badge-danger">NO</span>
                       )}
                     </td>
-
                     <td className="text-center">
                       <ProcessingButton
                         isProcessing={processingSubjectId === subject.id}
@@ -361,11 +355,7 @@ const Subject = () => {
                         type="button"
                         className="btn btn-light-danger btn-sm"
                         title="Edit"
-                        onClick={() => {
-                          toggleEditSubjectDrawer(
-                            subject as UpdateSubjectInterface
-                          );
-                        }}
+                        onClick={() => toggleEditSubjectDrawer(subject)}
                       >
                         <Icon name="edit" className="svg-icon" />
                         Edit
@@ -389,34 +379,35 @@ const Subject = () => {
       </div>
       <DrawerModal
         isOpen={addSubjectDrawer}
-        onClose={toggleAddSubjectDrawer}
+        onClose={() => toggleDrawer(setAddSubjectDrawer, fetchData)}
         position="right"
         width="900px"
         title="Add Subject"
       >
-        <AddSubject grade={grade} onSave={toggleAddSubjectDrawer} />
+        <AddSubject
+          grade={grade}
+          onSave={() => toggleDrawer(setAddSubjectDrawer, fetchData)}
+        />
       </DrawerModal>
-
       {editSubject && (
         <DrawerModal
           isOpen={editSubjectDrawer}
-          onClose={toggleEditSubjectDrawer}
+          onClose={() => toggleDrawer(setEditSubjectDrawer, fetchData)}
           position="right"
           width="900px"
           title="Update Subject"
         >
           <EditSubject
             grade={grade}
-            onSave={toggleEditSubjectDrawer}
+            onSave={() => toggleDrawer(setEditSubjectDrawer, fetchData)}
             subject={editSubject}
           />
         </DrawerModal>
       )}
-
       {gradeId && (
         <DrawerModal
           isOpen={updateRankDrawer}
-          onClose={toggleUpdateRankDrawer}
+          onClose={() => toggleDrawer(setUpdateRankDrawer, fetchData)}
           position="right"
           width="500px"
           title="Update Subject Rank"
@@ -424,14 +415,14 @@ const Subject = () => {
           <UpdateRank
             grade_id={Number(gradeId)}
             subjects={subjects}
-            onSave={toggleUpdateRankDrawer}
+            onSave={() => toggleDrawer(setUpdateRankDrawer, fetchData)}
           />
         </DrawerModal>
       )}
       {grade && teachers && addTeacherSubject && (
         <DrawerModal
           isOpen={subjectTeacherDrawer}
-          onClose={toggleSubjectTeacherDrawer}
+          onClose={() => toggleDrawer(setSubjectTeacherDrawer, fetchData)}
           position="right"
           width="800px"
           title={`Assign Subject Teachers for ${addTeacherSubject.name}`}
@@ -440,7 +431,7 @@ const Subject = () => {
             grade={grade as unknown as UpdateGradeInterface}
             subject={addTeacherSubject}
             teachers={teachers}
-            onSave={toggleSubjectTeacherDrawer}
+            onSave={() => toggleDrawer(setSubjectTeacherDrawer, fetchData)}
           />
         </DrawerModal>
       )}

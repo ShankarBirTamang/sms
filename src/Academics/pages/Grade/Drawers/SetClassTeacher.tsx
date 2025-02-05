@@ -37,7 +37,9 @@ const SetClassTeacher = ({ grade, onSave }: AddClassTeacher) => {
       .filter((employee) => employee.employee_type?.name === "Teacher")
       .map((teacher) => ({
         value: teacher.id,
-        label: teacher.full_name,
+        label: `${teacher.full_name}${
+          teacher.class?.grade ? ` (${teacher.class.full_grade})` : ""
+        }`,
       }));
     setTeachers(teachers);
 

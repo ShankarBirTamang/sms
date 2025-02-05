@@ -135,7 +135,7 @@ const useAddress = ({
       const newMunicipalityName = {
         id: updatedMunicipality.id,
         name: updatedMunicipality.name,
-        total_wards: updatedMunicipality.no_of_wards ?? 0,
+        total_wards: updatedMunicipality.total_wards ?? 0,
       };
       updateMunicipality(newMunicipalityName);
     }

@@ -1,4 +1,3 @@
-// Vehicles.tsx
 import { useState, FormEvent } from "react";
 import { icons } from "../../components/Icon/icons";
 import { Vehicle } from "../services/transportService";
@@ -8,10 +7,10 @@ import Icon from "../../components/Icon/Icon";
 import Pagination from "../../components/Pagination/Pagination";
 
 const Vehicles = () => {
-  const [searchTerm, setSearchTerm] = useState(""); // New state for search term
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
-  const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const {
     isEditing,
@@ -35,7 +34,6 @@ const Vehicles = () => {
     itemsPerPage,
   });
 
-  // header functions
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -47,15 +45,13 @@ const Vehicles = () => {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1); // Reset to the first page on new search
+    setCurrentPage(1);
   };
-  //header funtions end
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
     if (isEditing && editingVehicleId !== null) {
-      // Update existing vehicle
       console.log("Updating vehicle:", { ...form, id: editingVehicleId });
       setVehicles(
         vehicles.map((vehicle) =>
@@ -81,7 +77,6 @@ const Vehicles = () => {
       setIsEditing(false);
       setEditingVehicleId(null);
     } else {
-      // Add new vehicle
       const newVehicle: Vehicle = {
         id: vehicles.length + 1,
         name: form.name,
@@ -103,7 +98,6 @@ const Vehicles = () => {
     clearForm();
   };
 
-  //Handling edit click
   const handleEditClick = (vehicle: Vehicle) => {
     console.log("Editing vehicle:", vehicle);
     setForm({
@@ -131,7 +125,7 @@ const Vehicles = () => {
   return (
     <div>
       <div className="row">
-        {/* Add New Transport Vehicle Form */}
+        {}
         <div className="col-xl-4 col-md-4  mb-xl-10">
           <div className="card mb-3">
             <div className="card-header border-0 px-6">
@@ -265,15 +259,12 @@ const Vehicles = () => {
                 <div className="d-flex gap-3">
                   <button
                     type="reset"
-                    className="btn btn-secondary btn-sm w-20 mb-2 d-flex"
+                    className="btn btn-light me-3"
                     onClick={handleReset}
                   >
                     Reset
                   </button>
-                  <button
-                    type="submit"
-                    className="btn btn-sm btn-light-info w-20 mb-2 d-flex"
-                  >
+                  <button type="submit" className="btn btn-primary">
                     {isEditing ? "Update" : "Submit"}
                   </button>
                 </div>
@@ -281,7 +272,7 @@ const Vehicles = () => {
             </div>
           </div>
         </div>
-        {/* Transport Vehicles Table */}
+        {}
         <div className="col-xl-8 col-md-8  mb-xl-10">
           <div className="card mb-3">
             <div className="card-header border-0 px-6">
@@ -328,7 +319,7 @@ const Vehicles = () => {
               </div>
             </div>
             <div className="card-body pt-0">
-              <table className="table table-striped">
+              <table className="table align-middle table-row-dashed fs-6 gy-1 dataTable no-footer">
                 <thead>
                   <tr className="table">
                     {headers.map((header) => (
@@ -362,10 +353,11 @@ const Vehicles = () => {
                       </td>
                       <td className="text-center ">
                         <button
-                          className="btn btn-link "
+                          title="Edit"
+                          className="btn btn-light-info btn-icon btn-sm"
                           onClick={() => handleEditClick(vehicle)}
                         >
-                          {icons.edit}
+                          <Icon name={"edit"} className={"svg-icon"} />
                         </button>
                       </td>
                     </tr>
@@ -373,7 +365,7 @@ const Vehicles = () => {
                 </tbody>
               </table>
             </div>
-            {/* Pagination */}
+            {}
             <div className="card-footer">
               <Pagination
                 pagination={pagination}

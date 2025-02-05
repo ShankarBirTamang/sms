@@ -3,11 +3,10 @@ import Icon from "../../../components/Icon/Icon";
 import useExam from "../hooks/useExam";
 import useDebounce from "../../../hooks/useDebounce";
 import Loading from "../../../components/Loading/Loading";
-import { ExamInterface } from "../services/examSessionService";
 import { useNavigate } from "react-router-dom";
 import Pagination from "../../../components/Pagination/Pagination";
 import DrawerModal from "../../../components/DrawerModal/DrawerModal";
-import AddExam from "./AddExam";
+import AddExam from "./Drawers/AddExam";
 
 const ExamSession = () => {
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
@@ -15,35 +14,10 @@ const ExamSession = () => {
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(null);
   const [addExamDrawer, setAddExamDrawer] = useState(false);
   const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
-  const [examination, setExamination] = useState<ExamInterface[]>([
-    {
-      id: 1,
-      name: "Exam 1",
-      start_date_ad: "2022-01-01",
-      start_date_np: "2080-01-01",
-      end_date_ad: "2022-02-01",
-      end_date_np: "2080-02-01",
-      exam_level: "Nursery to 10",
-      session: "Academic session 2080",
-      is_completed: false,
-    },
-    {
-      id: 2,
-      name: "Exam 2",
-      start_date_ad: "2023-01-01",
-      start_date_np: "2081-01-01",
-      end_date_ad: "2023-02-01",
-      end_date_np: "2081-02-01",
-      exam_level: "Nursery to 10",
-      session: "Academic session 2081",
-      is_completed: false,
-    },
-  ]);
-  // const [currentId, setCurrentId] = useState<number | null>(null);
 
   const toggleCompletionStatus = (id: number) => {
-    setExamination((prevExamination) =>
-      prevExamination.map((exam) =>
+    setExaminations((prevExamination) =>
+      prevExamination?.map((exam) =>
         exam.id === id ? { ...exam, is_completed: !exam.is_completed } : exam
       )
     );
@@ -51,6 +25,9 @@ const ExamSession = () => {
 
   const toggleAddExamDrawer = () => {
     setAddExamDrawer(!addExamDrawer);
+    if (addExamDrawer) {
+      fetchExam();
+    }
   };
 
   //header functions
@@ -70,7 +47,14 @@ const ExamSession = () => {
 
   //header function ends here
 
-  const { isLoading, pagination, edgeLinks } = useExam({
+  const {
+    isLoading,
+    pagination,
+    edgeLinks,
+    examinations,
+    setExaminations,
+    fetchExam,
+  } = useExam({
     search: debouncedSearchTerm,
     currentPage,
     itemsPerPage,
@@ -81,7 +65,7 @@ const ExamSession = () => {
   const handleNavigate = (examId: number) => {
     navigate(`${examId}/show`);
   };
-
+  console.log("Examinations : ", examinations);
   return (
     <>
       <div className="card">
@@ -142,10 +126,10 @@ const ExamSession = () => {
         </div>
         <div className="card-body pt-0">
           {isLoading && <Loading />}
-          {!isLoading && examination.length === 0 && (
+          {!isLoading && examinations?.length === 0 && (
             <div className="alert alert-info">No Exams Found</div>
           )}
-          {!isLoading && examination.length > 0 && (
+          {!isLoading && examinations?.length !== 0 && (
             <table className="table align-middle table-row-dashed fs-6 gy-1">
               <thead>
                 <tr className="text-start  text-muted fw-bolder fs-7 text-uppercase gs-0">
@@ -160,12 +144,12 @@ const ExamSession = () => {
                 </tr>
               </thead>
               <tbody className="text-gray-600 fw-bold">
-                {examination.map((exam, index) => (
+                {examinations?.map((exam, index) => (
                   <tr key={exam.id}>
                     <td className="align-items-center">{index + 1}</td>
                     <td>{exam.name}</td>
-                    <td>{exam.exam_level}</td>
-                    <td>{exam.session}</td>
+                    <td>{exam.session_level?.level_name}</td>
+                    <td>{exam.session_level?.session_name}</td>
                     <td>{exam.start_date_np}</td>
                     <td>{exam.end_date_np}</td>
                     <td className="w-350px g-10">

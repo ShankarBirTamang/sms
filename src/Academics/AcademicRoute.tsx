@@ -18,6 +18,7 @@ import Subject from "./pages/Grade/Subject/Subject";
 import ViewTimeTable from "./pages/Routine/TimeTable/ViewTimeTable";
 import EditTimeTable from "./pages/Routine/TimeTable/EditTimeTable";
 import Student from "./pages/Grade/Students/Student";
+import SubjectStudent from "./pages/Grade/Subject/SubjectStudent/SubjectStudent";
 
 const routes: RouteConfig[] = [
   {
@@ -74,6 +75,11 @@ const routes: RouteConfig[] = [
     path: "grades/:gradeId/students",
     title: "Grade Students",
     element: <Student />,
+  },
+  {
+    path: "grades/:gradeId/students/subjects",
+    title: "Assign Grade Chooseable Subjects to Students",
+    element: <SubjectStudent />,
   },
   // {
   //   path: "subject-types",

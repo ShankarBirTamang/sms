@@ -193,6 +193,9 @@ const AddSubject = ({ grade, onSave }: AddSubjectProps) => {
                       value={field.value ? Number(field.value) : ""}
                       onChange={(e) => field.onChange(Number(e.target.value))}
                     >
+                      <option value="" hidden>
+                        Select Subject Type
+                      </option>
                       {subjectTypes.map((type, t) =>
                         type.is_active ? (
                           <option key={t} value={type.id}>

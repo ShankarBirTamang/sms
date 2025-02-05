@@ -7,6 +7,7 @@ import Loading from "../../../../components/Loading/Loading";
 import Icon from "../../../../components/Icon/Icon";
 import { useNavigate } from "react-router-dom";
 import Pagination from "../../../../components/Pagination/Pagination";
+import { StudentInterface } from "../../services/studentService";
 
 const Students = () => {
   useDocumentTitle("All Students");
@@ -19,10 +20,13 @@ const Students = () => {
     currentPage,
     itemsPerPage,
   });
+
+  const [selectedStudent, setSelectedStudent] =
+    useState<StudentInterface | null>(null);
   const navigate = useNavigate();
 
   const addStudentRoute = () => {
-    navigate("/students/create-edit");
+    navigate("/students/create");
   };
 
   // header functions
@@ -60,6 +64,11 @@ const Students = () => {
 
   const handleStudentOverviewNavigate = (studentId: number) => {
     navigate(`details/${studentId}/overview`);
+  };
+
+  const handleEditStudent = (student: StudentInterface) => {
+    setSelectedStudent(student);
+    navigate(`${student.id}/edit`);
   };
 
   return (
@@ -161,7 +170,7 @@ const Students = () => {
                                     <div className="loading-spinner" />
                                   ) : null}
                                   <img
-                                    src={student.photo}
+                                    src={student.thumbnail}
                                     alt={student.full_name}
                                     className={`w-100 ${
                                       imageLoadStates[student.id]
@@ -200,7 +209,7 @@ const Students = () => {
                         </td>
                         <td>{student.gender}</td>
                         <td>{student.contact}</td>
-                        <td>{student.address}</td>
+                        <td>{student.current_address?.full_address}</td>
 
                         <td className="text-end">
                           <div
@@ -220,13 +229,14 @@ const Students = () => {
                             >
                               <Icon name={"search"} className={"svg-icon-2"} />
                             </button>
-                            <a
+                            <button
+                              type="button"
+                              onClick={() => handleEditStudent(student)}
                               title="edit"
-                              href="#"
                               className="btn btn-light-success btn-sm btn-icon"
                             >
                               <Icon name={"edit"} className={"svg-icon-2"} />
-                            </a>
+                            </button>
                           </div>
                         </td>
                       </tr>

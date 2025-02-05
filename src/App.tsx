@@ -19,47 +19,50 @@ import AccountRoute from "./Modules/Accounts/AccountRoutes";
 import Address from "./General/pages/Address/Address";
 import ImportRoute from "./Modules/Import/ImportRoute";
 import ExportRoute from "./Modules/Export/ExportRoute";
+import { RoleProvider } from "./context/roleContext";
 
 const App = () => {
   return (
     <StrictMode>
       <BrowserRouter>
-        <PermissionProvider>
-          <Routes>
-            {/* Login route */}
-            <Route path="/login" element={<Login />} />
-            <Route element={<ProtectedRoute />}>
-              <Route element={<Layout />}>
-                <Route path="/" element={<Dashboard />} />
+        <RoleProvider>
+          <PermissionProvider>
+            <Routes>
+              {/* Login route */}
+              <Route path="/login" element={<Login />} />
+              <Route element={<ProtectedRoute />}>
+                <Route element={<Layout />}>
+                  <Route path="/" element={<Dashboard />} />
 
-                {/* Include transportation routes */}
-                <Route
-                  path="/transportation/vehicles/*"
-                  element={<Vehicles />}
-                />
-                <Route
-                  path="/transportation/routes/*"
-                  element={<TransportRoutes />}
-                />
+                  {/* Include transportation routes */}
+                  <Route
+                    path="/transportation/vehicles/*"
+                    element={<Vehicles />}
+                  />
+                  <Route
+                    path="/transportation/routes/*"
+                    element={<TransportRoutes />}
+                  />
 
-                <Route path="address/*" element={<Address />} />
+                  <Route path="address/*" element={<Address />} />
+                </Route>
+                <Route path="academics/*" element={<AcademicRoute />} />
+                <Route path="examination/*" element={<ExamRoute />} />
+                <Route
+                  path="design-services/*"
+                  element={<DesignServicesRoute />}
+                />
+                <Route path="institute/*" element={<InstituteRoute />} />
+                <Route path="students/*" element={<StudentRoute />} />
+                <Route path="employees/*" element={<EmployeeRoute />} />
+                <Route path="accounts/*" element={<AccountRoute />} />
+                <Route path="imports/*" element={<ImportRoute />} />
+                <Route path="exports/*" element={<ExportRoute />} />
               </Route>
-              <Route path="academics/*" element={<AcademicRoute />} />
-              <Route path="examination/*" element={<ExamRoute />} />
-              <Route
-                path="design-services/*"
-                element={<DesignServicesRoute />}
-              />
-              <Route path="institute/*" element={<InstituteRoute />} />
-              <Route path="students/*" element={<StudentRoute />} />
-              <Route path="employees/*" element={<EmployeeRoute />} />
-              <Route path="accounts/*" element={<AccountRoute />} />
-              <Route path="imports/*" element={<ImportRoute />} />
-              <Route path="exports/*" element={<ExportRoute />} />
-            </Route>
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </PermissionProvider>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </PermissionProvider>
+        </RoleProvider>
       </BrowserRouter>
     </StrictMode>
   );

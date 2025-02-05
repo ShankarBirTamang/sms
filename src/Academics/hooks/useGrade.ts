@@ -217,6 +217,34 @@ const useGrade = ({
     }
   };
 
+  interface AssignSubjectToStudentProp {
+    sectionId: number;
+    data: {
+      studentId: number;
+      subjectIds: number[];
+    }[];
+  }
+
+  const assignSubjectToStudent = async (
+    request: AssignSubjectToStudentProp
+  ) => {
+    try {
+      const result = await axiosInstance.post(
+        `academics/grades/section/${request.sectionId}/assign-subject-student`,
+        request
+      );
+      toast.success(result.data.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        toast.error(err.message);
+        setError(err.message);
+      } else {
+        toast.error("An unknown error occurred.");
+        setError("An unknown error occurred.");
+      }
+    }
+  };
+
   return {
     grades,
     fetchGrades,
@@ -232,6 +260,7 @@ const useGrade = ({
     getSectionStudents,
     getGrade,
     setStudentRollNo,
+    assignSubjectToStudent,
   };
 };
 

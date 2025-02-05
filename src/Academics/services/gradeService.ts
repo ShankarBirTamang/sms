@@ -64,6 +64,10 @@ export interface SectionInterface {
     id: number;
     full_name: string;
   };
+  subjects?: {
+    id: number;
+    name: string;
+  }[];
 }
 
 interface SectionsInterface {
