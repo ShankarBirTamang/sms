@@ -1,54 +1,57 @@
 import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import InputField from "../../components/InputField";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuill } from "react-quilljs"; // Import react-quilljs
+import "quill/dist/quill.snow.css"; // Import the styles
 import { z } from "zod";
 import axiosInstance from "../../../../../axiosConfig";
 const baseUrl = import.meta.env.VITE_API_URL;
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import defaultLogo from "../../../../../src/img/logo.png";
+import useHelpers from "../../../../hooks/useHelpers";
 
-interface FormData {
-  email: string;
+interface DetailsInterface {
   name: string;
   short_name: string;
-  latitude: string;
-  longitude: string;
   address: string;
   contact: string;
+  email: string;
+  latitude: string;
+  longitude: string;
   website: string;
   short_desc: string;
   long_desc: string;
-  logo?: FileList | null;
-  cover?: FileList | null;
+  logo: FileList | File | string | null;
+  cover: FileList | File | string | null;
 }
 
+const schema = z.object({
+  name: z.string().min(5, "Institute name must be at least 5 characters long"),
+  short_name: z.string().min(1, "Short name is required"),
+  email: z.string().email("Invalid email address").optional(),
+  address: z.string().min(3, "Institute address is required"),
+  contact: z.string().min(3, "Institute contact number is required"),
+  website: z.string().url("Invalid website URL").optional(),
+  latitude: z.string().min(1, "Latitude is required"),
+  longitude: z.string().min(1, "Longitude is required"),
+  short_desc: z.string().min(1, "Short Description is required"),
+  long_desc: z.string().min(1, "Long Description is required"),
+  logo: z.string().min(1, "Logo is required"),
+  cover: z.string().min(1, "Cover is required"),
+});
+
 const Details = () => {
-  const [backendLogo, setBackendLogo] = useState<string>(defaultLogo); // State for backend logo URL
+  const [loading, setLoading] = useState(false);
+  const [previewLogoBackend, setPreviewLogoBackend] = useState<string>(""); // Set to default logo URL from Api
+  const [previewCoverBackend, setPreviewCoverBackend] = useState<string>(""); // Set to default cover URL from Api
   const [previewLogo, setPreviewLogo] = useState<string>(""); // Set to default logo URL
   const [previewCover, setPreviewCover] = useState<string>(""); // Set to default cover URL
-  const [instituteDetails, setInstituteDetails] = useState<null | FormData>(
-    null
-  );
-
-  const schema = z.object({
-    name: z
-      .string()
-      .min(5, "Institute name must be at least 5 characters long"),
-    short_name: z.string().min(1, "Short name is required"),
-    email: z.string().email("Invalid email address").optional(),
-    address: z.string().min(3, "Institute address is required"),
-    contact: z.string().min(3, "Institute contact number is required"),
-    website: z.string().url("Invalid website URL").optional(),
-    latitude: z.string().min(1, "Latitude is required"),
-    longitude: z.string().min(1, "Longitude is required"),
-    short_desc: z.string().optional(),
-    long_desc: z.string().optional(),
-    logo: z.instanceof(FileList).nullable().optional(),
-    cover: z.instanceof(FileList).nullable().optional(),
-  });
-
+  const [instituteDetails, setInstituteDetails] =
+    useState<null | DetailsInterface>(null);
+  const { convertFileToBase64 } = useHelpers();
+  const { quill: quill1, quillRef: quillRef1 } = useQuill();
+  const { quill: quill2, quillRef: quillRef2 } = useQuill();
   const {
     register,
     handleSubmit,
@@ -57,7 +60,7 @@ const Details = () => {
     setValue,
     reset,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<DetailsInterface>({
     resolver: zodResolver(schema),
     defaultValues: {
       name: "",
@@ -69,9 +72,12 @@ const Details = () => {
       email: "",
       short_desc: "",
       long_desc: "",
+      logo: "",
+      cover: "",
     },
   });
 
+  //Get institute details from api
   useEffect(() => {
     const getInstituteDetails = async () => {
       try {
@@ -80,107 +86,132 @@ const Details = () => {
         );
         const details = response.data.data;
         setInstituteDetails(details);
-
-        if (details.logo) {
-          setPreviewLogo(details.logo);
-          setBackendLogo(details.logo);
-        } else {
-          setBackendLogo(""); // Reset to empty if no logo
-        }
-
-        if (details.cover) {
-          setPreviewCover(details.cover); // Set cover URL from details
-        } else {
-          setPreviewCover(""); // Reset to empty if no cover
-        }
+        reset({
+          name: details?.name || "",
+          short_name: details?.short_name || "",
+          latitude: details?.latitude || "",
+          longitude: details?.longitude || "",
+          address: details?.address || "",
+          contact: details?.contact || "",
+          email: details?.email || "",
+          short_desc: details?.short_desc || "",
+          long_desc: details?.long_desc || "",
+          logo: details?.logo || "",
+          cover: details?.cover || "",
+        });
+        setPreviewLogoBackend(
+          typeof details?.logo === "string" ? details.logo : ""
+        );
+        setPreviewCoverBackend(
+          typeof details?.cover === "string" ? details.cover : ""
+        );
       } catch (error) {
         console.error("Error fetching Institute Details:", error);
-      } finally {
-        console.log(
-          "Institute Details from getInstitute state",
-          instituteDetails
-        );
       }
     };
 
     getInstituteDetails();
+  }, []);
+
+  console.log("instituteDetails", instituteDetails);
+
+  //Set the inputs of quill text editor in hook-form state
+  useEffect(() => {
+    if (quill1) {
+      quill1.on("text-change", () => {
+        setValue("short_desc", quill1.root.innerHTML);
+      });
+    }
+  }, [quill1]);
+
+  useEffect(() => {
+    if (quill2) {
+      quill2.on("text-change", () => {
+        setValue("long_desc", quill2.root.innerHTML);
+      });
+    }
+  }, [quill2]);
+
+  //View short_desc and long_desc from api in text_editor field
+  useEffect(() => {
+    console.log("quill oneeeee", quill1);
+    quill1?.clipboard.dangerouslyPasteHTML(instituteDetails?.short_desc || "");
+    quill2?.clipboard.dangerouslyPasteHTML(instituteDetails?.long_desc || "");
   }, [instituteDetails]);
 
-  //Watching to convert Image file to it's respectiive url To Preview
+  //Watching to convert Image file to it's respectiive url To Preview and setValue
   const watchLogo = watch("logo");
-  useEffect(() => {
-    console.log("watchlogo", watchLogo);
-    if (watchLogo && watchLogo[0]) {
+  async function uploadLogo() {
+    if (watchLogo instanceof FileList && watchLogo[0]) {
       const file = watchLogo[0];
-      const objectUrl = URL.createObjectURL(file);
-      setPreviewLogo(objectUrl);
+      try {
+        const logoBase64 = await convertFileToBase64(file);
+        setPreviewLogo(logoBase64);
+        setValue("logo", logoBase64);
+      } catch (error) {
+        console.log("Error uploading logo", error);
+      }
     }
-  }, [watchLogo]);
+  }
 
   const watchCover = watch("cover");
-  useEffect(() => {
-    console.log("watchcover", watchCover);
-
-    if (watchCover && watchCover[0]) {
+  async function uploadCover() {
+    if (watchCover instanceof FileList && watchCover[0]) {
       const file = watchCover[0];
-      const objectUrl = URL.createObjectURL(file);
-      setPreviewCover(objectUrl);
+      try {
+        const coverBase64 = await convertFileToBase64(file);
+        setPreviewCover(coverBase64);
+        setValue("cover", coverBase64);
+        console.log("inside");
+      } catch (error) {
+        console.log("Error uploading cover", error);
+      }
     }
+  }
+
+  useEffect(() => {
+    uploadLogo();
+  }, [watchLogo]);
+
+  useEffect(() => {
+    uploadCover();
   }, [watchCover]);
 
   const handleCancelLogo = () => {
     setPreviewLogo(""); // Reset to default logo
-    setValue("logo", null);
+    setPreviewLogoBackend("");
+    setValue("logo", "");
     console.log("logo cancelled");
   };
 
   const handleCancelCover = () => {
     setPreviewCover("");
-    setValue("cover", null);
+    setPreviewCoverBackend("");
+    setValue("cover", "");
     console.log("cover cancelled");
   };
 
   const onSubmit = async (data: any) => {
     console.log("raw data", data);
-    const formData = new FormData();
 
-    // Append non-file fields to FormData
-    for (const key in data) {
-      if (key !== "logo" && key !== "cover") {
-        formData.append(key, data[key]);
-      }
-    }
-
-    // Handle logo file
-    if (data.logo && data.logo[0]) {
-      formData.append("logo", data.logo[0]);
-    }
-
-    // Handle cover file
-    if (data.cover && data.cover[0]) {
-      formData.append("cover", data.cover[0]);
-    }
-
-    console.log("formdata entries", formData.entries);
-    // Log all FormData key-value pairs
-
+    setLoading(true);
     try {
       const response = await axiosInstance.post(
         `${baseUrl}/general/institute/update`,
-        formData,
+        data,
         {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         }
       );
-
       toast.success("Institute Details submitted successfully");
-      console.log("Response from Details:", response.data);
-      reset();
+      console.log("Response from Details:", response.data.data);
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Error submitting form");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -188,12 +219,23 @@ const Details = () => {
     <>
       <div className="card mb-5 mb-xl-10">
         <div className="card-body pt-9 pb-0">
-          <div className="d-flex flex-wrap flex-sm-nowrap mb-3 align-items-center">
+          <div
+            className="d-flex flex-wrap flex-sm-nowrap mb-3 align-items-center border border-rounded"
+            style={{
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "center",
+              backgroundImage: `url(${previewCoverBackend})`,
+            }}
+          >
             <div className="me-7 mb-4">
               <div className="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative">
-                <img src={backendLogo ?? defaultLogo} alt="Institute Logo" />
+                <img
+                  src={previewLogoBackend ? previewLogoBackend : defaultLogo}
+                  alt="Institute Logo"
+                />
               </div>
             </div>
+
             <div className="flex-grow-1">
               <div className="d-flex justify-content-between align-items-start flex-wrap mb-2">
                 <div className="d-flex flex-column">
@@ -212,8 +254,8 @@ const Details = () => {
           <ul className="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-5 fw-bold">
             <li className="nav-item mt-2">
               <a
-                className="nav-link text-active-primary ms-0 me-10 py-5 active"
-                href="https://sms.aanshtech.com/sms/settings/institute"
+                className="nav-link text-active-primary ms-0 me-10 py-1 active"
+                href=""
               >
                 Profile
               </a>
@@ -255,7 +297,9 @@ const Details = () => {
                     <div
                       className="image-input-wrapper w-125px h-125px"
                       style={{
-                        backgroundImage: `url(${previewLogo})`,
+                        backgroundImage: `url(${
+                          previewLogo ? previewLogo : previewLogoBackend
+                        })`,
                       }}
                     ></div>
                     <label
@@ -320,7 +364,9 @@ const Details = () => {
                     <div
                       className="image-input-wrapper w-125px h-125px"
                       style={{
-                        backgroundImage: `url(${previewCover})`,
+                        backgroundImage: `url(${
+                          previewCover ? previewCover : previewCoverBackend
+                        })`,
                       }}
                     ></div>
                     <label
@@ -380,7 +426,6 @@ const Details = () => {
                     {...register("name")}
                     className="form-control form-control-lg form-control-solid"
                     placeholder="Enter Institute Name"
-                    required
                   />
                   {
                     <div className="fv-plugins-message-container mt-2 text-danger">
@@ -400,7 +445,6 @@ const Details = () => {
                     {...register("short_name")}
                     className="form-control form-control-lg form-control-solid"
                     placeholder="Enter Institute Short Name"
-                    required
                   />
                   {
                     <div className="fv-plugins-message-container mt-2 text-danger">
@@ -418,12 +462,9 @@ const Details = () => {
                 <div className="col-lg-8">
                   <input
                     type="text"
-                    {...register("contact", {
-                      required: "Institute contact number is required",
-                    })}
+                    {...register("contact")}
                     className="form-control form-control-lg form-control-solid"
                     placeholder="Enter Contact Number"
-                    required
                   />
                   {
                     <div className="fv-plugins-message-container mt-2 text-danger">
@@ -440,7 +481,6 @@ const Details = () => {
                 </label>
                 <div className="col-lg-8">
                   <input
-                    required
                     type="email"
                     {...register("email")}
                     className="form-control form-control-lg form-control-solid"
@@ -465,7 +505,6 @@ const Details = () => {
                     className="form-control form-control-lg form-control-solid"
                     rows={3}
                     placeholder="Enter Address"
-                    required
                   ></textarea>
                   {
                     <div className="fv-plugins-message-container mt-2 text-danger">
@@ -485,7 +524,6 @@ const Details = () => {
                     {...register("latitude")}
                     className="form-control form-control-lg form-control-solid"
                     placeholder="Enter Latitude"
-                    required
                   ></input>
                   {
                     <div className="fv-plugins-message-container mt-2 text-danger">
@@ -505,7 +543,6 @@ const Details = () => {
                     {...register("longitude")}
                     className="form-control form-control-lg form-control-solid"
                     placeholder="Enter Longitude"
-                    required
                   ></input>
                   {
                     <div className="fv-plugins-message-container mt-2 text-danger">
@@ -515,12 +552,7 @@ const Details = () => {
                 </div>
               </div>
 
-              <div
-                className="row mb-6"
-                // style={{
-                //   height: "12rem",
-                // }}
-              >
+              <div className="row mb-6">
                 <label className="col-lg-4 col-form-label fw-semibold fs-6">
                   Short Description
                 </label>
@@ -529,13 +561,12 @@ const Details = () => {
                     name="short_desc"
                     control={control}
                     render={({ field }) => (
-                      <InputField
-                        placeholder="Input Short Description"
-                        // style={{
-                        //   height: "6rem",
-                        // }}
-                        value={field.value} // Pass value explicitly
-                        onChange={field.onChange}
+                      <div
+                        {...field}
+                        ref={quillRef1}
+                        style={{
+                          height: "8rem",
+                        }}
                       />
                     )}
                   />
@@ -547,12 +578,7 @@ const Details = () => {
                 </div>
               </div>
 
-              <div
-                className="row mb-6"
-                // style={{
-                //   height: "12rem",
-                // }}
-              >
+              <div className="row mb-6">
                 <label className="col-lg-4 col-form-label fw-semibold fs-6">
                   Long Description
                 </label>
@@ -561,13 +587,12 @@ const Details = () => {
                     name="long_desc"
                     control={control}
                     render={({ field }) => (
-                      <InputField
-                        placeholder="Input Long Description"
-                        // style={{
-                        //   height: "6rem",
-                        // }}
-                        value={field.value} // Pass value explicitly
-                        onChange={field.onChange}
+                      <div
+                        {...field}
+                        ref={quillRef2}
+                        style={{
+                          height: "12rem",
+                        }}
                       />
                     )}
                   />
@@ -585,11 +610,9 @@ const Details = () => {
                   <button
                     type="submit"
                     className="btn btn-primary"
-                    style={{
-                      cursor: "pointer",
-                    }}
+                    disabled={loading}
                   >
-                    Save Changes
+                    {loading ? "............" : "Save Changes"}
                   </button>
                 </div>
               </div>

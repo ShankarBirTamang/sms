@@ -59,6 +59,7 @@ const AddIdCard = () => {
       reset({
         name: idCard.name,
         id_card_type_id: idCard.id_card_type.id,
+        color: idCard.color,
         html: idCard.html, // Ensure the html field is set
         background: idCard.background,
         signers: idCard.signers.map((signer: any) => ({
@@ -203,7 +204,7 @@ const AddIdCard = () => {
                 disabled={isLoadingSubmit}
               >
                 {isLoadingSubmit
-                  ? "........."
+                  ? "........"
                   : isEditMode
                   ? "Update"
                   : "Submit"}

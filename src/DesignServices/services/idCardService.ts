@@ -41,12 +41,12 @@ export interface UpdateIdCardInterface extends IdCardInterface {
 export const IdCardSchema = z.object({
   name: z.string().min(1, "Id Card name is required!"),
   html: z.string().min(1, "Html code is required!"),
+  background: z.string().min(1, "Background is required"),
   id_card_type_id: z.union([
     z.string().min(1, "Id Card Type is required"),
     z.number().min(1, "Id Card Type is required"),
   ]),
   color: z.string(),
-  background: z.string().min(1, "Background is required"),
   signers: z.array(
     z.object({
       title: z.string().optional(),

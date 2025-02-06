@@ -1,36 +1,34 @@
 import { useForm, FormProvider, Controller, get, set } from "react-hook-form";
 import Signature from "../../../components/Signature/Signature";
 import {
-  AdmitCardInterface,
-  admitCardSchema,
-  GetAdmitCardInterface,
-  UpdateAdmitCardInterface,
-} from "../../services/admitCardService";
+  MarksheetInterface,
+  marksheetSchema,
+  GetMarksheetInterface,
+  UpdateMarksheetInterface,
+} from "../../services/marksheetService";
 import CodeEditor from "../../../components/CodeEditor/CodeEditor";
 import { zodResolver } from "@hookform/resolvers/zod";
-import useAdmitCard from "../../hooks/useAdmitCard";
+import useMarksheet from "../../hooks/useMarksheet";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-const AddAdmitCard = () => {
+const AddMarksheet = () => {
   const [code, setCode] = useState("");
   const {
     isLoadingSubmit,
-    saveAdmitCard,
-    getOneAdmitCard,
-    admitCard,
-    updateAdmitCard,
-  } = useAdmitCard({});
-  const methods = useForm<AdmitCardInterface>({
+    saveMarksheet,
+    getOneMarksheet,
+    marksheet,
+    updateMarksheet,
+  } = useMarksheet({});
+  const methods = useForm<MarksheetInterface>({
     defaultValues: {
       name: "",
       html: "",
-      size: "",
       background: "",
-      cards_per_page: "",
       signers: [{ title: "", signature_id: "" }],
     },
-    resolver: zodResolver(admitCardSchema),
+    resolver: zodResolver(marksheetSchema),
   });
 
   const {
@@ -42,34 +40,33 @@ const AddAdmitCard = () => {
 
   //For Edit Mode
   const params = useParams();
-  const { admitCardId } = params;
-  const isEditMode = !!admitCardId;
+  const { marksheetId } = params;
+  const isEditMode = !!marksheetId;
   console.log("isEditMode", isEditMode);
   useEffect(() => {
-    if (admitCardId) {
-      getOneAdmitCard(Number(admitCardId));
+    if (marksheetId) {
+      getOneMarksheet(Number(marksheetId));
     }
-  }, [admitCardId]);
+  }, [marksheetId]);
 
-  //GetOneAdmitCard is a function that fetches the admit card data from the server and above admitCard is it's response
+  //GetOneMarksheet is a function that fetches the admit card data from the server and above marksheet is it's response
   useEffect(() => {
-    if (isEditMode && admitCard) {
+    if (isEditMode && marksheet) {
       reset({
-        name: admitCard.name,
-        size: admitCard.size,
-        background: admitCard.background,
-        cards_per_page: admitCard.cards_per_page,
-        signers: admitCard.signers.map((signer: any) => ({
+        name: marksheet.name,
+        background: marksheet.background,
+        html: marksheet.html,
+        signers: marksheet.signers.map((signer: any) => ({
           title: signer.title,
           signature_id: signer.id,
         })),
       });
-      setCode(admitCard.html);
+      setCode(marksheet.html);
     }
-  }, [admitCard, isEditMode, reset]);
+  }, [marksheet, isEditMode, reset]);
 
   const onSubmit = async (
-    data: AdmitCardInterface | UpdateAdmitCardInterface
+    data: MarksheetInterface | UpdateMarksheetInterface
   ) => {
     console.log("raw submitted data", data);
 
@@ -77,17 +74,15 @@ const AddAdmitCard = () => {
       if (isEditMode) {
         const updatedData = {
           ...data,
-          id: Number(admitCardId),
+          id: Number(marksheetId),
         };
-        await updateAdmitCard(updatedData);
+        await updateMarksheet(updatedData);
       } else {
-        await saveAdmitCard(data);
+        await saveMarksheet(data);
         // reset({
         //   name: "",
         //   html: "",
-        //   size: "",
         //   background:'',
-        //   cards_per_page: "",
         //   signers: [{ title: "", signature_id: "" }],
         // });
         setCode("<h1>Hello World</h1>");
@@ -107,12 +102,12 @@ const AddAdmitCard = () => {
           <div className="row card-header mb-6">
             <div className="card-title w-100">
               <h1 className="d-flex justify-content-between align-items-center position-relative my-3 w-100">
-                {isEditMode ? "Edit Admit Card" : "Create New Admit Card"}
+                {isEditMode ? "Edit Marksheet" : "Create New Marksheet"}
               </h1>
             </div>
             <div className="mb-4 col-md-5">
               <label htmlFor="name" className="required form-label">
-                Admit Card Name
+                Marksheet Name
               </label>
               <Controller
                 name="name"
@@ -128,55 +123,6 @@ const AddAdmitCard = () => {
                 )}
               />
               <span className="text-danger">{errors.name?.message}</span>
-            </div>
-            <div className="mb-4 col-md-3">
-              <label htmlFor="size" className="required form-label">
-                Size of Page
-              </label>
-              <Controller
-                name="size"
-                control={control}
-                render={({ field }) => (
-                  <select
-                    {...field}
-                    id="size"
-                    className="form-select form-select-solid"
-                  >
-                    <option value="" hidden>
-                      Select Paper Size
-                    </option>
-                    <option value="A4">A4</option>
-                  </select>
-                )}
-              />
-              <span className="text-danger">{errors.size?.message}</span>
-            </div>
-            <div className="mb-4 col-md-3">
-              <label htmlFor="size" className="required form-label">
-                No of Admit Card per Page
-              </label>
-              <Controller
-                name="cards_per_page"
-                control={control}
-                render={({ field }) => (
-                  <select
-                    {...field}
-                    id="cards_per_page"
-                    className="form-select form-select-solid"
-                  >
-                    <option value="" hidden>
-                      Select No. of Admit Card Per Page
-                    </option>
-                    <option value="2">2</option>
-                    <option value="4">4</option>
-                    <option value="8">8</option>
-                    <option value="16">16</option>
-                  </select>
-                )}
-              />
-              <span className="text-danger">
-                {errors.cards_per_page?.message}
-              </span>
             </div>
           </div>
 
@@ -223,4 +169,4 @@ const AddAdmitCard = () => {
   );
 };
 
-export default AddAdmitCard;
+export default AddMarksheet;

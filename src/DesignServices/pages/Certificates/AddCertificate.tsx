@@ -56,7 +56,7 @@ const AddCertificate = () => {
       getOneCertificate(Number(certificateId));
     }
   }, [certificateId]);
-  console.log("isEditMode sdfsadfsadfsdfsdf", certificate);
+  console.log("One Certificate", certificate);
 
   //To load the Certificate data initally in the form to Edit
   useEffect(() => {
@@ -64,12 +64,12 @@ const AddCertificate = () => {
       reset({
         name: certificate.name,
         size: certificate.size,
-        height: certificate.height,
-        width: certificate.width,
+        height: sizes[certificate.size].height,
+        width: sizes[certificate.size].width,
         background: certificate.background,
         html: certificate.html,
         orientation: certificate.orientation,
-        signers: certificate.signers.map((signer) => ({
+        signers: certificate.signers.map((signer: any) => ({
           title: signer.title,
           signature_id: signer.id,
         })),

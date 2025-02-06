@@ -85,7 +85,7 @@ const IdCard = () => {
                   <Link
                     to={"/design-services/id-cards/create"}
                     className="btn btn-primary btn-sm ms-2 align-content-center"
-                    title="Add TimeTable"
+                    title="Add ID Card"
                   >
                     <Icon name={"add"} className={"svg-icon"} />
                     Add ID Card
@@ -99,9 +99,7 @@ const IdCard = () => {
             <div>
               {isLoading && <Loading />}
               {!isLoading && idCardList.length === 0 && (
-                <div className="alert alert-info">
-                  No Academic Sessions Found
-                </div>
+                <div className="alert alert-info">No ID Card found!!</div>
               )}
               {!isLoading && (
                 <table
@@ -112,7 +110,7 @@ const IdCard = () => {
                   <thead>
                     <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                       <th> #</th>
-                      <th>Name</th>
+                      <th>ID Card Name</th>
                       <th>Holder</th>
                       <th className="min-w-225px">Background</th>
                       <th>Signers</th>
@@ -132,7 +130,7 @@ const IdCard = () => {
                         <td>{idCard.id_card_type.name}</td>
                         <td>
                           <img
-                            style={{ width: "8rem", height: "8rem" }}
+                            style={{ height: "10rem", width: "auto" }}
                             src={idCard.background}
                           ></img>
                         </td>
@@ -148,7 +146,7 @@ const IdCard = () => {
                         </td>
                         <td className="text-end">
                           <button
-                            title="edit admit card"
+                            title="Edit ID Card"
                             type="button"
                             onClick={() => handleEditClick(idCard)}
                             className="btn btn-light-info btn-sm m-1"
@@ -158,7 +156,7 @@ const IdCard = () => {
                           </button>
 
                           <button
-                            title="view admit card"
+                            title="View ID Card"
                             type="button"
                             onClick={() => handleViewClick(idCard)}
                             className="btn btn-light-success btn-sm m-1"

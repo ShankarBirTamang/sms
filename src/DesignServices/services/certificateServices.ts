@@ -3,13 +3,14 @@ import apiRoute from "../../services/httpService";
 
 export interface SignatureInterface {
   title?: string;
-  signature_id?: string | number;
+  signature_id?: number | string;
 }
 
 export interface GetSignatureInterface {
   id: number;
   title?: string;
-  signature_id?: string | number;
+  name?: string;
+  signature?: string;
 }
 
 export interface PaperSizeInterface {
@@ -76,8 +77,8 @@ export const certificateSchema = z.object({
   orientation: z.string().min(1, "Orientation is required"),
   signers: z.array(
     z.object({
-      name: z.string().optional(),
-      signature: z.union([z.string(), z.number()]).optional(),
+      title: z.string().optional(),
+      signature_id: z.union([z.string(), z.number()]).optional(),
     })
   ),
 });
@@ -85,4 +86,4 @@ export const certificateSchema = z.object({
 // Type for the form data
 // export type CertificateInterface = z.infer<typeof certificateSchema>;
 
-export default apiRoute("/design-services/certificates");
+export default apiRoute("design-services/certificates");

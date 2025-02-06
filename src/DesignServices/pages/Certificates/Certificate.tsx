@@ -88,7 +88,7 @@ const Certificate = () => {
                   <Link
                     to={"/design-services/certificates/create"}
                     className="btn btn-primary btn-sm ms-2 align-content-center"
-                    title="Add TimeTable"
+                    title="Add Certificate"
                   >
                     <Icon name={"add"} className={"svg-icon"} />
                     Add Certificate
@@ -102,7 +102,7 @@ const Certificate = () => {
             <div>
               {isLoading && <Loading />}
               {!isLoading && certificateList.length === 0 && (
-                <div className="alert alert-info">No Certificates Found</div>
+                <div className="alert alert-info">No Certificates Found!!</div>
               )}
               {!isLoading && (
                 <table
@@ -129,7 +129,12 @@ const Certificate = () => {
                             (itemsPerPage ?? 0)}
                         </td>
                         <td className="sorting_1">{certificate.name}</td>
-                        <td></td>
+                        <td>
+                          <img
+                            style={{ width: "auto", height: "10rem" }}
+                            src={certificate.background}
+                          ></img>
+                        </td>
                         <td>
                           {certificate.signers.map((signer, index) => (
                             <span
