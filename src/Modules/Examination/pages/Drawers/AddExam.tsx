@@ -8,6 +8,9 @@ import { z } from "zod";
 import useExam from "../../hooks/useExam";
 import { CreateExamInterface } from "../../services/examSessionService";
 import useAcademicSession from "../../../Academics/hooks/useAcademicSession";
+import useAdmitCard from "../../../../DesignServices/hooks/useAdmitCard";
+import useMarksheet from "../../../../DesignServices/hooks/useMarksheet";
+import useMarksScheme from "../../hooks/useMarksScheme";
 
 interface AddExamProps {
   onSave: () => void;
@@ -17,14 +20,14 @@ const AddExam = ({ onSave }: AddExamProps) => {
   const [hasSymbol, setHasSymbol] = useState<boolean>(false);
   const [hasRegistration, setHasRegistration] = useState<boolean>(false);
   const [isMerged, setIsMerged] = useState<boolean>(false);
-  const [admitCardDesign, setAdmitCardDesign] = useState<string>("general");
-  const [markSheetDesign, setMarkSheetDesign] =
-    useState<string>("gradedFormatWithPR");
   const [selectedSessionId, setSelectedSessionId] = useState<number>();
   const [selectedGrades, setSelectedGrades] = useState<number[]>([]);
   const [selectedExams, setSelectedExams] = useState<number[]>([]);
+  const [selectedMarksSchemes, setSelectedMarksSchemes] = useState<number[]>(
+    []
+  );
 
-  // const [isSubmitting, setisSubmitting] = useState<boolean>(false);
+  const [isSubmitting, setisSubmitting] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const [renderKey, setRenderKey] = useState("");
   const [startValueAD, setStartValueAD] = useState("");
@@ -38,12 +41,22 @@ const AddExam = ({ onSave }: AddExamProps) => {
 
   const { academicSessions } = useAcademicSession({});
   const { createExam, examinations } = useExam({});
+  const { admitCardList } = useAdmitCard({});
+  const { marksheetList } = useMarksheet({});
+  const { marksSchemes } = useMarksScheme({});
   const academicSessionOptions = academicSessions
     .filter((session) => session.is_active)
     .map((session) => ({
       value: session.id,
       label: session.name,
     }));
+
+  const theoryMarksSchemes = marksSchemes.filter(
+    (scheme) => scheme.group === "Theory"
+  );
+  const practicalMarksScheme = marksSchemes.filter(
+    (scheme) => scheme.group === "Practical"
+  );
 
   const schema = z.object({
     name: z.string().min(1, { message: "Exam name is required" }),
@@ -56,14 +69,17 @@ const AddExam = ({ onSave }: AddExamProps) => {
     end_date_np: z.string(),
     result_date: z.string({ message: "Result Date Field is required." }),
     result_date_np: z.string(),
-    admit_card_id: z.number().default(1),
-    marksheet_id: z.number().default(1),
+    admit_card_id: z.number(),
+    marksheet_id: z.number(),
     academic_session_id: z.number().refine(
       (id) => {
         return academicSessions.some((session) => session.id === id);
       },
       { message: "Invalid academic session Id" }
     ),
+    marks_schemes: z
+      .array(z.number())
+      .min(1, { message: "At least one grade must be selected." }),
     grades: z
       .array(z.number())
       .min(1, { message: "At least one grade must be selected." }),
@@ -119,6 +135,14 @@ const AddExam = ({ onSave }: AddExamProps) => {
     setIsMerged(value);
     setValue("is_merged", value);
   };
+
+  const handleMarksSchemesSelection = (marksSchemeId: number) => {
+    const updatedMarksSchemes = selectedMarksSchemes.includes(marksSchemeId)
+      ? selectedMarksSchemes.filter((id) => id !== marksSchemeId)
+      : [...selectedMarksSchemes, marksSchemeId];
+    setSelectedMarksSchemes(updatedMarksSchemes);
+    setValue("marks_schemes", updatedMarksSchemes);
+  };
   const handleGradeSelection = (gradeId: number) => {
     const updatedGrades = selectedGrades.includes(gradeId)
       ? selectedGrades.filter((id) => id !== gradeId)
@@ -134,24 +158,6 @@ const AddExam = ({ onSave }: AddExamProps) => {
 
     setSelectedExams(updatedExams);
     setValue("merged_exams", updatedExams);
-  };
-
-  const handleAdmitCardDesignChange = (value: string) => {
-    setAdmitCardDesign(value);
-    const numericValue =
-      value === "general"
-        ? 1
-        : value === "employee"
-        ? 2
-        : value === "summerSeason"
-        ? 3
-        : 1;
-    setValue("admit_card_id", numericValue);
-  };
-  const handleMarkSheetDesignChange = (value: string) => {
-    setMarkSheetDesign(value);
-    const nValue = value === "gradedFormatWithPR" ? 1 : 1;
-    setValue("marksheet_id", nValue);
   };
 
   const handleSelectAll = (sessionId: number, isChecked: boolean) => {
@@ -231,7 +237,7 @@ const AddExam = ({ onSave }: AddExamProps) => {
     // console.log("Selected Grades: ", selectedGrades);
     console.log("Form Grades: ", getValues("grades"));
     console.log("Form Merged Exams: ", getValues("merged_exams"));
-  }, [selectedGrades, setValue, selectedExams]);
+  }, [selectedGrades, setValue, selectedExams, getValues]);
 
   const onSubmit: SubmitHandler<ExamFormData> = async (data: ExamFormData) => {
     // setisSubmitting(true);
@@ -278,7 +284,9 @@ const AddExam = ({ onSave }: AddExamProps) => {
               <div className="col-12">
                 <input
                   {...register("name")}
-                  className="form-control required"
+                  className={`form-control required ${
+                    errors.name && "is-invalid"
+                  }`}
                   type="text"
                 />
                 {errors.name && (
@@ -398,7 +406,9 @@ const AddExam = ({ onSave }: AddExamProps) => {
                 valueAD={startValueAD}
                 valueBS={startValueBS}
               />
-              {errors.start_date && <p>{errors.start_date.message}</p>}
+              {errors.start_date && (
+                <div className="text-danger">{errors.start_date.message}</div>
+              )}
             </div>
 
             <div className="col-6 mb-7">
@@ -436,19 +446,23 @@ const AddExam = ({ onSave }: AddExamProps) => {
                 Admit Card Design
               </label>
               <select
-                className="form-control w-full"
+                className={`form-control required ${
+                  errors.admit_card_id && "is-invalid"
+                }`}
                 title="Admit Card Design"
                 id="admit_card_design"
-                value={admitCardDesign}
-                onChange={(e) => {
-                  handleAdmitCardDesignChange(
-                    e.target.value === "general" ? "general" : e.target.value
-                  );
-                }}
+                {...register("admit_card_id", {
+                  valueAsNumber: true,
+                })}
               >
-                <option value="general">General</option>
-                <option value="employee">Employee</option>
-                <option value="summerSeason">Summer Season</option>
+                <option value="" hidden>
+                  Select Admit card Design
+                </option>
+                {admitCardList.map((card, c) => (
+                  <option key={c} value={card.id}>
+                    {card.name}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -457,31 +471,103 @@ const AddExam = ({ onSave }: AddExamProps) => {
                 Mark Sheet Design
               </label>
               <select
-                className="form-control w-full "
+                className={`form-control required ${
+                  errors.marksheet_id && "is-invalid"
+                }`}
                 title="Mark Sheet Design "
                 id="markSheetDesign"
-                value={markSheetDesign}
-                onChange={(e) =>
-                  handleMarkSheetDesignChange(
-                    e.target.value === "gradedFormatWithPR"
-                      ? "gradedFormatWithPR"
-                      : e.target.value
-                  )
-                }
+                {...register("marksheet_id", {
+                  valueAsNumber: true,
+                })}
               >
-                <option value="gradedFormatWithPR">
-                  Graded Format with PR
+                <option value="" hidden>
+                  Select Marksheet card Design
                 </option>
+                {marksheetList.map((sheet, m) => (
+                  <option key={m} value={sheet.id}>
+                    {sheet.name}
+                  </option>
+                ))}
               </select>
             </div>
 
-            <div className="col mt-15 ">
-              <label className=" col-md-12 text-center fw-bold fs-6  ">
-                <h1>PARTICIPATING GRADES</h1>
-              </label>
-              <label className=" col-md-12 text-center fs-6 mb-2 text-danger">
-                (Select Only the Grades that are participating on this Exam.)
-              </label>
+            <div className="col-12 mt-15 ">
+              <div className="row justify-content-center">
+                <label className=" col-md-12 text-center fw-bold fs-6  ">
+                  <h1>Exam Marking Scheme</h1>
+                </label>
+                <label className=" col-md-12 text-center fs-6 mb-2 text-danger">
+                  (Marks Assignable for Subjects.)
+                </label>
+                <hr />
+                <div className="col-md-4">
+                  <h4>Theory Group</h4>
+                  <ul className="list-group">
+                    {theoryMarksSchemes?.map((scheme) => (
+                      <li key={scheme.id} className="list-group-item border-0">
+                        <div className="form-check">
+                          <input
+                            className={`form-check-input marks-schemeCheckbox-${scheme.id}`}
+                            type="checkbox"
+                            id={`marks-scheme-${scheme.id}`}
+                            value={scheme.id}
+                            checked={selectedMarksSchemes.includes(scheme.id)}
+                            onChange={() =>
+                              handleMarksSchemesSelection(scheme.id)
+                            }
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor={`marks-scheme-${scheme.id}`}
+                          >
+                            {scheme.name} ({scheme.short_name})
+                          </label>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="col-md-4">
+                  <h4>
+                    Practical Group {JSON.stringify(selectedMarksSchemes)}
+                  </h4>
+                  <ul className="list-group">
+                    {practicalMarksScheme?.map((scheme) => (
+                      <li key={scheme.id} className="list-group-item border-0">
+                        <div className="form-check">
+                          <input
+                            className={`form-check-input marks-schemeCheckbox-${scheme.id}`}
+                            type="checkbox"
+                            id={`marks-scheme-${scheme.id}`}
+                            value={scheme.id}
+                            checked={selectedMarksSchemes.includes(scheme.id)}
+                            onChange={() =>
+                              handleMarksSchemesSelection(scheme.id)
+                            }
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor={`marks-scheme-${scheme.id}`}
+                          >
+                            {scheme.name} ({scheme.short_name})
+                          </label>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-12 mt-15 ">
+              <div className="row">
+                <label className=" col-md-12 text-center fw-bold fs-6  ">
+                  <h1>PARTICIPATING GRADES</h1>
+                </label>
+                <label className=" col-md-12 text-center fs-6 mb-2 text-danger">
+                  (Select Only the Grades that are participating on this Exam.)
+                </label>
+              </div>
             </div>
           </div>
 
@@ -560,6 +646,9 @@ const AddExam = ({ onSave }: AddExamProps) => {
                       </div>
                     </div>
                   ))}
+                {errors.grades && (
+                  <div className="text-danger">{errors.grades.message}</div>
+                )}
               </div>
 
               <div className="col-12">

@@ -158,6 +158,20 @@ const menuItems: MenuItem[] = [
       },
     ],
   },
+  {
+    title: "Examination",
+    route: "/system",
+    submenu: [
+      {
+        title: "All Exams",
+        route: "/examination/session",
+      },
+      {
+        title: "Exam Settings",
+        route: "/examination/settings",
+      },
+    ],
+  },
 ];
 
 const Settings = () => {

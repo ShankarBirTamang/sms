@@ -12,7 +12,7 @@ const ExamSession = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(null);
-  const [addExamDrawer, setAddExamDrawer] = useState(false);
+  const [addExamDrawer, setAddExamDrawer] = useState(true);
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const toggleCompletionStatus = (id: number) => {
