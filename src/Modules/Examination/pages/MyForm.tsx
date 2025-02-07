@@ -46,6 +46,12 @@ const MyForm = ({ onSave }: AddExamProps) => {
     console.log("Submitted Data:", data);
   };
 
+  function handleAcademicSessionChange(
+    event: ChangeEvent<HTMLSelectElement>
+  ): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="col-12">
