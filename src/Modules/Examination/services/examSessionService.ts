@@ -24,7 +24,7 @@ interface SessionLevel {
   level_name: string;
 }
 
-interface ExamMarksScheme {
+export interface ExamMarksScheme {
   id: number;
   marks_scheme_id: number;
   name: string;
@@ -46,18 +46,18 @@ export interface ExamSessionInterface {
   is_completed: boolean;
   session_level: SessionLevel;
   exam_attributes: ExamAttributes;
-  exam_grades: ExamGrades[];
-  exam_marks_scheme: ExamMarksScheme[];
+  exam_grades: ExamGrade[];
+  exam_marks_schemes: ExamMarksScheme[];
 }
 
-interface ExamAttributesInterface {
+export interface ExamAttributesInterface {
   id: number;
   name: string;
   html: string;
   background: string;
   signers: Signers[];
 }
-interface Signers {
+export interface Signers {
   id: number;
   name: string;
   holder: { id?: number; name?: string };
@@ -69,10 +69,11 @@ interface ExamAttributes {
   mark_sheet: ExamAttributesInterface;
 }
 
-interface ExamGrades {
+export interface ExamGrade {
   exam_grade_id: number;
   grade_id: number;
   grade_name: string;
+  grade_short_name: string;
   sections: SectionInterface[];
 }
 

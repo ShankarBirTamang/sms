@@ -133,10 +133,10 @@ const ExamSession = () => {
                   <th className="min-w-200px">Name</th>
                   <th className="w-150px">Level</th>
                   <th className="w-250px">Academic Session</th>
-                  <th className="min-w-125px">Start Date</th>
-                  <th className="min-w-125px">End Date</th>
-                  <th className="w-300px">Status</th>
-                  <th className="min-w-125px">Actions</th>
+                  <th className="w-150px">Start Date</th>
+                  <th className="w-150px">End Date</th>
+                  <th className="min-w-100px">Status</th>
+                  <th className="w-125px text-end">Actions</th>
                 </tr>
               </thead>
               <tbody className="text-gray-600 fw-bold">
@@ -146,8 +146,12 @@ const ExamSession = () => {
                     <td>{exam.name}</td>
                     <td>{exam.session_level?.level_name}</td>
                     <td>{exam.session_level?.session_name}</td>
-                    <td>{exam.start_date_np}</td>
-                    <td>{exam.end_date_np}</td>
+                    <td>
+                      {exam.start_date_np} B.S. <br /> {exam.start_date} A.D.
+                    </td>
+                    <td>
+                      {exam.end_date_np} B.S. <br /> {exam.end_date} A.D.
+                    </td>
                     <td className="w-350px g-10">
                       {exam.is_completed ? (
                         <div className="d-flex align-items-center">
@@ -182,7 +186,7 @@ const ExamSession = () => {
                       )}
                     </td>
                     <td className="text-end">
-                      <div className="d-flex gap-2">
+                      <div className="d-flex gap-2 justify-content-end">
                         <button
                           title="Edit Exam Session"
                           type="button"
