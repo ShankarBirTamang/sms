@@ -24,6 +24,14 @@ interface SessionLevel {
   level_name: string;
 }
 
+interface ExamMarksScheme {
+  id: number;
+  marks_scheme_id: number;
+  name: string;
+  short_name: string;
+  group: "Theory" | "Practical";
+}
+
 export interface ExamSessionInterface {
   id: number;
   name: string;
@@ -39,6 +47,7 @@ export interface ExamSessionInterface {
   session_level: SessionLevel;
   exam_attributes: ExamAttributes;
   exam_grades: ExamGrades[];
+  exam_marks_scheme: ExamMarksScheme[];
 }
 
 interface ExamAttributesInterface {
@@ -78,6 +87,7 @@ export interface CreateExamInterface {
   has_symbol_no: boolean;
   has_registration_no: boolean;
   academic_session_id: number;
+  marks_schemes: number[];
   grades: number[];
   is_merged: boolean;
   merged_exams?: number[];

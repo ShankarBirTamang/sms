@@ -12,7 +12,7 @@ const ExamSession = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(null);
-  const [addExamDrawer, setAddExamDrawer] = useState(true);
+  const [addExamDrawer, setAddExamDrawer] = useState(false);
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const toggleCompletionStatus = (id: number) => {
@@ -62,7 +62,6 @@ const ExamSession = () => {
   const handleNavigate = (examId: number) => {
     navigate(`${examId}/show`);
   };
-  console.log("Examinations : ", examinations);
   return (
     <>
       <div className="card">

@@ -10,6 +10,7 @@ import examSessionService, {
   ExamSessionInterface,
   CreateExamInterface,
 } from "../services/examSessionService";
+import toast from "react-hot-toast";
 
 const useExam = ({
   search = "",
@@ -79,6 +80,7 @@ const useExam = ({
     merged_exams,
     admit_card_id,
     marksheet_id,
+    marks_schemes,
   }: CreateExamInterface) => {
     const params = {
       name,
@@ -96,6 +98,7 @@ const useExam = ({
       merged_exams,
       admit_card_id,
       marksheet_id,
+      marks_schemes,
     };
     try {
       const result = await examSessionService.create<CreateExamInterface>(
@@ -104,12 +107,14 @@ const useExam = ({
       // Update state only after successful creation
 
       // setExaminations([...examinations,result.data.data]);
-      console.log("use Exam");
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
+      // console.log("use Exam");
+    } catch (error: unknown) {
+      if (error instanceof Error && "response" in error) {
+        const axiosError = error as { response: { data: { errors: string } } };
+        setError(axiosError.response.data.errors);
+        console.log(axiosError.response);
       } else {
-        setError("An unknown error occurred.");
+        toast.error("Unknown Error Occured");
       }
     }
   };
