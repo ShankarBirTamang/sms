@@ -498,60 +498,74 @@ const AddExam = ({ onSave }: AddExamProps) => {
                     <Loading />
                   </div>
                 )}
-                <div className="col-md-4">
-                  <h4>Theory Group</h4>
-                  <ul className="list-group">
-                    {theoryMarksSchemes?.map((scheme) => (
-                      <li key={scheme.id} className="list-group-item border-0">
-                        <div className="form-check">
-                          <input
-                            className={`form-check-input marks-schemeCheckbox-${scheme.id}`}
-                            type="checkbox"
-                            id={`marks-scheme-${scheme.id}`}
-                            value={scheme.id}
-                            checked={selectedMarksSchemes.includes(scheme.id)}
-                            onChange={() =>
-                              handleMarksSchemesSelection(scheme.id)
-                            }
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor={`marks-scheme-${scheme.id}`}
+                {marksSchemes.length > 0 && (
+                  <>
+                    <div className="col-md-4">
+                      <h4>Theory Group</h4>
+                      <ul className="list-group">
+                        {theoryMarksSchemes?.map((scheme) => (
+                          <li
+                            key={scheme.id}
+                            className="list-group-item border-0"
                           >
-                            {scheme.name} ({scheme.short_name})
-                          </label>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="col-md-4">
-                  <h4>Practical Group</h4>
-                  <ul className="list-group">
-                    {practicalMarksScheme?.map((scheme) => (
-                      <li key={scheme.id} className="list-group-item border-0">
-                        <div className="form-check">
-                          <input
-                            className={`form-check-input marks-schemeCheckbox-${scheme.id}`}
-                            type="checkbox"
-                            id={`marks-scheme-${scheme.id}`}
-                            value={scheme.id}
-                            checked={selectedMarksSchemes.includes(scheme.id)}
-                            onChange={() =>
-                              handleMarksSchemesSelection(scheme.id)
-                            }
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor={`marks-scheme-${scheme.id}`}
+                            <div className="form-check">
+                              <input
+                                className={`form-check-input marks-schemeCheckbox-${scheme.id}`}
+                                type="checkbox"
+                                id={`marks-scheme-${scheme.id}`}
+                                value={scheme.id}
+                                checked={selectedMarksSchemes.includes(
+                                  scheme.id
+                                )}
+                                onChange={() =>
+                                  handleMarksSchemesSelection(scheme.id)
+                                }
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor={`marks-scheme-${scheme.id}`}
+                              >
+                                {scheme.name} ({scheme.short_name})
+                              </label>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="col-md-4">
+                      <h4>Practical Group</h4>
+                      <ul className="list-group">
+                        {practicalMarksScheme?.map((scheme) => (
+                          <li
+                            key={scheme.id}
+                            className="list-group-item border-0"
                           >
-                            {scheme.name} ({scheme.short_name})
-                          </label>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                            <div className="form-check">
+                              <input
+                                className={`form-check-input marks-schemeCheckbox-${scheme.id}`}
+                                type="checkbox"
+                                id={`marks-scheme-${scheme.id}`}
+                                value={scheme.id}
+                                checked={selectedMarksSchemes.includes(
+                                  scheme.id
+                                )}
+                                onChange={() =>
+                                  handleMarksSchemesSelection(scheme.id)
+                                }
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor={`marks-scheme-${scheme.id}`}
+                              >
+                                {scheme.name} ({scheme.short_name})
+                              </label>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 

@@ -4,11 +4,13 @@ import {
   PaginationAndSearch,
 } from "../../../Interface/Interface";
 
-import { CanceledError } from "../../../services/apiClient";
+import axiosInstance, { CanceledError } from "../../../services/apiClient";
 import { PaginationProps } from "../../../components/Pagination/Pagination";
 import examSessionService, {
   ExamSessionInterface,
   CreateExamInterface,
+  ExamGradeSubject,
+  CreateExamGradeSubject,
 } from "../services/examSessionService";
 import toast from "react-hot-toast";
 
@@ -119,6 +121,26 @@ const useExam = ({
     }
   };
 
+  const addExamGradeSubject = async (data: CreateExamGradeSubject) => {
+    try {
+      const result = await axiosInstance.post(
+        "examination/exam/assign-exam-grade-subjects",
+        data
+      );
+
+      toast.success("Subjects assigned Successfully.");
+      return result.data.data;
+    } catch (error: unknown) {
+      if (error instanceof Error && "response" in error) {
+        const axiosError = error as { response: { data: { errors: string } } };
+        setError(axiosError.response.data.errors);
+        console.log(axiosError.response);
+      } else {
+        toast.error("Unknown Error Occured");
+      }
+    }
+  };
+
   return {
     isLoading,
     pagination,
@@ -129,6 +151,7 @@ const useExam = ({
     fetchExam,
     setExaminations,
     createExam,
+    addExamGradeSubject,
   };
 };
 

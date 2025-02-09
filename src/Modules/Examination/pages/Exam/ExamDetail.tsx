@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import Icon from "../../../../components/Icon/Icon";
 import { useNavigate, useParams } from "react-router-dom";
 import examSessionService, {
-  ExamGrade,
+  ExamGradeInterface,
   ExamSessionInterface,
 } from "../../services/examSessionService";
 import Loading from "../../../../components/Loading/Loading";
@@ -18,9 +18,10 @@ const ExamDetail = () => {
 
   const [assignExamSubjectDrawer, setAssignExamSubjectDrawer] = useState(false);
 
-  const [selectedExamGrade, setSelectedExamGrade] = useState<ExamGrade>();
+  const [selectedExamGrade, setSelectedExamGrade] =
+    useState<ExamGradeInterface>();
 
-  const toggleAssignExamSubjectDrawer = (examGrade?: ExamGrade) => {
+  const toggleAssignExamSubjectDrawer = (examGrade?: ExamGradeInterface) => {
     setSelectedExamGrade(examGrade);
     setAssignExamSubjectDrawer(!assignExamSubjectDrawer);
   };
@@ -56,6 +57,25 @@ const ExamDetail = () => {
 
     loadExam();
   }, [fetchExam, navigate]);
+
+  const handleAssignExamSubjectSave = (examGrade: ExamGradeInterface) => {
+    if (exam) {
+      const updatedExamGrades = exam.exam_grades.map((exam_Grade) =>
+        exam_Grade.exam_grade_id === examGrade.exam_grade_id
+          ? examGrade
+          : exam_Grade
+      );
+
+      setExam({
+        ...exam,
+        exam_grades: updatedExamGrades,
+      });
+    }
+
+    setSelectedExamGrade(undefined);
+    setAssignExamSubjectDrawer(false);
+    document.body.classList.remove("no-scroll");
+  };
 
   if (isLoading) {
     return (
@@ -156,14 +176,35 @@ const ExamDetail = () => {
                     </td>
                     <td rowSpan={examGrade.sections.length + 1}>
                       <div className="d-flex flex-wrap gap-2">
-                        <span
-                          className="badge badge-danger cursor-pointer"
-                          onClick={() =>
-                            toggleAssignExamSubjectDrawer(examGrade)
-                          }
-                        >
-                          Edit
-                        </span>
+                        {examGrade.exam_grade_subjects
+                          .filter((subject) => subject.status === true)
+                          .map((examGradeSubject, egs) => (
+                            <span
+                              key={egs}
+                              className="badge badge-primary cursor-pointer"
+                            >
+                              {examGradeSubject.name}
+                            </span>
+                          ))}
+                        {examGrade.exam_grade_subjects.length > 0 ? (
+                          <span
+                            className="badge badge-danger cursor-pointer"
+                            onClick={() =>
+                              toggleAssignExamSubjectDrawer(examGrade)
+                            }
+                          >
+                            Edit Exam Subjects
+                          </span>
+                        ) : (
+                          <span
+                            className="badge badge-success cursor-pointer"
+                            onClick={() =>
+                              toggleAssignExamSubjectDrawer(examGrade)
+                            }
+                          >
+                            Add Exam Subjects
+                          </span>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -213,6 +254,9 @@ const ExamDetail = () => {
           <AssignExamSubject
             examMarksScheme={exam.exam_marks_schemes}
             examGrade={selectedExamGrade}
+            onSave={(examGrade: ExamGradeInterface) =>
+              handleAssignExamSubjectSave(examGrade)
+            }
           />
         </DrawerModal>
       )}

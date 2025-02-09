@@ -22,6 +22,7 @@ const DrawerModal = ({
   const [isVisible, setIsVisible] = useState(isOpen);
 
   useEffect(() => {
+    console.log("isOpen at line 25 in DrawerModal/DrawerModal.tsx:", isOpen);
     if (isOpen) {
       setIsVisible(true);
       document.body.classList.add("no-scroll");

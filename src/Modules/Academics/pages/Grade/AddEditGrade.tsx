@@ -5,18 +5,11 @@ import { useForm } from "react-hook-form";
 import useAcademicSession from "../../hooks/useAcademicSession";
 import CustomSelect, {
   Option,
-} from "../../../components/CustomSelect/CustomSelect";
+} from "../../../../components/CustomSelect/CustomSelect";
 import useGradeGroup from "../../hooks/useGradeGroup";
 import SectionComponent from "./SectionComponent";
-import {
-  AddGradeInterface,
-  SectionData,
-  UpdateGradeInterface,
-} from "../../services/gradeService";
+import { AddGradeInterface, SectionData } from "../../services/gradeService";
 import useGrade from "../../hooks/useGrade";
-import EditSectionComponent, {
-  EditSectionDataInterface,
-} from "./EditSectionComponent";
 
 interface AddEditGradeProps {
   onSave: () => void;
@@ -149,8 +142,8 @@ const AddEditGrade = ({ onSave, editData, formType }: AddEditGradeProps) => {
     if (isValid) {
       setValue("section_type", data.sectionType);
       setValue("has_faculties", data.hasFaculties);
-      setValue("sections", data.sections);
-      setValue("facultySections", data.facultySections);
+      setValue("sections", data.sections || []);
+      setValue("facultySections", data.facultySections || []);
     }
   };
 

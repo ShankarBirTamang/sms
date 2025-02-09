@@ -46,7 +46,7 @@ export interface ExamSessionInterface {
   is_completed: boolean;
   session_level: SessionLevel;
   exam_attributes: ExamAttributes;
-  exam_grades: ExamGrade[];
+  exam_grades: ExamGradeInterface[];
   exam_marks_schemes: ExamMarksScheme[];
 }
 
@@ -69,11 +69,31 @@ interface ExamAttributes {
   mark_sheet: ExamAttributesInterface;
 }
 
-export interface ExamGrade {
+export interface ExamSubjectMarksSchemeInterface {
+  id: number;
+  exam_grade_subject_id: number;
+  exam_marks_scheme_id: number;
+  exam_marks_scheme_name: string;
+  exam_marks_scheme_group: string;
+  full_marks: string;
+  pass_marks: string;
+}
+
+export interface ExamGradeSubjectInterface {
+  id: number;
+  subject_id: number;
+  name: string;
+  rank: number;
+  status: boolean;
+  exam_subject_marks_schemes: ExamSubjectMarksSchemeInterface[];
+}
+
+export interface ExamGradeInterface {
   exam_grade_id: number;
   grade_id: number;
   grade_name: string;
   grade_short_name: string;
+  exam_grade_subjects: ExamGradeSubjectInterface[];
   sections: SectionInterface[];
 }
 
@@ -109,4 +129,22 @@ export interface CreateExamInterface {
 // export interface AcademicLevelsResponse {
 //   data: UpdateAcademicSessionInterface[];
 // }
+
+interface Marks {
+  fm: number;
+  pm: number;
+}
+
+export interface CreateExamGradeSubject {
+  subjectId: number;
+  selected: boolean;
+  isMarks: boolean;
+  rank: number;
+  marks: Record<string, Marks>; // Record<string, Marks> represents an object with string keys and Marks values
+}
+export interface CreateExamGradeSubject {
+  examGradeId: number;
+  subjects: CreateExamGradeSubject[];
+}
+
 export default apiRoute("/examination/exams");

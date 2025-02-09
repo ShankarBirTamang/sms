@@ -1,33 +1,73 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ExamGrade, ExamMarksScheme } from "../../services/examSessionService";
+import {
+  CreateExamGradeSubject,
+  ExamGradeInterface,
+  ExamMarksScheme,
+} from "../../services/examSessionService";
 import useSubject from "../../../Academics/hooks/useSubject";
 import Loading from "../../../../components/Loading/Loading";
+import useExam from "../../hooks/useExam";
 
 interface AssignExamSubjectProps {
   examMarksScheme: ExamMarksScheme[];
-  examGrade: ExamGrade;
-  onSave: (data: any) => void;
+  examGrade: ExamGradeInterface;
+  onSave: (exam: ExamGradeInterface) => void;
 }
 
-// Define Zod schema for validation
 const MarksSchema = z.object({
-  fm: z.number().min(1, "Full Marks is required"),
-  pm: z.number().min(1, "Pass Marks is required"),
+  fm: z.number().optional(),
+  pm: z.number().optional(),
 });
 
-const SubjectSchema = z.object({
-  subjectId: z.number(),
-  selected: z.boolean(),
-  rank: z.number().min(1, "Rank is required"),
-  marks: z.record(MarksSchema), // Ensure marks is a record
-});
+const examSubjectScheme = z
+  .object({
+    subjects: z.record(
+      z.object({
+        subjectId: z.number(),
+        selected: z.boolean().default(true),
+        isMarks: z.boolean().default(true),
+        rank: z.coerce.number().min(1, "Rank is required"),
+        marks: z.record(MarksSchema).optional(),
+      })
+    ),
+  })
+  .superRefine((data, ctx) => {
+    for (const sub in data.subjects) {
+      const subject = data.subjects[sub];
+      if (subject.selected && subject.isMarks) {
+        if (!subject.marks) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Marks is required",
+            path: ["subjects", sub, "marks"],
+          });
+        } else {
+          for (const key in subject.marks) {
+            const mark = subject.marks[key];
+            if (!mark.pm) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "pm is required",
+                path: ["subjects", sub, "marks", key, "pm"],
+              });
+            }
+            if (!mark.fm) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "fm is required",
+                path: ["subjects", sub, "marks", key, "fm"],
+              });
+            }
+          }
+        }
+      }
+    }
+  });
 
-const FormSchema = z.array(SubjectSchema);
-
-type FormValues = z.infer<typeof FormSchema>;
+type FormValues = z.infer<typeof examSubjectScheme>;
 
 const AssignExamSubject = ({
   examMarksScheme,
@@ -35,55 +75,118 @@ const AssignExamSubject = ({
   onSave,
 }: AssignExamSubjectProps) => {
   const { subjects, isLoading } = useSubject({ grade_id: examGrade.grade_id });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { addExamGradeSubject } = useExam({});
+
+  const theoryMarksSchemes = useMemo(
+    () => examMarksScheme?.filter((scheme) => scheme.group === "Theory"),
+    [examMarksScheme]
+  );
+  const practicalMarksScheme = useMemo(
+    () => examMarksScheme?.filter((scheme) => scheme.group === "Practical"),
+    [examMarksScheme]
+  );
 
   const {
     control,
     handleSubmit,
+    register,
     formState: { errors },
     reset,
+    watch,
   } = useForm<FormValues>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: subjects?.map((subject) => ({
-      subjectId: subject.id,
-      selected: false,
-      rank: subject.rank || 1,
-      marks: examMarksScheme.reduce((acc, scheme) => {
-        acc[scheme.id] = { fm: 0, pm: 0 }; // Initialize marks as an object
-        return acc;
-      }, {} as Record<string, { fm: number; pm: number }>),
-    })),
+    resolver: zodResolver(examSubjectScheme),
+    defaultValues: useMemo(
+      () => ({
+        subjects: Object.fromEntries(
+          subjects.map((subject) => [
+            subject.id,
+            {
+              subjectId: subject.id,
+              selected: true,
+              isMarks: subject?.subject_type?.marking_scheme === "marks",
+              rank: subject.rank ?? 1,
+              marks: Object.fromEntries(
+                examMarksScheme.map((scheme) => [scheme.id, { fm: 0, pm: 0 }])
+              ),
+            },
+          ])
+        ),
+      }),
+      [subjects, examMarksScheme]
+    ),
   });
 
+  const resetForm = useCallback(() => {
+    reset({
+      subjects: Object.fromEntries(
+        subjects.map((subject) => {
+          const examGradeSubject = examGrade?.exam_grade_subjects?.find(
+            (egs) => egs.subject_id === subject.id
+          );
+          console.log(examGradeSubject);
+          return [
+            subject.id,
+            {
+              subjectId: subject.id,
+              selected: examGradeSubject?.status ?? true,
+              isMarks: subject?.subject_type?.marking_scheme === "marks",
+              rank: examGradeSubject?.rank ?? subject.rank ?? 1,
+              marks: Object.fromEntries(
+                examMarksScheme.map((scheme) => {
+                  const examSubjectMarkScheme =
+                    examGradeSubject?.exam_subject_marks_schemes.find(
+                      (mk_scheme) =>
+                        mk_scheme.exam_marks_scheme_id === scheme.id
+                    );
+
+                  return [
+                    scheme.id,
+                    {
+                      fm: Number(examSubjectMarkScheme?.full_marks) || 0,
+                      pm: Number(examSubjectMarkScheme?.pass_marks) || 0,
+                    },
+                  ];
+                })
+              ),
+            },
+          ];
+        })
+      ),
+    });
+  }, [reset, subjects, examGrade?.exam_grade_subjects, examMarksScheme]);
+
   useEffect(() => {
-    if (subjects) {
-      reset(
-        subjects.map((subject) => ({
-          subjectId: subject.id,
-          selected: false,
-          rank: subject.rank || 1,
-          marks: examMarksScheme.reduce((acc, scheme) => {
-            acc[scheme.id] = { fm: 0, pm: 0 }; // Initialize marks as an object
-            return acc;
-          }, {} as Record<string, { fm: number; pm: number }>),
-        }))
-      );
+    if (subjects.length) {
+      resetForm();
     }
-  }, [subjects, examMarksScheme, reset]);
+  }, [subjects, examMarksScheme, resetForm]);
 
-  const theoryMarksSchemes = examMarksScheme?.filter(
-    (scheme) => scheme.group === "Theory"
-  );
-  const practicalMarksScheme = examMarksScheme?.filter(
-    (scheme) => scheme.group === "Practical"
-  );
+  const onSubmit = async ({ subjects }: FormValues) => {
+    setIsSubmitting(true);
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Form Data:", JSON.stringify(data, null, 2));
-    onSave(data);
+    const formattedData = {
+      examGradeId: examGrade.exam_grade_id,
+      subjects: Object.values(subjects).map((subject) => ({
+        subjectId: subject.subjectId,
+        selected: subject.selected,
+        isMarks: subject.isMarks,
+        rank: subject.rank,
+        marks: Object.fromEntries(
+          Object.entries(subject.marks || {}).map(([key, mark]) => [
+            key,
+            { fm: mark.fm || 0, pm: mark.pm || 0 },
+          ])
+        ),
+      })),
+    } as CreateExamGradeSubject;
+    const response = await addExamGradeSubject(formattedData);
+    onSave(response);
+    setIsSubmitting(false);
   };
 
   useEffect(() => {
-    console.log("Errors:", JSON.stringify(errors, null, 2));
+    console.log("Form errors:", errors);
   }, [errors]);
 
   return (
@@ -91,18 +194,11 @@ const AssignExamSubject = ({
       {isLoading && <Loading />}
       {!isLoading && (
         <form onSubmit={handleSubmit(onSubmit)}>
-          <table className="table table-row-bordered table-responsive table-hover table-bordered align-middle">
+          <table className="custom-table table-border-light">
             <thead>
               <tr>
-                <th rowSpan={3} className="w-30px">
-                  <div className="form-check">
-                    <input
-                      className="form-check-input selectAll"
-                      type="checkbox"
-                    />
-                  </div>
-                </th>
-                <th rowSpan={3} className="w-70px text-center">
+                <th rowSpan={3} className="w-30px"></th>
+                <th rowSpan={3} className="w-100px text-center">
                   Rank
                 </th>
                 <th rowSpan={3} className="w-150px">
@@ -123,12 +219,12 @@ const AssignExamSubject = ({
               </tr>
               <tr className="text-center">
                 {theoryMarksSchemes.map((scheme, th) => (
-                  <th key={th} colSpan={2}>
+                  <th className="text-center" key={th} colSpan={2}>
                     {scheme.name}
                   </th>
                 ))}
                 {practicalMarksScheme.map((scheme, pr) => (
-                  <th key={pr} colSpan={2}>
+                  <th className="text-center" key={pr} colSpan={2}>
                     {scheme.name}
                   </th>
                 ))}
@@ -143,12 +239,12 @@ const AssignExamSubject = ({
               </tr>
             </thead>
             <tbody>
-              {subjects?.map((subject, index) => (
+              {subjects?.map((subject) => (
                 <tr key={subject.id}>
                   <td>
                     <div className="form-check">
                       <Controller
-                        name={`${index}.selected`}
+                        name={`subjects.${subject.id}.selected`}
                         control={control}
                         render={({ field }) => (
                           <input
@@ -164,150 +260,156 @@ const AssignExamSubject = ({
                     </div>
                   </td>
                   <td>
-                    <Controller
-                      name={`${index}.rank`}
-                      control={control}
-                      render={({ field }) => (
-                        <input
-                          {...field}
-                          type="number"
-                          step={1}
-                          className={`form-control ${
-                            errors[index]?.rank ? "is-invalid" : ""
-                          }`}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value) || 0)
-                          }
-                        />
-                      )}
+                    <input
+                      type="number"
+                      step={1}
+                      {...register(`subjects.${subject.id}.rank`, {
+                        valueAsNumber: true,
+                      })}
+                      className={`form-control ${
+                        errors.subjects?.[subject.id]?.rank ? "is-invalid" : ""
+                      }`}
+                      defaultValue={subject.rank}
                     />
-                    {errors[index]?.rank && (
+                    {errors.subjects?.[subject.id]?.rank && (
                       <div className="invalid-feedback">
-                        {errors[index]?.rank?.message}
+                        {errors.subjects[subject.id]?.rank?.message}
                       </div>
                     )}
                   </td>
                   <td>
-                    <input type="hidden" value="3" />
-                    <input type="hidden" className="form-control" value="no" />
-                    {subject.name}
+                    {subject.name} {subject.subject_type?.marking_scheme}
                   </td>
-                  {theoryMarksSchemes.map((scheme) => (
-                    <React.Fragment key={scheme.id}>
-                      <td>
-                        <Controller
-                          name={`${index}.marks.${scheme.id}.fm`}
-                          control={control}
-                          render={({ field }) => (
-                            <input
-                              {...field}
-                              type="number"
-                              step={0.01}
-                              className={`form-control ${
-                                errors[index]?.marks?.[scheme.id]?.fm
-                                  ? "is-invalid"
-                                  : ""
-                              }`}
-                              onChange={(e) =>
-                                field.onChange(Number(e.target.value) || 0)
+                  {subject.subject_type?.marking_scheme === "grade" && (
+                    <td colSpan={examMarksScheme.length * 2}>
+                      This Subject is Graded
+                    </td>
+                  )}
+                  {watch(`subjects.${subject.id}.selected`) &&
+                    subject.subject_type?.marking_scheme === "marks" &&
+                    theoryMarksSchemes.map((scheme) => (
+                      <React.Fragment key={scheme.id}>
+                        <td>
+                          <input
+                            type="number"
+                            step={0.01}
+                            {...register(
+                              `subjects.${subject.id}.marks.${scheme.id}.fm`,
+                              {
+                                valueAsNumber: true,
                               }
-                              value={field.value}
-                            />
-                          )}
-                        />
-                        {errors[index]?.marks?.[scheme.id]?.fm && (
-                          <div className="invalid-feedback">
-                            {errors[index]?.marks?.[scheme.id]?.fm?.message}
-                          </div>
-                        )}
-                      </td>
-                      <td>
-                        <Controller
-                          name={`${index}.marks.${scheme.id}.pm`}
-                          control={control}
-                          render={({ field }) => (
-                            <input
-                              {...field}
-                              type="number"
-                              step={0.01}
-                              className={`form-control ${
-                                errors[index]?.marks?.[scheme.id]?.pm
-                                  ? "is-invalid"
-                                  : ""
-                              }`}
-                              onChange={(e) =>
-                                field.onChange(Number(e.target.value) || 0)
+                            )}
+                            className={`form-control ${
+                              errors.subjects?.[subject.id]?.marks?.[scheme.id]
+                                ?.fm
+                                ? "is-invalid"
+                                : ""
+                            }`}
+                            placeholder={`FM for ${scheme.short_name}`}
+                          />
+                          {errors.subjects?.[subject.id]?.marks?.[scheme.id]
+                            ?.fm && (
+                            <div className="invalid-feedback">
+                              {
+                                errors.subjects[subject.id]?.marks?.[scheme.id]
+                                  ?.fm?.message
                               }
-                              value={field.value}
-                            />
+                            </div>
                           )}
-                        />
-                        {errors[index]?.marks?.[scheme.id]?.pm && (
-                          <div className="invalid-feedback">
-                            {errors[index]?.marks?.[scheme.id]?.pm?.message}
-                          </div>
-                        )}
-                      </td>
-                    </React.Fragment>
-                  ))}
-                  {practicalMarksScheme.map((scheme) => (
-                    <React.Fragment key={scheme.id}>
-                      <td>
-                        <Controller
-                          name={`${index}.marks.${scheme.id}.fm`}
-                          control={control}
-                          render={({ field }) => (
-                            <input
-                              {...field}
-                              type="number"
-                              step={0.01}
-                              className={`form-control ${
-                                errors[index]?.marks?.[scheme.id]?.fm
-                                  ? "is-invalid"
-                                  : ""
-                              }`}
-                              onChange={(e) =>
-                                field.onChange(Number(e.target.value) || 0)
+                        </td>
+                        <td>
+                          <input
+                            {...register(
+                              `subjects.${subject.id}.marks.${scheme.id}.pm`,
+                              {
+                                valueAsNumber: true,
                               }
-                              value={field.value}
-                            />
-                          )}
-                        />
-                        {errors[index]?.marks?.[scheme.id]?.fm && (
-                          <div className="invalid-feedback">
-                            {errors[index]?.marks?.[scheme.id]?.fm?.message}
-                          </div>
-                        )}
-                      </td>
-                      <td>
-                        <Controller
-                          name={`${index}.marks.${scheme.id}.pm`}
-                          control={control}
-                          render={({ field }) => (
-                            <input
-                              {...field}
-                              type="number"
-                              step={0.01}
-                              className={`form-control ${
-                                errors[index]?.marks?.[scheme.id]?.pm
-                                  ? "is-invalid"
-                                  : ""
-                              }`}
-                              onChange={(e) =>
-                                field.onChange(Number(e.target.value) || 0)
+                            )}
+                            type="number"
+                            step={0.01}
+                            className={`form-control ${
+                              errors.subjects?.[subject.id]?.marks?.[scheme.id]
+                                ?.pm
+                                ? "is-invalid"
+                                : ""
+                            }`}
+                            placeholder={`PM for ${scheme.short_name}`}
+                          />
+                          {errors.subjects?.[subject.id]?.marks?.[scheme.id]
+                            ?.pm && (
+                            <div className="invalid-feedback">
+                              {
+                                errors.subjects[subject.id]?.marks?.[scheme.id]
+                                  ?.pm?.message
                               }
-                              value={field.value}
-                            />
+                            </div>
                           )}
-                        />
-                        {errors[index]?.marks?.[scheme.id]?.pm && (
-                          <div className="invalid-feedback">
-                            {errors[index]?.marks?.[scheme.id]?.pm?.message}
-                          </div>
-                        )}
-                      </td>
-                    </React.Fragment>
-                  ))}
+                        </td>
+                      </React.Fragment>
+                    ))}
+
+                  {watch(`subjects.${subject.id}.selected`) &&
+                    subject.subject_type?.marking_scheme === "marks" &&
+                    practicalMarksScheme.map((scheme) => (
+                      <React.Fragment key={scheme.id}>
+                        <td>
+                          <input
+                            type="number"
+                            step={0.01}
+                            {...register(
+                              `subjects.${subject.id}.marks.${scheme.id}.fm`,
+                              {
+                                valueAsNumber: true,
+                              }
+                            )}
+                            className={`form-control ${
+                              errors.subjects?.[subject.id]?.marks?.[scheme.id]
+                                ?.fm
+                                ? "is-invalid"
+                                : ""
+                            }`}
+                            placeholder={`FM for ${scheme.short_name}`}
+                          />
+                          {errors.subjects?.[subject.id]?.marks?.[scheme.id]
+                            ?.fm && (
+                            <div className="invalid-feedback">
+                              {
+                                errors.subjects[subject.id]?.marks?.[scheme.id]
+                                  ?.fm?.message
+                              }
+                            </div>
+                          )}
+                        </td>
+                        <td>
+                          <input
+                            {...register(
+                              `subjects.${subject.id}.marks.${scheme.id}.pm`,
+                              {
+                                valueAsNumber: true,
+                              }
+                            )}
+                            type="number"
+                            step={0.01}
+                            className={`form-control ${
+                              errors.subjects?.[subject.id]?.marks?.[scheme.id]
+                                ?.pm
+                                ? "is-invalid"
+                                : ""
+                            }`}
+                            placeholder={`PM for ${scheme.short_name}`}
+                          />
+                          {errors.subjects?.[subject.id]?.marks?.[scheme.id]
+                            ?.pm && (
+                            <div className="invalid-feedback">
+                              {
+                                errors.subjects[subject.id]?.marks?.[scheme.id]
+                                  ?.pm?.message
+                              }
+                            </div>
+                          )}
+                        </td>
+                      </React.Fragment>
+                    ))}
                 </tr>
               ))}
             </tbody>
@@ -316,12 +418,17 @@ const AssignExamSubject = ({
             <button
               type="button"
               className="btn btn-light me-3"
-              onClick={() => reset()}
+              onClick={resetForm}
+              disabled={isSubmitting}
             >
               Discard
             </button>
-            <button type="submit" className="btn btn-primary">
-              Submit
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Submitting......" : "Submit"}
             </button>
           </div>
         </form>
