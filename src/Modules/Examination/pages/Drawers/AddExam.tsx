@@ -11,6 +11,7 @@ import useAcademicSession from "../../../Academics/hooks/useAcademicSession";
 import useAdmitCard from "../../../../DesignServices/hooks/useAdmitCard";
 import useMarksheet from "../../../../DesignServices/hooks/useMarksheet";
 import useMarksScheme from "../../hooks/useMarksScheme";
+import toast from "react-hot-toast";
 
 interface AddExamProps {
   onSave: () => void;
@@ -60,8 +61,8 @@ const AddExam = ({ onSave }: AddExamProps) => {
 
   const schema = z.object({
     name: z.string().min(1, { message: "Exam name is required" }),
-    has_symbol_no: z.boolean().default(true),
-    has_registration_no: z.boolean().default(true),
+    has_symbol_no: z.boolean().default(false),
+    has_registration_no: z.boolean().default(false),
     is_merged: z.boolean().default(false),
     start_date: z.string({ message: "Start Date Field is required." }),
     start_date_np: z.string(),
@@ -191,12 +192,6 @@ const AddExam = ({ onSave }: AddExamProps) => {
 
   useEffect(() => {
     setRenderKey(Math.floor((Math.random() + 1) * 10).toString());
-    console.log(
-      academicSessions.map(
-        (session) => session.academic_level_id === selectedSessionId
-      )
-    );
-    console.log("Form errors: ", errors);
   }, [academicSessions, errors, selectedSessionId]);
 
   const handleAcademicSessionChange = (
@@ -204,6 +199,8 @@ const AddExam = ({ onSave }: AddExamProps) => {
   ) => {
     if (selectedOption) {
       setValue("academic_session_id", selectedOption.value);
+      setValue("grades", []);
+      setSelectedGrades([]);
       setSelectedSessionId(selectedOption.value);
     }
   };
@@ -223,8 +220,8 @@ const AddExam = ({ onSave }: AddExamProps) => {
       end_date_np: "",
       result_date: "",
       result_date_np: "",
-      admit_card_id: 1,
-      marksheet_id: 1,
+      admit_card_id: undefined,
+      marksheet_id: undefined,
     });
     setSelectedGrades([]);
     setSelectedExams([]);
@@ -234,14 +231,10 @@ const AddExam = ({ onSave }: AddExamProps) => {
   useEffect(() => {
     setValue("grades", selectedGrades);
     setValue("merged_exams", selectedExams);
-    // console.log("Selected Grades: ", selectedGrades);
-    console.log("Form Grades: ", getValues("grades"));
-    console.log("Form Merged Exams: ", getValues("merged_exams"));
   }, [selectedGrades, setValue, selectedExams, getValues]);
 
   const onSubmit: SubmitHandler<ExamFormData> = async (data: ExamFormData) => {
-    // setisSubmitting(true);
-    console.log("Submitted data: ", data);
+    setisSubmitting(true);
     try {
       const examData: CreateExamInterface = {
         name: data.name,
@@ -254,6 +247,7 @@ const AddExam = ({ onSave }: AddExamProps) => {
         has_symbol_no: data.has_symbol_no,
         has_registration_no: data.has_registration_no,
         academic_session_id: data.academic_session_id,
+        marks_schemes: data.marks_schemes,
         grades: data.grades,
         is_merged: data.is_merged,
         merged_exams: data.merged_exams,
@@ -262,11 +256,10 @@ const AddExam = ({ onSave }: AddExamProps) => {
       };
       await createExam(examData);
     } catch (error) {
-      console.log("Error saving exam data: ", error);
+      toast.error(String(error));
     } finally {
-      // setisSubmitting(false);
+      setisSubmitting(false);
       onSave();
-
       // resetForm();
     }
   };
@@ -500,6 +493,11 @@ const AddExam = ({ onSave }: AddExamProps) => {
                   (Marks Assignable for Subjects.)
                 </label>
                 <hr />
+                {marksSchemes.length <= 0 && (
+                  <div className="col-12">
+                    <Loading />
+                  </div>
+                )}
                 <div className="col-md-4">
                   <h4>Theory Group</h4>
                   <ul className="list-group">
@@ -528,9 +526,7 @@ const AddExam = ({ onSave }: AddExamProps) => {
                   </ul>
                 </div>
                 <div className="col-md-4">
-                  <h4>
-                    Practical Group {JSON.stringify(selectedMarksSchemes)}
-                  </h4>
+                  <h4>Practical Group</h4>
                   <ul className="list-group">
                     {practicalMarksScheme?.map((scheme) => (
                       <li key={scheme.id} className="list-group-item border-0">
@@ -585,6 +581,11 @@ const AddExam = ({ onSave }: AddExamProps) => {
                 options={academicSessionOptions}
                 onChange={handleAcademicSessionChange}
                 error={errors.academic_session_id?.message}
+                defaultValue={
+                  academicSessionOptions.find(
+                    (option) => option.value === selectedSessionId
+                  ) || null
+                }
                 placeholder="Select Academic Level"
               />
             </div>

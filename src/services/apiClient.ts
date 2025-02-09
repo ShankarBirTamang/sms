@@ -1,4 +1,4 @@
-import axios, { CanceledError } from "axios";
+import axios, { CanceledError, AxiosError } from "axios";
 
 // Retrieve the base URL from your environment variables
 const baseUrl = import.meta.env.VITE_API_URL;
@@ -18,4 +18,4 @@ axiosInstance.interceptors.request.use((config) => {
 });
 
 export default axiosInstance;
-export { CanceledError };
+export { CanceledError, AxiosError };

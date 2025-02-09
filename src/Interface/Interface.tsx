@@ -9,17 +9,6 @@ export interface PaginationAndSearch {
   itemsPerPage?: number | null;
 }
 
-// export interface AcademicSessionInterface {
-//   id: number;
-//   name: string;
-//   start_date: string;
-//   start_date_np: string;
-//   end_date: string;
-//   end_date_np: string;
-//   academic_level_id: number;
-//   academic_level: string;
-// }
-
 export interface ApiResponseInterface<T> {
   data: T[];
   links: {
@@ -42,6 +31,15 @@ export interface ApiResponseInterface<T> {
     to: number;
     total: number;
   };
+}
+
+interface ValidationErrors {
+  [key: string]: string[];
+}
+
+export interface ApiCreateUpdateResponse {
+  message: string;
+  errors?: ValidationErrors;
 }
 
 export interface ApiResponse<T> {

@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import Icon from "../../../../components/Icon/Icon";
 import { useNavigate, useParams } from "react-router-dom";
 import examSessionService, {
+  ExamGrade,
   ExamSessionInterface,
 } from "../../services/examSessionService";
 import Loading from "../../../../components/Loading/Loading";
@@ -17,7 +18,10 @@ const ExamDetail = () => {
 
   const [assignExamSubjectDrawer, setAssignExamSubjectDrawer] = useState(false);
 
-  const toggleAssignExamSubjectDrawer = () => {
+  const [selectedExamGrade, setSelectedExamGrade] = useState<ExamGrade>();
+
+  const toggleAssignExamSubjectDrawer = (examGrade?: ExamGrade) => {
+    setSelectedExamGrade(examGrade);
     setAssignExamSubjectDrawer(!assignExamSubjectDrawer);
   };
 
@@ -154,7 +158,9 @@ const ExamDetail = () => {
                       <div className="d-flex flex-wrap gap-2">
                         <span
                           className="badge badge-danger cursor-pointer"
-                          onClick={toggleAssignExamSubjectDrawer}
+                          onClick={() =>
+                            toggleAssignExamSubjectDrawer(examGrade)
+                          }
                         >
                           Edit
                         </span>
@@ -169,23 +175,24 @@ const ExamDetail = () => {
                           Result Ledger for {examGrade.grade_name} :
                           {section.faculty.name !== "General" &&
                             section.faculty.name}
-                          ({section.name})
+                          {section.name}
                         </a>
                       </td>
                       <td className="text-end">
-                        <a href="#" className="badge badge-danger">
-                          Update Marks for {examGrade.grade_name} :
+                        <span className="badge badge-primary">
+                          Add Marks for {examGrade.grade_short_name} :
                           {section.faculty.name !== "General" &&
                             section.faculty.name}
-                          ({section.name})
-                        </a>
+                          {section.name}
+                        </span>
                         <br />
-                        <a href="#" className="badge badge-danger">
-                          Update Result Remarks of {examGrade.grade_name} :
+                        <span className="badge badge-primary">
+                          Update Result Remarks of {examGrade.grade_short_name}{" "}
+                          :
                           {section.faculty.name !== "General" &&
                             section.faculty.name}
-                          ({section.name})
-                        </a>
+                          {section.name}
+                        </span>
                       </td>
                     </tr>
                   ))}
@@ -195,15 +202,20 @@ const ExamDetail = () => {
           </table>
         </div>
       </div>
-      <DrawerModal
-        isOpen={assignExamSubjectDrawer}
-        onClose={toggleAssignExamSubjectDrawer}
-        position="right"
-        width="80vw"
-        title="Assign Exam Subjects"
-      >
-        <AssignExamSubject />
-      </DrawerModal>
+      {exam && selectedExamGrade && (
+        <DrawerModal
+          isOpen={assignExamSubjectDrawer}
+          onClose={toggleAssignExamSubjectDrawer}
+          position="right"
+          width={`${Math.min(exam.exam_marks_schemes.length + 3, 9)}0vw`}
+          title={`Assign Exam Subjectes for ${selectedExamGrade.grade_name}`}
+        >
+          <AssignExamSubject
+            examMarksScheme={exam.exam_marks_schemes}
+            examGrade={selectedExamGrade}
+          />
+        </DrawerModal>
+      )}
     </>
   );
 };
