@@ -1,5 +1,6 @@
-import { SessionLevel } from "../../../Academics/services/academicSessionService";
 import apiRoute from "../../../services/httpService";
+import { AcademicSessionInterface } from "../../Academics/services/academicSessionService";
+import { SectionInterface } from "../../Academics/services/gradeService";
 // import { UpdateGradeInterface } from "./gradeService";
 
 // export interface ExamInterface {
@@ -15,6 +16,13 @@ import apiRoute from "../../../services/httpService";
 //   is_completed?: boolean;
 
 // }
+
+interface SessionLevel {
+  session_id: number;
+  session_name: string;
+  level_id: number;
+  level_name: string;
+}
 
 export interface ExamSessionInterface {
   id: number;
@@ -56,6 +64,7 @@ interface ExamGrades {
   exam_grade_id: number;
   grade_id: number;
   grade_name: string;
+  sections: SectionInterface[];
 }
 
 export interface CreateExamInterface {
@@ -71,7 +80,7 @@ export interface CreateExamInterface {
   academic_session_id: number;
   grades: number[];
   is_merged: boolean;
-  merged_exams: number[];
+  merged_exams?: number[];
   admit_card_id: number;
   marksheet_id: number;
 }

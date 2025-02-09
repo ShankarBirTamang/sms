@@ -5,8 +5,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import SessionGradePicker from "../../../../../Academics/componenet/SessionGradePicker/SessionGradePicker";
-import useGrade from "../../../../../Academics/hooks/useGrade";
 import { StudentInterface } from "../../../services/studentService";
 import Loading from "../../../../../components/Loading/Loading";
 
@@ -23,6 +21,8 @@ import {
 } from "../../../../../services/generalService";
 import useHelpers from "../../../../../hooks/useHelpers";
 import toast from "react-hot-toast";
+import useGrade from "../../../../Academics/hooks/useGrade";
+import SessionGradePicker from "../../../../Academics/componenet/SessionGradePicker/SessionGradePicker";
 
 const StudentPhotograph = () => {
   useDocumentTitle("Capture Student Photograph");

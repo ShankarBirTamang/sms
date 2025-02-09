@@ -1,5 +1,5 @@
 import React from "react";
-import SessionGradePicker from "../../../../Academics/componenet/SessionGradePicker/SessionGradePicker";
+import SessionGradePicker from "../../../Academics/componenet/SessionGradePicker/SessionGradePicker";
 
 const StudentImport = () => {
   const handleSessionSelectChange = (selectedValues: {

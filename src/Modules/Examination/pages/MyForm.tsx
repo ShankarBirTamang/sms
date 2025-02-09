@@ -2,7 +2,7 @@ import React, { ChangeEvent, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import useAcademicSession from "../../../Academics/hooks/useAcademicSession";
+import useAcademicSession from "../../Academics/hooks/useAcademicSession";
 
 interface AddExamProps {
   onSave: () => void;
@@ -57,7 +57,7 @@ const MyForm = ({ onSave }: AddExamProps) => {
       <div className="col-12">
         <div>
           <div>
-            <label>Academic Session *</label>
+            <label>Academic Session*</label>
             <select
               value={academicSession}
               onChange={handleAcademicSessionChange}

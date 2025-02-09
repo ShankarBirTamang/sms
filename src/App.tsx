@@ -5,7 +5,6 @@ import Layout from "./layout/Layout";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import ProtectedRoute from "./components/Icon/ProtectedRoute";
 import Login from "./pages/Authentication/Login";
-import AcademicRoute from "./Academics/AcademicRoute";
 import { PermissionProvider } from "./context/permissionContext";
 import NotFound from "./pages/error/NotFound";
 import StudentRoute from "./Modules/Student/StudentRoute";
@@ -14,12 +13,14 @@ import DesignServicesRoute from "./DesignServices/DesignServicesRoute";
 import Vehicles from "./Transportation/pages/Vehicles";
 import TransportRoutes from "./Transportation/pages/TransportRoutes";
 import EmployeeRoute from "./Modules/Employee/EmployeeRoute";
-import ExamRoute from "./Modules/Examination/examRoute";
+import ExamRoute from "./Modules/Examination/ExamRoute";
 import AccountRoute from "./Modules/Accounts/AccountRoutes";
 import Address from "./General/pages/Address/Address";
 import ImportRoute from "./Modules/Import/ImportRoute";
 import ExportRoute from "./Modules/Export/ExportRoute";
 import { RoleProvider } from "./context/roleContext";
+import AcademicRoute from "./Modules/Academics/AcademicRoute";
+import GeneralRoute from "./Modules/General/GeneralRoute";
 
 const App = () => {
   return (
@@ -58,6 +59,7 @@ const App = () => {
                 <Route path="accounts/*" element={<AccountRoute />} />
                 <Route path="imports/*" element={<ImportRoute />} />
                 <Route path="exports/*" element={<ExportRoute />} />
+                <Route path="general/*" element={<GeneralRoute />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>

@@ -9,11 +9,11 @@ import DrawerModal from "../../../components/DrawerModal/DrawerModal";
 import AddExam from "./Drawers/AddExam";
 
 const ExamSession = () => {
-  const [searchTerm, setSearchTerm] = useState(""); // New state for search term
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(null);
-  const [addExamDrawer, setAddExamDrawer] = useState(false);
-  const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
+  const [addExamDrawer, setAddExamDrawer] = useState(true);
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const toggleCompletionStatus = (id: number) => {
     setExaminations((prevExamination) =>
@@ -30,22 +30,19 @@ const ExamSession = () => {
     }
   };
 
-  //header functions
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1); // Reset to the first page on new search
+    setCurrentPage(1);
   };
 
   const handleItemsPerPageChange = (value: number | null) => {
     setItemsPerPage(value);
     setCurrentPage(1);
   };
-
-  //header function ends here
 
   const {
     isLoading,
@@ -190,7 +187,6 @@ const ExamSession = () => {
                         <button
                           title="Edit Exam Session"
                           type="button"
-                          // onClick={() => handleEditClick(exam)}
                           className="btn btn-light-info btn-icon btn-sm"
                         >
                           <Icon name={"edit"} className={"svg-icon"} />
@@ -211,7 +207,7 @@ const ExamSession = () => {
             </table>
           )}
         </div>
-        {/* Pagination */}
+        {}
         <div className="card-footer">
           {pagination && (
             <Pagination
@@ -225,7 +221,7 @@ const ExamSession = () => {
           isOpen={addExamDrawer}
           onClose={toggleAddExamDrawer}
           position="right"
-          width="900px"
+          width="800px"
           title="EXAMINATION DETAILS"
         >
           <AddExam onSave={toggleAddExamDrawer} />
