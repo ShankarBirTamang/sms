@@ -74,6 +74,7 @@ export interface ExamSubjectMarksSchemeInterface {
   exam_grade_subject_id: number;
   exam_marks_scheme_id: number;
   exam_marks_scheme_name: string;
+  exam_marks_scheme_short_name: string;
   exam_marks_scheme_group: string;
   full_marks: string;
   pass_marks: string;
@@ -83,6 +84,7 @@ export interface ExamGradeSubjectInterface {
   id: number;
   subject_id: number;
   name: string;
+  marking_scheme: string;
   rank: number;
   status: boolean;
   exam_subject_marks_schemes: ExamSubjectMarksSchemeInterface[];

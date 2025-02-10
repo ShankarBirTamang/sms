@@ -141,6 +141,23 @@ const useExam = ({
     }
   };
 
+  const getExamGrade = useCallback(async (examGradeId: number) => {
+    try {
+      const result = await axiosInstance.get(
+        "examination/exam/exam-grade/" + examGradeId
+      );
+      return result.data.data;
+    } catch (error: unknown) {
+      if (error instanceof Error && "response" in error) {
+        const axiosError = error as { response: { data: { errors: string } } };
+        setError(axiosError.response.data.errors);
+        console.log(axiosError.response);
+      } else {
+        toast.error("Unknown Error Occured");
+      }
+    }
+  }, []);
+
   return {
     isLoading,
     pagination,
@@ -152,6 +169,7 @@ const useExam = ({
     setExaminations,
     createExam,
     addExamGradeSubject,
+    getExamGrade,
   };
 };
 

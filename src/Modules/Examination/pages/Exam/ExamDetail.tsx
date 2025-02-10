@@ -77,6 +77,12 @@ const ExamDetail = () => {
     document.body.classList.remove("no-scroll");
   };
 
+  const navigateExamGradeMarks = (examGradeId: number, sectionId: number) => {
+    navigate(
+      `/examination/session/exam-grade-marks/${examGradeId}/${sectionId}`
+    );
+  };
+
   if (isLoading) {
     return (
       <>
@@ -179,16 +185,13 @@ const ExamDetail = () => {
                         {examGrade.exam_grade_subjects
                           .filter((subject) => subject.status === true)
                           .map((examGradeSubject, egs) => (
-                            <span
-                              key={egs}
-                              className="badge badge-primary cursor-pointer"
-                            >
+                            <span key={egs} className="badge badge-primary">
                               {examGradeSubject.name}
                             </span>
                           ))}
                         {examGrade.exam_grade_subjects.length > 0 ? (
                           <span
-                            className="badge badge-danger cursor-pointer"
+                            className="badge badge-danger cursor-pointer hover hover-scale"
                             onClick={() =>
                               toggleAssignExamSubjectDrawer(examGrade)
                             }
@@ -197,7 +200,7 @@ const ExamDetail = () => {
                           </span>
                         ) : (
                           <span
-                            className="badge badge-success cursor-pointer"
+                            className="badge badge-success cursor-pointer hover hover-scale"
                             onClick={() =>
                               toggleAssignExamSubjectDrawer(examGrade)
                             }
@@ -212,24 +215,31 @@ const ExamDetail = () => {
                     <tr key={s}>
                       <td className="text-center"> {section.name}</td>
                       <td>
-                        <a href="#" className="badge badge-success">
+                        <span className="badge badge-success cursor-pointer  hover hover-scale">
                           Result Ledger for {examGrade.grade_name} :
                           {section.faculty.name !== "General" &&
                             section.faculty.name}
                           {section.name}
-                        </a>
+                        </span>
                       </td>
                       <td className="text-end">
-                        <span className="badge badge-primary">
+                        <span
+                          className="badge badge-primary cursor-pointer hover hover-scale"
+                          onClick={() =>
+                            navigateExamGradeMarks(
+                              examGrade.exam_grade_id,
+                              section.id
+                            )
+                          }
+                        >
                           Add Marks for {examGrade.grade_short_name} :
                           {section.faculty.name !== "General" &&
                             section.faculty.name}
                           {section.name}
                         </span>
                         <br />
-                        <span className="badge badge-primary">
-                          Update Result Remarks of {examGrade.grade_short_name}{" "}
-                          :
+                        <span className="badge badge-primary cursor-pointer  hover hover-scale">
+                          Add Result Remarks of {examGrade.grade_short_name} :
                           {section.faculty.name !== "General" &&
                             section.faculty.name}
                           {section.name}

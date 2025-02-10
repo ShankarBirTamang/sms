@@ -4,6 +4,7 @@ import ProtectedRoute from "../../components/Icon/ProtectedRoute";
 import ExamSession from "./pages/ExamSession";
 import ExamDetail from "./pages/Exam/ExamDetail";
 import ExamSettings from "./pages/ExamSettings/ExamSettings";
+import ExamMarks from "./pages/Exam/Marks/ExamMarks";
 
 interface RouteConfig {
   path: string;
@@ -18,6 +19,11 @@ const routes: RouteConfig[] = [
     path: "session/:examId/show",
     title: "Exam Session Details",
     element: <ExamDetail />,
+  },
+  {
+    path: "session/exam-grade-marks/:examGradeId/:sectionId",
+    title: "Exam Session Details",
+    element: <ExamMarks />,
   },
 ];
 
