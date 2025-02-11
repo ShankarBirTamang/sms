@@ -17,6 +17,12 @@ import { SectionInterface } from "../../Academics/services/gradeService";
 
 // }
 
+interface ExamSectionInterface {
+  id: number;
+  name: string;
+  faculty: string;
+}
+
 interface SessionLevel {
   session_id: number;
   session_name: string;
@@ -87,6 +93,8 @@ export interface ExamGradeSubjectInterface {
   marking_scheme: string;
   rank: number;
   status: boolean;
+  is_section_specific: boolean;
+  sections: ExamSectionInterface[];
   exam_subject_marks_schemes: ExamSubjectMarksSchemeInterface[];
 }
 
@@ -96,7 +104,7 @@ export interface ExamGradeInterface {
   grade_name: string;
   grade_short_name: string;
   exam_grade_subjects: ExamGradeSubjectInterface[];
-  sections: SectionInterface[];
+  sections: ExamSectionInterface[];
 }
 
 export interface CreateExamInterface {

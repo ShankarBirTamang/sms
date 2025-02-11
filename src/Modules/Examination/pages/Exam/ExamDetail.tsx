@@ -217,8 +217,7 @@ const ExamDetail = () => {
                       <td>
                         <span className="badge badge-success cursor-pointer  hover hover-scale">
                           Result Ledger for {examGrade.grade_name} :
-                          {section.faculty.name !== "General" &&
-                            section.faculty.name}
+                          {section.faculty !== "General" && section.faculty}
                           {section.name}
                         </span>
                       </td>
@@ -233,15 +232,13 @@ const ExamDetail = () => {
                           }
                         >
                           Add Marks for {examGrade.grade_short_name} :
-                          {section.faculty.name !== "General" &&
-                            section.faculty.name}
+                          {section.faculty !== "General" && section.faculty}
                           {section.name}
                         </span>
                         <br />
                         <span className="badge badge-primary cursor-pointer  hover hover-scale">
                           Add Result Remarks of {examGrade.grade_short_name} :
-                          {section.faculty.name !== "General" &&
-                            section.faculty.name}
+                          {section.faculty !== "General" && section.faculty}
                           {section.name}
                         </span>
                       </td>
