@@ -16,7 +16,9 @@ const useExam = ({
   }: PaginationAndSearch) => {
     
     const [examinations , setExaminations] = useState<ExamSessionInterface[]>([]);
-
+    const [isEditing , setIsEditing] = useState<boolean>(true);
+      const [selectedGrades, setSelectedGrades] = useState<number[]>([]);
+    
 
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setLoading] = useState(false);
@@ -116,7 +118,7 @@ const createExam = async ({
 
   return {
     isLoading,pagination,edgeLinks,error , examinations ,setStatusChanged, 
-    fetchExam,
+    fetchExam, isEditing, setIsEditing,selectedGrades,setSelectedGrades,
     setExaminations ,createExam
   }
 }

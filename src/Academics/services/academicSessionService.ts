@@ -23,6 +23,14 @@ export interface ChangeAcademicSessionStatusInterface {
   id: number;
 }
 
+export interface SessionLevel {
+  session_id : number;
+  session_name : string;
+  level_id : number;
+  level_name: string;
+}
+
+
 // export interface AcademicLevelsResponse {
 //   data: UpdateAcademicSessionInterface[];
 // }

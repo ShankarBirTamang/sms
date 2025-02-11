@@ -137,7 +137,17 @@ const AddExam = ({ onSave }: AddExamProps) => {
     setSelectedExams(updatedExams);
     setValue("merged_exams", updatedExams);
   };
+  /*
+onChange = {()=> handleBrandSelection(brand.name)}
 
+
+const handleBrandSelection(brandName){
+const updatedBrands = brandsFilter.includes(brandName)?
+          brandsFilter.filter((name)=>name!==brandName)
+          :[...brandsFilter,brandName]
+setBrandsFilter(updatedBrands);
+}
+*/
   const handleAdmitCardDesignChange = (value: string) => {
     setAdmitCardDesign(value);
     const numericValue =
