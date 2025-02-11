@@ -10,14 +10,18 @@ import AddExam from "./Drawers/AddExam";
 import EditExam from "./Drawers/EditExam";
 
 const ExamSession = () => {
-  const [searchTerm, setSearchTerm] = useState(""); // New state for search term
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(null);
   const [addExamDrawer, setAddExamDrawer] = useState(false);
+<<<<<<< HEAD
   const [editExamDrawer, setEditExamDrawer] = useState(false);
   const [selectedExamId, setSelectedExamId] = useState<number | null>(null);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
+=======
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+>>>>>>> origin
 
   const toggleCompletionStatus = (id: number) => {
     setExaminations((prevExamination) =>
@@ -34,6 +38,7 @@ const ExamSession = () => {
     }
   };
 
+<<<<<<< HEAD
   const toggleEditExamDrawer = (ex_Id?: number | null) => {
     console.log("ToggleEdit Exam");
     setIsEditing(!isEditing);
@@ -50,21 +55,21 @@ const ExamSession = () => {
   };
 
   //header functions
+=======
+>>>>>>> origin
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1); // Reset to the first page on new search
+    setCurrentPage(1);
   };
 
   const handleItemsPerPageChange = (value: number | null) => {
     setItemsPerPage(value);
     setCurrentPage(1);
   };
-
-  //header function ends here
 
   const {
     isLoading,
@@ -88,6 +93,7 @@ const ExamSession = () => {
   const handleNavigate = (examId: number) => {
     navigate(`${examId}/show`);
   };
+<<<<<<< HEAD
 
   const handleEditClick = (examId: number) => {
     console.log("Handle Edit Click");
@@ -104,6 +110,8 @@ const ExamSession = () => {
     // navigate(`${examId}/edit`);
   };
   console.log("Examinations : ", examinations);
+=======
+>>>>>>> origin
   return (
     <>
       <div className="card">
@@ -175,10 +183,10 @@ const ExamSession = () => {
                   <th className="min-w-200px">Name</th>
                   <th className="w-150px">Level</th>
                   <th className="w-250px">Academic Session</th>
-                  <th className="min-w-125px">Start Date</th>
-                  <th className="min-w-125px">End Date</th>
-                  <th className="w-300px">Status</th>
-                  <th className="min-w-125px">Actions</th>
+                  <th className="w-150px">Start Date</th>
+                  <th className="w-150px">End Date</th>
+                  <th className="min-w-100px">Status</th>
+                  <th className="w-125px text-end">Actions</th>
                 </tr>
               </thead>
               <tbody className="text-gray-600 fw-bold">
@@ -188,8 +196,12 @@ const ExamSession = () => {
                     <td>{exam.name}</td>
                     <td>{exam.session_level?.level_name}</td>
                     <td>{exam.session_level?.session_name}</td>
-                    <td>{exam.start_date_np}</td>
-                    <td>{exam.end_date_np}</td>
+                    <td>
+                      {exam.start_date_np} B.S. <br /> {exam.start_date} A.D.
+                    </td>
+                    <td>
+                      {exam.end_date_np} B.S. <br /> {exam.end_date} A.D.
+                    </td>
                     <td className="w-350px g-10">
                       {exam.is_completed ? (
                         <div className="d-flex align-items-center">
@@ -224,11 +236,14 @@ const ExamSession = () => {
                       )}
                     </td>
                     <td className="text-end">
-                      <div className="d-flex gap-2">
+                      <div className="d-flex gap-2 justify-content-end">
                         <button
                           title="Edit Exam Session"
                           type="button"
+<<<<<<< HEAD
                           onClick={() => handleEditClick(exam.id)}
+=======
+>>>>>>> origin
                           className="btn btn-light-info btn-icon btn-sm"
                         >
                           <Icon name={"edit"} className={"svg-icon"} />
@@ -249,7 +264,7 @@ const ExamSession = () => {
             </table>
           )}
         </div>
-        {/* Pagination */}
+        {}
         <div className="card-footer">
           {pagination && (
             <Pagination
@@ -263,8 +278,13 @@ const ExamSession = () => {
           isOpen={addExamDrawer}
           onClose={toggleAddExamDrawer}
           position="right"
+<<<<<<< HEAD
           width="900px"
           title="ADD EXAMINATION DETAILS"
+=======
+          width="800px"
+          title="EXAMINATION DETAILS"
+>>>>>>> origin
         >
           <AddExam onSave={toggleAddExamDrawer} />
         </DrawerModal>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  ApiResponse,
   ApiResponseInterface,
   PaginationAndSearch,
 } from "../../Interface/Interface";
@@ -7,7 +8,10 @@ import { PaginationProps } from "../../components/Pagination/Pagination";
 import toast from "react-hot-toast";
 import certificateServices, {
   CertificateInterface,
+  GetCertificateInterface,
+  UpdateCertificateInterface,
 } from "../services/certificateServices";
+import { CanceledError } from "axios";
 
 const useCertificate = ({
   search = "",
@@ -15,7 +19,11 @@ const useCertificate = ({
   itemsPerPage = null,
 }: PaginationAndSearch) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [certificates, setCertificates] = useState<CertificateInterface[]>([]);
+  const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
+  const [certificate, setCertificate] = useState<GetCertificateInterface>();
+  const [certificateList, setCertificateList] = useState<
+    GetCertificateInterface[]
+  >([]);
   const [error, setError] = useState<string | null>(null);
 
   //For Pagination
@@ -35,18 +43,16 @@ const useCertificate = ({
     }
 
     const { request, cancel } =
-      certificateServices.getAll<ApiResponseInterface<CertificateInterface>>(
+      certificateServices.getAll<ApiResponseInterface<GetCertificateInterface>>(
         params
       );
 
     request
       .then((result) => {
-        setCertificates(result.data.data);
+        setCertificateList(result.data.data);
         setPagination(result.data.meta);
         setEdgeLinks(result.data.links);
         setIsLoading(false);
-        // console.log("result after fetching Admit Cards", result.data.data);
-        console.log("result after fetching Admit Cards meta", result.data);
       })
       .catch((error) => {
         console.log("Error while fetching Admit Cards", error);
@@ -57,20 +63,64 @@ const useCertificate = ({
     // return () => cancel();
   }, [search, currentPage, itemsPerPage]);
 
-  // const saveCertificate = async ({ name, signers }) => {
-  //   console.log("create admit card fn");
+  const getOneCertificate = async (id: number) => {
+    const { request, cancel } =
+      certificateServices.getOne<ApiResponse<GetCertificateInterface>>(id);
 
-  //   const params = { name, signers };
-  //   const response = await certificateService.create<CertificateInterface>(params);
-  //   console.log("admit card response", response);
-  //   setCertificates((prev) => [...prev, response.data.data]);
-  // };
+    request
+      .then((result) => {
+        console.log("One Certificate", result.data.data);
+        setCertificate(result.data.data);
+      })
+      .catch((err) => {
+        if (err instanceof CanceledError) return;
+        setError(err.message);
+        toast.error("Error while fetching One Certificate");
+      });
+    return () => cancel();
+  };
+
+  const saveCertificate = async (data: CertificateInterface) => {
+    setIsLoadingSubmit(true);
+    console.log("data to be saved", data);
+    try {
+      const response = await certificateServices.create<CertificateInterface>(
+        data
+      );
+      console.log("response", response.data.data);
+      toast.success("Certificate saved successfully");
+    } catch (error) {
+      console.log("Error while saving certificate", error);
+      toast.error("Error while saving certificate");
+    } finally {
+      setIsLoadingSubmit(false);
+    }
+  };
+
+  const updateCertificate = async (data: UpdateCertificateInterface) => {
+    setIsLoadingSubmit(true);
+    try {
+      const response =
+        await certificateServices.update<UpdateCertificateInterface>(data);
+      console.log("Certificate response", response.data.data);
+      toast.success("Certificate updated successfully..");
+    } catch (error) {
+      toast.error("An error occurred when trying to update Certificate..");
+    } finally {
+      setIsLoadingSubmit(false);
+    }
+  };
 
   return {
     pagination,
     edgeLinks,
     isLoading,
-    certificates,
+    isLoadingSubmit,
+    certificate,
+    certificateList,
+    getOneCertificate,
+    saveCertificate,
+    updateCertificate,
   };
 };
 

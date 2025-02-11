@@ -1,0 +1,261 @@
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useParams } from "react-router-dom";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { StudentInterface } from "../../../../Student/services/studentService";
+import { ExamGradeInterface } from "../../../services/examSessionService";
+import useDebounce from "../../../../../hooks/useDebounce";
+import useGrade from "../../../../Academics/hooks/useGrade";
+import useExam from "../../../hooks/useExam";
+import { z } from "zod";
+import Icon from "../../../../../components/Icon/Icon";
+
+const marksSchema = z.record(
+  z.string(), // Subject ID
+  z.record(
+    z.string(), // Marks Scheme ID
+    z.union([z.string(), z.number()]) // Marks or Grade
+  )
+);
+
+// Define the form schema
+const formSchema = z.object({
+  students: z.record(z.string(), marksSchema), // Student ID -> Marks
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
+const ExamMarks = () => {
+  const { examGradeId, sectionId } = useParams<{
+    examGradeId: string;
+    sectionId: string;
+  }>();
+  const [students, setStudents] = useState<StudentInterface[]>([]);
+  const [examGrade, setExamGrade] = useState<ExamGradeInterface>();
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+
+  const { getSectionStudents } = useGrade({});
+  const { getExamGrade } = useExam({});
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      students: {},
+    },
+  });
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      const students = await getSectionStudents(Number(sectionId));
+      setStudents(students);
+    };
+    fetchStudents();
+  }, [getSectionStudents, sectionId]);
+
+  useEffect(() => {
+    const fetchExamGrade = async () => {
+      const examGrade = await getExamGrade(Number(examGradeId));
+      setExamGrade(examGrade);
+    };
+    fetchExamGrade();
+  }, [examGradeId, getExamGrade]);
+
+  const sortedStudents = useMemo(() => {
+    return [...students].sort(
+      (a, b) => (Number(a.roll_no) || 0) - (Number(b.roll_no) || 0)
+    );
+  }, [students]);
+
+  const filteredStudents = useMemo(() => {
+    return sortedStudents.filter((student) =>
+      student.full_name
+        ?.toLowerCase()
+        .includes(debouncedSearchTerm.toLowerCase())
+    );
+  }, [sortedStudents, debouncedSearchTerm]);
+
+  const handleSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchTerm(e.target.value);
+    },
+    []
+  );
+
+  const onSubmit = (data: FormValues) => {
+    console.log("Form Data Submitted:", data);
+    // Handle form submission logic here
+  };
+
+  useEffect(() => {
+    console.log(errors);
+  }, [errors]);
+
+  return (
+    <>
+      <div className="card">
+        <div className="card-header">
+          <div className="card-title">
+            <h2>Exam Marks for the Students of {examGrade?.grade_name}</h2>
+          </div>
+          <div className="card-toolbar">
+            <div
+              className="d-flex justify-content-end gap-2"
+              data-kt-user-table-toolbar="base"
+            >
+              <div className="d-flex align-items-center gap-2">
+                <div className="d-flex align-items-center position-relative">
+                  <Icon
+                    name="searchDark"
+                    className="svg-icon svg-icon-1 position-absolute ms-6"
+                  />
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    className="form-control w-250px ps-14"
+                    placeholder="Search Students"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="card-body pt-0">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <table className="table align-middle table-row-dashed fs-6 gy-1 table-hover">
+              <thead>
+                <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+                  <th className="w-30px" rowSpan={2}>
+                    S.N.
+                  </th>
+                  <th className="min-w-200px" rowSpan={2}>
+                    Student Name
+                  </th>
+                  {examGrade?.exam_grade_subjects.map((subject, sub) => (
+                    <th
+                      key={sub}
+                      className="text-center"
+                      colSpan={subject.exam_subject_marks_schemes.length}
+                    >
+                      {subject.name}
+                    </th>
+                  ))}
+                </tr>
+                <tr>
+                  {examGrade?.exam_grade_subjects.map((subject, sub) => (
+                    <React.Fragment key={sub}>
+                      {subject.exam_subject_marks_schemes.map(
+                        (marksScheme, ms) => (
+                          <th key={ms} className="text-center">
+                            {marksScheme.exam_marks_scheme_short_name}:{" "}
+                            {marksScheme.full_marks}
+                          </th>
+                        )
+                      )}
+                    </React.Fragment>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="text-gray-600 fw-bold">
+                {filteredStudents.map((student, st) => (
+                  <tr key={student.id}>
+                    <td>{st + 1}</td>
+                    <td>
+                      <div className="d-flex align-items-center">
+                        <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
+                          {student.photo && (
+                            <div className="symbol-label">
+                              <img
+                                src={student.photo}
+                                alt={student.full_name}
+                              />
+                            </div>
+                          )}
+                        </div>
+                        <div className="d-flex flex-column">
+                          {student.full_name}
+                          <span>
+                            {student.roll_no && `Roll No : ${student.roll_no}`}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    {examGrade?.exam_grade_subjects.map((subject, sub) => (
+                      <React.Fragment key={sub}>
+                        {subject.exam_subject_marks_schemes.map(
+                          (marksScheme, ms) => (
+                            <React.Fragment key={ms}>
+                              {subject.marking_scheme === "marks" ? (
+                                <td className="text-center p-1">
+                                  <div className="d-flex justify-content-center">
+                                    <Controller
+                                      name={`students.${student.id}.${subject.id}.${marksScheme.id}`}
+                                      control={control}
+                                      defaultValue=""
+                                      render={({ field }) => (
+                                        <input
+                                          {...field}
+                                          type="text"
+                                          className="form-control mb-3 mb-lg-0 w-50px marks-field text-center"
+                                          placeholder={`${marksScheme.exam_marks_scheme_short_name}`}
+                                        />
+                                      )}
+                                    />
+                                  </div>
+                                </td>
+                              ) : (
+                                <td className="text-center p-1">
+                                  <div className="d-flex justify-content-center">
+                                    <Controller
+                                      name={`students.${student.id}.${subject.id}.${marksScheme.id}`}
+                                      control={control}
+                                      defaultValue=""
+                                      render={({ field }) => (
+                                        <select
+                                          {...field}
+                                          className="form-control w-50px text-center"
+                                        >
+                                          <option value="" hidden></option>
+                                          <option value="A+">A+</option>
+                                          <option value="A">A</option>
+                                          <option value="B+">B+</option>
+                                          <option value="B">B</option>
+                                          <option value="C+">C+</option>
+                                          <option value="C">C</option>
+                                          <option value="D">D</option>
+                                          <option value="E">E</option>
+                                          <option value="F">F</option>
+                                          <option value="AB">AB</option>
+                                          <option value="NG">NG</option>
+                                        </select>
+                                      )}
+                                    />
+                                  </div>
+                                </td>
+                              )}
+                            </React.Fragment>
+                          )
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <hr />
+            <button className="btn btn-primary" type="submit">
+              Submit
+            </button>
+          </form>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default ExamMarks;

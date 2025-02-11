@@ -10,7 +10,7 @@ import Icon from "../../components/Icon/Icon";
 const TransportRoutes = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
+  const [itemsPerPage, setItemsPerPage] = useState<number | null>(5);
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const {
@@ -332,7 +332,7 @@ const TransportRoutes = () => {
                       />
                       <input
                         type="text"
-                        className="form-control form-control-solid w-250px ps-14"
+                        className="form-control w-250px ps-14"
                         id="data_search"
                         placeholder="Search Routes Name"
                         value={searchTerm}
@@ -362,21 +362,13 @@ const TransportRoutes = () => {
               </div>
             </div>
             <div className="card-body pt-0">
-              <table className="table table-bordered table-hover">
+              <table className="table align-middle table-row-dashed fs-6 gy-1 dataTable no-footer">
                 <thead className="thead-light">
                   <tr>
-                    <th>
-                      <strong>SN</strong>
-                    </th>
-                    <th>
-                      <strong>Name</strong>
-                    </th>
-                    <th>
-                      <strong>Route Checkpoints</strong>
-                    </th>
-                    <th>
-                      <strong>Actions</strong>
-                    </th>
+                    <th className="w-50px">SN</th>
+                    <th>Name</th>
+                    <th>Route Checkpoints</th>
+                    <th className="w-50px">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -385,36 +377,55 @@ const TransportRoutes = () => {
                       <td>{index + 1}</td>
                       <td>{route.name}</td>
                       <td>
-                        {route.route_checkpoints.map((cp) => (
-                          <div key={cp.id} className="d-flex gap-2 my-2">
-                            <span className="d-block">
-                              {cp.location_name} ({cp.latitude}, {cp.longitude})
-                            </span>
-                            <div className="btn-group" role="group">
-                              <button
-                                className="btn btn-success "
-                                style={{ fontSize: "10px", padding: "2px 8px" }}
-                                onClick={() =>
-                                  handleEditCheckpointForm(route.id, cp)
-                                }
-                              >
-                                Edit
-                              </button>
-                              <button
-                                style={{ fontSize: "10px", padding: "2px 8px" }}
-                                className="btn btn-danger"
-                                onClick={() =>
-                                  handleDeleteCheckpoint(route.id, cp.id)
-                                }
-                              >
-                                Delete
-                              </button>
+                        <div className="d-flex gap-2 flex-wrap">
+                          {route.route_checkpoints.map((cp) => (
+                            <div
+                              className="d-flex justify-content-between border p-2 w-150px"
+                              key={cp.id}
+                            >
+                              <span className=" me-2">{cp.location_name}</span>
+                              <div className="btn-group" role="group">
+                                <button
+                                  title="edit"
+                                  type="button"
+                                  className="btn btn-success "
+                                  style={{
+                                    fontSize: "10px",
+                                    padding: "2px 8px",
+                                  }}
+                                  onClick={() =>
+                                    handleEditCheckpointForm(route.id, cp)
+                                  }
+                                >
+                                  <Icon
+                                    name={"edit"}
+                                    className={"svg-icon m-0"}
+                                  />
+                                </button>
+                                {/* <button
+                                  title="de;ete"
+                                  type="button"
+                                  style={{
+                                    fontSize: "10px",
+                                    padding: "2px 8px",
+                                  }}
+                                  className="btn btn-danger"
+                                  onClick={() =>
+                                    handleDeleteCheckpoint(route.id, cp.id)
+                                  }
+                                >
+                                  <Icon
+                                    name={"delete"}
+                                    className={"svg-icon m-0"}
+                                  />
+                                </button> */}
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                         <button
-                          style={{ fontSize: "10px", padding: "2px 8px" }}
-                          className="btn btn-primary mt-2"
+                          style={{ fontSize: "12px", padding: "2px 8px" }}
+                          className="btn btn-danger mt-2"
                           onClick={() => handleOpenCheckpointForm(route.id)}
                         >
                           Add Checkpoint
@@ -422,11 +433,12 @@ const TransportRoutes = () => {
                       </td>
                       <td>
                         <button
-                          style={{ fontSize: "10px", padding: "4px 8px" }}
-                          className="btn btn-sm btn-light-info w-20 mb-2 d-flex"
+                          title="edit academic level"
+                          type="button"
                           onClick={() => handleEditRoute(route)}
+                          className="btn btn-light-info btn-icon btn-sm"
                         >
-                          {icons.edit}
+                          <Icon name={"edit"} className={"svg-icon"} />
                         </button>
                       </td>
                     </tr>

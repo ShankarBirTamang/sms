@@ -3,28 +3,32 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import CustomSelect from "../../../../components/CustomSelect/CustomSelect";
 import Loading from "../../../../components/Loading/Loading";
 import DatePicker from "../../../../components/DatePicker/DatePicker";
-import useAcademicSession from "../../../../Academics/hooks/useAcademicSession";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import useExam from "../../hooks/useExam";
 import { CreateExamInterface } from "../../services/examSessionService";
+import useAcademicSession from "../../../Academics/hooks/useAcademicSession";
+import useAdmitCard from "../../../../DesignServices/hooks/useAdmitCard";
+import useMarksheet from "../../../../DesignServices/hooks/useMarksheet";
+import useMarksScheme from "../../hooks/useMarksScheme";
+import toast from "react-hot-toast";
 
 interface AddExamProps {
   onSave: () => void;
 }
 
 const AddExam = ({ onSave }: AddExamProps) => {
-  const [hasSymbol, setHasSymbol] = useState<boolean>(true);
-  const [hasRegistration, setHasRegistration] = useState<boolean>(true);
+  const [hasSymbol, setHasSymbol] = useState<boolean>(false);
+  const [hasRegistration, setHasRegistration] = useState<boolean>(false);
   const [isMerged, setIsMerged] = useState<boolean>(false);
-  const [admitCardDesign, setAdmitCardDesign] = useState<string>("general");
-  const [markSheetDesign, setMarkSheetDesign] =
-    useState<string>("gradedFormatWithPR");
   const [selectedSessionId, setSelectedSessionId] = useState<number>();
   const [selectedGrades, setSelectedGrades] = useState<number[]>([]);
   const [selectedExams, setSelectedExams] = useState<number[]>([]);
+  const [selectedMarksSchemes, setSelectedMarksSchemes] = useState<number[]>(
+    []
+  );
 
-  // const [isSubmitting, setisSubmitting] = useState<boolean>(false);
+  const [isSubmitting, setisSubmitting] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const [renderKey, setRenderKey] = useState("");
   const [startValueAD, setStartValueAD] = useState("");
@@ -38,6 +42,9 @@ const AddExam = ({ onSave }: AddExamProps) => {
 
   const { academicSessions } = useAcademicSession({});
   const { createExam, examinations } = useExam({});
+  const { admitCardList } = useAdmitCard({});
+  const { marksheetList } = useMarksheet({});
+  const { marksSchemes } = useMarksScheme({});
   const academicSessionOptions = academicSessions
     .filter((session) => session.is_active)
     .map((session) => ({
@@ -45,10 +52,17 @@ const AddExam = ({ onSave }: AddExamProps) => {
       label: session.name,
     }));
 
+  const theoryMarksSchemes = marksSchemes.filter(
+    (scheme) => scheme.group === "Theory"
+  );
+  const practicalMarksScheme = marksSchemes.filter(
+    (scheme) => scheme.group === "Practical"
+  );
+
   const schema = z.object({
     name: z.string().min(1, { message: "Exam name is required" }),
-    has_symbol_no: z.boolean().default(true),
-    has_registration_no: z.boolean().default(true),
+    has_symbol_no: z.boolean().default(false),
+    has_registration_no: z.boolean().default(false),
     is_merged: z.boolean().default(false),
     start_date: z.string({ message: "Start Date Field is required." }),
     start_date_np: z.string(),
@@ -56,20 +70,21 @@ const AddExam = ({ onSave }: AddExamProps) => {
     end_date_np: z.string(),
     result_date: z.string({ message: "Result Date Field is required." }),
     result_date_np: z.string(),
-    admit_card_id: z.number().default(1),
-    marksheet_id: z.number().default(1),
+    admit_card_id: z.number(),
+    marksheet_id: z.number(),
     academic_session_id: z.number().refine(
       (id) => {
         return academicSessions.some((session) => session.id === id);
       },
       { message: "Invalid academic session Id" }
     ),
+    marks_schemes: z
+      .array(z.number())
+      .min(1, { message: "At least one grade must be selected." }),
     grades: z
       .array(z.number())
       .min(1, { message: "At least one grade must be selected." }),
-    merged_exams: z
-      .array(z.number())
-      .min(1, { message: "At least one exam must be selected." }),
+    merged_exams: z.array(z.number()).optional(),
   });
 
   type ExamFormData = z.infer<typeof schema>;
@@ -121,6 +136,14 @@ const AddExam = ({ onSave }: AddExamProps) => {
     setIsMerged(value);
     setValue("is_merged", value);
   };
+
+  const handleMarksSchemesSelection = (marksSchemeId: number) => {
+    const updatedMarksSchemes = selectedMarksSchemes.includes(marksSchemeId)
+      ? selectedMarksSchemes.filter((id) => id !== marksSchemeId)
+      : [...selectedMarksSchemes, marksSchemeId];
+    setSelectedMarksSchemes(updatedMarksSchemes);
+    setValue("marks_schemes", updatedMarksSchemes);
+  };
   const handleGradeSelection = (gradeId: number) => {
     const updatedGrades = selectedGrades.includes(gradeId)
       ? selectedGrades.filter((id) => id !== gradeId)
@@ -140,6 +163,7 @@ const AddExam = ({ onSave }: AddExamProps) => {
   /*
 onChange = {()=> handleBrandSelection(brand.name)}
 
+<<<<<<< HEAD
 
 const handleBrandSelection(brandName){
 const updatedBrands = brandsFilter.includes(brandName)?
@@ -166,6 +190,8 @@ setBrandsFilter(updatedBrands);
     setValue("marksheet_id", nValue);
   };
 
+=======
+>>>>>>> origin
   const handleSelectAll = (sessionId: number, isChecked: boolean) => {
     const sessionGrades =
       academicSessions
@@ -197,19 +223,15 @@ setBrandsFilter(updatedBrands);
 
   useEffect(() => {
     setRenderKey(Math.floor((Math.random() + 1) * 10).toString());
-    console.log(
-      academicSessions.map(
-        (session) => session.academic_level_id === selectedSessionId
-      )
-    );
-    console.log("Form errors: ", errors);
-  }, [academicSessions, errors]);
+  }, [academicSessions, errors, selectedSessionId]);
 
   const handleAcademicSessionChange = (
     selectedOption: { value: number; label: string } | null
   ) => {
     if (selectedOption) {
       setValue("academic_session_id", selectedOption.value);
+      setValue("grades", []);
+      setSelectedGrades([]);
       setSelectedSessionId(selectedOption.value);
     }
   };
@@ -229,8 +251,8 @@ setBrandsFilter(updatedBrands);
       end_date_np: "",
       result_date: "",
       result_date_np: "",
-      admit_card_id: 1,
-      marksheet_id: 1,
+      admit_card_id: undefined,
+      marksheet_id: undefined,
     });
     setSelectedGrades([]);
     setSelectedExams([]);
@@ -240,14 +262,10 @@ setBrandsFilter(updatedBrands);
   useEffect(() => {
     setValue("grades", selectedGrades);
     setValue("merged_exams", selectedExams);
-    // console.log("Selected Grades: ", selectedGrades);
-    console.log("Form Grades: ", getValues("grades"));
-    console.log("Form Merged Exams: ", getValues("merged_exams"));
-  }, [selectedGrades, setValue, selectedExams]);
+  }, [selectedGrades, setValue, selectedExams, getValues]);
 
   const onSubmit: SubmitHandler<ExamFormData> = async (data: ExamFormData) => {
-    // setisSubmitting(true);
-    console.log("Submitted data: ", data);
+    setisSubmitting(true);
     try {
       const examData: CreateExamInterface = {
         name: data.name,
@@ -260,6 +278,7 @@ setBrandsFilter(updatedBrands);
         has_symbol_no: data.has_symbol_no,
         has_registration_no: data.has_registration_no,
         academic_session_id: data.academic_session_id,
+        marks_schemes: data.marks_schemes,
         grades: data.grades,
         is_merged: data.is_merged,
         merged_exams: data.merged_exams,
@@ -268,11 +287,10 @@ setBrandsFilter(updatedBrands);
       };
       await createExam(examData);
     } catch (error) {
-      console.log("Error saving exam data: ", error);
+      toast.error(String(error));
     } finally {
-      // setisSubmitting(false);
+      setisSubmitting(false);
       onSave();
-
       // resetForm();
     }
   };
@@ -290,7 +308,9 @@ setBrandsFilter(updatedBrands);
               <div className="col-12">
                 <input
                   {...register("name")}
-                  className="form-control form-control-solid required"
+                  className={`form-control required ${
+                    errors.name && "is-invalid"
+                  }`}
                   type="text"
                 />
                 {errors.name && (
@@ -398,7 +418,7 @@ setBrandsFilter(updatedBrands);
               <hr />
             </div>
 
-            <div className="col-12 mb-7">
+            <div className="col-6 mb-7">
               <DatePicker
                 key={renderKey}
                 onDateChange={(date) => handleDateChange(date, "startDate")}
@@ -410,10 +430,12 @@ setBrandsFilter(updatedBrands);
                 valueAD={startValueAD}
                 valueBS={startValueBS}
               />
-              {errors.start_date && <p>{errors.start_date.message}</p>}
+              {errors.start_date && (
+                <div className="text-danger">{errors.start_date.message}</div>
+              )}
             </div>
 
-            <div className="col-12 mb-7">
+            <div className="col-6 mb-7">
               <DatePicker
                 key={renderKey}
                 onDateChange={(date) => handleDateChange(date, "endDate")}
@@ -425,7 +447,7 @@ setBrandsFilter(updatedBrands);
               />
             </div>
 
-            <div className="col-12 mb-5">
+            <div className="col-6 mb-5">
               <DatePicker
                 key={renderKey}
                 onDateChange={(date) => handleDateChange(date, "resultDate")}
@@ -448,19 +470,23 @@ setBrandsFilter(updatedBrands);
                 Admit Card Design
               </label>
               <select
-                className="form-control w-full"
+                className={`form-control required ${
+                  errors.admit_card_id && "is-invalid"
+                }`}
                 title="Admit Card Design"
                 id="admit_card_design"
-                value={admitCardDesign}
-                onChange={(e) => {
-                  handleAdmitCardDesignChange(
-                    e.target.value === "general" ? "general" : e.target.value
-                  );
-                }}
+                {...register("admit_card_id", {
+                  valueAsNumber: true,
+                })}
               >
-                <option value="general">General</option>
-                <option value="employee">Employee</option>
-                <option value="summerSeason">Summer Season</option>
+                <option value="" hidden>
+                  Select Admit card Design
+                </option>
+                {admitCardList.map((card, c) => (
+                  <option key={c} value={card.id}>
+                    {card.name}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -469,31 +495,120 @@ setBrandsFilter(updatedBrands);
                 Mark Sheet Design
               </label>
               <select
-                className="form-control w-full "
+                className={`form-control required ${
+                  errors.marksheet_id && "is-invalid"
+                }`}
                 title="Mark Sheet Design "
                 id="markSheetDesign"
-                value={markSheetDesign}
-                onChange={(e) =>
-                  handleMarkSheetDesignChange(
-                    e.target.value === "gradedFormatWithPR"
-                      ? "gradedFormatWithPR"
-                      : e.target.value
-                  )
-                }
+                {...register("marksheet_id", {
+                  valueAsNumber: true,
+                })}
               >
-                <option value="gradedFormatWithPR">
-                  Graded Format with PR
+                <option value="" hidden>
+                  Select Marksheet card Design
                 </option>
+                {marksheetList.map((sheet, m) => (
+                  <option key={m} value={sheet.id}>
+                    {sheet.name}
+                  </option>
+                ))}
               </select>
             </div>
 
-            <div className="col mt-15 ">
-              <label className=" col-md-12 text-center fw-bold fs-6  ">
-                <h1>PARTICIPATING GRADES</h1>
-              </label>
-              <label className=" col-md-12 text-center fs-6 mb-2 text-danger">
-                (Select Only the Grades that are participating on this Exam.)
-              </label>
+            <div className="col-12 mt-15 ">
+              <div className="row justify-content-center">
+                <label className=" col-md-12 text-center fw-bold fs-6  ">
+                  <h1>Exam Marking Scheme</h1>
+                </label>
+                <label className=" col-md-12 text-center fs-6 mb-2 text-danger">
+                  (Marks Assignable for Subjects.)
+                </label>
+                <hr />
+                {marksSchemes.length <= 0 && (
+                  <div className="col-12">
+                    <Loading />
+                  </div>
+                )}
+                {marksSchemes.length > 0 && (
+                  <>
+                    <div className="col-md-4">
+                      <h4>Theory Group</h4>
+                      <ul className="list-group">
+                        {theoryMarksSchemes?.map((scheme) => (
+                          <li
+                            key={scheme.id}
+                            className="list-group-item border-0"
+                          >
+                            <div className="form-check">
+                              <input
+                                className={`form-check-input marks-schemeCheckbox-${scheme.id}`}
+                                type="checkbox"
+                                id={`marks-scheme-${scheme.id}`}
+                                value={scheme.id}
+                                checked={selectedMarksSchemes.includes(
+                                  scheme.id
+                                )}
+                                onChange={() =>
+                                  handleMarksSchemesSelection(scheme.id)
+                                }
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor={`marks-scheme-${scheme.id}`}
+                              >
+                                {scheme.name} ({scheme.short_name})
+                              </label>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="col-md-4">
+                      <h4>Practical Group</h4>
+                      <ul className="list-group">
+                        {practicalMarksScheme?.map((scheme) => (
+                          <li
+                            key={scheme.id}
+                            className="list-group-item border-0"
+                          >
+                            <div className="form-check">
+                              <input
+                                className={`form-check-input marks-schemeCheckbox-${scheme.id}`}
+                                type="checkbox"
+                                id={`marks-scheme-${scheme.id}`}
+                                value={scheme.id}
+                                checked={selectedMarksSchemes.includes(
+                                  scheme.id
+                                )}
+                                onChange={() =>
+                                  handleMarksSchemesSelection(scheme.id)
+                                }
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor={`marks-scheme-${scheme.id}`}
+                              >
+                                {scheme.name} ({scheme.short_name})
+                              </label>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div className="col-12 mt-15 ">
+              <div className="row">
+                <label className=" col-md-12 text-center fw-bold fs-6  ">
+                  <h1>PARTICIPATING GRADES</h1>
+                </label>
+                <label className=" col-md-12 text-center fs-6 mb-2 text-danger">
+                  (Select Only the Grades that are participating on this Exam.)
+                </label>
+              </div>
             </div>
           </div>
 
@@ -511,6 +626,11 @@ setBrandsFilter(updatedBrands);
                 options={academicSessionOptions}
                 onChange={handleAcademicSessionChange}
                 error={errors.academic_session_id?.message}
+                defaultValue={
+                  academicSessionOptions.find(
+                    (option) => option.value === selectedSessionId
+                  ) || null
+                }
                 placeholder="Select Academic Level"
               />
             </div>
@@ -572,6 +692,9 @@ setBrandsFilter(updatedBrands);
                       </div>
                     </div>
                   ))}
+                {errors.grades && (
+                  <div className="text-danger">{errors.grades.message}</div>
+                )}
               </div>
 
               <div className="col-12">
@@ -634,9 +757,9 @@ setBrandsFilter(updatedBrands);
                 </label>
                 <div className="row g-3">
                   <div className="col-12">
-                    <div className="row row-cols-1 row-cols-md-2 g-3">
+                    <div className="row">
                       {examinations.map((exam) => (
-                        <div key={exam.id} className="mb-3">
+                        <div key={exam.id} className="col-12 mb-3">
                           <div className="form-check ">
                             <input
                               className={`form-check-input gradeCheckbox-${exam.id}`}

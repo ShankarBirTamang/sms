@@ -126,7 +126,12 @@ const ShowEmployeeLayout = () => {
                     </div>
                     <div className="col-md-12 pb-5 fs-6">
                       <div className="fw-bold mt-5">Address</div>
-                      <div className="text-gray-600">{employee.address}</div>
+                      <div className="text-gray-600">
+                        Current: {employee.current_address?.full_address}
+                      </div>
+                      <div className="text-gray-600">
+                        Permanent: {employee.permanent_address?.full_address}
+                      </div>
                     </div>
                   </div>
                   <div className="pb-5 fs-6"></div>
@@ -166,100 +171,6 @@ const ShowEmployeeLayout = () => {
                 <a className="nav-link text-active-primary pb-4" href="#">
                   Subjects
                 </a>
-              </li>
-
-              <li className="nav-item ms-auto">
-                <div
-                  className="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-semibold py-4 w-250px fs-6"
-                  data-kt-menu="true"
-                >
-                  <div className="menu-item px-5">
-                    <div className="menu-content text-muted pb-2 px-5 fs-7 text-uppercase">
-                      Payments
-                    </div>
-                  </div>
-                  <div className="menu-item px-5">
-                    <a href="#" className="menu-link px-5">
-                      Create invoice
-                    </a>
-                  </div>
-                  <div className="menu-item px-5">
-                    <a href="#" className="menu-link flex-stack px-5">
-                      Create payments
-                      <i
-                        className="fas fa-exclamation-circle ms-2 fs-7"
-                        data-bs-toggle="tooltip"
-                        aria-label="Specify a target name for future usage and reference"
-                        data-kt-initialized="1"
-                      ></i>
-                    </a>
-                  </div>
-                  <div
-                    className="menu-item px-5"
-                    data-kt-menu-trigger="hover"
-                    data-kt-menu-placement="left-start"
-                  >
-                    <a href="#" className="menu-link px-5">
-                      <span className="menu-title">Subscription</span>
-                      <span className="menu-arrow"></span>
-                    </a>
-                    <div className="menu-sub menu-sub-dropdown w-175px py-4">
-                      <div className="menu-item px-3">
-                        <a href="#" className="menu-link px-5">
-                          Apps
-                        </a>
-                      </div>
-                      <div className="menu-item px-3">
-                        <a href="#" className="menu-link px-5">
-                          Billing
-                        </a>
-                      </div>
-                      <div className="menu-item px-3">
-                        <a href="#" className="menu-link px-5">
-                          Statements
-                        </a>
-                      </div>
-                      <div className="separator my-2"></div>
-                      <div className="menu-item px-3">
-                        <div className="menu-content px-3">
-                          <label className="form-check form-switch form-check-custom form-check-solid">
-                            <input
-                              className="form-check-input w-30px h-20px"
-                              type="checkbox"
-                              value=""
-                              name="notifications"
-                              id="kt_user_menu_notifications"
-                            />
-                            <span className="form-check-label text-muted fs-6">
-                              Notifications
-                            </span>
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="separator my-3"></div>
-                  <div className="menu-item px-5">
-                    <div className="menu-content text-muted pb-2 px-5 fs-7 text-uppercase">
-                      Account
-                    </div>
-                  </div>
-                  <div className="menu-item px-5">
-                    <a href="#" className="menu-link px-5">
-                      Reports
-                    </a>
-                  </div>
-                  <div className="menu-item px-5 my-1">
-                    <a href="#" className="menu-link px-5">
-                      Account Settings
-                    </a>
-                  </div>
-                  <div className="menu-item px-5">
-                    <a href="#" className="menu-link text-danger px-5">
-                      Delete customer
-                    </a>
-                  </div>
-                </div>
               </li>
             </ul>
             <div className="tab-content">

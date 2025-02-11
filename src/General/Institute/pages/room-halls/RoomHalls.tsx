@@ -57,7 +57,6 @@ const RoomHalls = () => {
   const handleEditClick = async (roomHall: UpdateRoomHallsForm) => {
     reset({
       name: roomHall.name,
-      number: roomHall.number,
       description: roomHall.description,
     });
     setFormMode("edit");
@@ -96,7 +95,6 @@ const RoomHalls = () => {
   const resetForm = () => {
     reset({
       name: "",
-      number: 0,
       description: "",
     });
 
@@ -137,26 +135,7 @@ const RoomHalls = () => {
 
                     <span className="text-danger">{errors.name?.message}</span>
                   </div>
-                  <div className="fv-row mb-7">
-                    <label className="required fw-bold fs-6 mb-2">
-                      Room/Hall Number
-                    </label>
-                    <input
-                      type="text"
-                      {...register("number", {
-                        required: "Room/Hall number is required",
-                        valueAsNumber: true,
-                      })}
-                      className={`form-control ${
-                        errors.name && "is-invalid"
-                      } form-control mb-3 mb-lg-0`}
-                      placeholder="Eg: 101"
-                    />
 
-                    <span className="text-danger">
-                      {errors.number?.message}
-                    </span>
-                  </div>
                   <div className="fv-row mb-7">
                     <label className="fw-bold fs-6 mb-2">Description</label>
                     <textarea
@@ -265,7 +244,6 @@ const RoomHalls = () => {
                       <tr>
                         <th className="text-center">SN</th>
                         <th>Name</th>
-                        <th>No. of Room</th>
                         <th>Description</th>
                         <th className="text-end">Actions</th>
                       </tr>
@@ -280,7 +258,7 @@ const RoomHalls = () => {
                               (itemsPerPage ?? 0)}
                           </td>
                           <td>{roomHall.name}</td>
-                          <td>{roomHall.number}</td>
+
                           <td>{roomHall.description}</td>
                           <td className="text-end">
                             <button

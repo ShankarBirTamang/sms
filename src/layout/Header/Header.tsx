@@ -1,15 +1,16 @@
 // import { Link } from "react-router-dom";
 import Icon from "../../components/Icon/Icon.tsx";
-import Search from "./Component/Search.tsx";
 import NavDropDown from "./Component/NavDropDown.tsx";
 import ColorMode from "./Component/ColorMode.tsx";
 import Toast from "../../components/Toast/Toast.tsx";
+import Search from "../../General/pages/Searrch/Search.tsx";
 
 interface Header {
   title?: string;
+  subtitle?: string;
 }
 
-const Header = ({ title }: Header) => {
+const Header = ({ title, subtitle }: Header) => {
   return (
     <>
       <div>
@@ -29,7 +30,7 @@ const Header = ({ title }: Header) => {
                 {title ?? "Infinity School"}
               </span>
               <small className="text-gray-600 fs-6 fw-normal pt-2">
-                Create a store with #YDR-124-346 code
+                {subtitle}
               </small>
             </h1>
           </div>

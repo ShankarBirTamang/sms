@@ -1,18 +1,19 @@
 import { useState } from "react";
 import useDebounce from "../../../hooks/useDebounce";
 import Icon from "../../../components/Icon/Icon";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Loading from "../../../components/Loading/Loading";
 import Pagination from "../../../components/Pagination/Pagination";
 import useAdmitCard from "../../hooks/useAdmitCard";
-import { AdmitCardInterface } from "../../services/admitCardService";
+import { GetAdmitCardInterface } from "../../services/admitCardService";
 
 const AdmitCard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(10);
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
   const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
-  const { isLoading, admitCards, pagination, edgeLinks } = useAdmitCard({
+  const navigate = useNavigate();
+  const { isLoading, admitCardList, pagination, edgeLinks } = useAdmitCard({
     search: debouncedSearchTerm,
     currentPage,
     itemsPerPage,
@@ -22,14 +23,14 @@ const AdmitCard = () => {
     setSearchTerm(event.target.value);
   };
 
-  const handleViewClick = (admitCard: AdmitCardInterface) => {};
-
-  const handleEditClick = (admitCard: AdmitCardInterface) => {};
+  const handleEditClick = (admitCard: GetAdmitCardInterface) => {
+    navigate(`/design-services/admit-cards/${admitCard.id}/edit`);
+  };
+  const handleViewClick = (admitCard: GetAdmitCardInterface) => {};
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-  const handleDeleteClick = () => {};
   const handleItemsPerPageChange = (value: number | null) => {
     setItemsPerPage(value);
     setCurrentPage(1);
@@ -82,7 +83,7 @@ const AdmitCard = () => {
                   <Link
                     to={"/design-services/admit-cards/create"}
                     className="btn btn-primary btn-sm ms-2 align-content-center"
-                    title="Add TimeTable"
+                    title="Add Admit Card"
                   >
                     <Icon name={"add"} className={"svg-icon"} />
                     Add Admit Card
@@ -95,10 +96,8 @@ const AdmitCard = () => {
           <div className="card-body pt-0">
             <div>
               {isLoading && <Loading />}
-              {!isLoading && admitCards.length === 0 && (
-                <div className="alert alert-info">
-                  No Academic Sessions Found
-                </div>
+              {!isLoading && admitCardList.length === 0 && (
+                <div className="alert alert-info">No Admit Card found!!</div>
               )}
               {!isLoading && (
                 <table
@@ -109,13 +108,15 @@ const AdmitCard = () => {
                   <thead>
                     <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                       <th> #</th>
-                      <th className="min-w-225px">Session Name</th>
-                      <th>Signees</th>
+                      <th className="min-w-225px">Admit Card Name</th>
+                      <th className="min-w-225px">Cards per Page</th>
+                      <th className="min-w-225px">Background</th>
+                      <th>Signers</th>
                       <th className="text-end">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="text-gray-600 fw-bold table">
-                    {admitCards.map((admitCard, index) => (
+                    {admitCardList.map((admitCard, index) => (
                       <tr key={index} className="odd">
                         <td>
                           {currentPage * (itemsPerPage ?? 0) +
@@ -124,24 +125,41 @@ const AdmitCard = () => {
                             (itemsPerPage ?? 0)}
                         </td>
                         <td className="sorting_1">{admitCard.name}</td>
-                        <td></td>
+                        <td>{admitCard.cards_per_page}</td>
+                        <td>
+                          <img
+                            style={{ width: "auto", height: "10rem" }}
+                            src={admitCard.background}
+                          ></img>
+                        </td>
+                        <td>
+                          {admitCard.signers.map((signer) => (
+                            <span
+                              key={signer.id}
+                              className="badge rounded-pill bg-primary p-2 fs-7 me-1"
+                            >
+                              {signer.name}
+                            </span>
+                          ))}
+                        </td>
                         <td className="text-end">
                           <button
-                            title="edit admit card"
+                            title="Delete"
                             type="button"
                             onClick={() => handleEditClick(admitCard)}
-                            className="btn btn-light-info btn-icon btn-sm m-1"
+                            className="btn btn-light-info btn-sm m-1"
                           >
                             <Icon name={"edit"} className={"svg-icon"} />
+                            Edit
                           </button>
-
                           <button
-                            title="view admit card"
+                            title="Edit"
                             type="button"
                             onClick={() => handleViewClick(admitCard)}
-                            className="btn btn-success btn-icon btn-sm m-1"
+                            className="btn btn-light-success btn-sm m-1"
                           >
                             <Icon name={"search"} className={"svg-icon"} />
+                            View
                           </button>
                         </td>
                       </tr>

@@ -8,6 +8,7 @@ import Marksheet from "./pages/Marksheets/Marksheet";
 import AddAdmitCard from "./pages/AdmitCards/AddAdmitCard";
 import AddCertificate from "./pages/Certificates/AddCertificate";
 import AddIdCard from "./pages/IdCards/AddIdCard";
+import AddMarksheet from "./pages/Marksheets/AddMarksheet";
 
 type RouteConfig = {
   path: string;
@@ -27,12 +28,22 @@ const routes: RouteConfig[] = [
     element: <AddIdCard />,
   },
   {
+    path: "id-cards/:idCardId/edit",
+    title: "Id Cards",
+    element: <AddIdCard />,
+  },
+  {
     path: "admit-cards",
     title: "Admit Cards",
     element: <AdmitCard />,
   },
   {
     path: "admit-cards/create",
+    title: "Admit Cards",
+    element: <AddAdmitCard />,
+  },
+  {
+    path: "admit-cards/:admitCardId/edit",
     title: "Admit Cards",
     element: <AddAdmitCard />,
   },
@@ -46,11 +57,25 @@ const routes: RouteConfig[] = [
     title: "Certificates",
     element: <AddCertificate />,
   },
-
+  {
+    path: "certificates/:certificateId/edit",
+    title: "Certificates",
+    element: <AddCertificate />,
+  },
   {
     path: "marksheets",
     title: "Marksheet",
     element: <Marksheet />,
+  },
+  {
+    path: "marksheets/create",
+    title: "Marksheet",
+    element: <AddMarksheet />,
+  },
+  {
+    path: "marksheets/:marksheetId/edit",
+    title: "Marksheet",
+    element: <AddMarksheet />,
   },
 ];
 

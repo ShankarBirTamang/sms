@@ -1,11 +1,20 @@
-import { useEffect, useState } from "react";
-import { CanceledError } from "../../../services/apiClient";
+import { useCallback, useEffect, useState } from "react";
+import axiosInstance, { CanceledError } from "../../../services/apiClient";
 import {
+  ApiResponse,
   ApiResponseInterface,
   PaginationAndSearch,
 } from "../../../Interface/Interface";
 import { PaginationProps } from "../../../components/Pagination/Pagination";
-import studentService, { StudentInterface } from "../services/studentService";
+import studentService, {
+  AddStudentGuardianInterface,
+  AddStudentInterface,
+  EditStudentGuardianInterface,
+  EditStudentInterface,
+  StudentGuardianInterface,
+  StudentInterface,
+} from "../services/studentService";
+import toast from "react-hot-toast";
 
 const useStudent = ({
   search = "",
@@ -22,7 +31,7 @@ const useStudent = ({
 
   const [students, setStudents] = useState<StudentInterface[]>([]);
 
-  useEffect(() => {
+  const fetchStudents = useCallback(async () => {
     setLoading(true);
     const params: Record<string, string | number | null> = {
       per_page: itemsPerPage,
@@ -32,7 +41,7 @@ const useStudent = ({
       params.page = currentPage;
     }
 
-    const { request, cancel } =
+    const { request } =
       studentService.getAll<ApiResponseInterface<StudentInterface>>(params);
     request
       .then((result) => {
@@ -46,17 +55,88 @@ const useStudent = ({
         setError(err.message);
         setLoading(false);
       });
-
-    return () => cancel();
   }, [search, currentPage, itemsPerPage]);
 
-  const getSingleStudent = async (id: number) => {
+  useEffect(() => {
+    fetchStudents();
+  }, [fetchStudents]);
+
+  const getSingleStudent = useCallback(async (id: number) => {
     try {
       const student = await studentService.item<{ id: number }>({ id });
       return student.data;
     } catch (error) {
       console.error("Error fetching single student:", error);
       throw error;
+    }
+  }, []);
+
+  const saveStudent = async (data: AddStudentInterface) => {
+    try {
+      const result = await studentService.create<AddStudentInterface>(data);
+      fetchStudents();
+      return result.data.data;
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+        toast.error(err.message);
+      } else {
+        setError("An unknown error occurred.");
+        toast.error("An unknown error occurred.");
+      }
+    }
+  };
+
+  const updateStudent = async (data: EditStudentInterface) => {
+    try {
+      const result = await studentService.update<EditStudentInterface>(data);
+      return result.data.data;
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+        toast.error(err.message);
+      } else {
+        setError("An unknown error occurred.");
+        toast.error("An unknown error occurred.");
+      }
+    }
+  };
+
+  const createGuardian = async (data: AddStudentGuardianInterface) => {
+    try {
+      const result = await axiosInstance.post<StudentGuardianInterface>(
+        "/student-guardians",
+        data
+      );
+      const guardian = Array.isArray(result.data)
+        ? result.data[0]
+        : result.data;
+      toast.success("Guardian added successfully.");
+      return guardian;
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+        toast.error(err.message);
+      }
+    }
+  };
+
+  const updateGuardian = async (data: EditStudentGuardianInterface) => {
+    try {
+      const result = await axiosInstance.put<StudentGuardianInterface>(
+        `/student-guardians/${data.id}`,
+        data
+      );
+      const guardian = Array.isArray(result.data)
+        ? result.data[0]
+        : result.data;
+      toast.success("Guardian updated successfully.");
+      return guardian;
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+        toast.error(err.message);
+      }
     }
   };
 
@@ -67,6 +147,11 @@ const useStudent = ({
     error,
     edgeLinks,
     getSingleStudent,
+    fetchStudents,
+    saveStudent,
+    updateStudent,
+    createGuardian,
+    updateGuardian,
   };
 };
 

@@ -5,8 +5,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import SessionGradePicker from "../../../../../Academics/componenet/SessionGradePicker/SessionGradePicker";
-import useGrade from "../../../../../Academics/hooks/useGrade";
 import { StudentInterface } from "../../../services/studentService";
 import Loading from "../../../../../components/Loading/Loading";
 
@@ -23,6 +21,8 @@ import {
 } from "../../../../../services/generalService";
 import useHelpers from "../../../../../hooks/useHelpers";
 import toast from "react-hot-toast";
+import useGrade from "../../../../Academics/hooks/useGrade";
+import SessionGradePicker from "../../../../Academics/componenet/SessionGradePicker/SessionGradePicker";
 
 const StudentPhotograph = () => {
   useDocumentTitle("Capture Student Photograph");
@@ -100,6 +100,7 @@ const StudentPhotograph = () => {
         }
       } catch {
         toast.error("Error Uploading Photo");
+        setSelectedStudent(undefined);
       }
     } else {
       // If no file is selected, reset the selected student and clear the input value
@@ -186,7 +187,6 @@ const StudentPhotograph = () => {
 
                       <th className="min-w-125px">Gender</th>
                       <th className="min-w-125px">Contact</th>
-                      <th className="min-w-125px">Address</th>
                       <th className="text-end min-w-175px">Actions</th>
                     </tr>
                   </thead>
@@ -225,7 +225,6 @@ const StudentPhotograph = () => {
                         </td>
                         <td>{student.gender}</td>
                         <td>{student.contact}</td>
-                        <td>{student.address}</td>
 
                         <td className="text-end">
                           <div className="d-flex gap-3 justify-content-end">

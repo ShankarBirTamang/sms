@@ -1,244 +1,137 @@
-<div className="card mt-5">
-  <div className="card-header pt-6">
-    <div className="card-title w-100 justify-content-between">
-      <h2>Student List</h2>
-      <div className="d-flex align-items-end gap-5"></div>
-    </div>
-    <hr />
-  </div>
+<div className="content d-flex flex-column flex-column-fluid">
+  <div className="container-xxl" id="kt_content_container">
+    <div className="card">
+      <div className="card-body pt-0">
+        <form>
+          <table
+            className="table align-middle table-row-dashed fs-6 gy-5"
+            id="myTable"
+          >
+            <thead style="position: sticky; top: 90px; background: white">
+              <tr
+                className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0"
+              >
+                <th className="w-30px" rowspan="2">S.N.</th>
+                <th className="min-w-200px" rowspan="2">Student Name</th>
 
-  <div className="card-body">
-    @if(count($students) > 0)
-    <div className="row">
-      <div className="col-12 text-center">
-        <div wire:loading>
-          <x-loading />
-        </div>
-        <div className="students">
-          <div id="#table_student" className="table-container">
-            <table className="student-table">
-              <thead>
-                <tr>
-                  <th className="headcol col-roll">Roll</th>
-                  <th className="headcol col-first-name first-col">
-                    First Name
-                  </th>
-                  <th className="headcol col-middle-name middle-col">
-                    Middle Name
-                  </th>
-                  <th className="headcol col-last-name last-col">Last Name</th>
-                  <th className="col-iemis">IEMIS</th>
-                  <th className="col-gender">Gender</th>
-                  <th className="col-ethnicity">Ethnicity</th>
-                  <th className="col-dob">Date of Birth</th>
-                  <th className="col-address">Address</th>
-                  <th className="col-contact">Contact</th>
-                  <th className="col-blood-group">Blood Group</th>
-                  <th className="col-nationality">Nationality</th>
-                  <th className="col-mother-tongue">Mother Tongue</th>
-                  <th className="col-religion">Religion</th>
-                  <th className="col-contact">Contact</th>
-                  <th className="col-father-name">Father's Name</th>
-                  <th className="col-father-contact">Father's Contact</th>
-                  <th className="col-mother-name">Mother's Name</th>
-                  <th className="col-mother-contact">Mother's Contact</th>
-                  <th className="col-actions" style="z-index: 25">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach($students as $stu => $student)
-                <tr>
-                  <td className="headcol col-roll">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.roll"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="headcol col-first-name first-col">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.first_name"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="headcol col-middle-name middle-col">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.middle_name"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="headcol col-last-name last-col">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.last_name"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="col-iemis">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.iemis"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="col-gender">
-                    <select
-                      wire:model="students.{{$stu}}.gender"
-                      className="form-control @error('gender')is-invalid @enderror"
-                    >
-                      <option value="" selected hidden>Gender</option>
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                      <option value="Others">Others</option>
-                    </select>
-                  </td>
-                  <td className="col-gender">
-                    <select
-                      wire:model="students.{{$stu}}.ethnicity"
-                      className="form-control @error('gender')is-invalid @enderror"
-                    >
-                      <option value="" selected hidden>Ethnicity</option>
-                      <option value="Others">Others</option>
-                      <option value="Dalit">Dalit</option>
-                      <option value="Janajati">Janajati</option>
-                    </select>
-                  </td>
+                <th className="text-center">Comp. Nepali</th>
+                <th className="text-center">Comp. English</th>
+                <th className="text-center">Com. Mathematics</th>
+                <th className="text-center">Drawing</th>
+              </tr>
+              <tr>
+                <th className="text-center">TH: 50</th>
 
-                  <td className="col-dob">
-                    <livewire:general.date-converter
-                      wire:key="date-{{ $stu }}"
-                      inputName="dob_{{ $stu }}"
-                      dateModel="dob_{{ $stu }}"
-                      value="{{  $student['dob_en'] }}"
-                      valueNp="{{  $student['dob_np'] }}"
-                    />
-                  </td>
-                  <td className="col-address">
+                <th className="text-center">TH: 50</th>
+
+                <th className="text-center">TH: 50</th>
+
+                <th className="text-center">TH: 25</th>
+              </tr>
+            </thead>
+
+            <tbody className="text-gray-600 fw-bold">
+              <tr>
+                <td>1</td>
+                <td>
+                  AARAV BASNET
+                  <input
+                    type="hidden"
+                    name="results[0][student_id]"
+                    value="1"
+                  />
+                </td>
+                <input
+                  type="hidden"
+                  name="results[0][marks][1][exam_subject_id]"
+                  value="1"
+                />
+                <td className="text-center w-100px">
+                  <div
+                    className="d-flex justify-content-center"
+                    style="gap: 15px"
+                  >
                     <input
                       type="text"
-                      wire:model="students.{{$stu}}.address"
-                      className="form-control @error('email') is-invalid @enderror"
+                      className="form-control form-control-solid mb-3 mb-lg-0 w-50px marks-field"
+                      name="results[0][marks][1][mth]"
+                      value=" 23 "
+                      full-mark="50"
+                      pass-mark="17.5"
+                      placeholder="TH"
                     />
-                  </td>
-                  <td className="col-contact">
+                  </div>
+                </td>
+                <input
+                  type="hidden"
+                  name="results[0][marks][2][exam_subject_id]"
+                  value="2"
+                />
+                <td className="text-center w-100px">
+                  <div
+                    className="d-flex justify-content-center"
+                    style="gap: 15px"
+                  >
                     <input
                       type="text"
-                      wire:model="students.{{$stu}}.contact"
-                      className="form-control @error('email') is-invalid @enderror"
+                      className="form-control form-control-solid mb-3 mb-lg-0 w-50px marks-field"
+                      name="results[0][marks][2][mth]"
+                      value=" 31 "
+                      full-mark="50"
+                      pass-mark="17.5"
+                      placeholder="TH"
                     />
-                  </td>
-                  <td className="col-blood-group">
-                    <select
-                      wire:model="students.{{$stu}}.blood"
-                      className="form-control @error('blood_group')is-invalid @enderror"
-                    >
-                      <option value="" selected hidden>Blood</option>
-                      @foreach($bloodGroups as $bg)
-                      <option value="{{ $bg }}+">{{ $bg }}+</option>
-                      <option value="{{ $bg }}-">{{ $bg }}-</option>
-                      @endforeach
-                    </select>
-                  </td>
-                  <td className="col-nationality">
+                  </div>
+                </td>
+                <input
+                  type="hidden"
+                  name="results[0][marks][3][exam_subject_id]"
+                  value="3"
+                />
+                <td className="text-center w-100px">
+                  <div
+                    className="d-flex justify-content-center"
+                    style="gap: 15px"
+                  >
                     <input
                       type="text"
-                      wire:model="students.{{$stu}}.nationality"
-                      className="form-control @error('email') is-invalid @enderror"
+                      className="form-control form-control-solid mb-3 mb-lg-0 w-50px marks-field"
+                      name="results[0][marks][3][mth]"
+                      value=" 21 "
+                      full-mark="50"
+                      pass-mark="17.5"
+                      placeholder="TH"
                     />
-                  </td>
-                  <td className="col-mother-tongue">
+                  </div>
+                </td>
+                <input
+                  type="hidden"
+                  name="results[0][marks][4][exam_subject_id]"
+                  value="4"
+                />
+                <td className="text-center w-100px">
+                  <div
+                    className="d-flex justify-content-center"
+                    style="gap: 15px"
+                  >
                     <input
                       type="text"
-                      wire:model="students.{{$stu}}.mother_tongue"
-                      className="form-control @error('email') is-invalid @enderror"
+                      className="form-control form-control-solid mb-3 mb-lg-0 w-50px marks-field"
+                      name="results[0][marks][4][mth]"
+                      value=" 21 "
+                      full-mark="25"
+                      pass-mark="8.75"
+                      placeholder="TH"
                     />
-                  </td>
-                  <td className="col-religion">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.religion"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="col-contact">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.contact"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="col-father-name">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.father_name"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="col-father-contact">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.father_contact"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="col-mother-name">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.mother_name"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="col-mother-contact">
-                    <input
-                      type="text"
-                      wire:model="students.{{$stu}}.mother_contact"
-                      className="form-control @error('email') is-invalid @enderror"
-                    />
-                  </td>
-                  <td className="col-actions">
-                    <button
-                      wire:loading.remove
-                      wire:target="saveStudent({{ $stu }})"
-                      wire:click="saveStudent({{ $stu }})"
-                      type="button"
-                      className="btn btn-sm btn-primary"
-                    >
-                      Save
-                    </button>
-                    <div wire:loading wire:target="saveStudent({{ $stu }})">
-                      <button className="btn btn-sm btn-danger">
-                        <span
-                          className="spinner-border btn-spinner-border"
-                          role="status"
-                        >
-                          <span className="visually-hidden">Loading...</span>
-                        </span>
-                      </button>
-                    </div>
-                    {{--
-                    <button
-                      className="btn btn-primary btn-sm"
-                      --}}
-                      {{--
-                      wire:click="saveStudent({{ $stu }})"
-                    >
-                      Save--}} {{--</button
-                    >--}}
-                  </td>
-                </tr>
-                @endforeach
-              </tbody>
-            </table>
-          </div>
-        </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <hr />
+          <button className="btn btn-primary" type="submit">Submit</button>
+        </form>
       </div>
     </div>
-
-    <div className="mt-3 text-center">
-      <h4>No Students Selected</h4>
-    </div>
-    f
   </div>
 </div>
