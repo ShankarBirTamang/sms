@@ -17,7 +17,7 @@ import { SectionInterface } from "../../Academics/services/gradeService";
 
 // }
 
-interface ExamSectionInterface {
+export interface ExamSectionInterface {
   id: number;
   name: string;
   faculty: string;

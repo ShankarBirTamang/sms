@@ -158,6 +158,29 @@ const useExam = ({
     }
   }, []);
 
+  const saveExamSubjectMarks = async ({
+    examGradeId,
+    sectionId,
+    data,
+  }: any) => {
+    try {
+      const result = await axiosInstance.post(
+        `examination/exam/exam-grade/${examGradeId}/section/${sectionId}`,
+        { students: data }
+      );
+      console.log("result at line 167 in hooks/useExam.ts:", result);
+      console.log(JSON.stringify(examGradeId));
+    } catch (error: unknown) {
+      if (error instanceof Error && "response" in error) {
+        const axiosError = error as { response: { data: { errors: string } } };
+        setError(axiosError.response.data.errors);
+        console.log(axiosError.response);
+      } else {
+        toast.error("Unknown Error Occured");
+      }
+    }
+  };
+
   return {
     isLoading,
     pagination,
@@ -170,6 +193,7 @@ const useExam = ({
     createExam,
     addExamGradeSubject,
     getExamGrade,
+    saveExamSubjectMarks,
   };
 };
 

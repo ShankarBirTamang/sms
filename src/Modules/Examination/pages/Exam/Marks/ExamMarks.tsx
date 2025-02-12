@@ -6,6 +6,7 @@ import { StudentInterface } from "../../../../Student/services/studentService";
 import {
   ExamGradeInterface,
   ExamGradeSubjectInterface,
+  ExamSectionInterface,
 } from "../../../services/examSessionService";
 import useDebounce from "../../../../../hooks/useDebounce";
 import useGrade from "../../../../Academics/hooks/useGrade";
@@ -36,6 +37,8 @@ const ExamMarks = () => {
   const [subjectMarksDrawer, setSubjectMarksDrawer] = useState(false);
   const [selectedExamGradeSubject, setSelectedExamGradeSubject] =
     useState<ExamGradeSubjectInterface>();
+  const [examGradeSection, setExamGradeSection] =
+    useState<ExamSectionInterface>();
   const [examGradeSubjects, setExamGradeSubjects] = useState<
     ExamGradeSubjectInterface[]
   >([]);
@@ -112,10 +115,14 @@ const ExamMarks = () => {
         return false;
       }
     );
+    const section = examGrade?.sections.find((section) => {
+      return section.id === Number(sectionId);
+    });
+    setExamGradeSection(section);
 
     setExamGradeSubjects(examGradeSubjects || []);
     console.log(examGradeSubjects);
-  }, [examGrade?.exam_grade_subjects, sectionId]);
+  }, [examGrade?.exam_grade_subjects, examGrade?.sections, sectionId]);
 
   const toggleSubjectMarksDrawer = (
     examGradeSubject?: ExamGradeSubjectInterface
@@ -139,7 +146,10 @@ const ExamMarks = () => {
       <div className="card">
         <div className="card-header">
           <div className="card-title">
-            <h2>Exam Marks for the Students of {examGrade?.grade_name}</h2>
+            <h2>
+              Exam Marks for the Students of {examGrade?.grade_name}{" "}
+              {examGradeSection?.faculty}:{examGradeSection?.name}
+            </h2>
           </div>
           <div className="card-toolbar">
             <div
@@ -333,7 +343,7 @@ const ExamMarks = () => {
           </form>
         </div>
       </div>
-      {selectedExamGradeSubject && (
+      {examGrade && selectedExamGradeSubject && examGradeSection && (
         <DrawerModal
           isOpen={subjectMarksDrawer}
           onClose={toggleSubjectMarksDrawer}
@@ -342,11 +352,14 @@ const ExamMarks = () => {
             selectedExamGradeSubject?.exam_subject_marks_schemes?.length + 1,
             9
           )}0vw`}
-          title={`Add marks for ${selectedExamGradeSubject.name} of ${examGrade?.grade_name}`}
+          title={`Add marks for ${selectedExamGradeSubject.name} of ${examGrade?.grade_name}
+              ${examGradeSection?.faculty}:${examGradeSection?.name}`}
         >
           <SubjectMarks
             students={filteredStudents}
             examGradeSubject={selectedExamGradeSubject}
+            examGradeSection={examGradeSection}
+            examGrade={examGrade}
           />
         </DrawerModal>
       )}
