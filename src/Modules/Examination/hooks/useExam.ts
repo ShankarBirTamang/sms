@@ -15,6 +15,17 @@ import examSessionService, {
 import toast from "react-hot-toast";
 
 const useExam = ({
+<<<<<<< HEAD
+    search = "",
+    currentPage = 1,
+    itemsPerPage = null,
+  }: PaginationAndSearch) => {
+    
+    const [examinations , setExaminations] = useState<ExamSessionInterface[]>([]);
+    const [isEditing , setIsEditing] = useState<boolean>(true);
+      const [selectedGrades, setSelectedGrades] = useState<number[]>([]);
+    
+=======
   search = "",
   currentPage = 1,
   itemsPerPage = null,
@@ -24,6 +35,7 @@ const useExam = ({
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setLoading] = useState(false);
   const [statusChanged, setStatusChanged] = useState(false); // State to track status changes
+>>>>>>> origin
 
   // For Pagination
   const [pagination, setPagination] =
@@ -182,6 +194,13 @@ const useExam = ({
   };
 
   return {
+<<<<<<< HEAD
+    isLoading,pagination,edgeLinks,error , examinations ,setStatusChanged, 
+    fetchExam, isEditing, setIsEditing,selectedGrades,setSelectedGrades,
+    setExaminations ,createExam
+  }
+}
+=======
     isLoading,
     pagination,
     edgeLinks,
@@ -196,5 +215,6 @@ const useExam = ({
     saveExamSubjectMarks,
   };
 };
+>>>>>>> origin
 
 export default useExam;
