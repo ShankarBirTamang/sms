@@ -7,21 +7,13 @@ import { useNavigate } from "react-router-dom";
 import Pagination from "../../../components/Pagination/Pagination";
 import DrawerModal from "../../../components/DrawerModal/DrawerModal";
 import AddExam from "./Drawers/AddExam";
-import EditExam from "./Drawers/EditExam";
 
 const ExamSession = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number | null>(null);
   const [addExamDrawer, setAddExamDrawer] = useState(false);
-<<<<<<< HEAD
-  const [editExamDrawer, setEditExamDrawer] = useState(false);
-  const [selectedExamId, setSelectedExamId] = useState<number | null>(null);
-
-  const debouncedSearchTerm = useDebounce(searchTerm, 300); // Use debounce with 300ms delay
-=======
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
->>>>>>> origin
 
   const toggleCompletionStatus = (id: number) => {
     setExaminations((prevExamination) =>
@@ -38,25 +30,6 @@ const ExamSession = () => {
     }
   };
 
-<<<<<<< HEAD
-  const toggleEditExamDrawer = (ex_Id?: number | null) => {
-    console.log("ToggleEdit Exam");
-    setIsEditing(!isEditing);
-    setEditExamDrawer(!editExamDrawer);
-    console.log("isEditing : ", isEditing);
-    if (ex_Id) {
-      setSelectedExamId(ex_Id);
-    } else {
-      setSelectedExamId(null);
-    }
-    if (editExamDrawer) {
-      fetchExam();
-    }
-  };
-
-  //header functions
-=======
->>>>>>> origin
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -77,11 +50,7 @@ const ExamSession = () => {
     edgeLinks,
     examinations,
     setExaminations,
-    setIsEditing,
-    isEditing,
     fetchExam,
-    selectedGrades,
-    setSelectedGrades,
   } = useExam({
     search: debouncedSearchTerm,
     currentPage,
@@ -93,25 +62,6 @@ const ExamSession = () => {
   const handleNavigate = (examId: number) => {
     navigate(`${examId}/show`);
   };
-<<<<<<< HEAD
-
-  const handleEditClick = (examId: number) => {
-    console.log("Handle Edit Click");
-    examinations
-      .filter((exam) => exam.id === examId)
-      .map((exam) => {
-        if (exam?.exam_grades) {
-          setSelectedGrades(exam?.exam_grades?.map((grade) => grade.grade_id));
-        }
-      });
-    console.log(`selectedGrades of examId:${examId} is ${selectedGrades}`);
-    toggleEditExamDrawer(examId);
-
-    // navigate(`${examId}/edit`);
-  };
-  console.log("Examinations : ", examinations);
-=======
->>>>>>> origin
   return (
     <>
       <div className="card">
@@ -240,10 +190,6 @@ const ExamSession = () => {
                         <button
                           title="Edit Exam Session"
                           type="button"
-<<<<<<< HEAD
-                          onClick={() => handleEditClick(exam.id)}
-=======
->>>>>>> origin
                           className="btn btn-light-info btn-icon btn-sm"
                         >
                           <Icon name={"edit"} className={"svg-icon"} />
@@ -278,25 +224,10 @@ const ExamSession = () => {
           isOpen={addExamDrawer}
           onClose={toggleAddExamDrawer}
           position="right"
-<<<<<<< HEAD
-          width="900px"
-          title="ADD EXAMINATION DETAILS"
-=======
           width="800px"
           title="EXAMINATION DETAILS"
->>>>>>> origin
         >
           <AddExam onSave={toggleAddExamDrawer} />
-        </DrawerModal>
-
-        <DrawerModal
-          isOpen={editExamDrawer}
-          onClose={toggleEditExamDrawer}
-          position="right"
-          width="900px"
-          title="EDIT EXAMINATION DETAILS"
-        >
-          <EditExam examId={selectedExamId} onSave={toggleEditExamDrawer} />
         </DrawerModal>
       </div>
     </>

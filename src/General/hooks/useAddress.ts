@@ -172,21 +172,6 @@ const useAddress = ({
     const params = {
       name,
     };
-<<<<<<< HEAD
-    
-    const addProvince = async ({
-      country_id, name,
-    }: CreateProvinceInterface) => {
-      const params = {
-        country_id, name,
-      };
-  
-      try {
-        const result =
-          await provincesRoute.create<CreateProvinceInterface>(params);
-          console.log("New Province Added successfully");
-=======
->>>>>>> origin
 
     try {
       const result = await countriesRoute.create<CreateAddressInterface>(

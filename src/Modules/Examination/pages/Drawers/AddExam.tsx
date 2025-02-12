@@ -160,38 +160,7 @@ const AddExam = ({ onSave }: AddExamProps) => {
     setSelectedExams(updatedExams);
     setValue("merged_exams", updatedExams);
   };
-  /*
-onChange = {()=> handleBrandSelection(brand.name)}
 
-<<<<<<< HEAD
-
-const handleBrandSelection(brandName){
-const updatedBrands = brandsFilter.includes(brandName)?
-          brandsFilter.filter((name)=>name!==brandName)
-          :[...brandsFilter,brandName]
-setBrandsFilter(updatedBrands);
-}
-*/
-  const handleAdmitCardDesignChange = (value: string) => {
-    setAdmitCardDesign(value);
-    const numericValue =
-      value === "general"
-        ? 1
-        : value === "employee"
-        ? 2
-        : value === "summerSeason"
-        ? 3
-        : 1;
-    setValue("admit_card_id", numericValue);
-  };
-  const handleMarkSheetDesignChange = (value: string) => {
-    setMarkSheetDesign(value);
-    const nValue = value === "gradedFormatWithPR" ? 1 : 1;
-    setValue("marksheet_id", nValue);
-  };
-
-=======
->>>>>>> origin
   const handleSelectAll = (sessionId: number, isChecked: boolean) => {
     const sessionGrades =
       academicSessions
