@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import useStudent from "../../../hooks/useStudent";
 import { StudentInterface } from "../../../services/studentService";
 import Loading from "../../../../../components/Loading/Loading";
@@ -36,6 +36,11 @@ const StudentDetailLayout = () => {
   const handleEditStudent = (student: StudentInterface) => {
     navigate(`${student.id}/edit`);
   };
+  const location = useLocation(); // Get current route
+  // Function to check if the current tab is active
+  const isActive = (path: string) =>
+    location.pathname === path ? "active" : "";
+
   return (
     <>
       {!student && <Loading />}
@@ -193,32 +198,74 @@ const StudentDetailLayout = () => {
             <ul className="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-8">
               <li className="nav-item">
                 <a
-                  className="nav-link text-active-primary pb-4 active"
-                  href="#"
+                  className={`nav-link text-active-primary pb-4 ${isActive(
+                    `/students/details/${studentId}/overview`
+                  )}`}
+                  href={`/students/details/${studentId}/overview`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate(`/students/details/${studentId}/overview`);
+                  }}
                 >
                   Overview
                 </a>
               </li>
 
               <li className="nav-item">
-                <a className="nav-link text-active-primary pb-4" href="#">
+                <a
+                  className={`nav-link text-active-primary pb-4 ${isActive(
+                    `/students/details/${studentId}/qualification`
+                  )}`}
+                  href={`/students/details/${studentId}/qualification`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate(`/students/details/${studentId}/qualification`);
+                  }}
+                >
                   Qualification
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link text-active-primary pb-4" href="#">
+                <a
+                  className={`nav-link text-active-primary pb-4 ${isActive(
+                    `/students/details/${studentId}/documents`
+                  )}`}
+                  href={`/students/details/${studentId}/documents`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate(`/students/details/${studentId}/documents`);
+                  }}
+                >
                   Documents
                 </a>
               </li>
 
               <li className="nav-item">
-                <a className="nav-link text-active-primary pb-4" href="#">
+                <a
+                  className={`nav-link text-active-primary pb-4 ${isActive(
+                    `/students/details/${studentId}/examRecords`
+                  )}`}
+                  href={`/students/details/${studentId}/examRecords`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate(`/students/details/${studentId}/examRecords`);
+                  }}
+                >
                   Exam Records
                 </a>
               </li>
 
               <li className="nav-item">
-                <a className="nav-link text-active-primary pb-4" href="#">
+                <a
+                  className={`nav-link text-active-primary pb-4 ${isActive(
+                    `/students/details/${studentId}/subjects`
+                  )}`}
+                  href={`/students/details/${studentId}/subjects`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate(`/students/details/${studentId}/subjects`);
+                  }}
+                >
                   Subjects
                 </a>
               </li>

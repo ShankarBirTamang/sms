@@ -9,6 +9,10 @@ import StudentPhotograph from "./pages/StudentServices/Photograph/StudentPhotogr
 import StudentBulkEdit from "./pages/StudentServices/BulkEdit/StudentBulkEdit";
 import StudentCreate from "./pages/Student/StudentCreate";
 import StudentEdit from "./pages/Student/StudentEdit";
+import Qualification from "./pages/Student/Details/Qualification";
+import Documents from "./pages/Student/Details/Documents";
+import ExamRecords from "./pages/Student/Details/ExamRecords";
+import Subjects from "./pages/Student/Details/Subjects";
 
 const routes = [
   {
@@ -44,6 +48,26 @@ const studentDetailsRoutes = [
     path: "/details/:studentId/overview",
     title: "Students",
     element: <Overview />,
+  },
+  {
+    path: "/details/:studentId/qualification",
+    title: "Qualifications",
+    element: <Qualification />,
+  },
+  {
+    path: "/details/:studentId/documents",
+    title: "Documents",
+    element: <Documents />,
+  },
+  {
+    path: "/details/:studentId/examRecords",
+    title: "ExamRecords",
+    element: <ExamRecords />,
+  },
+  {
+    path: "/details/:studentId/subjects",
+    title: "Subjects",
+    element: <Subjects />,
   },
 ];
 const StudentRoute = () => {
