@@ -1,7 +1,40 @@
 import React from "react";
 
 const Qualification = () => {
-  return <div>Qualification tab</div>;
+  return (
+    <>
+      <div className="card card-flush mt-xl-0 mb-6 mb-xl-9 ">
+        <div className="card-header mt-6 ">
+          <div className="card-title flex-column">
+            <h2 className="mb-1">All Qualifications</h2>
+            <div className="fs-6 fw-semibold text-muted"></div>
+          </div>
+          <div className="card-toolbar d-flex gap-3">
+            <button
+              type="button"
+              className="btn btn-primary"
+              // onClick={toggleAddQualificationDrawer}
+            >
+              Add Qualification
+            </button>
+          </div>
+        </div>
+
+        <div className="div card-body d-flex flex-column">
+          <table className="table align-middle table-row-dashed fs-6">
+            <thead>
+              <tr>
+                <th className="w-200p x">Title</th>
+                <th>Descriptions</th>
+                <th className="text-end">Images</th>
+                <th className="text-end">Actions</th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+    </>
+  );
 };
 
 export default Qualification;
